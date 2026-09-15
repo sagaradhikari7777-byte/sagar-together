@@ -1,0 +1,47 @@
+functionsDirectory = "/workspace/scratch/4ea05caa70aa/staging/together/netlify/functions"
+functionsDirectoryOrigin = "config-v1"
+headersOrigin = "config"
+plugins = []
+redirects = []
+
+[build]
+publish = "/workspace/scratch/4ea05caa70aa/staging/together/dist"
+publishOrigin = "config"
+base = "/workspace/scratch/4ea05caa70aa/staging/together"
+command = "npm run build"
+commandOrigin = "config"
+functions = "/workspace/scratch/4ea05caa70aa/staging/together/netlify/functions"
+
+  [build.environment]
+  NODE_VERSION = "22"
+
+  [build.processing]
+
+    [build.processing.css]
+
+    [build.processing.html]
+
+    [build.processing.images]
+
+    [build.processing.js]
+
+  [build.services]
+
+[database]
+
+  [database.migrations]
+  path = "/workspace/scratch/4ea05caa70aa/staging/together/netlify/database/migrations"
+
+[functions]
+
+  [functions."*"]
+  node_bundler = "esbuild"
+
+[[headers]]
+for = "/*"
+
+  [headers.values]
+  X-Content-Type-Options = "nosniff"
+  Referrer-Policy = "no-referrer"
+  X-Frame-Options = "DENY"
+  Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
