@@ -1,0 +1,108 @@
+/* One viewport, two rows: scrollable content and a dedicated navigation dock. */
+:root {
+  --dock-safe-bottom:env(safe-area-inset-bottom,0px);
+  --dock-height:89px;
+  --dock-surface:linear-gradient(180deg,#edf5f3c7,#e9f2f3ed);
+}
+#app.has-navigation {
+  height:100vh;height:100dvh;
+  display:grid;grid-template-rows:minmax(0,1fr) auto;
+  overflow:hidden;
+}
+#app.has-navigation>.shell {
+  width:100%;min-width:0;min-height:0;
+  overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;scrollbar-color:#6d98824a transparent;
+  margin:0 auto;padding-bottom:24px;
+  scroll-padding-top:18px;scroll-padding-bottom:24px;
+}
+#app.has-navigation>.nav-wrap {
+  position:relative;inset:auto;transform:none;
+  width:100%;max-width:none;min-width:0;margin:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:10px max(14px,env(safe-area-inset-right,0px)) calc(8px + var(--dock-safe-bottom)) max(14px,env(safe-area-inset-left,0px));
+  background:var(--dock-surface);
+  border-top:1px solid #ffffff65;
+  box-shadow:0 -7px 24px #31575006;
+  z-index:5;
+}
+.nav-wrap .nav {
+  flex:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  align-items:center;gap:2px;
+  width:min(100%,470px);min-width:0;height:70px;
+  padding:6px;border-radius:27px;
+  background:linear-gradient(135deg,#ffffffd4,#ffffff68 50%,#f5fffb9c);
+  border:1px solid #fffffff0;
+  box-shadow:0 6px 19px #1e494215,inset 0 1px 1px #fff,inset 0 -1px 1px #ffffff8a;
+}
+.nav-wrap .nav button {
+  display:grid;grid-template-rows:28px 14px;
+  justify-items:center;align-content:center;gap:3px;
+  width:100%;min-width:0;height:56px;min-height:56px;
+  padding:4px 2px;margin:0;border:1px solid transparent;border-radius:21px;
+  color:#536d66;font-size:11px;line-height:14px;font-weight:550;
+  letter-spacing:0;background:transparent;box-shadow:none;
+}
+.nav-wrap .nav button.active {
+  background:linear-gradient(145deg,#e8f7efeb,#c9e5dba3);
+  border-color:#ffffffc9;color:#1b654e;
+  box-shadow:inset 0 1px 0 #fff,0 2px 5px #30675408;
+}
+.nav-wrap .nav .nav-icon {
+  display:grid;place-items:center;width:28px;height:28px;
+  flex:none;align-self:center;box-sizing:border-box;
+}
+.nav-wrap .nav .nav-icon .icon{width:23px;height:23px;stroke-width:1.8}
+.nav-wrap .nav button.active .icon{stroke-width:2.1}
+.nav-wrap .nav button>span:last-child{display:block;height:14px;line-height:14px;white-space:nowrap}
+.nav-wrap .nav .nav-add{color:#22634e}
+.nav-wrap .nav .nav-add .nav-icon {
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(145deg,#569c82,#1f7054);
+  border:1px solid #ffffffc9;
+  box-shadow:inset 0 1px 0 #ffffff6b,0 2px 6px #1c594219;
+}
+.nav-wrap .nav .nav-add .icon{width:20px;height:20px;color:#fff;stroke-width:1.8}
+.nav-wrap .nav button:active{transform:scale(.96)}
+.nav-wrap .nav button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+/* Toasts sit above the entire dock, including the iPhone home-indicator inset. */
+#toast{bottom:calc(var(--dock-height) + var(--dock-safe-bottom) + 12px)}
+/* Dialogs cover the dock in the browser top layer, with their own bottom inset. */
+@media(max-width:700px) {
+  dialog,.theme-dark dialog {
+    padding-bottom:max(20px,calc(12px + env(safe-area-inset-bottom,0px)));
+    scroll-padding-bottom:24px;
+  }
+}
+.theme-dark {
+  --dock-surface:linear-gradient(180deg,#153330e6,#102d2bed);
+}
+.theme-dark #app.has-navigation>.nav-wrap{border-top-color:#dcfff215;box-shadow:0 -7px 24px #001b1912}
+.theme-dark .nav-wrap .nav {
+  background:linear-gradient(135deg,#50776d5c,#274842b8 50%,#354f666b);
+  border-color:#dcfff240;
+  box-shadow:0 7px 20px #001e202b,inset 0 1px 1px #e9fff931,inset 0 -1px 0 #ffffff13;
+}
+.theme-dark .nav-wrap .nav button{color:#b2ccc0}
+.theme-dark .nav-wrap .nav button.active {
+  color:#edfff7;background:linear-gradient(135deg,#b8ead34a,#76ab912e);
+  border-color:#c3e7d940;box-shadow:inset 0 1px 0 #ffffff29;
+}
+.theme-dark .nav-wrap .nav .nav-add{color:#cbe8d9}
+.theme-dark .nav-wrap .nav .nav-add .nav-icon{background:linear-gradient(145deg,#c1ead7,#81bb9f);border-color:#eafff361}
+.theme-dark .nav-wrap .nav .nav-add .icon{color:#174d38}
+@media(max-width:350px){.nav-wrap .nav button{font-size:10px}.nav-wrap .nav{gap:0;padding-inline:4px}}
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more) {
+  #app.has-navigation>.nav-wrap{background:#e9f2ed}
+  .nav-wrap .nav{background:#f3fbf5;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:#b9cec1}
+  .nav-wrap .nav button.active{background:#cce4d7}
+  .theme-dark #app.has-navigation>.nav-wrap{background:#153326}
+  .theme-dark .nav-wrap .nav{background:#254237;border-color:#738d7e}
+  .theme-dark .nav-wrap .nav button.active{background:#496d58}
+}
+@media(prefers-reduced-motion:reduce){.nav-wrap .nav button{transition:none}.nav-wrap .nav button:active{transform:none}}
+
+/* Keep optional controls hidden even when shared button classes use flex. */
+[hidden]{display:none!important}
