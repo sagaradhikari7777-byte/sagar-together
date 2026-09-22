@@ -1,0 +1,299 @@
+/* Together / Clarity. Content stays calm; glass belongs to floating controls. */
+:root{
+  color:#171b24;background:#f5f6f9;
+  --muted:#6b7280;--blue:#006be6;--accent:#006be6;
+  --surface:#fff;--panel:#fff;--input:#f3f4f7;--dialog:#f5f6f9;
+  --line:#192d4a12;--soft-accent:#eaf2ff;--warm:#eaf2ff;--warm-ink:#185fb5;
+  --card-border:#e9edf3;--shadow:0 2px 8px #17294503;
+}
+.ios-app{color:#171b24;background:#f5f6f9;letter-spacing:-.2px;font-size:15px;-webkit-font-smoothing:antialiased}
+.ios-app .ambient{display:none}
+.ios-app .shell{max-width:1120px;padding-top:calc(20px + env(safe-area-inset-top,0px));padding-inline:24px}
+.ios-app .top{margin-bottom:25px;gap:12px}
+.ios-app .brand{font-size:19px;letter-spacing:-.75px;font-weight:750;gap:8px}
+.ios-app .brand img{width:29px;height:29px;filter:hue-rotate(75deg) saturate(1.6)}
+.ios-app .signed-in-user{gap:8px;max-width:52%;min-height:44px}
+.ios-app .signed-in-copy small{font-size:9px;color:var(--muted)}
+.ios-app .signed-in-copy strong{font-size:12px;font-weight:650}
+.ios-app .avatar{background:#e8effa;color:#1964bf;border:2px solid var(--surface);font-weight:650}
+.ios-app .avatar.b{background:#eee9fc;color:#7954bb}
+.ios-app .signed-in-user .avatar{width:35px;height:35px}
+.ios-app h1{font-size:32px;line-height:1.12;font-weight:750;letter-spacing:-1.1px}
+.ios-app h2{font-size:18px;font-weight:700;letter-spacing:-.45px}
+.ios-app h3{font-size:15px;font-weight:650}
+.ios-app .eyebrow{font-size:10px;font-weight:650;letter-spacing:1.6px;margin-bottom:7px;color:var(--muted)}
+.ios-app .home-title{align-items:center;margin-bottom:19px}
+.ios-app .home-title h1{font-size:32px;margin:0}
+.ios-app .home-title .eyebrow{font-size:10px}
+.ios-app .icon-button{width:44px;height:44px;min-height:44px;background:var(--surface);border:1px solid var(--line);box-shadow:0 2px 8px #0c244b04;color:var(--accent)}
+.ios-app .icon-button .icon{width:21px;height:21px}
+.ios-app .glass{background:var(--surface);border:1px solid var(--card-border);border-radius:22px;box-shadow:var(--shadow);backdrop-filter:none;-webkit-backdrop-filter:none}
+.ios-app .home-columns{grid-template-columns:1.05fr 1fr;gap:28px}
+.ios-app .home-main{position:static}
+.ios-app .overview-card{background:linear-gradient(125deg,#12386f,#155ecb 70%,#257ce5);color:#fff;border:0;border-radius:26px;padding:22px;box-shadow:0 10px 24px #1458b51a}
+.ios-app .overview-top{gap:12px}
+.ios-app .overview-top .eyebrow{color:#d1e5ff;font-size:10px;letter-spacing:1.35px;margin:0}
+.live-indicator{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:#e0ecff;flex:none}
+.live-indicator i{width:5px;height:5px;border-radius:50%;background:#7fecbc;box-shadow:0 0 0 3px #7fecbc15}
+.balance-focus{display:block;width:100%;padding:22px 0 20px;text-align:left;color:inherit;border:0;background:transparent;min-width:0}
+.balance-value{display:block;font-size:clamp(40px,11vw,52px);line-height:1.05;font-weight:650;letter-spacing:-2.2px;overflow-wrap:anywhere}
+.balance-direction{display:block;font-size:12px;line-height:1.5;color:#e5eeff;margin-top:10px;overflow-wrap:anywhere}
+.balance-direction b{font-weight:650;color:#fff}
+.balance-direction .icon{width:14px;height:14px;vertical-align:-3px;margin-right:5px}
+.ios-app .overview-card .couple-summary{border-top:1px solid #ffffff25;padding-top:15px;margin-top:0;gap:16px}
+.ios-app .overview-card .couple-stat{padding:0;border:0;background:none;min-width:0}
+.ios-app .overview-card .couple-label{color:#d1e5ff;font-size:11px;white-space:normal;line-height:1.35;overflow-wrap:anywhere}
+.ios-app .overview-card .couple-stat strong{font-size:21px;font-weight:650;letter-spacing:-.4px;margin:6px 0 3px}
+.ios-app .overview-card .couple-stat small{font-size:10px;color:#c1d8fa}
+.overview-sheet{display:flex;align-items:center;gap:10px;width:100%;min-width:0;margin-top:18px;padding:12px 0 0;border:0;border-top:1px solid #ffffff25;background:transparent;color:#fff;text-align:left;min-height:48px}
+.overview-sheet>.icon{width:18px;height:18px;color:#c3ddff}
+.overview-sheet>span{flex:1;min-width:0}
+.overview-sheet strong{display:block;font-size:12px;font-weight:550;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.overview-sheet small{display:block;font-size:10px;color:#ccdef9;margin-top:3px;line-height:1.4;overflow-wrap:anywhere}
+.overview-sheet>.icon:last-child{width:14px;height:14px}
+.ios-app .home-metrics{gap:10px;margin-top:12px}
+.ios-app .home-metrics button{background:var(--surface);border:1px solid var(--card-border);border-radius:20px;padding:15px;gap:7px;box-shadow:none;color:inherit;min-height:100px}
+.ios-app .home-metrics small{font-size:11px}
+.ios-app .home-metrics strong{font-size:22px;font-weight:700;letter-spacing:-.6px}
+.ios-app .home-metrics .metric-category{font-size:18px}
+.ios-app .home-metrics button>span{font-size:10px}
+.ios-app .section-head{margin:22px 0 10px;min-height:32px;gap:12px}
+.ios-app .section-head h2{font-size:18px}
+.ios-app .text-button{color:var(--accent);font-size:12px;font-weight:550;min-height:44px;padding:8px 0}
+.ios-app .quick-grid{gap:10px}
+.ios-app .quick-grid button{grid-template-columns:32px minmax(0,1fr);background:var(--surface);border:1px solid var(--card-border);border-radius:18px;padding:12px;min-height:66px;gap:4px 9px;box-shadow:none;color:inherit}
+.ios-app .quick-grid button>.quick-icon{width:32px;height:32px;border-radius:11px}
+.ios-app .quick-grid button>span:nth-child(2){font-size:12px;font-weight:650}
+.ios-app .quick-grid button>small{font-size:11px;color:var(--muted)}
+.ios-app .quick-icon{background:var(--soft-accent);color:var(--accent)}
+.ios-app .insight-link{background:var(--soft-accent);border:0;color:var(--warm-ink);border-radius:18px;padding:14px;gap:12px;margin-top:14px}
+.ios-app .insight-link .quick-icon{background:transparent;color:inherit}
+.ios-app .insight-link strong{font-size:12px;font-weight:650}
+.ios-app .insight-link small{font-size:10px;line-height:1.4;opacity:.85}
+.ios-app .home-secondary>.section-head:first-child{margin-top:0}
+.ios-app .list{border-radius:22px;box-shadow:none}
+.ios-app .expense-row{background:var(--line)}
+.ios-app .expense-front{background:var(--surface)}
+.ios-app .expense{padding:14px 2px 14px 14px;min-height:78px;gap:11px;color:inherit}
+.ios-app .expense-info strong{font-size:14px;font-weight:650;margin:0 0 4px;letter-spacing:-.2px}
+.ios-app .expense-info>span{display:block;font-size:10px;line-height:1.4;letter-spacing:0}
+.ios-app .expense-info .expense-share{margin-top:2px;font-size:10px;color:var(--muted);white-space:normal;overflow-wrap:anywhere}
+.ios-app .expense-total{max-width:38%;min-width:0;align-self:center}
+.ios-app .expense-total strong{font-size:14px;font-weight:650;letter-spacing:-.3px;margin:0;overflow-wrap:anywhere}
+.ios-app .expense-more{flex-basis:32px;width:32px;font-size:21px;padding:0 4px}
+.ios-app .category{width:37px;height:37px;border-radius:13px;background:#e5f4ef;color:#208268}
+.ios-app .category .icon{width:20px;height:20px}
+.ios-app .category.travel{background:#e3efff;color:#2077db}
+.ios-app .category.food{background:#fff0df;color:#b77c24}
+.ios-app .category.bills,.ios-app .category.movie{background:#eee8ff;color:#8153c7}
+.ios-app .category.gift{background:#ffe8ed;color:#ca5272}
+.ios-app .category.wifi{background:#e6f3f9;color:#2082ae}
+.ios-app .category.home{background:#fcf0dc;color:#a77a24}
+.ios-app .household-banner{gap:10px;min-height:70px;padding:18px 2px 0;color:inherit}
+.ios-app .household-banner strong{font-size:12px;font-weight:650}
+.ios-app .household-banner small{font-size:11px;color:var(--muted);margin-top:4px}
+.ios-app .household-banner>.icon{width:17px;height:17px;color:var(--muted)}
+.ios-app .toolbar{margin:20px 0 14px;gap:8px}
+.ios-app .toolbar input[type=search],.ios-app .catalog-dialog>input{background-color:#e9ecf2;border:1px solid transparent;border-radius:15px;box-shadow:none;padding:12px 14px;min-height:46px}
+.ios-app input::placeholder,.ios-app textarea::placeholder{color:#828997;opacity:1}
+.ios-app .sheet-list{gap:12px;margin-top:16px}
+.ios-app .sheet-front{background:var(--surface);border-radius:22px}
+.ios-app .sheet-open{padding:17px 6px 17px 14px;min-height:90px;gap:11px}
+.sheet-symbol{display:grid;place-items:center;width:38px;height:42px;flex:none;border-radius:12px;background:var(--soft-accent);color:var(--accent)}
+.sheet-symbol .icon{width:21px;height:21px}
+.ios-app .sheet-copy strong{font-size:14px;font-weight:650;line-height:1.35;margin-bottom:4px;white-space:normal;overflow-wrap:anywhere}
+.ios-app .sheet-copy>.sheet-meta{display:flex;flex-direction:column;gap:2px;font-size:12px;line-height:1.4}
+.ios-app .sheet-dates{font-size:10px;line-height:1.5}
+.ios-app .sheet-count{font-size:11px;color:var(--muted)}
+.ios-app .sheet-more{min-width:32px;padding:0 7px;font-size:21px}
+.ios-app .sheet-heading{display:block;min-width:0}
+.ios-app .sheet-heading h1{font-size:29px;line-height:1.16}
+.ios-app .sheet-heading .sheet-dates{margin-top:7px;font-size:12px}
+.ios-app .swipe-hint{font-size:11px;margin-top:16px}
+.ios-app .journal-tools{gap:8px;margin-top:15px}
+.ios-app .journal-tools select,.ios-app .journal-tools>.icon-button,.ios-app .filter-button{min-height:44px;height:44px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.ios-app .switches{gap:7px;margin:12px 0}
+.ios-app .switches button{border:0;background:var(--surface);color:var(--muted);padding:9px 14px;min-height:40px;font-size:12px}
+.ios-app .switches .selected{background:var(--soft-accent);color:var(--accent);font-weight:650}
+.ios-app .day-group{margin-top:21px}
+.ios-app .day-heading{color:var(--muted);padding-inline:3px;margin-bottom:8px}
+.ios-app .day-heading h2,.ios-app .day-heading>span{font-size:10px}
+.ios-app .hero{padding:22px;background:var(--surface);color:inherit}
+.ios-app .hero .amount{color:inherit;font-size:44px;letter-spacing:-1.5px;margin:14px 0 10px}
+.ios-app .hero .badge{background:var(--soft-accent);color:var(--accent);border:0;font-size:10px;max-width:70%;padding:7px 10px}
+.ios-app .paid-grid{border-color:var(--line);padding-top:18px;margin-top:21px}
+.ios-app .paid-grid strong.amount{font-size:22px;letter-spacing:-.5px;margin:7px 0 0}
+.ios-app .dot{background:#2c86f3}.ios-app .dot.b{background:#9b7de1}
+.ios-app .primary{background:#0876f9;border:1px solid #0876f9;border-radius:15px;box-shadow:none;color:#fff;font-weight:650;font-size:14px;min-height:48px;padding:12px 18px}
+.ios-app .secondary{background:var(--surface);border:1px solid var(--line);color:inherit;border-radius:15px;min-height:46px;padding:12px 16px}
+.ios-app .danger{color:#d13748}.ios-app .delete-confirm{background:#dc3548;color:#fff;border-color:#dc3548}
+.ios-app .panel{padding:18px;margin:14px 0;border-radius:22px}
+.ios-app .bar{background:var(--line);height:6px}.ios-app .bar>i{background:#438eed}
+.ios-app .insight-hero{background:var(--soft-accent);border-radius:22px;padding:22px}
+.ios-app .insight-hero>strong{color:var(--accent);font-size:39px}
+.ios-app .profile-card{display:flex;gap:13px;align-items:center;padding:19px;margin:20px 0 25px}
+.profile-card>.avatar{width:48px;height:48px;font-size:16px}
+.profile-card>div{min-width:0;flex:1}
+.profile-card small{font-size:10px;color:var(--muted)}
+.ios-app .profile-card h2{font-size:19px;margin-top:3px;overflow-wrap:anywhere}
+.profile-card p{font-size:11px;color:var(--muted);margin:5px 0 0;overflow-wrap:anywhere}
+.ios-app .settings-heading{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin:24px 6px 9px;font-weight:600}
+.ios-app .settings-group{overflow:hidden;padding:0}
+.setting-row{display:flex;align-items:center;width:100%;gap:12px;padding:14px;text-align:left;border:0;background:transparent;min-height:67px;color:inherit;border-bottom:1px solid var(--line);list-style:none;cursor:pointer}
+.setting-row:last-child{border-bottom:0}
+.setting-row>span:nth-child(2){flex:1;min-width:0}
+.setting-row strong{display:block;font-size:13px;font-weight:550;overflow-wrap:anywhere}
+.setting-row small{display:block;font-size:10px;line-height:1.4;color:var(--muted);margin-top:4px;overflow-wrap:anywhere}
+.setting-row>.icon{width:15px;height:15px;color:#99a1ae}
+.setting-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:var(--soft-accent);color:var(--accent);flex:none}
+.setting-icon .icon{width:18px;height:18px}
+.household-edit{border-bottom:1px solid var(--line)}
+.household-edit>summary::-webkit-details-marker{display:none}
+.household-edit[open]>summary>.icon{transform:rotate(90deg)}
+.household-edit form{padding:5px 16px 18px}
+.household-edit .member-row .avatar{width:32px;height:32px}
+.install-note{display:flex;gap:12px;padding:20px 8px;color:var(--muted);align-items:flex-start}
+.install-note>.icon{width:18px;height:18px;margin-top:2px}
+.ios-app .install-note h3{font-size:12px;color:inherit}
+.install-note p{font-size:11px;line-height:1.55;margin:5px 0 0}
+.settings-footnote{text-align:center;font-size:10px;color:var(--muted);line-height:1.5;margin:18px 0 0}
+.ios-app input,.ios-app select,.ios-app textarea{background-color:var(--input);border:1px solid var(--line);border-radius:13px;min-height:46px;padding:12px;color:inherit;font-size:16px}
+.ios-app input:focus,.ios-app select:focus,.ios-app textarea:focus{border-color:#4395fb;box-shadow:0 0 0 3px #4395fb18}
+.ios-app input[type=date]{height:48px}
+.ios-app .field{margin-bottom:15px}
+.ios-app .field>span{font-size:12px;line-height:1.4;font-weight:550;margin-bottom:6px}
+.ios-app .big-input{font-size:38px;font-weight:550;letter-spacing:-1px;padding:16px;min-height:78px;background:var(--surface)}
+.ios-app .split-preview{background:var(--soft-accent);color:inherit;padding:13px;line-height:1.6}
+.ios-app .entry-note,.ios-app .setup-note{background:var(--soft-accent);color:var(--muted);font-size:11px}
+.ios-app dialog{background:var(--dialog);border:1px solid #ffffffb3;border-radius:28px;padding:22px;box-shadow:0 25px 80px #12264933;backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);color:inherit;scroll-padding-block:80px 28px}
+.ios-app dialog::backdrop{background:#111d383b;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.ios-app .dialog-head{top:-22px;background:var(--dialog);padding:10px 0;margin-top:-10px;margin-bottom:20px}
+.ios-app .dialog-head h2,.ios-app .catalog-head h2{font-size:19px;letter-spacing:-.5px;font-weight:700}
+.ios-app .dialog-head .icon-button,.ios-app .catalog-head .icon-button{width:44px;height:44px;min-height:44px;background:var(--surface);color:var(--muted)}
+.ios-app .catalog-dialog{padding-top:12px}
+.ios-app .catalog-handle{background:#939baa55;margin-bottom:14px}
+.ios-app .catalog-head{margin-bottom:16px}
+.ios-app .catalog-list{background:var(--surface);border:1px solid var(--line);border-radius:20px;margin-top:16px}
+.ios-app .catalog-choice{min-height:64px;padding:12px;gap:11px}
+.ios-app .catalog-name{font-size:14px}
+.ios-app .catalog-icon{width:34px;height:34px;border-radius:11px}
+.ios-app .catalog-edit{min-height:48px;color:var(--muted)}
+.ios-app .expense-action-summary strong{font-size:18px;font-weight:650}
+.ios-app .sheet-option-list{gap:8px}
+.ios-app .sheet-option-list button{min-height:50px}
+.ios-app .auth{max-width:420px;margin:15px auto 0}
+.ios-app .auth .brand{font-size:22px}
+.ios-app .welcome-eyebrow{margin:38px 0 13px;font-size:9px;color:var(--muted)}
+.ios-app .auth h1{font-size:43px;letter-spacing:-1.9px;line-height:1.08;font-weight:750;margin:0 0 16px}
+.ios-app .auth h1>span{color:var(--accent)}
+.ios-app .welcome-copy{font-size:14px;line-height:1.65;max-width:370px;margin-bottom:24px}
+.ios-app .welcome-preview{transform:none;background:linear-gradient(125deg,#12386f,#155ecb 75%,#257ce5);border:0;border-radius:26px;color:#fff;padding:22px;box-shadow:0 12px 28px #1458b51a;margin:0 0 24px}
+.ios-app .welcome-preview .eyebrow{color:#d1e5ff;font-size:9px;letter-spacing:1.25px}
+.ios-app .sample-tag{color:#d1e5ff;border-color:#ffffff25;font-size:9px}
+.ios-app .preview-balance{font-size:29px;letter-spacing:-1px;margin-top:18px}
+.ios-app .preview-balance>span{background:#ffffff20;color:#fff}
+.ios-app .welcome-preview>p{color:#d1e5ff;font-size:11px;margin:8px 0 20px}
+.ios-app .preview-expense{background:#ffffff15;border:1px solid #ffffff20;border-radius:16px;padding:13px}
+.ios-app .preview-expense small{color:#d1e5ff}
+.ios-app .preview-expense .category{background:#ffffff20;color:#fff}
+.ios-app .welcome-benefits{margin:23px 0}
+.ios-app .welcome-benefits>span{font-size:10px;line-height:1.4}
+.ios-app .welcome-footnote{font-size:10px}
+.ios-app .setup-progress>.done{background:#0876f9}
+.ios-app .auth .panel{background:var(--surface)}
+.ios-app #toast{background:#1e2a3d;color:#fff;border:1px solid #ffffff20;box-shadow:0 8px 24px #0002;font-size:12px;border-radius:16px;bottom:var(--dock-clearance)}
+.ios-app.theme-dark{
+  color:#f3f5fa;background:#101216;
+  --muted:#9fa7b5;--blue:#76b5ff;--accent:#76b5ff;
+  --surface:#1c2028;--panel:#1c2028;--input:#13171f;--dialog:#191d25;
+  --line:#c0d5ff14;--card-border:#c0d5ff0c;--soft-accent:#203650;--warm:#203650;--warm-ink:#a3cdff;
+  --shadow:0 2px 8px #00000005;
+}
+.ios-app.theme-dark .avatar{background:#243b56;color:#9dcaff;border-color:var(--surface)}
+.ios-app.theme-dark .avatar.b{background:#39304f;color:#cdb5ff}
+.ios-app.theme-dark .toolbar input[type=search],.ios-app.theme-dark .catalog-dialog>input{background:#20252f;border-color:var(--line)}
+.ios-app.theme-dark .category{background:#203e37;color:#89d7bd}
+.ios-app.theme-dark .category.travel{background:#223956;color:#89bcff}
+.ios-app.theme-dark .category.food,.ios-app.theme-dark .category.home{background:#403521;color:#e8bb7a}
+.ios-app.theme-dark .category.bills,.ios-app.theme-dark .category.movie{background:#34294d;color:#c3a1f3}
+.ios-app.theme-dark .category.gift{background:#452b37;color:#eda4bd}
+.ios-app.theme-dark .category.wifi{background:#223d47;color:#83cee8}
+.ios-app.theme-dark dialog{border-color:#ffffff1c}
+.ios-app.theme-dark input::placeholder,.ios-app.theme-dark textarea::placeholder{color:#919aaa}
+.ios-app.theme-dark .danger{color:#ff8492}.ios-app.theme-dark .delete-confirm{color:#fff}
+.ios-app.theme-dark .swipe-sheet{background:#333b4a}
+.ios-app.theme-dark .notice{background:#3e3520;color:#f1d89a;border-color:#ffffff12}
+.ios-app.theme-dark .catalog-icon{filter:brightness(.85)}
+@media(min-width:701px){
+  .ios-app .shell{padding-top:30px;padding-inline:32px}
+  .ios-app .top{margin-bottom:32px}
+  .ios-app .home-title{margin-bottom:24px}
+  .ios-app .home-title h1,.ios-app h1{font-size:36px}
+  .ios-app .home-secondary{padding-top:0}
+  .ios-app .home-secondary>.section-head:first-child{min-height:29px;margin-top:0;margin-bottom:12px}
+  .ios-app .overview-card{padding:26px}
+  .ios-app .balance-focus{padding:24px 0}
+  .ios-app .balance-value{font-size:54px}
+  .ios-app .settings-group,.ios-app .profile-card,.ios-app .install-note,.ios-app .settings-footnote,.ios-app #settings-form{max-width:720px}
+  .ios-app .auth{margin-top:20px}
+}
+@media(max-width:700px){
+  .ios-app .shell{padding-inline:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));padding-top:calc(16px + env(safe-area-inset-top,0px))}
+  .ios-app .home-columns{display:block}
+  .ios-app .home-secondary>.section-head:first-child{margin-top:24px}
+  .ios-app dialog{inset:auto 0 0;margin:0;width:100%;max-width:100%;max-height:calc(100dvh - env(safe-area-inset-top,0px) - 16px);border-radius:28px 28px 0 0;padding:20px max(18px,env(safe-area-inset-right,0px)) max(22px,calc(14px + env(safe-area-inset-bottom,0px))) max(18px,env(safe-area-inset-left,0px))}
+  .ios-app .dialog-head{top:-20px}
+  .ios-app .catalog-dialog{padding-top:10px}
+  .ios-app .welcome-shell{padding-bottom:30px}
+}
+@media(max-width:360px){
+  .ios-app .shell{padding-inline:14px}
+  .ios-app .brand{font-size:17px}.ios-app .brand img{width:26px;height:26px}
+  .ios-app .signed-in-copy strong{font-size:11px}.ios-app .signed-in-user{gap:5px}
+  .ios-app .signed-in-user .avatar{width:31px;height:31px;font-size:11px}
+  .ios-app .home-title h1,.ios-app h1{font-size:29px}
+  .ios-app .overview-card{padding:19px;border-radius:23px}
+  .ios-app .balance-value{font-size:43px}
+  .ios-app .home-metrics button{padding:13px}
+  .ios-app .home-metrics .metric-category{font-size:16px}
+  .ios-app .quick-grid button{padding:10px;column-gap:7px;grid-template-columns:27px minmax(0,1fr)}
+  .ios-app .quick-grid button>.quick-icon{width:27px;height:27px}
+  .ios-app .quick-grid button>span:nth-child(2){font-size:11px}
+  .ios-app .expense{padding-left:11px;gap:8px}
+  .ios-app .expense-info strong,.ios-app .expense-total strong{font-size:13px}
+  .ios-app .category{width:32px;height:34px;border-radius:11px}
+  .ios-app .sheet-open{gap:9px;padding-left:12px}
+  .ios-app .sheet-copy strong{font-size:13px}.ios-app .sheet-dates{font-size:9px}
+  .ios-app .sheet-symbol{width:30px;height:37px;border-radius:10px}
+  .ios-app .sheet-more{min-width:30px;padding-inline:5px}
+  .ios-app .auth h1{font-size:37px}.ios-app .welcome-eyebrow{margin-top:28px}
+  .ios-app .welcome-preview{padding:18px}.ios-app .welcome-preview .eyebrow{font-size:8px}
+  .ios-app .sheet-heading h1{font-size:27px}
+}
+@media(prefers-reduced-motion:reduce){.ios-app *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  .ios-app dialog{background:var(--dialog);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .ios-app dialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none;background:#111d3866}
+}
+@media(prefers-contrast:more){.ios-app{--muted:#4b5565;--line:#56678055;--card-border:#56678055}.ios-app.theme-dark{--muted:#c6d2e3;--line:#c6d2e366;--card-border:#c6d2e366}}
+/* Concealed gestures stay non-interactive; visible actions retain touch targets. */
+.ios-app .expense-swipe-action[aria-hidden="true"],.ios-app .swipe-actions[aria-hidden="true"]{visibility:hidden}
+.ios-app .expense-more{flex-basis:44px;width:44px}
+.ios-app .sheet-more{min-width:44px}
+/* Keep the mobile overview useful at a glance, with recent activity in reach. */
+@media(max-width:700px){
+  .ios-app .balance-focus{padding:16px 0 14px}
+  .ios-app .balance-value{font-size:46px}
+  .ios-app .balance-direction{margin-top:8px}
+  .ios-app .overview-card{padding:20px}
+  .ios-app .overview-card .couple-summary{padding-top:13px}
+  .ios-app .overview-card .couple-stat strong{font-size:20px;margin:5px 0 0}
+  .ios-app .overview-card .couple-stat small{display:none}
+  .ios-app .overview-sheet{margin-top:14px;padding-top:10px;min-height:44px}
+  .ios-app .home-metrics button{min-height:91px;padding:13px 14px;gap:6px}
+  .ios-app .home-main .section-head{margin-top:16px;margin-bottom:8px}
+  .ios-app .quick-grid{display:flex;overflow-x:auto;gap:9px;scrollbar-width:none;padding-bottom:2px;scroll-snap-type:x proximity}
+  .ios-app .quick-grid::-webkit-scrollbar{display:none}
+  .ios-app .quick-grid button{flex:0 0 155px;scroll-snap-align:start;min-height:60px;padding:10px}
+  .ios-app .home-secondary>.section-head:first-child{margin-top:18px}
+}

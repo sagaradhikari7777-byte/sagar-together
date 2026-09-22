@@ -1,107 +1,72 @@
-/* A floating glass capsule shared by every signed-in screen. */
+/* Floating navigation is shared by every signed-in view. */
 :root {
   --dock-safe-bottom:env(safe-area-inset-bottom,0px);
   --dock-height:64px;
-  --dock-gap:10px;
+  --dock-gap:12px;
   --dock-clearance:calc(var(--dock-height) + var(--dock-gap) + var(--dock-safe-bottom) + 24px);
 }
-#app.has-navigation {
-  position:relative;height:100vh;height:100dvh;
-  display:block;overflow:hidden;
+#app.has-navigation{position:relative;height:100vh;height:100dvh;display:block;overflow:hidden}
+#app.has-navigation>.shell{
+  width:100%;height:100%;min-width:0;min-height:0;margin:0 auto;
+  overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;scrollbar-width:thin;
+  scrollbar-color:#8b919b40 transparent;
+  padding-bottom:var(--dock-clearance);scroll-padding-top:18px;scroll-padding-bottom:var(--dock-clearance);
 }
-#app.has-navigation>.shell {
-  width:100%;height:100%;min-width:0;min-height:0;
-  overflow-y:auto;overflow-x:hidden;
-  overscroll-behavior-y:contain;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:thin;scrollbar-color:#6d98824a transparent;
-  margin:0 auto;padding-bottom:var(--dock-clearance);
-  scroll-padding-top:18px;scroll-padding-bottom:var(--dock-clearance);
-}
-/* Only the capsule has a surface. The surrounding safe area stays transparent. */
-#app.has-navigation>.nav-wrap {
+#app.has-navigation>.nav-wrap{
   position:absolute;inset:auto auto calc(var(--dock-gap) + var(--dock-safe-bottom)) 50%;
-  transform:translateX(-50%);
-  width:min(460px,calc(100% - 28px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)));
-  max-width:none;min-width:0;margin:0;padding:0;
-  display:block;background:none;border:0;box-shadow:none;
-  pointer-events:none;z-index:5;
+  transform:translateX(-50%);z-index:5;
+  width:min(500px,calc(100% - 28px - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)));
+  max-width:none;min-width:0;margin:0;padding:0;display:flex;align-items:center;gap:10px;
+  background:none;border:0;box-shadow:none;pointer-events:none;
 }
-.nav-wrap .nav {
-  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
-  align-items:center;gap:2px;
-  width:100%;min-width:0;height:var(--dock-height);
-  padding:4px;border-radius:999px;pointer-events:auto;
-  background:linear-gradient(155deg,#ffffff85,#ffffff38 52%,#ffffff61);
-  border:1px solid #ffffffb8;
-  box-shadow:0 8px 28px #192f3324,0 1px 4px #172e3012,inset 0 1px 1px #ffffffed,inset 0 -1px 1px #ffffff70;
-  backdrop-filter:blur(20px) saturate(1.65);-webkit-backdrop-filter:blur(20px) saturate(1.65);
+.nav-wrap .nav{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;gap:2px;
+  flex:1;width:auto;min-width:0;height:var(--dock-height);padding:4px;border-radius:999px;pointer-events:auto;
+  background:linear-gradient(155deg,#ffffffb8,#ffffff70 55%,#ffffffa0);
+  border:1px solid #ffffffd9;
+  box-shadow:0 8px 30px #18263720,0 1px 4px #18263710,inset 0 1px 1px #fff,inset 0 -1px 1px #ffffff80;
+  backdrop-filter:blur(22px) saturate(1.7);-webkit-backdrop-filter:blur(22px) saturate(1.7);
 }
-.nav-wrap .nav::before {
-  background:linear-gradient(165deg,#ffffff30,transparent 38%,transparent 72%,#ffffff20);
+.nav-wrap .nav::before{content:none}
+.nav-wrap .nav button{
+  display:grid;grid-template-rows:26px 13px;justify-items:center;align-content:center;gap:3px;
+  width:100%;min-width:0;height:54px;min-height:54px;padding:4px 2px;margin:0;
+  border:1px solid transparent;border-radius:999px;
+  color:#606670;font-size:10px;line-height:13px;font-weight:600;letter-spacing:0;
+  background:transparent;box-shadow:none;transition:background .2s,color .2s,transform .2s;
 }
-.nav-wrap .nav button {
-  display:grid;grid-template-rows:27px 13px;
-  justify-items:center;align-content:center;gap:2px;
-  width:100%;min-width:0;height:54px;min-height:54px;
-  padding:4px 2px;margin:0;border:1px solid transparent;border-radius:999px;
-  color:#242b2b;font-size:10.5px;line-height:13px;font-weight:550;
-  letter-spacing:0;background:transparent;box-shadow:none;
-  transition:background .18s,color .18s,transform .18s;
+.nav-wrap .nav button.active{
+  background:#007aff12;border-color:#ffffff65;color:#0065dc;box-shadow:inset 0 1px 1px #ffffff78;
 }
-.nav-wrap .nav button.active {
-  background:linear-gradient(145deg,#73797e29,#72777b1a);
-  border-color:#ffffff36;color:#111717;
-  box-shadow:inset 0 1px 1px #ffffff38;
-}
-.nav-wrap .nav .nav-icon {
-  display:grid;place-items:center;width:27px;height:27px;
-  flex:none;align-self:center;box-sizing:border-box;
-}
-.nav-wrap .nav .nav-icon .icon{width:24px;height:24px;stroke-width:1.8}
-.nav-wrap .nav button.active .icon{stroke-width:2.35}
+.nav-wrap .nav .nav-icon{display:grid;place-items:center;width:26px;height:26px;flex:none;align-self:center}
+.nav-wrap .nav .nav-icon .icon{width:23px;height:23px;stroke-width:1.8}
+.nav-wrap .nav button.active .icon{stroke-width:2.15}
 .nav-wrap .nav button>span:last-child{display:block;height:13px;line-height:13px;white-space:nowrap}
-.nav-wrap .nav .nav-add{color:#242b2b}
-.nav-wrap .nav .nav-add .nav-icon {
-  border-radius:50%;background:none;border:1.7px solid currentColor;
-  box-shadow:none;color:inherit;
+.nav-wrap .nav-create{
+  flex:0 0 62px;width:62px;height:62px;min-height:44px;pointer-events:auto;
+  border:1px solid #fff9;border-radius:50%;display:grid;place-content:center;justify-items:center;gap:0;padding:5px;
+  background:linear-gradient(145deg,#218cff,#0763ee);color:#fff;
+  box-shadow:0 6px 22px #0763ee35,inset 0 1px 2px #ffffff78,inset 0 -1px 1px #063fc850;
+  font-size:10px;font-weight:650;line-height:13px;
 }
-.nav-wrap .nav .nav-add .icon{width:19px;height:19px;color:inherit;stroke-width:1.8}
-.nav-wrap .nav button:active{transform:scale(.96)}
-.nav-wrap .nav button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.nav-create .icon{width:27px;height:27px;stroke-width:1.9}
+.nav-wrap button:active{transform:scale(.94)}
+.nav-wrap button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #toast{bottom:var(--dock-clearance)}
-/* Dialogs cover the navigation in the browser top layer. */
-@media(max-width:700px) {
-  dialog,.theme-dark dialog {
-    padding-bottom:max(20px,calc(12px + env(safe-area-inset-bottom,0px)));
-    scroll-padding-bottom:24px;
-  }
+.ios-app.theme-dark .nav-wrap .nav{
+  background:linear-gradient(155deg,#414650b8,#22262fa6 55%,#333941ab);border-color:#ffffff24;
+  box-shadow:0 8px 30px #0005,inset 0 1px 1px #ffffff25,inset 0 -1px 1px #ffffff10;
 }
-.theme-dark .nav-wrap .nav {
-  background:linear-gradient(155deg,#52585c78,#20262970 52%,#43494d70);
-  border-color:#ffffff45;
-  box-shadow:0 8px 28px #00000038,0 1px 4px #00000026,inset 0 1px 1px #ffffff38,inset 0 -1px 1px #ffffff17;
+.ios-app.theme-dark .nav-wrap .nav button{color:#c1c7d1}
+.ios-app.theme-dark .nav-wrap .nav button.active{color:#74b8ff;background:#3998ff24;border-color:#ffffff10;box-shadow:inset 0 1px 1px #ffffff0c}
+@media(max-width:350px){#app.has-navigation>.nav-wrap{gap:8px}.nav-wrap .nav{gap:0;padding-inline:3px}.nav-wrap .nav-create{flex-basis:58px;width:58px;height:58px}.nav-wrap .nav button{font-size:9px}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.nav-wrap .nav{background:#f3f5fa}.ios-app.theme-dark .nav-wrap .nav{background:#272c35}}
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more){
+  .nav-wrap .nav{background:#f3f5fa;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:#a8b3c4}
+  .nav-wrap .nav button.active{background:#dbe9fc}
+  .ios-app.theme-dark .nav-wrap .nav{background:#272c35;border-color:#788599}
+  .ios-app.theme-dark .nav-wrap .nav button.active{background:#163c65}
 }
-.theme-dark .nav-wrap .nav::before{background:linear-gradient(165deg,#ffffff12,transparent 38%,transparent 72%,#ffffff08)}
-.theme-dark .nav-wrap .nav button,.theme-dark .nav-wrap .nav .nav-add{color:#f0f2f2}
-.theme-dark .nav-wrap .nav button.active {
-  color:#fff;background:linear-gradient(145deg,#e9edef29,#e9edef17);
-  border-color:#ffffff18;box-shadow:inset 0 1px 1px #ffffff17;
-}
-.theme-dark .nav-wrap .nav .nav-add .nav-icon{background:none;border-color:currentColor;color:inherit}
-.theme-dark .nav-wrap .nav .nav-add .icon{color:inherit}
-@media(max-width:350px){.nav-wrap .nav button{font-size:10px}.nav-wrap .nav{gap:0;padding-inline:3px}}
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) {
-  .nav-wrap .nav{background:#f3f5f5}
-  .theme-dark .nav-wrap .nav{background:#293132}
-}
-@media(prefers-reduced-transparency:reduce),(prefers-contrast:more) {
-  .nav-wrap .nav{background:#f3f5f5;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:#b8c1c1}
-  .nav-wrap .nav button.active{background:#d8dede}
-  .theme-dark .nav-wrap .nav{background:#293132;border-color:#8b9898}
-  .theme-dark .nav-wrap .nav button.active{background:#4b5657}
-}
-@media(prefers-reduced-motion:reduce){.nav-wrap .nav button{transition:none}.nav-wrap .nav button:active{transform:none}}
-
-/* Keep optional controls hidden even when shared button classes use flex. */
+@media(prefers-reduced-motion:reduce){.nav-wrap button{transition:none}.nav-wrap button:active{transform:none}}
 [hidden]{display:none!important}
