@@ -20,12 +20,12 @@ export function calculateAmount(expression) {
 }
 
 export function filterExpenses(items, names, options = {}) {
-  const {query = '', visibility = 'all', payer = '', category = '', from = '', to = '', sort = 'newest'} = options;
+  const {query = '', status = 'all', payer = '', category = '', from = '', to = '', sort = 'newest'} = options;
   const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
   return items.filter(e => {
     const haystack = [e.merchant, e.category, names[e.payer], e.notes, e.date, (e.cents / 100).toFixed(2)].join(' ').toLowerCase();
     return terms.every(t => haystack.includes(t)) &&
-      (visibility === 'all' || (visibility === 'open' ? e.visibility === 'shared' && !e.settlement : e.visibility === visibility)) &&
+      (status === 'all' || (status === 'open' ? !e.settlement : status === 'settled' && !!e.settlement)) &&
       (payer === '' || e.payer === Number(payer)) && (!category || e.category === category) &&
       (!from || e.date >= from) && (!to || e.date <= to);
   }).sort((a, b) => sort === 'largest' ? b.cents - a.cents : sort === 'smallest' ? a.cents - b.cents : sort === 'oldest' ? a.date.localeCompare(b.date) : b.date.localeCompare(a.date));
@@ -33,9 +33,9 @@ export function filterExpenses(items, names, options = {}) {
 
 export function summarizeSpending(items) {
   const categories = new Map(), people = [0, 0, 0, 0];
-  let total = 0, shared = 0;
-  for (const e of items) { total += e.cents; if (e.visibility === 'shared') shared += e.cents; people[e.payer] += e.cents; categories.set(e.category, (categories.get(e.category) || 0) + e.cents); }
-  return {total, shared, privateTotal: total - shared, count: items.length, average: items.length ? Math.round(total / items.length) : 0, people, categories: [...categories].sort((a, b) => b[1] - a[1])};
+  let total = 0, equalSplit = 0;
+  for (const e of items) { total += e.cents; if (e.split === 'half') equalSplit += e.cents; people[e.payer] += e.cents; categories.set(e.category, (categories.get(e.category) || 0) + e.cents); }
+  return {total, equalSplit, coupleAssigned: total - equalSplit, count: items.length, average: items.length ? Math.round(total / items.length) : 0, people, categories: [...categories].sort((a, b) => b[1] - a[1])};
 }
 
 export function repeatPreset(expense) {

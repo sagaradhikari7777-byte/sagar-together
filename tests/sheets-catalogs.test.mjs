@@ -11,7 +11,7 @@ test('catalogs persist additions, renames, removals without changing historical 
  assert.equal(h.expenses[0].merchant,'Amazon');
  assert(visible(h,2).catalogs.merchants.includes('Local shop'));
  assert(!visible(h,0).catalogs.merchants.includes('Amazon'));
- assert.equal(visible(h,2).expenses.length,0);
+ assert.equal(visible(h,2).expenses.length,1);
  assert.throws(()=>mutate(h,0,{action:'catalog',kind:'merchants',operation:'add',name:'local SHOP'}),/already/);
  assert.throws(()=>mutate(h,0,{action:'catalog',kind:'categories',operation:'add',name:' '}));
 });
@@ -23,7 +23,7 @@ test('sheet edits retain identity and pin toggles',()=>{
  mutate(h,0,{action:'pin',id});assert.equal(h.sheets[0].pinned,true);
  assert.throws(()=>mutate(h,0,{action:'sheet-edit',id,name:'No',start:'2026-09-20',end:'2026-09-10'}));
 });
-test('sheet deletion respects expense privacy, ownership and settlement locks',()=>{
+test('sheet deletion respects expense ownership and settlement locks',()=>{
  const h=setup(),id=h.sheets[0].id;mutate(h,0,{action:'expense',expense:expense(h)});
  assert.throws(()=>mutate(h,2,{action:'sheet-delete',id}),/protected/);
  mutate(h,0,{action:'sheet-delete',id});assert.equal(h.sheets.length,0);assert.equal(h.expenses.length,0);
