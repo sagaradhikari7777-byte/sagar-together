@@ -15,3 +15,13 @@ button,input,select,textarea{-webkit-tap-highlight-color:transparent}button:focu
 @media(prefers-reduced-motion:reduce){.welcome-preview{transform:none}}
 /* Keep merchant names legible without making shortcuts tall. */
 .quick-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.quick-grid button{display:grid;grid-template-columns:27px minmax(0,1fr);grid-template-rows:auto auto;column-gap:8px;row-gap:3px;align-items:center;justify-content:start;min-height:60px;padding:10px;text-align:left;border-radius:16px}.quick-grid button>.quick-icon{grid-row:1/3;width:27px;height:27px}.quick-grid button>span:nth-child(2){font-size:11px;width:100%;text-align:left}.quick-grid button>small{text-align:left;font-size:10px}.home-main .insight-link{margin-top:13px}
+
+/* Keep named shares and complete sheet periods readable on small screens. */
+.expense-total{min-width:0;max-width:45%}
+.expense-total>span{display:block;white-space:normal;overflow-wrap:anywhere;line-height:1.4}
+.sheet-heading{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 16px;min-width:0}
+.sheet-heading h1{margin:0;overflow-wrap:anywhere}
+.sheet-dates{color:var(--muted);font-size:12px;font-weight:400;line-height:1.5;font-variant-numeric:tabular-nums}
+.sheet-heading .sheet-dates{margin:0;font-size:13px}
+.sheet-copy>.sheet-meta{display:flex;flex-wrap:wrap;gap:2px 10px;white-space:normal;overflow:visible;line-height:1.5}
+.sheet-meta>.sheet-dates{overflow-wrap:anywhere}
