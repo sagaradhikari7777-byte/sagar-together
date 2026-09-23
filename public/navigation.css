@@ -30,28 +30,28 @@
 }
 .nav-wrap .nav::before{content:none}
 .nav-wrap .nav button{
-  display:grid;grid-template-rows:26px 13px;justify-items:center;align-content:center;gap:3px;
+  display:grid;grid-template-rows:25px 14px;justify-items:center;align-content:center;gap:3px;
   width:100%;min-width:0;height:54px;min-height:54px;padding:4px 2px;margin:0;
   border:1px solid transparent;border-radius:999px;
-  color:#606670;font-size:10px;line-height:13px;font-weight:600;letter-spacing:0;
+  color:#606670;font-size:11px;line-height:14px;font-weight:600;letter-spacing:0;
   background:transparent;box-shadow:none;transition:background .2s,color .2s,transform .2s;
 }
 .nav-wrap .nav button.active{
-  background:#007aff12;border-color:#ffffff65;color:#0065dc;box-shadow:inset 0 1px 1px #ffffff78;
+  background:#25634d18;border-color:#ffffff65;color:#17634e;box-shadow:inset 0 1px 1px #ffffff78;
 }
 .nav-wrap .nav .nav-icon{display:grid;place-items:center;width:26px;height:26px;flex:none;align-self:center}
 .nav-wrap .nav .nav-icon .icon{width:23px;height:23px;stroke-width:1.8}
 .nav-wrap .nav button.active .icon{stroke-width:2.15}
-.nav-wrap .nav button>span:last-child{display:block;height:13px;line-height:13px;white-space:nowrap}
+.nav-wrap .nav button>span:last-child{display:block;height:14px;line-height:14px;white-space:nowrap}
 .nav-wrap .nav-create{
   flex:0 0 62px;width:62px;height:62px;min-height:44px;pointer-events:auto;
   border:1px solid #fff9;border-radius:50%;display:grid;place-content:center;justify-items:center;gap:0;padding:5px;
-  background:linear-gradient(145deg,#218cff,#0763ee);color:#fff;
-  box-shadow:0 6px 22px #0763ee35,inset 0 1px 2px #ffffff78,inset 0 -1px 1px #063fc850;
+  background:linear-gradient(145deg,#34765c,#205c46);color:#fff;
+  box-shadow:0 6px 22px #1a4c342b,inset 0 1px 2px #ffffff78,inset 0 -1px 1px #123e2b50;
   font-size:10px;font-weight:650;line-height:13px;
 }
 .nav-create .icon{width:27px;height:27px;stroke-width:1.9}
-.nav-wrap button:active{transform:scale(.94)}
+.nav-wrap button:active{filter:brightness(.93)}
 .nav-wrap button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 #toast{bottom:var(--dock-clearance)}
 .ios-app.theme-dark .nav-wrap .nav{
@@ -59,14 +59,14 @@
   box-shadow:0 8px 30px #0005,inset 0 1px 1px #ffffff25,inset 0 -1px 1px #ffffff10;
 }
 .ios-app.theme-dark .nav-wrap .nav button{color:#c1c7d1}
-.ios-app.theme-dark .nav-wrap .nav button.active{color:#74b8ff;background:#3998ff24;border-color:#ffffff10;box-shadow:inset 0 1px 1px #ffffff0c}
+.ios-app.theme-dark .nav-wrap .nav button.active{color:#b2dfc4;background:#acd8bc24;border-color:#ffffff10;box-shadow:inset 0 1px 1px #ffffff0c}
 @media(max-width:350px){#app.has-navigation>.nav-wrap{gap:8px}.nav-wrap .nav{gap:0;padding-inline:3px}.nav-wrap .nav-create{flex-basis:58px;width:58px;height:58px}.nav-wrap .nav button{font-size:9px}}
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.nav-wrap .nav{background:#f3f5fa}.ios-app.theme-dark .nav-wrap .nav{background:#272c35}}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.nav-wrap .nav{background:#f4f6f3}.ios-app.theme-dark .nav-wrap .nav{background:#272c35}}
 @media(prefers-reduced-transparency:reduce),(prefers-contrast:more){
-  .nav-wrap .nav{background:#f3f5fa;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:#a8b3c4}
-  .nav-wrap .nav button.active{background:#dbe9fc}
+  .nav-wrap .nav{background:#f4f6f3;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:#a8b3c4}
+  .nav-wrap .nav button.active{background:#dcebdd}
   .ios-app.theme-dark .nav-wrap .nav{background:#272c35;border-color:#788599}
-  .ios-app.theme-dark .nav-wrap .nav button.active{background:#163c65}
+  .ios-app.theme-dark .nav-wrap .nav button.active{background:#214331}
 }
 @media(prefers-reduced-motion:reduce){.nav-wrap button{transition:none}.nav-wrap button:active{transform:none}}
 [hidden]{display:none!important}
