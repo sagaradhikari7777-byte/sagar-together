@@ -282,3 +282,37 @@
 @media(prefers-reduced-motion:reduce){.ios-app *{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 @media(prefers-reduced-transparency:reduce),(prefers-contrast:more){.ios-app dialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none;background:#142c2866}}
 @media(prefers-contrast:more){.ios-app{--muted:#3b5046;--line:#6f8175;--card-border:#6f8175}.ios-app.theme-dark{--muted:#d1ddd4;--line:#85958a;--card-border:#85958a}}
+
+/* Settlement: bill totals and couple allocations remain visible together. */
+.ios-app .settle-overview{background:var(--surface);border:1px solid var(--card-border);border-radius:24px;padding:20px;margin-bottom:22px}
+.ios-app .settle-overview-heading{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.ios-app .settle-overview-heading h2{font-size:18px;margin:0}
+.ios-app .settle-period{margin:6px 0 16px}
+.ios-app .settle-couple{display:grid;gap:7px;font-size:12px;color:var(--muted);margin:14px 0 18px}
+.ios-app .settle-couple select{width:100%;font-size:16px;min-height:44px;color:var(--ink)}
+.ios-app .settle-totals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.ios-app .settle-totals span{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
+.ios-app .settle-totals strong{display:block;font-size:26px;letter-spacing:-.03em;overflow-wrap:anywhere}
+.ios-app .settle-totals>div:last-child strong{color:var(--accent)}
+.ios-app .settle-paid{display:flex;justify-content:space-between;gap:14px;padding:16px 0;margin-top:8px;border-top:1px solid var(--line);font-size:13px;line-height:1.5}
+.ios-app .settle-paid span{color:var(--muted);min-width:0;overflow-wrap:anywhere}
+.ios-app .settle-paid strong{flex-shrink:0}
+.ios-app .settle-net{background:var(--balance-surface);color:var(--balance-ink);padding:14px 16px;border-radius:16px}
+.ios-app .settle-net>div{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ios-app .settle-net span{font-size:13px;font-weight:600}.ios-app .settle-net strong{font-size:25px;letter-spacing:-.02em}
+.ios-app .settle-net p{font-size:12px;margin:6px 0 0;line-height:1.5;overflow-wrap:anywhere}
+.ios-app .settle-explanation{font-size:11px;line-height:1.5;color:var(--muted);margin:12px 0 0}
+.ios-app .settle-breakdown{margin-bottom:22px}.ios-app .settle-breakdown>.section-head{margin-bottom:6px}.ios-app .settle-breakdown>p{font-size:12px;margin:0 0 12px}
+.ios-app .settle-expenses{border:1px solid var(--card-border);border-radius:20px;overflow:hidden;background:var(--surface)}
+.ios-app .settle-expenses ul{list-style:none;padding:0;margin:0}
+.ios-app .settle-columns,.ios-app .settle-expense{display:grid;grid-template-columns:minmax(0,1fr) minmax(68px,.48fr) minmax(68px,.48fr);gap:10px;align-items:center;padding:12px 14px;width:100%;text-align:left}
+.ios-app .settle-columns{font-size:11px;color:var(--muted);background:var(--canvas)}
+.ios-app .settle-columns>:not(:first-child),.ios-app .settle-expense>:not(:first-child){text-align:right;overflow-wrap:anywhere}
+.ios-app .settle-expense{border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;color:var(--ink);min-height:76px;font-size:13px;cursor:pointer}
+.ios-app .settle-expense:active{background:var(--soft-accent)}
+.ios-app .settle-expense-info{min-width:0}.ios-app .settle-expense-info>strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.ios-app .settle-expense-info small{display:block;font-size:11px;line-height:1.5;color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.ios-app .settle-expense-share{color:var(--accent)}
+.ios-app .settle-footer{border-top:1px solid var(--line);font-size:13px;color:var(--ink)}
+.ios-app .settle-overview,.ios-app .settle-expenses{font-variant-numeric:tabular-nums}
+@media(max-width:360px){.ios-app .settle-overview{padding:16px}.ios-app .settle-columns,.ios-app .settle-expense{padding-inline:10px;gap:6px;grid-template-columns:minmax(0,1fr) 68px 68px}.ios-app .settle-totals strong{font-size:23px}}
