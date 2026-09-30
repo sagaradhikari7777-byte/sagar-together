@@ -128,26 +128,26 @@ function settleView(){
 }
 
 function settingsHouseholdDialog(){
- modal('Household & names',\`<p class="small muted">Update the household name or member names. These changes are visible to everyone.</p><form id="settings-household-form"><label class="field"><span>Household name</span><input name="name" value="\${esc(data.name)}" maxlength="100" required></label>\${data.names.map((n,i)=>\`<label class="field"><span>\${esc(couple(group(i)))} · Member \${i%2+1}</span><input name="n\${i}" value="\${esc(n)}" maxlength="40" required></label>\`).join('')}<p class="error" role="alert"></p><button class="primary full">Save changes</button></form>\`);
+ modal('Household & names',`<p class="small muted">Update the household name or member names. These changes are visible to everyone.</p><form id="settings-household-form"><label class="field"><span>Household name</span><input name="name" value="${esc(data.name)}" maxlength="100" required></label>${data.names.map((n,i)=>`<label class="field"><span>${esc(couple(group(i)))} · Member ${i%2+1}</span><input name="n${i}" value="${esc(n)}" maxlength="40" required></label>`).join('')}<p class="error" role="alert"></p><button class="primary full">Save changes</button></form>`);
  const form=sheet.querySelector('#settings-household-form');
  form.onsubmit=async e=>{e.preventDefault();const v=new FormData(form),button=form.querySelector('.primary');button.disabled=true;try{await save({action:'settings',name:v.get('name'),names:[0,1,2,3].map(i=>v.get('n'+i))});sheet.close();toast('Household updated');}catch(err){errorIn(form,err);button.disabled=false;}};
 }
 function settings(){
- const tile=(action,ic,title,subtitle)=>\`<button type="button" class="settings-one-tile" data-action="\${action}"><span class="settings-one-icon">\${icon(ic)}</span><span><strong>\${title}</strong><small>\${subtitle}</small></span>\${icon('chevron')}</button>\`;
- return \`<section class="liquid-page settings-one-page"><div class="settings-one-head"><div><p class="liquid-overline">YOUR SPACE</p><h1>Settings</h1></div><button class="liquid-mini-icon" data-action="theme" aria-label="Toggle appearance">\${icon('moon')}</button></div>
- <section class="settings-one-profile"><span class="settings-one-avatar">\${esc(initials(data.names[data.seat]))}</span><div><strong>\${esc(data.names[data.seat])}</strong><small>\${esc(data.name)} · \${esc(couple(group(data.seat)))}</small></div><span class="settings-one-badge">You</span></section>
- <div class="settings-one-members">\${data.names.map((n,i)=>\`<span class="\${i===data.seat?'you':''}"><i>\${esc(initials(n))}</i><b>\${esc(n)}</b><small>\${i===data.seat?'You':data.claimed[i]?'Connected':'Invite'}</small></span>\`).join('')}</div>
+ const tile=(action,ic,title,subtitle)=>`<button type="button" class="settings-one-tile" data-action="${action}"><span class="settings-one-icon">${icon(ic)}</span><span><strong>${title}</strong><small>${subtitle}</small></span>${icon('chevron')}</button>`;
+ return `<section class="liquid-page settings-one-page"><div class="settings-one-head"><div><p class="liquid-overline">YOUR SPACE</p><h1>Settings</h1></div><button class="liquid-mini-icon" data-action="theme" aria-label="Toggle appearance">${icon('moon')}</button></div>
+ <section class="settings-one-profile"><span class="settings-one-avatar">${esc(initials(data.names[data.seat]))}</span><div><strong>${esc(data.names[data.seat])}</strong><small>${esc(data.name)} · ${esc(couple(group(data.seat)))}</small></div><span class="settings-one-badge">You</span></section>
+ <div class="settings-one-members">${data.names.map((n,i)=>`<span class="${i===data.seat?'you':''}"><i>${esc(initials(n))}</i><b>${esc(n)}</b><small>${i===data.seat?'You':data.claimed[i]?'Connected':'Invite'}</small></span>`).join('')}</div>
  <div class="settings-one-grid">
-  \${tile('settings-household','home','Household & names','Edit your shared space')}
-  \${tile('invite','people','Invite members','Bring everyone in')}
-  \${tile('access','lock','Access link','Private sign-in')}
-  \${tile('merchants','store','Merchants','Places you spend')}
-  \${tile('categories','tag','Categories','Organise expenses')}
-  \${tile('entry-preferences','plus','Expense defaults','Faster entry')}
-  \${tile('insights','chart','Insights','See spending')}
-  \${tile('export','receipt','Export','Download CSV')}
+  ${tile('settings-household','home','Household & names','Edit your shared space')}
+  ${tile('invite','people','Invite members','Bring everyone in')}
+  ${tile('access','lock','Access link','Private sign-in')}
+  ${tile('merchants','store','Merchants','Places you spend')}
+  ${tile('categories','tag','Categories','Organise expenses')}
+  ${tile('entry-preferences','plus','Expense defaults','Faster entry')}
+  ${tile('insights','chart','Insights','See spending')}
+  ${tile('export','receipt','Export','Download CSV')}
  </div>
- <div class="settings-one-bottom"><button class="settings-one-appearance" data-action="theme">\${icon('moon')}<span><strong>Appearance</strong><small>Light / dark</small></span></button><button class="settings-one-signout" data-action="signout">\${demo?'Leave demo':'Sign out'}</button></div></section>\`;
+ <div class="settings-one-bottom"><button class="settings-one-appearance" data-action="theme">${icon('moon')}<span><strong>Appearance</strong><small>Light / dark</small></span></button><button class="settings-one-signout" data-action="signout">${demo?'Leave demo':'Sign out'}</button></div></section>`;
 }
 
 function render(){
