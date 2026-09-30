@@ -1,0 +1,103 @@
+/* Together: cobalt, ink and quiet glass. One theme for every view. */
+.ios-app{
+ --ink:#182338;--muted:#627089;--accent:#2459dc;--blue:var(--accent);
+ --canvas:#f3f6fc;--surface:#ffffff;--panel:var(--surface);--input:#f6f8fc;
+ --dialog:#ffffff;--line:#e2e8f2;--card-border:#e3e9f3;
+ --soft-accent:#eaf0ff;--warm:var(--soft-accent);--warm-ink:#244fae;
+ --balance-surface:#eaf0ff;--balance-ink:#244fae;
+ --shadow:0 4px 18px #1b365606;--radius:20px;--radius-control:14px;
+ background:var(--canvas);color:var(--ink);letter-spacing:-.018em;
+ color-scheme:light;
+}
+.ios-app.theme-dark{
+ --ink:#ecf1fc;--muted:#a1aec5;--accent:#9bb9ff;--blue:var(--accent);
+ --canvas:#101725;--surface:#192337;--panel:var(--surface);--input:#121d30;
+ --dialog:#192337;--line:#2d3a51;--card-border:#2b3850;
+ --soft-accent:#263958;--warm:var(--soft-accent);--warm-ink:#b5caff;
+ --balance-surface:#263958;--balance-ink:#d6e3ff;
+ --shadow:0 4px 18px #0000000c;color-scheme:dark;
+}
+.ios-app .top{padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.ios-app .brand{font-weight:750;letter-spacing:-.05em}
+.ios-app .signed-in-copy small{font-size:10px;font-weight:500}
+.ios-app .avatar,.ios-app.theme-dark .avatar{border:1px solid var(--line);background:var(--soft-accent);color:var(--accent)}
+.ios-app .avatar.b,.ios-app.theme-dark .avatar.b{background:var(--soft-accent);color:var(--accent)}
+.ios-app h1,.ios-app .home-title h1,.ios-app .sheet-heading h1{font-weight:720;letter-spacing:-.045em}
+.ios-app .page-subtitle{color:var(--muted)}
+.ios-app .icon-button{background:var(--surface);border-color:var(--line);color:var(--ink);border-radius:50%;box-shadow:0 3px 10px #18233805}
+.ios-app .glass,.ios-app .settle-overview,.ios-app .settle-expenses{background:var(--surface);border-color:var(--card-border);box-shadow:var(--shadow)}
+.ios-app .overview-card,.ios-app.theme-dark .overview-card{
+ position:relative;overflow:hidden;background:linear-gradient(120deg,#2449b8,#2762e6);
+ color:#fff;border:1px solid #3266dd;border-radius:22px;box-shadow:0 10px 26px #2459dc1a;
+}
+.ios-app .overview-sheet,.ios-app.theme-dark .overview-sheet{border-color:#ffffff29;color:#fff}
+.ios-app .overview-sheet small{color:#dbe5ff}.ios-app .overview-sheet strong{font-weight:600}
+.ios-app .balance-focus{padding:17px 0 15px;text-align:left}
+.ios-app .balance-label{color:#dbe5ff;font-size:11px;font-weight:500}
+.ios-app .balance-value{font-size:38px;font-weight:650;letter-spacing:-.045em;margin:3px 0 5px}
+.ios-app .balance-direction{color:#eaf0ff;font-size:12px;line-height:1.5}
+.ios-app .couple-summary,.ios-app.theme-dark .couple-summary{border-color:#ffffff29;padding-top:12px}
+.ios-app .couple-label{color:#dbe5ff}.ios-app .couple-stat strong{color:#fff;font-size:18px}.ios-app .couple-stat small{color:#dbe5ff}
+.ios-app .dot,.ios-app .dot.b{background:#c3d5ff}
+.ios-app .home-metrics{gap:10px;padding:0;margin-top:10px}
+.ios-app .home-metrics button,.ios-app .home-metrics button+button{border:1px solid var(--card-border);border-radius:16px;background:var(--surface);padding:12px;min-height:80px;gap:4px}
+.ios-app .home-metrics strong{font-size:20px}.ios-app .home-metrics .metric-category{font-size:16px}
+.ios-app .home-metrics small{font-size:11px}.ios-app .home-metrics button>span{font-size:10px}
+.ios-app .section-head{margin-top:20px}.ios-app .section-head h2{font-size:16px;font-weight:650}
+.ios-app .text-button{font-size:12px;color:var(--accent)}
+.ios-app .quick-grid button{background:var(--surface);border-color:var(--card-border);border-radius:16px;min-height:56px}
+.ios-app .quick-icon,.ios-app .setting-icon{background:var(--soft-accent);color:var(--accent)}
+.ios-app .category,.ios-app.theme-dark .category{background:var(--soft-accent);color:var(--accent)}
+.ios-app .category.food,.ios-app.theme-dark .category.food{background:#fff2dd;color:#98671a}
+.ios-app .category.bills,.ios-app .category.movie,.ios-app.theme-dark .category.bills,.ios-app.theme-dark .category.movie{background:#eeeafd;color:#7757b1}
+.ios-app .category.gift,.ios-app.theme-dark .category.gift{background:#fbe9ed;color:#ab4569}
+.ios-app.theme-dark .category.food{background:#3c3222;color:#edc685}.ios-app.theme-dark .category.bills,.ios-app.theme-dark .category.movie{background:#332d49;color:#c6afff}.ios-app.theme-dark .category.gift{background:#3d293a;color:#edb1ca}
+.ios-app .expense-front,.ios-app .sheet-front{background:var(--surface)}
+.ios-app .expense-info strong{font-weight:620}.ios-app .expense-info>span{color:var(--muted)}
+.ios-app .expense-info .expense-share{color:var(--accent)}
+.ios-app .expense-total strong{font-weight:650}.ios-app .expense-more,.ios-app .sheet-more{color:var(--muted)}
+.ios-app .list,.ios-app .sheet-front{border-radius:20px}
+.ios-app .sheet-copy>.sheet-meta{gap:3px}.ios-app .sheet-meta>span:first-child{font-weight:550;color:var(--ink)}
+.ios-app .sheet-symbol{background:var(--soft-accent);color:var(--accent);height:36px;border-radius:11px}
+.ios-app .sheet-count{background:var(--input);border:1px solid var(--line);padding:3px 8px;border-radius:8px;min-width:24px;text-align:center}
+.ios-app .sheet-open{min-height:84px}
+.ios-app .toolbar input[type=search],.ios-app .catalog-dialog>input{background-color:var(--surface);border-color:var(--line);border-radius:14px}
+.ios-app .switches{background:var(--soft-accent);border:1px solid var(--line);border-radius:14px}.ios-app .switches .selected{color:var(--accent);border-radius:10px}
+.ios-app .day-heading h2{font-weight:600;color:var(--muted)}
+.ios-app .primary,.ios-app.theme-dark .primary{background:#2459dc;border-color:#2459dc;color:#fff;border-radius:14px;box-shadow:0 3px 8px #2459dc15}
+.ios-app .primary:hover{background:#1e4cc2}.ios-app .delete-confirm,.ios-app.theme-dark .delete-confirm{background:#bc3f59;border-color:#bc3f59}
+.ios-app .secondary{background:var(--surface);border-color:var(--line);border-radius:14px}
+.ios-app input,.ios-app select,.ios-app textarea{background-color:var(--input);border-color:var(--line);border-radius:14px}
+.ios-app .big-input{background:transparent;border-radius:0;font-weight:600;color:var(--ink)}
+.ios-app .field>span{color:var(--muted);font-weight:550}.ios-app .split-preview{background:var(--soft-accent);border:1px solid var(--line);border-radius:14px;color:var(--ink)}
+.ios-app .entry-details>summary{color:var(--ink)}.ios-app .dialog-head{background:var(--dialog);border-color:var(--line)}
+.ios-app dialog{background:var(--dialog);border-color:var(--line);box-shadow:0 20px 80px #10172533}
+.ios-app dialog::backdrop{background:#10172559;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.ios-app .dialog-head .icon-button,.ios-app .catalog-head .icon-button{background:var(--input);border-color:var(--line);color:var(--muted)}
+.ios-app .back-button{color:var(--ink);border-color:var(--line);background:linear-gradient(145deg,#fff,#ffffff9c);box-shadow:inset 0 1px 1px #fff,0 2px 8px #18233808}
+.ios-app.theme-dark .back-button{background:linear-gradient(145deg,#2d3b54,#1e2b42);border-color:var(--line);color:var(--ink);box-shadow:inset 0 1px 1px #ffffff12}
+.ios-app .catalog-list{border-color:var(--line)}.ios-app .catalog-icon{background:var(--soft-accent);color:var(--accent)}
+.ios-app .profile-card{background:var(--surface);border-color:var(--card-border)}.ios-app .settings-heading{font-size:11px;letter-spacing:.07em;text-transform:uppercase;font-weight:600}
+.ios-app .setting-row{border-color:var(--line)}.ios-app .setting-row strong{font-weight:550}.ios-app .setting-row:hover{background:var(--input)}
+.ios-app .household-banner{color:var(--ink)}.ios-app .settle-totals>div:last-child strong,.ios-app .settle-expense-share{color:var(--accent)}
+.ios-app .settle-net{background:var(--soft-accent);color:var(--balance-ink);border:1px solid var(--line);border-radius:14px}
+.ios-app .settle-explanation{font-size:11px}.ios-app .settle-columns{background:var(--input)}.ios-app .settle-expense{color:var(--ink)}
+.ios-app .settle-footer{background:var(--soft-accent)}.ios-app .bar>i{background:var(--accent)}
+.ios-app .insight-hero{background:var(--soft-accent)}.ios-app .insight-hero>strong{color:var(--accent)}
+.ios-app .welcome-preview{background:var(--soft-accent);color:var(--ink);border:1px solid var(--line);box-shadow:0 12px 36px #2459dc09}
+.ios-app .preview-balance>span{background:#2459dc;color:#fff}.ios-app .auth h1>span{color:var(--accent)}
+.ios-app .setup-progress>.done{background:var(--accent)}.ios-app .entry-note,.ios-app .setup-note{background:var(--soft-accent)}
+.ios-app .nav-wrap .nav{background:linear-gradient(145deg,#ffffffde,#ffffffad);border-color:#fff;box-shadow:0 8px 32px #172e4f1a,inset 0 1px 1px #fff;backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%)}
+.ios-app .nav-wrap .nav button{color:#657087;font-weight:550}
+.ios-app .nav-wrap .nav button.active{background:#e9efff;border-color:#ffffff80;color:#2459dc;box-shadow:inset 0 1px 1px #fff}
+.ios-app .nav-wrap .nav-create{background:linear-gradient(145deg,#3a73f0,#2459dc);border-color:#ffffffa8;box-shadow:0 5px 18px #2459dc35,inset 0 1px 2px #ffffff80;color:#fff}
+.ios-app.theme-dark .nav-wrap .nav{background:linear-gradient(145deg,#26344bdc,#19263ad6);border-color:#ffffff20;box-shadow:0 8px 32px #0005,inset 0 1px 1px #ffffff19}
+.ios-app.theme-dark .nav-wrap .nav button{color:var(--muted)}.ios-app.theme-dark .nav-wrap .nav button.active{background:#39538669;color:#c1d5ff;border-color:#ffffff15;box-shadow:none}
+.ios-app .notice{background:var(--soft-accent);border-color:var(--line);color:var(--muted);padding:10px 12px;border-radius:14px;font-size:11px;margin-bottom:16px}
+.ios-app .notice .text-button{min-height:32px;padding:5px 0}
+.ios-app #toast{background:#182338;color:#fff}
+@media(min-width:701px){.ios-app .home-columns{gap:28px}.ios-app .balance-focus{padding-block:22px}.ios-app .balance-value{font-size:42px}}
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more){.ios-app .nav-wrap .nav{background:var(--surface);border-color:var(--line);backdrop-filter:none;-webkit-backdrop-filter:none}.ios-app.theme-dark .nav-wrap .nav{background:var(--surface)}.ios-app dialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}.ios-app .back-button{background:var(--surface)}}
+@media(prefers-contrast:more){.ios-app{--muted:#3e506c;--line:#8393af;--card-border:#8393af}.ios-app.theme-dark{--muted:#c6d2e7;--line:#8393af;--card-border:#8393af}}
+.ios-app.theme-dark .notice{background:var(--soft-accent);border-color:var(--line);color:var(--muted)}
+@media(hover:hover) and (pointer:fine){.ios-app .primary,.ios-app .secondary,.ios-app .icon-button{transition:background-color 160ms ease-out,border-color 160ms ease-out}}
