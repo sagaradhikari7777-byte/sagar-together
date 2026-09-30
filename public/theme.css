@@ -610,3 +610,98 @@
  .ios-app .settle-clean-row{grid-template-columns:34px minmax(0,1fr) auto 10px;gap:8px}
  .ios-app .settle-clean-icon{width:34px;height:34px}
 }
+
+
+/* Settle — one-screen iPhone layout. */
+.ios-app #app.has-navigation>.shell.settle-shell{
+ height:100dvh;min-height:100dvh;overflow:hidden;
+ padding-top:calc(78px + var(--safe-top));
+ padding-bottom:calc(92px + var(--safe-bottom));
+}
+.ios-app .settle-one-page{height:100%;min-height:0;display:flex;flex-direction:column;padding:0}
+.ios-app .settle-one-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:none;margin:2px 0 11px}
+.ios-app .settle-one-head .liquid-overline{font-size:8.5px;margin-bottom:3px}
+.ios-app .settle-one-head h1{font-size:28px;line-height:1.08;letter-spacing:-1px;margin:0}
+.ios-app .settle-one-head-actions{display:flex;align-items:center;gap:7px;min-width:0}
+.ios-app .settle-one-head-actions .liquid-period{min-height:40px;height:40px;padding-inline:10px;border-radius:20px;max-width:150px}
+.ios-app .settle-one-head-actions .liquid-period>.icon{width:13px;height:13px}
+.ios-app .settle-one-head-actions .liquid-period select{min-height:38px!important;height:38px!important;font-size:10px!important;max-width:112px}
+.ios-app .settle-history-button{width:38px!important;height:38px!important;min-height:38px!important;flex:none}
+
+.ios-app .settle-one-hero{
+ flex:none;position:relative;overflow:hidden;border-radius:23px;padding:14px 15px 13px;
+ background:linear-gradient(148deg,#273632 0%,#334b46 67%,#3a544f 100%);color:#f7fbfa;
+ box-shadow:0 14px 34px rgba(40,67,62,.12)
+}
+.ios-app .settle-one-hero:after{content:"";position:absolute;width:170px;height:170px;border:1px solid rgba(255,255,255,.06);border-radius:50%;right:-72px;top:-58px;pointer-events:none}
+.ios-app .settle-one-top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ios-app .settle-one-hero .settle-status{font-size:8px;padding:6px 9px}
+.ios-app .settle-one-hero .settle-copy-icon{width:34px;height:34px}
+.ios-app .settle-one-main{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 10px}
+.ios-app .settle-one-main>div:first-child{min-width:0}
+.ios-app .settle-one-main>div:first-child>strong{display:block;font-size:36px;line-height:1.04;letter-spacing:-1.35px;font-weight:610;font-variant-numeric:tabular-nums}
+.ios-app .settle-one-main p{font-size:9px;color:#c8d5d2;margin:4px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:210px}
+.ios-app .settle-one-faces{display:flex;align-items:center;gap:5px;flex:none}
+.ios-app .settle-one-faces>span:nth-child(2){font-size:12px;color:#c5d3cf}
+.ios-app .settle-one-faces .liquid-face-stack i{width:24px;height:24px;font-size:7px}
+.ios-app .settle-one-record{position:relative;z-index:1;width:100%;min-height:42px!important;background:#f5f9f8!important;color:#22302d!important;font-size:10.5px!important;border-radius:13px!important}
+.ios-app .settle-one-record .icon{width:14px;height:14px}
+
+.ios-app .settle-one-stats{flex:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:9px 0}
+.ios-app .settle-one-stats>div{min-width:0;padding:9px 8px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.ios-app .settle-one-stats>div.accent{background:var(--accent-soft);border-color:transparent}
+.ios-app .settle-one-stats small{display:block;font-size:7.5px;color:var(--muted);white-space:nowrap}
+.ios-app .settle-one-stats strong{display:block;font-size:11px;font-weight:620;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ios-app .settle-one-stats .accent small,.ios-app .settle-one-stats .accent strong{color:var(--accent)}
+
+.ios-app .settle-one-breakdown{flex:1;min-height:0;background:var(--surface);border:1px solid var(--line);border-radius:19px;padding:12px 13px;display:flex;flex-direction:column}
+.ios-app .settle-one-breakdown-head{flex:none;display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:7px}
+.ios-app .settle-one-breakdown-head .liquid-overline{font-size:7.5px;margin-bottom:2px}
+.ios-app .settle-one-breakdown-head h2{font-size:14px;margin:0}
+.ios-app .settle-one-breakdown-head label{min-width:126px}
+.ios-app .settle-one-breakdown-head label>span{display:block;font-size:7.5px;color:var(--muted);margin-bottom:3px}
+.ios-app .settle-one-breakdown-head select{width:100%;height:34px;min-height:34px!important;padding:0 24px 0 8px!important;border-radius:10px!important;background:var(--surface-2)!important;font-size:9px!important}
+.ios-app .settle-one-list{min-height:0;border-top:1px solid var(--line)}
+.ios-app .settle-one-row{width:100%;min-height:51px;display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:9px;padding:5px 0;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left}
+.ios-app .settle-one-row:last-child{border-bottom:0}
+.ios-app .settle-one-row .settle-clean-icon{width:32px;height:32px;border-radius:10px}
+.ios-app .settle-one-row .settle-clean-icon .icon{width:15px;height:15px}
+.ios-app .settle-one-info{min-width:0}
+.ios-app .settle-one-info strong{display:block;font-size:10.5px;font-weight:590;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ios-app .settle-one-info small{display:block;font-size:8px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ios-app .settle-one-share{text-align:right}
+.ios-app .settle-one-share small{display:block;font-size:7px;color:var(--muted)}
+.ios-app .settle-one-share b{display:block;font-size:10.5px;font-weight:620;margin-top:2px}
+.ios-app .settle-more-expenses{flex:none;width:100%;height:31px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:space-between;padding:4px 0 0;font-size:8.5px}
+.ios-app .settle-more-expenses span{color:var(--accent);font-weight:600}
+.ios-app .settle-one-empty{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;color:var(--muted);font-size:9px;text-align:center}
+.ios-app .settle-one-empty>.icon{width:18px;height:18px;color:var(--mint-ink)}
+
+.ios-app .settle-one-foot{flex:none;display:flex;align-items:center;justify-content:center;gap:18px;height:31px;padding-top:4px}
+.ios-app .settle-one-foot .text-button{display:inline-flex;align-items:center;gap:5px;font-size:9px;min-height:27px;padding:2px 0}
+.ios-app .settle-one-foot .icon{width:12px;height:12px}
+
+/* Payment history moved off the one-page layout into a compact sheet. */
+.ios-app .history-modal-list{background:var(--surface);border:1px solid var(--line);border-radius:17px;padding:0 14px}
+.ios-app .history-modal-row{display:flex;align-items:center;gap:10px;min-height:68px;border-bottom:1px solid var(--line)}
+.ios-app .history-modal-row:last-child{border-bottom:0}
+.ios-app .history-modal-row>span:nth-child(2){flex:1;min-width:0}
+.ios-app .history-modal-row strong{display:block;font-size:11px}
+.ios-app .history-modal-row small{display:block;font-size:9px;color:var(--muted);margin-top:4px}
+.ios-app .history-modal-row>b{font-size:12px}
+
+/* Very short phones keep the core one-page Settle view by trimming only tertiary controls. */
+@media(max-height:740px) and (max-width:699px){
+ .ios-app #app.has-navigation>.shell.settle-shell{padding-top:calc(72px + var(--safe-top));padding-bottom:calc(88px + var(--safe-bottom))}
+ .ios-app .settle-one-head{margin-bottom:7px}.ios-app .settle-one-head h1{font-size:25px}
+ .ios-app .settle-one-hero{padding:11px 13px 10px}.ios-app .settle-one-main{margin:5px 0 7px}.ios-app .settle-one-main>div:first-child>strong{font-size:32px}
+ .ios-app .settle-one-stats{margin:6px 0}.ios-app .settle-one-stats>div{padding:7px 6px}
+ .ios-app .settle-one-row{min-height:46px}.ios-app .settle-one-foot{display:none}
+}
+@media(max-width:360px){
+ .ios-app .settle-one-head-actions .liquid-period{max-width:118px}
+ .ios-app .settle-one-main>div:first-child>strong{font-size:32px}
+ .ios-app .settle-one-faces .liquid-face-stack{display:none}
+ .ios-app .settle-one-breakdown-head label{min-width:108px}
+ .ios-app .settle-one-stats strong{font-size:10px}.ios-app .settle-one-stats small{font-size:7px}
+}
