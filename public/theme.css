@@ -309,3 +309,201 @@
  .ios-app .home-quick-grid>button:nth-child(n+4){display:none}
  .ios-app .home-quick-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
+
+
+/* 2026-09-30 — balanced density pass.
+   Home still fits on one modern iPhone screen, but typography and touch targets
+   are restored to comfortable sizes. Other screens scroll naturally with more breathing room. */
+
+/* Main navigation: still full-width, now more legible and relaxed. */
+.ios-app #app.has-navigation>.nav-wrap.liquid-nav-wrap{
+ left:12px!important;right:12px!important;bottom:calc(10px + var(--safe-bottom))!important;
+}
+.ios-app .liquid-tabs{height:68px!important;border-radius:27px!important;padding:6px!important}
+.ios-app .liquid-tabs button{height:56px!important;border-radius:20px!important;font-size:10px!important;gap:4px!important}
+.ios-app .liquid-tabs button .icon{width:22px;height:22px}
+.ios-app .liquid-add{right:20px!important;bottom:calc(88px + var(--safe-bottom))!important;width:50px!important;height:50px!important;min-width:50px!important;min-height:50px!important}
+.ios-app #app.has-navigation>.shell{padding-bottom:calc(106px + var(--safe-bottom))}
+
+/* Comfortable page rhythm everywhere except the deliberately single-screen Home. */
+.ios-app #app.has-navigation>.shell:not(.home-shell){
+ padding-top:calc(94px + var(--safe-top));
+ padding-inline:20px;
+}
+.ios-app .liquid-page,.ios-app .liquid-inner-page{padding-bottom:18px}
+.ios-app .liquid-page-heading{margin:22px 0 24px;gap:16px}
+.ios-app .liquid-page-heading h1{font-size:34px;line-height:1.08;letter-spacing:-1.4px}
+.ios-app .liquid-page-heading .liquid-overline{font-size:10px;margin-bottom:9px}
+.ios-app .liquid-page-heading>div>p:last-child{font-size:13px;line-height:1.6;margin-top:9px}
+.ios-app .liquid-circle{width:46px;height:46px;min-width:46px}
+.ios-app .liquid-circle .icon{width:20px;height:20px}
+.ios-app .liquid-house{height:52px;border-radius:26px}
+.ios-app .liquid-profile{width:52px;height:52px}
+.ios-app .liquid-profile span{width:38px;height:38px;font-size:11px}
+.ios-app .liquid-inner-title small{font-size:9px}.ios-app .liquid-inner-title strong{font-size:13px}
+
+/* Home: one screen, but no micro-type. */
+.ios-app #app.has-navigation>.shell.home-shell{
+ padding-top:calc(78px + var(--safe-top));
+ padding-bottom:calc(94px + var(--safe-bottom));
+}
+.ios-app .home-one-head{margin:5px 0 12px;gap:12px}
+.ios-app .home-one-head .liquid-overline{font-size:9px;margin-bottom:4px}
+.ios-app .home-one-head h1{font-size:28px;line-height:1.1;letter-spacing:-1.1px}
+.ios-app .home-one-actions{gap:8px}
+.ios-app .home-one-actions .liquid-circle{width:40px;height:40px;min-width:40px}
+.ios-app .home-period-pill{height:40px;max-width:132px;padding-inline:11px;border-radius:20px}
+.ios-app .home-period-pill span{font-size:10px}
+.ios-app .home-period-pill .icon{width:14px;height:14px}
+
+.ios-app .home-balance-compact{border-radius:24px;padding:16px 17px 14px}
+.ios-app .home-balance-label{font-size:8.5px}
+.ios-app .home-balance-main strong{font-size:38px;letter-spacing:-1.5px;margin:5px 0 4px}
+.ios-app .home-balance-main p{font-size:10px;line-height:1.4;max-width:260px}
+.ios-app .home-settle-button{width:44px;height:44px;min-width:44px}
+.ios-app .home-settle-button .icon{width:19px;height:19px}
+.ios-app .home-balance-stats{margin-top:13px;padding-top:12px}
+.ios-app .home-balance-stats>div{padding-inline:8px}
+.ios-app .home-balance-stats small{font-size:8px}
+.ios-app .home-balance-stats b{font-size:11px;margin-top:4px}
+
+.ios-app .home-section-line{margin:13px 1px 7px}
+.ios-app .home-section-line.quick{margin-top:11px}
+.ios-app .home-section-line span{font-size:8px;margin-bottom:2px}
+.ios-app .home-section-line h2{font-size:16px}
+.ios-app .home-section-line .text-button{font-size:10px;min-height:30px}
+.ios-app .home-section-line .liquid-mini-icon{width:32px;height:32px;min-height:32px}
+.ios-app .home-section-line .liquid-mini-icon .icon{width:14px;height:14px}
+
+.ios-app .liquid-home-one>.liquid-expense-list{padding:0 13px;border-radius:18px}
+.ios-app .liquid-home-one .liquid-expense{min-height:59px!important;padding:8px 0!important;gap:10px}
+.ios-app .liquid-home-one .liquid-category{width:35px;height:35px;border-radius:11px}
+.ios-app .liquid-home-one .liquid-category .icon{width:17px;height:17px}
+.ios-app .liquid-home-one .expense-info strong{font-size:12px}
+.ios-app .liquid-home-one .expense-info>span{font-size:9px;margin-top:3px}
+.ios-app .liquid-home-one .expense-total strong{font-size:12px}
+.ios-app .liquid-home-one .expense-more{min-height:44px!important;width:28px!important;min-width:28px!important;font-size:11px!important}
+
+.ios-app .home-quick-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ios-app .home-quick-grid>button{height:58px;padding:7px;border-radius:16px;gap:7px}
+.ios-app .home-quick-grid .liquid-quick-icon{width:32px;height:32px;border-radius:10px}
+.ios-app .home-quick-grid .liquid-quick-icon .icon{width:15px;height:15px}
+.ios-app .home-quick-grid strong{font-size:9.5px}
+.ios-app .home-quick-grid small{font-size:8.5px;margin-top:3px}
+.ios-app .home-quick-empty{grid-column:span 2!important}
+
+/* Expense journal: normal iOS-sized rows and controls. */
+.ios-app .liquid-journal-summary{gap:11px;margin-bottom:17px}
+.ios-app .liquid-journal-summary>div{border-radius:19px;padding:16px}
+.ios-app .liquid-journal-summary small{font-size:10px}
+.ios-app .liquid-journal-summary strong{font-size:23px;margin-top:8px}
+.ios-app .liquid-search{height:50px;border-radius:25px;padding-inline:15px;margin-bottom:16px}
+.ios-app .liquid-search .icon{width:18px;height:18px}
+.ios-app .liquid-search input{height:46px!important;font-size:13px!important}
+.ios-app .liquid-segments{padding:5px!important;border-radius:15px!important;margin-bottom:18px!important}
+.ios-app .liquid-segments button{min-height:38px!important;padding:7px 16px!important;border-radius:10px!important;font-size:11px!important}
+.ios-app .liquid-view-options>summary{min-height:48px;font-size:11px}
+.ios-app .journal-tools .filter-button,.ios-app .journal-tools select{height:44px;font-size:11px!important}
+.ios-app .liquid-result-meta{font-size:10px;margin:20px 2px 9px}.ios-app .liquid-result-meta strong{font-size:12px}
+.ios-app .liquid-expense-list{border-radius:21px;padding-inline:15px}
+.ios-app .liquid-expense{min-height:76px;padding:11px 0!important;gap:12px}
+.ios-app .liquid-category{width:40px;height:40px;border-radius:13px}
+.ios-app .liquid-category .icon{width:19px;height:19px}
+.ios-app .expense-info strong{font-size:13px}
+.ios-app .expense-info>span{font-size:10px;margin-top:4px}
+.ios-app .expense-info .expense-share{font-size:9.5px}
+.ios-app .expense-total strong{font-size:13px}.ios-app .expense-total small{font-size:9px}
+.ios-app .expense-more{width:34px!important;min-width:34px!important;font-size:13px!important}
+
+/* Sheets: larger cards and clearer hierarchy. */
+.ios-app .liquid-sheet-list{gap:13px}
+.ios-app .liquid-sheet{border-radius:21px!important}
+.ios-app .liquid-sheet .sheet-open{min-height:94px;padding:15px!important;gap:13px!important}
+.ios-app .liquid-sheet-icon{width:43px;height:43px;border-radius:13px}
+.ios-app .liquid-sheet-icon .icon{width:20px;height:20px}
+.ios-app .liquid-sheet-status{font-size:9px;margin-bottom:4px}
+.ios-app .liquid-sheet-copy strong{font-size:14px}
+.ios-app .liquid-sheet-copy small{font-size:10px;margin-top:6px}
+.ios-app .liquid-sheet-total{font-size:13px}
+.ios-app .liquid-sheet .sheet-more{width:34px!important;min-width:34px!important;font-size:13px!important}
+.ios-app .liquid-hint{font-size:9px;margin-top:14px}
+
+/* Settle: more visual breathing room. */
+.ios-app .liquid-period{min-height:48px;border-radius:24px;padding-inline:14px}
+.ios-app .liquid-period select{min-height:46px!important;font-size:12px!important}
+.ios-app .liquid-settle-hero{border-radius:28px;padding:26px 22px;margin-top:18px}
+.ios-app .liquid-settle-badge{font-size:9px;padding:7px 10px}
+.ios-app .liquid-settle-hero>strong{font-size:52px;margin:18px 0 24px}
+.ios-app .liquid-transfer{gap:10px;margin-bottom:23px}
+.ios-app .liquid-transfer b{font-size:10px;max-width:130px}
+.ios-app .liquid-face-stack i{width:27px;height:27px;font-size:8px}
+.ios-app .liquid-settle-action{min-height:48px!important;font-size:12px!important}
+.ios-app .liquid-settle-hero>small{font-size:9px;margin-top:11px}
+.ios-app .liquid-copy{font-size:10px}
+.ios-app .liquid-breakdown{margin-top:17px;border-radius:23px;padding:20px}
+.ios-app .liquid-breakdown-head>div small{font-size:9px}.ios-app .liquid-breakdown-head h2{font-size:17px}
+.ios-app .liquid-breakdown-head label>span{font-size:9px}
+.ios-app .liquid-breakdown-head select{height:42px!important;min-height:42px!important;font-size:10px!important}
+.ios-app .liquid-breakdown-period{font-size:9px;margin:8px 0 17px}
+.ios-app .liquid-breakdown-stats{gap:9px}
+.ios-app .liquid-breakdown-stats>div{padding:12px 10px;border-radius:13px}
+.ios-app .liquid-breakdown-stats span{font-size:8.5px}.ios-app .liquid-breakdown-stats strong{font-size:14px;margin-top:5px}
+.ios-app .liquid-settle-row{min-height:69px;grid-template-columns:minmax(0,1fr) 62px 62px 12px;gap:9px}
+.ios-app .liquid-settle-row>span:first-child strong{font-size:11px}
+.ios-app .liquid-settle-row small{font-size:9px;margin-top:4px}
+.ios-app .liquid-settle-row b{font-size:11px}
+.ios-app .liquid-history{border-radius:19px;padding-inline:16px}
+.ios-app .liquid-history>div{min-height:69px}
+.ios-app .liquid-history-icon{width:35px;height:35px}.ios-app .liquid-history strong{font-size:11px}.ios-app .liquid-history small{font-size:9px}.ios-app .liquid-history>div>b{font-size:12px}
+
+/* Settings: comfortable list rows, readable descriptions. */
+.ios-app .liquid-profile-card{padding:17px;border-radius:22px;margin-bottom:15px}
+.ios-app .liquid-profile-avatar{width:54px;height:54px;border-radius:17px;font-size:12px}
+.ios-app .liquid-profile-card strong{font-size:16px}.ios-app .liquid-profile-card small{font-size:10px;margin-top:5px}
+.ios-app .liquid-member-strip{padding:14px 10px;border-radius:19px;gap:7px}
+.ios-app .liquid-member-strip i{width:37px;height:37px;font-size:9px;margin-bottom:7px}
+.ios-app .liquid-member-strip b{font-size:9.5px}.ios-app .liquid-member-strip small{font-size:8px;margin-top:4px}
+.ios-app .settings-heading{font-size:10px!important;margin:25px 4px 9px!important}
+.ios-app .liquid-settings-group{border-radius:19px}
+.ios-app .setting-row{min-height:70px!important;padding:11px 15px!important;gap:12px!important}
+.ios-app .setting-icon{width:38px!important;height:38px!important;border-radius:12px!important}
+.ios-app .setting-icon .icon{width:18px;height:18px}
+.ios-app .setting-row strong{font-size:12.5px}.ios-app .setting-row small{font-size:9.5px;margin-top:5px}
+.ios-app .setting-row>.icon{width:13px;height:13px}
+.ios-app .liquid-signout{font-size:11px;padding-top:25px}
+
+/* Forms and dialogs: easier to read, still compact enough for one-handed entry. */
+.ios-app dialog{padding-inline:20px!important}
+.ios-app .dialog-head{margin-bottom:17px!important}.ios-app .dialog-head h2{font-size:20px!important}
+.ios-app .field{margin-bottom:16px}.ios-app .field>span{font-size:10.5px;margin-bottom:7px}
+.ios-app input,.ios-app select,.ios-app textarea{min-height:48px;font-size:15px!important;padding:11px 12px!important}
+.ios-app .entry-amount{border-radius:22px;padding:20px;margin-bottom:17px}
+.ios-app .entry-amount .big-input,.ios-app .big-input{font-size:46px!important;min-height:62px!important}
+.ios-app .split-preview{font-size:11px!important;padding:13px!important}
+.ios-app .entry-details{border-radius:16px!important;padding-inline:13px!important}
+.ios-app .entry-details>summary{min-height:52px!important;font-size:11px!important}
+.ios-app .primary{min-height:48px!important;font-size:12px!important}.ios-app .secondary{min-height:46px!important;font-size:11px!important}
+.ios-app .catalog-row,.ios-app .catalog-choice{min-height:64px!important}.ios-app .catalog-name{font-size:12px!important}
+
+/* Home-specific height adaptation: preserve readable sizes and remove lower-priority content first. */
+@media(max-height:780px) and (max-width:699px){
+ .ios-app #app.has-navigation>.shell.home-shell{padding-top:calc(74px + var(--safe-top));padding-bottom:calc(92px + var(--safe-bottom))}
+ .ios-app .home-one-head{margin-bottom:9px}.ios-app .home-one-head h1{font-size:26px}
+ .ios-app .home-balance-compact{padding:14px 15px 12px}.ios-app .home-balance-main strong{font-size:35px}
+ .ios-app .home-balance-stats{margin-top:10px;padding-top:9px}
+ .ios-app .home-section-line{margin-top:9px}.ios-app .liquid-home-one .liquid-expense{min-height:55px!important}
+ .ios-app .home-quick-grid>button{height:54px}
+}
+@media(max-height:710px) and (max-width:699px){
+ .ios-app .home-section-line.quick,.ios-app .home-quick-grid{display:none}
+ .ios-app .liquid-home-one .liquid-expense{min-height:58px!important}
+}
+@media(max-width:360px){
+ .ios-app .home-one-head h1{font-size:25px}
+ .ios-app .home-period-pill{max-width:100px}
+ .ios-app .home-balance-main strong{font-size:34px}
+ .ios-app .home-balance-stats small{font-size:7.5px}.ios-app .home-balance-stats b{font-size:10px}
+ .ios-app .home-quick-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .ios-app .home-quick-grid>button:nth-child(n+4){display:none}
+ .ios-app .liquid-page-heading h1{font-size:31px}
+}
