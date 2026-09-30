@@ -705,3 +705,85 @@
  .ios-app .settle-one-breakdown-head label{min-width:108px}
  .ios-app .settle-one-stats strong{font-size:10px}.ios-app .settle-one-stats small{font-size:7px}
 }
+
+
+/* Settings — one-screen dashboard with comfortable touch targets. */
+.ios-app #app.has-navigation>.shell.settings-shell{
+ height:100dvh;min-height:100dvh;overflow:hidden;
+ padding-top:calc(78px + var(--safe-top));
+ padding-bottom:calc(92px + var(--safe-bottom));
+}
+.ios-app .settings-one-page{height:100%;min-height:0;display:flex;flex-direction:column;padding:0}
+.ios-app .settings-one-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:none;margin:2px 0 11px}
+.ios-app .settings-one-head .liquid-overline{font-size:8.5px;margin-bottom:3px}
+.ios-app .settings-one-head h1{font-size:28px;line-height:1.08;letter-spacing:-1px;margin:0}
+.ios-app .settings-one-head>.liquid-mini-icon{display:none}
+
+.ios-app .settings-one-profile{
+ flex:none;display:flex;align-items:center;gap:12px;
+ min-height:72px;padding:12px 14px;border:1px solid var(--line);border-radius:20px;
+ background:linear-gradient(135deg,var(--accent-soft),color-mix(in srgb,var(--surface) 80%,var(--accent-soft)));
+}
+.ios-app .settings-one-avatar{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(145deg,#648c95,#456b75);color:#fff;font-size:11px;font-weight:700;flex:none}
+.ios-app .settings-one-profile>div{flex:1;min-width:0}
+.ios-app .settings-one-profile strong{display:block;font-size:14px;font-weight:620}
+.ios-app .settings-one-profile small{display:block;font-size:9.5px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ios-app .settings-one-badge{font-size:8px;font-weight:650;color:var(--accent);background:var(--surface);padding:6px 8px;border-radius:999px;flex:none}
+
+.ios-app .settings-one-members{
+ flex:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;
+ margin:9px 0;padding:9px 8px;border:1px solid var(--line);border-radius:17px;background:var(--surface)
+}
+.ios-app .settings-one-members>span{text-align:center;min-width:0}
+.ios-app .settings-one-members i{display:grid;place-items:center;width:31px;height:31px;margin:0 auto 5px;border-radius:50%;background:var(--surface-2);color:var(--muted);font-style:normal;font-size:8px}
+.ios-app .settings-one-members .you i{background:var(--accent-soft);color:var(--accent)}
+.ios-app .settings-one-members b{display:block;font-size:8.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ios-app .settings-one-members small{display:block;font-size:7.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.ios-app .settings-one-grid{
+ flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(4,minmax(58px,1fr));gap:7px
+}
+.ios-app .settings-one-tile{
+ min-width:0;min-height:58px;padding:10px 10px;border:1px solid var(--line);border-radius:16px;background:var(--surface);
+ display:grid;grid-template-columns:34px minmax(0,1fr) 11px;align-items:center;gap:9px;text-align:left
+}
+.ios-app .settings-one-tile:active{background:var(--surface-2)}
+.ios-app .settings-one-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--surface-2);color:var(--accent)}
+.ios-app .settings-one-icon .icon{width:16px;height:16px}
+.ios-app .settings-one-tile>span:nth-child(2){min-width:0}
+.ios-app .settings-one-tile strong{display:block;font-size:10.5px;font-weight:610;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ios-app .settings-one-tile small{display:block;font-size:8px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ios-app .settings-one-tile>.icon{width:10px;height:10px;color:var(--muted)}
+
+.ios-app .settings-one-bottom{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.ios-app .settings-one-appearance,.ios-app .settings-one-signout{
+ min-height:47px;border-radius:15px;border:1px solid var(--line);background:var(--surface);padding:7px 11px
+}
+.ios-app .settings-one-appearance{display:flex;align-items:center;gap:9px;text-align:left}
+.ios-app .settings-one-appearance>.icon{width:17px;height:17px;color:var(--accent);flex:none}
+.ios-app .settings-one-appearance>span{min-width:0}
+.ios-app .settings-one-appearance strong{display:block;font-size:10.5px;font-weight:610}
+.ios-app .settings-one-appearance small{display:block;font-size:8px;color:var(--muted);margin-top:2px}
+.ios-app .settings-one-signout{color:var(--danger);font-size:10.5px;font-weight:600}
+
+.ios-app #settings-household-form .field{margin-bottom:14px}
+.ios-app #settings-household-form .primary{margin-top:4px}
+
+/* Shorter phones keep all primary settings visible; subtitles disappear before controls shrink. */
+@media(max-height:740px) and (max-width:699px){
+ .ios-app #app.has-navigation>.shell.settings-shell{padding-top:calc(72px + var(--safe-top));padding-bottom:calc(88px + var(--safe-bottom))}
+ .ios-app .settings-one-head{margin-bottom:7px}.ios-app .settings-one-head h1{font-size:25px}
+ .ios-app .settings-one-profile{min-height:64px;padding-block:9px}.ios-app .settings-one-avatar{width:42px;height:42px}
+ .ios-app .settings-one-members{margin:6px 0;padding-block:6px}.ios-app .settings-one-members i{width:28px;height:28px;margin-bottom:3px}
+ .ios-app .settings-one-grid{gap:6px;grid-template-rows:repeat(4,minmax(52px,1fr))}
+ .ios-app .settings-one-tile{min-height:52px;padding-block:7px}.ios-app .settings-one-tile small{display:none}
+ .ios-app .settings-one-bottom{margin-top:6px}.ios-app .settings-one-appearance,.ios-app .settings-one-signout{min-height:43px}
+}
+@media(max-width:360px){
+ .ios-app .settings-one-grid{gap:6px}
+ .ios-app .settings-one-tile{grid-template-columns:31px minmax(0,1fr) 9px;padding-inline:8px;gap:7px}
+ .ios-app .settings-one-icon{width:31px;height:31px}
+ .ios-app .settings-one-tile strong{font-size:9.7px}
+ .ios-app .settings-one-tile small{font-size:7.5px}
+ .ios-app .settings-one-members b{font-size:8px}
+}
