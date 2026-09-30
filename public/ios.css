@@ -327,3 +327,51 @@
 .ios-app.theme-dark .back-button{background:linear-gradient(145deg,#34463bc9,#1c2823a6);border-color:#ffffff26;box-shadow:inset 0 1px 1px #ffffff25,0 2px 8px #0002;color:var(--ink)}
 @media(max-width:360px){.ios-app .header-leading{gap:8px}.ios-app .with-back .signed-in-copy small{display:none}.ios-app .with-back .brand{font-size:17px}.ios-app .with-back .signed-in-user{max-width:44%;gap:6px}.ios-app .dialog-head h2{font-size:18px}}
 @media(prefers-reduced-transparency:reduce),(prefers-contrast:more){.ios-app .back-button{background:var(--surface);border-color:var(--line);backdrop-filter:none;-webkit-backdrop-filter:none}}
+
+/* Compact rhythm shared by tabs, inner pages, onboarding and dialogs. */
+.ios-app{--radius:18px;--radius-control:12px;font-size:14px;line-height:1.45}
+.ios-app .shell{max-width:960px;padding:calc(12px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.ios-app .top{margin-bottom:18px;gap:8px}
+.ios-app .brand{font-size:18px;gap:7px}.ios-app .brand img{width:26px;height:26px}
+.ios-app .signed-in-user .avatar{width:32px;height:32px}.ios-app .signed-in-copy small{font-size:10px}.ios-app .signed-in-copy strong{font-size:12px}
+.ios-app h1,.ios-app .home-title h1,.ios-app .sheet-heading h1{font-size:25px;line-height:1.18}
+.ios-app h2,.ios-app .section-head h2{font-size:17px}.ios-app h3{font-size:15px}
+.ios-app .eyebrow{font-size:11px}.ios-app .page-subtitle,.ios-app .sheet-heading .sheet-dates{font-size:12px;margin-top:5px}
+.ios-app .home-title{margin-bottom:14px;gap:8px}.ios-app .home-columns{gap:24px}
+.ios-app .overview-card{padding:0 16px 12px;border-radius:20px}
+.ios-app .overview-sheet{padding:10px 0;min-height:50px}.ios-app .overview-sheet strong{font-size:13px}.ios-app .overview-sheet small{margin-top:2px}
+.ios-app .balance-focus{padding:12px 0}.ios-app .balance-value{font-size:34px;margin:3px 0 5px}.ios-app .balance-direction{font-size:12px}
+.ios-app .couple-summary{padding-top:10px;gap:12px}.ios-app .couple-label{font-size:11px}.ios-app .couple-stat strong{font-size:18px;margin:3px 4px 0 0}
+.ios-app .home-metrics{margin-top:9px}.ios-app .home-metrics button{min-height:58px;gap:3px;padding-block:3px}.ios-app .home-metrics strong{font-size:19px}.ios-app .home-metrics .metric-category{font-size:16px}
+.ios-app .section-head{margin:18px 0 7px;min-height:32px}.ios-app .home-secondary>.section-head:first-child{margin-top:12px;margin-bottom:5px}
+.ios-app .quick-grid{gap:8px}.ios-app .quick-grid button{flex-basis:142px;min-height:54px;border-radius:15px;padding:8px 10px;grid-template-columns:28px minmax(0,1fr);column-gap:8px}
+.ios-app .quick-grid button>.quick-icon{width:28px;height:28px}.ios-app .quick-grid button>span:nth-child(2){font-size:12px}.ios-app .quick-grid button>small{font-size:11px}
+.ios-app .expense{min-height:68px;padding:10px 0 10px 12px;gap:9px}.ios-app .expense-info strong,.ios-app .expense-total strong{font-size:14px}.ios-app .expense-info strong{margin-bottom:2px}
+.ios-app .expense-info>span{font-size:11px}.ios-app .category{width:32px;height:32px;flex-shrink:0}.ios-app .category .icon{width:18px;height:18px}
+.ios-app .household-banner{padding:14px 2px 0;min-height:60px}.ios-app .household-banner small{font-size:11px}
+.ios-app .toolbar{margin:14px 0 10px}.ios-app .toolbar input[type=search],.ios-app .catalog-dialog>input{padding:10px 12px;min-height:44px}
+.ios-app .sheet-list{gap:10px;margin-top:12px}.ios-app .sheet-open{min-height:78px;padding:12px 0 12px 12px;gap:10px}
+.ios-app .sheet-copy strong{font-size:14px;margin-bottom:3px}.ios-app .sheet-copy>.sheet-meta{font-size:12px;gap:2px}.ios-app .sheet-symbol{width:32px;height:36px;border-radius:10px}.ios-app .sheet-symbol .icon{width:20px;height:20px}
+.ios-app .swipe-hint{font-size:11px;margin-top:12px}.ios-app .switches{margin:10px 0;padding:3px}.ios-app .switches button{font-size:12px;min-height:38px;padding:7px 8px}
+.ios-app .day-group{margin-top:14px}.ios-app .day-heading{margin-bottom:6px}.ios-app .day-heading h2,.ios-app .day-heading>span{font-size:11px}
+.ios-app .hero{padding:18px}.ios-app .hero .amount{font-size:34px;margin:14px 0 6px}.ios-app .paid-grid{margin-top:14px;padding-top:12px}.ios-app .paid-grid strong.amount{font-size:20px}
+.ios-app .primary,.ios-app .secondary{min-height:44px;padding:10px 14px;font-size:14px}
+.ios-app .panel{padding:16px;margin:12px 0}.ios-app .profile-card{padding:16px;gap:10px;margin:14px 0 18px}.ios-app .profile-card>.avatar{width:40px;height:40px}.ios-app .profile-card h2{font-size:18px}
+.ios-app .settings-heading{margin:18px 4px 7px;font-size:12px}.ios-app .setting-row{min-height:58px;padding:11px 12px;gap:10px}.ios-app .setting-row strong{font-size:14px}.ios-app .setting-row small{font-size:11px;margin-top:2px}
+.ios-app .setting-icon{width:30px;height:30px}.ios-app .install-note{padding:16px 4px}.ios-app .settings-footnote{margin-top:14px;font-size:11px}
+.ios-app input,.ios-app select,.ios-app textarea{min-height:44px;padding:10px 12px;font-size:16px}.ios-app input[type=date]{height:44px}
+.ios-app .field{margin-bottom:12px}.ios-app .field>span{font-size:12px;margin-bottom:5px}.ios-app .big-input{font-size:34px;min-height:58px;padding:6px 0}
+.ios-app .amount-calculator{margin-bottom:12px}.ios-app .split-preview{padding:10px 12px;font-size:12px;line-height:1.55}
+.ios-app .entry-details{margin:12px 0}.ios-app .entry-details>summary{min-height:54px;font-size:13px;padding:8px 0}.ios-app .entry-details-body{padding:10px 0 12px}
+.ios-app dialog{padding:18px;border-radius:22px;scroll-padding-block:74px 22px}.ios-app .dialog-head{top:-18px;margin-top:-8px;margin-bottom:12px;padding:8px 0;gap:8px}
+.ios-app .dialog-head h2,.ios-app .catalog-head h2{font-size:18px}.ios-app .back-button{width:44px;height:44px;min-width:44px;min-height:44px}.ios-app .catalog-head .back-button{width:44px;height:44px}
+.ios-app .catalog-head{margin-bottom:12px}.ios-app .catalog-list{margin-top:12px;border-radius:16px}.ios-app .catalog-choice{min-height:56px;padding:10px;gap:9px}.ios-app .catalog-name{font-size:14px}.ios-app .catalog-icon{width:30px;height:30px}
+.ios-app .insight-hero{padding:16px}.ios-app .insight-hero>strong{font-size:30px;margin:6px 0 10px}.ios-app .insight-split{padding-top:12px}
+.ios-app .settle-overview{padding:16px;border-radius:18px;margin-bottom:16px}.ios-app .settle-overview-heading h2{font-size:16px}.ios-app .settle-period{margin:4px 0 10px}
+.ios-app .settle-couple{margin:10px 0 12px;gap:5px}.ios-app .settle-totals{gap:10px}.ios-app .settle-totals strong{font-size:23px}.ios-app .settle-paid{padding:12px 0;margin-top:6px;font-size:12px}
+.ios-app .settle-net{padding:12px;border-radius:12px}.ios-app .settle-net strong{font-size:22px}.ios-app .settle-breakdown{margin-bottom:16px}.ios-app .settle-expenses{border-radius:16px}.ios-app .settle-expense{min-height:64px;padding-block:10px}.ios-app .settle-expense-info>strong{font-size:13px}
+.ios-app .auth{max-width:400px;margin-top:6px}.ios-app .auth .brand{font-size:20px;margin-bottom:24px}.ios-app .welcome-eyebrow{margin:24px 0 10px;font-size:12px}
+.ios-app .auth h1{font-size:32px;margin-bottom:12px}.ios-app .welcome-copy{font-size:14px;line-height:1.5;margin-bottom:18px}.ios-app .welcome-preview{padding:16px;margin-bottom:16px;border-radius:20px}.ios-app .preview-balance{font-size:25px;margin-top:14px}.ios-app .welcome-preview>p{margin-bottom:14px}.ios-app .welcome-benefits{margin:16px 0}
+@media(min-width:701px){.ios-app .shell{padding:20px 28px 28px}.ios-app .top{margin-bottom:22px}.ios-app .home-secondary>.section-head:first-child{margin-top:0}.ios-app .balance-value{font-size:38px}}
+@media(max-width:700px){.ios-app dialog{padding:16px max(16px,env(safe-area-inset-right,0px)) max(18px,calc(10px + env(safe-area-inset-bottom,0px))) max(16px,env(safe-area-inset-left,0px));border-radius:22px 22px 0 0}.ios-app .dialog-head{top:-16px}}
+@media(max-width:360px){.ios-app .shell{padding-inline:12px}.ios-app h1,.ios-app .home-title h1,.ios-app .sheet-heading h1{font-size:23px}.ios-app .auth h1{font-size:29px}.ios-app .expense{padding-left:10px;gap:7px}.ios-app .settle-columns,.ios-app .settle-expense{padding-inline:10px;gap:6px}}
