@@ -1888,3 +1888,684 @@
 .ios-app .re-sheet-card.featured .re-sheet-meta{
   color:#e2e6e8!important;
 }
+
+
+/* Home-aligned main screens — one visual language across all tabs. */
+.ios-app .home-aligned{
+  height:100%;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  width:100%;
+}
+.ios-app .ha-head{
+  flex:none;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin:5px 0 12px;
+}
+.ios-app .ha-head>div:first-child{min-width:0}
+.ios-app .ha-head .re-eyebrow{margin-bottom:3px;font-size:9px}
+.ios-app .ha-head h1{
+  margin:0;
+  font-size:29px;
+  line-height:1.06;
+  letter-spacing:-1.05px;
+  font-weight:680;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ha-head>div:first-child>p:last-child{
+  margin:5px 0 0;
+  font-size:10px;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ha-head-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+}
+
+/* Same emphasis-card proportions as Home */
+.ios-app .ha-hero{
+  flex:none;
+  position:relative;
+  overflow:hidden;
+  padding:15px 16px 13px;
+  border-radius:23px;
+  background:#4d5861;
+  color:#fff;
+  box-shadow:0 12px 26px rgba(48,56,62,.10);
+}
+.ios-app.theme-dark .ha-hero{background:#353c42}
+.ios-app .ha-hero:after{
+  content:"";
+  position:absolute;
+  width:165px;
+  height:165px;
+  border:1px solid rgba(255,255,255,.055);
+  border-radius:50%;
+  right:-68px;
+  top:-54px;
+  pointer-events:none;
+}
+.ios-app .ha-hero-top{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  font-size:8px;
+  letter-spacing:.08em;
+  color:#e1e5e7;
+}
+.ios-app .ha-hero-top em{
+  font-style:normal;
+  font-size:7.5px;
+  color:#dce1e3;
+}
+.ios-app .ha-hero-main{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:8px;
+}
+.ios-app .ha-hero-main>div{min-width:0}
+.ios-app .ha-hero-main strong{
+  display:block;
+  font-size:38px;
+  line-height:1.02;
+  letter-spacing:-1.45px;
+  font-weight:610;
+}
+.ios-app .ha-hero-main p{
+  margin:4px 0 0;
+  font-size:10px;
+  color:#e0e4e6;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ha-hero-main>button{
+  width:42px;
+  height:42px;
+  min-width:42px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  display:grid;
+  place-items:center;
+}
+.ios-app .ha-hero-main>button .icon{width:18px;height:18px}
+.ios-app .ha-hero-stats{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:0;
+  margin-top:11px;
+  padding-top:10px;
+  border-top:1px solid rgba(255,255,255,.09);
+}
+.ios-app .ha-hero-stats>span{
+  min-width:0;
+  padding:0 9px;
+  border-left:1px solid rgba(255,255,255,.08);
+}
+.ios-app .ha-hero-stats>span:first-child{
+  padding-left:0;
+  border-left:0;
+}
+.ios-app .ha-hero-stats small{
+  display:block;
+  font-size:8.5px;
+  color:#dce2e4!important;
+}
+.ios-app .ha-hero-stats b{
+  display:block;
+  margin-top:3px;
+  font-size:11px;
+  font-weight:610;
+  color:#fff;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* Shared Home-like section headers */
+.ios-app .ha-section-head{
+  flex:none;
+  min-height:42px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:10px;
+  margin:11px 2px 7px;
+}
+.ios-app .ha-section-head>div:first-child{min-width:0}
+.ios-app .ha-section-head small{
+  display:block;
+  margin-bottom:2px;
+  font-size:8px;
+  letter-spacing:.10em;
+  color:var(--muted);
+}
+.ios-app .ha-section-head h2{
+  margin:0;
+  font-size:15px;
+  line-height:1.15;
+  font-weight:650;
+}
+.ios-app .ha-inline-actions{
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.ios-app .ha-inline-actions>select{
+  height:32px!important;
+  min-height:32px!important;
+  padding:0 24px 0 8px!important;
+  border-radius:10px!important;
+  background:var(--surface)!important;
+  font-size:8.5px!important;
+}
+
+/* Shared list / scrolling region */
+.ios-app .ha-scroll-list{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:none;
+  padding-bottom:2px;
+}
+.ios-app .ha-scroll-list::-webkit-scrollbar{display:none}
+.ios-app .ha-scroll-list .day-group{margin-top:8px}
+.ios-app .ha-scroll-list .day-heading{
+  margin:0 2px 5px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.ios-app .ha-scroll-list .day-heading h2,
+.ios-app .ha-scroll-list .day-heading>span{
+  font-size:8px!important;
+  color:var(--muted);
+}
+.ios-app .ha-scroll-list .liquid-expense-list{
+  border-radius:17px;
+  padding:0 12px;
+}
+.ios-app .ha-scroll-list .liquid-expense{
+  min-height:61px!important;
+  padding:7px 0!important;
+}
+.ios-app .ha-scroll-list .liquid-category{
+  width:34px;
+  height:34px;
+}
+.ios-app .ha-scroll-list .expense-info strong{font-size:11px}
+.ios-app .ha-scroll-list .expense-info>span{font-size:8.5px}
+.ios-app .ha-scroll-list .expense-total strong{font-size:11px}
+.ios-app .ha-scroll-list .expense-total small{font-size:7.5px}
+
+/* Inside sheet */
+.ios-app .ha-detail .ha-head h1{max-width:290px}
+.ios-app .ha-detail-hero .ha-hero-main strong{font-size:36px}
+.ios-app .ha-filter-row{
+  flex:none;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:7px;
+  align-items:center;
+  margin-bottom:6px;
+}
+.ios-app .ha-filter-row .re-search{height:40px}
+.ios-app .ha-filter-row .re-search input{height:36px!important;font-size:11px!important}
+.ios-app .ha-filter-row .re-segments button{
+  min-height:30px!important;
+  padding:4px 8px!important;
+  font-size:8px!important;
+}
+.ios-app .ha-result-head{
+  flex:none;
+  min-height:25px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin:0 2px 4px;
+}
+.ios-app .ha-result-head span{font-size:8px;color:var(--muted)}
+.ios-app .ha-result-head strong{font-size:10px;margin-left:auto}
+.ios-app .ha-result-head .text-button{min-height:24px;font-size:8px;padding:0}
+
+/* Sheets */
+.ios-app .ha-sheet-hero-main{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  margin-top:9px;
+}
+.ios-app .ha-sheet-hero-main>button{
+  min-width:0;
+  padding:0;
+  border:0;
+  background:none;
+  color:#fff;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 11px;
+  gap:7px;
+  align-items:center;
+  text-align:left;
+}
+.ios-app .ha-sheet-hero-main>button>span{min-width:0}
+.ios-app .ha-sheet-hero-main strong{
+  display:block;
+  font-size:17px;
+  font-weight:620;
+  color:#fff;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ha-sheet-hero-main small{
+  display:block;
+  margin-top:4px;
+  font-size:9px;
+  color:#e0e4e6!important;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ha-sheet-hero-main>button>.icon{width:11px;color:#e0e4e6}
+.ios-app .ha-sheet-hero-main>b{
+  font-size:17px;
+  font-weight:620;
+  color:#fff;
+  white-space:nowrap;
+}
+.ios-app .ha-sheet-search{
+  flex:none;
+  height:40px;
+  margin-bottom:7px;
+}
+.ios-app .ha-sheet-search input{height:36px!important;font-size:11px!important}
+.ios-app .ha-sheet-list{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+.ios-app .ha-sheet-list .re-sheet-open{
+  min-height:73px!important;
+  padding:9px 10px!important;
+}
+.ios-app .ha-sheet-list .re-folder{
+  width:35px;
+  height:35px;
+}
+.ios-app .ha-sheet-list .re-sheet-copy strong{font-size:10.5px}
+.ios-app .ha-sheet-list .re-sheet-copy em{font-size:7.5px}
+.ios-app .ha-sheet-list .re-sheet-money{font-size:10.5px}
+.ios-app .ha-empty-note{
+  padding:18px;
+  border:1px dashed var(--line-strong);
+  border-radius:16px;
+  background:var(--surface);
+  text-align:center;
+  color:var(--muted);
+  font-size:9px;
+}
+.ios-app .ha-empty{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Settle */
+.ios-app .ha-head-actions .re-period{
+  margin:0;
+  height:38px;
+  max-width:150px;
+  padding:0 8px;
+}
+.ios-app .ha-head-actions .re-period select{
+  height:36px!important;
+  min-height:36px!important;
+  max-width:112px;
+  font-size:8.5px!important;
+}
+.ios-app .ha-settle-main{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:7px;
+}
+.ios-app .ha-settle-main>div:first-child{min-width:0}
+.ios-app .ha-settle-main>div:first-child strong{
+  display:block;
+  font-size:38px;
+  line-height:1.02;
+  letter-spacing:-1.45px;
+  font-weight:610;
+}
+.ios-app .ha-settle-main>div:first-child p{
+  margin:4px 0 0;
+  font-size:9.5px;
+  color:#e0e4e6;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ha-settle-main .re-route{
+  margin:0;
+  flex:none;
+}
+.ios-app .ha-hero-action{
+  position:relative;
+  z-index:1;
+  width:100%;
+  min-height:39px;
+  margin-top:10px;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:12px;
+  background:rgba(255,255,255,.09);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-size:9.5px;
+  font-weight:600;
+}
+.ios-app .ha-hero-action .icon{width:14px}
+.ios-app .ha-share-select{
+  min-width:125px;
+}
+.ios-app .ha-share-select>span{
+  display:block;
+  margin-bottom:3px;
+  font-size:7.5px;
+  color:var(--muted);
+}
+.ios-app .ha-share-select select{
+  width:100%;
+  height:32px!important;
+  min-height:32px!important;
+  padding:0 22px 0 7px!important;
+  border-radius:9px!important;
+  background:var(--surface)!important;
+  font-size:8px!important;
+}
+.ios-app .ha-breakdown{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:17px;
+  background:var(--surface);
+  padding:0 12px;
+}
+.ios-app .ha-breakdown-list{
+  flex:1;
+  min-height:0;
+}
+.ios-app .ha-breakdown-list>button{
+  width:100%;
+  min-height:52px;
+  padding:6px 0;
+  border:0;
+  border-bottom:1px solid var(--line);
+  background:none;
+  display:grid;
+  grid-template-columns:32px minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+  text-align:left;
+}
+.ios-app .ha-breakdown-list>button:last-child{border-bottom:0}
+.ios-app .ha-breakdown-list .re-cat{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+}
+.ios-app .ha-breakdown-list>button>span:nth-child(2){min-width:0}
+.ios-app .ha-breakdown-list strong{
+  display:block;
+  font-size:10px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ha-breakdown-list small{
+  display:block;
+  margin-top:2px;
+  font-size:7.5px;
+  color:var(--muted);
+}
+.ios-app .ha-breakdown-list em{
+  font-style:normal;
+  text-align:right;
+}
+.ios-app .ha-breakdown-list em b{
+  display:block;
+  margin-top:2px;
+  font-size:10px;
+}
+.ios-app .ha-more{
+  width:100%;
+  height:29px;
+  border:0;
+  border-top:1px solid var(--line);
+  background:none;
+  color:var(--accent);
+  font-size:8px;
+}
+.ios-app .ha-balanced{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  color:var(--muted);
+  font-size:9px;
+}
+.ios-app .ha-balanced .icon{width:16px;color:var(--accent)}
+.ios-app .ha-foot-actions{
+  flex:none;
+  min-height:31px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:18px;
+}
+.ios-app .ha-foot-actions button{
+  border:0;
+  background:none;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:4px;
+  font-size:8.5px;
+}
+.ios-app .ha-foot-actions .icon{width:11px}
+
+/* Settings now follows Home: one hero + simple sections */
+.ios-app .ha-settings-hero{
+  padding-bottom:12px;
+}
+.ios-app .ha-settings-person{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr) 36px;
+  gap:11px;
+  align-items:center;
+}
+.ios-app .ha-settings-avatar{
+  width:48px;
+  height:48px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.10);
+  color:#fff;
+  font-size:10px;
+  font-weight:700;
+}
+.ios-app .ha-settings-person>div{min-width:0}
+.ios-app .ha-settings-person small{
+  display:block;
+  font-size:7px;
+  letter-spacing:.08em;
+  color:#dfe4e6!important;
+}
+.ios-app .ha-settings-person strong{
+  display:block;
+  margin-top:2px;
+  font-size:15px;
+  font-weight:620;
+  color:#fff;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ha-settings-person p{
+  margin:3px 0 0;
+  font-size:8.5px;
+  color:#dfe4e6;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ha-settings-person>button{
+  width:36px;
+  height:36px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  display:grid;
+  place-items:center;
+}
+.ios-app .ha-settings-person>button .icon{width:11px}
+.ios-app .ha-setting-group{
+  flex:none;
+  overflow:hidden;
+  padding:0 12px;
+  border:1px solid var(--line);
+  border-radius:17px;
+  background:var(--surface);
+}
+.ios-app .ha-setting-row{
+  width:100%;
+  min-height:51px;
+  padding:6px 0;
+  border:0;
+  border-bottom:1px solid var(--line);
+  background:none;
+  display:grid;
+  grid-template-columns:33px minmax(0,1fr) auto 10px;
+  gap:9px;
+  align-items:center;
+  text-align:left;
+}
+.ios-app .ha-setting-row:last-child{border-bottom:0}
+.ios-app .ha-setting-row>span:first-child{
+  width:33px;
+  height:33px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+.ios-app .ha-setting-row>span:first-child .icon{width:15px}
+.ios-app .ha-setting-row>span:nth-child(2){min-width:0}
+.ios-app .ha-setting-row strong{
+  display:block;
+  font-size:10.5px;
+  font-weight:610;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ha-setting-row small{
+  display:block;
+  margin-top:2px;
+  font-size:8px;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ha-setting-row em{
+  font-style:normal;
+  font-size:8px;
+  color:var(--muted);
+}
+.ios-app .ha-setting-row>.icon{
+  width:10px;
+  color:var(--muted);
+}
+.ios-app .ha-signout{
+  flex:none;
+  width:100%;
+  min-height:30px;
+  margin-top:4px;
+  padding:0;
+  border:0;
+  background:none;
+  color:var(--danger);
+  font-size:9px;
+}
+
+/* Short screens: trim secondary copy rather than change the visual language. */
+@media(max-height:720px) and (max-width:699px){
+  .ios-app .ha-head{margin-bottom:8px}
+  .ios-app .ha-head h1{font-size:27px}
+  .ios-app .ha-head>div:first-child>p:last-child{display:none}
+  .ios-app .ha-hero{padding-top:12px;padding-bottom:11px}
+  .ios-app .ha-hero-main strong,
+  .ios-app .ha-settle-main>div:first-child strong{font-size:34px}
+  .ios-app .ha-section-head{margin-top:8px;min-height:36px}
+  .ios-app .ha-setting-row{min-height:47px}
+  .ios-app .ha-setting-row small{display:none}
+  .ios-app .ha-settings-person p{display:none}
+}
+@media(max-width:390px){
+  .ios-app .ha-filter-row{
+    grid-template-columns:1fr;
+  }
+  .ios-app .ha-filter-row .re-segments{justify-self:start}
+  .ios-app .ha-head-actions .re-period{max-width:132px}
+  .ios-app .ha-head-actions .re-period select{max-width:94px}
+}
+@media(max-width:360px){
+  .ios-app .ha-head h1{font-size:26px}
+  .ios-app .ha-sheet-hero-main{grid-template-columns:minmax(0,1fr) auto}
+  .ios-app .ha-setting-row{grid-template-columns:31px minmax(0,1fr) auto 9px;gap:7px}
+  .ios-app .ha-setting-row>span:first-child{width:31px;height:31px}
+}
