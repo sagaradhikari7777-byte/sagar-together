@@ -143,13 +143,14 @@ function settingsMoreDialog(){
 }
 function settings(){
  const dark=document.body.classList.contains('theme-dark');
- const row=(action,ic,title,sub)=>`<button class="ps-row" data-action="${action}"><span class="ps-row-icon">${icon(ic)}</span><span><strong>${title}</strong><small>${sub}</small></span>${icon('chevron')}</button>`;
- const action=(id,ic,title,sub)=>`<button class="ps-action" data-action="${id}"><span>${icon(ic)}</span><strong>${title}</strong><small>${sub}</small></button>`;
- return `<section class="re-page sp-page premium-settings"><div class="ps-head"><div><p class="re-eyebrow">YOUR SPACE</p><h1>Settings</h1></div><button class="re-small-round" data-action="theme" aria-label="Switch appearance">${icon(dark?'sun':'moon')}</button></div>
- <section class="ps-identity"><div class="ps-avatar">${esc(initials(data.names[data.seat]))}</div><div class="ps-identity-copy"><div><strong>${esc(data.names[data.seat])}</strong><em>You</em></div><small>${esc(data.name)} · ${esc(couple(group(data.seat)))}</small><p>4 people · 2 couples · one shared journal</p></div><button data-action="settings-household" aria-label="Edit household">${icon('chevron')}</button><div class="ps-people">${data.names.map((n,i)=>`<span class="${i===data.seat?'you':''}"><i>${esc(initials(n))}</i><b>${esc(n)}</b><small>${i===data.seat?'You':data.claimed[i]?'Connected':'Invite'}</small></span>`).join('')}</div></section>
- <div class="ps-section-title"><span>HOUSEHOLD</span></div><section class="ps-group">${row('settings-household','people','Household & names','Members, couples and household name')}${row('invite','plus','Invite someone','Share access safely')}${row('access','lock','Private access link','Your personal sign-in link')}</section>
- <div class="ps-section-title"><span>PREFERENCES</span></div><div class="ps-actions">${action('entry-preferences','settings','Expense defaults','Faster entry')}${action('insights','chart','Insights','Spending overview')}${action('theme',dark?'sun':'moon','Appearance',dark?'Dark mode':'Light mode')}${action('settings-more','dots','More tools','Merchants, categories & export')}</div>
- <button class="ps-signout" data-action="signout">${demo?'Leave demo':'Sign out'}</button></section>`;
+ const row=(action,ic,title,sub,tail='')=>`<button class="ms-row" data-action="${action}"><span class="ms-icon">${icon(ic)}</span><span class="ms-copy"><strong>${title}</strong><small>${sub}</small></span>${tail?`<em>${tail}</em>`:''}${icon('chevron')}</button>`;
+ return `<section class="re-page sp-page minimal-settings"><div class="ms-head"><div><p class="re-eyebrow">YOUR SPACE</p><h1>Settings</h1></div></div>
+ <section class="ms-profile"><span class="ms-avatar">${esc(initials(data.names[data.seat]))}</span><span class="ms-profile-copy"><strong>${esc(data.names[data.seat])}</strong><small>${esc(data.name)} · ${esc(couple(group(data.seat)))}</small></span><button data-action="settings-household" aria-label="Edit household">${icon('chevron')}</button></section>
+ <div class="ms-members">${data.names.map((n,i)=>`<span class="${i===data.seat?'you':''}"><i>${esc(initials(n))}</i><b>${esc(n)}</b><small>${i===data.seat?'You':data.claimed[i]?'Connected':'Invite'}</small></span>`).join('')}</div>
+ <h2 class="ms-label">Household</h2><section class="ms-group">${row('settings-household','people','Household & names','Members, couples and household name')}${row('invite','plus','Invite members','Share access safely')}${row('access','lock','Private access link','Your personal sign-in link')}</section>
+ <h2 class="ms-label">App</h2><section class="ms-group">${row('entry-preferences','settings','Expense preferences','Defaults for faster entry')}${row('settings-more','tag','Journal tools','Merchants, categories and export')}${row('insights','chart','Insights','Review your shared spending')}</section>
+ <h2 class="ms-label">Appearance</h2><section class="ms-group ms-appearance">${row('theme',dark?'sun':'moon','Theme','Use a calm light or dark appearance',dark?'Dark':'Light')}</section>
+ <button class="ms-signout" data-action="signout">${demo?'Leave demo':'Sign out'}</button></section>`;
 }
 function render(){
  if(!data)return auth();
