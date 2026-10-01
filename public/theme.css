@@ -312,3 +312,298 @@
  .ios-app .sp-page-head h1{font-size:27px}
  .ios-app .sp-settings-grid{gap:5px}.ios-app .sp-setting-tile{column-gap:6px;padding-inline:8px}
 }
+
+
+/* 2026-10-01 — full-screen comfort pass.
+   Use the whole iPhone canvas, restore normal reading sizes, and soften contrast. */
+.ios-app{
+  --bg:#f4f2ee;
+  --surface:#fbfaf7;
+  --surface-2:#eeece7;
+  --text:#202622;
+  --muted:#68736d;
+  --line:rgba(36,43,38,.085);
+  --line-strong:rgba(36,43,38,.14);
+  --accent:#6a8175;
+  --accent-2:#82988d;
+  --accent-soft:#e4ebe6;
+  --mint:#e2ebe5;
+  --mint-ink:#5d796b;
+  --blue-soft:#e7ecee;
+  --blue-ink:#667d86;
+  --sand:#f1e8df;
+  --sand-ink:#8e715d;
+  --danger:#b85d67;
+  --glass:rgba(250,249,246,.76);
+  --glass-border:rgba(255,255,255,.84);
+  background:var(--bg);
+  color:var(--text);
+  font-size:15px;
+  line-height:1.45;
+}
+.ios-app.theme-dark{
+  --bg:#17201d;
+  --surface:#202a26;
+  --surface-2:#1b2421;
+  --text:#eef2ef;
+  --muted:#aab6b0;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.15);
+  --accent:#adc1b6;
+  --accent-2:#8fa79a;
+  --accent-soft:#2a3932;
+  --mint:#263932;
+  --mint-ink:#b5d1c2;
+  --blue-soft:#29353a;
+  --blue-ink:#bfd0d6;
+  --sand:#392f29;
+  --sand-ink:#dec4b0;
+  --danger:#e48a94;
+  --glass:rgba(31,42,37,.78);
+}
+.ios-app .ambient{
+  inset:-100px -60px auto;
+  height:320px;
+  background:
+    radial-gradient(circle at 18% 18%,rgba(214,226,219,.62),transparent 38%),
+    radial-gradient(circle at 82% 7%,rgba(225,228,221,.7),transparent 38%);
+  filter:blur(36px);
+  opacity:.62;
+}
+.ios-app.theme-dark .ambient{opacity:.10}
+
+/* Use the phone canvas instead of nesting everything in a narrow column. */
+.ios-app .re-shell{
+  width:100%;
+  max-width:820px;
+  padding-inline:12px;
+}
+.ios-app .re-page{
+  width:100%;
+  max-width:none;
+}
+.ios-app .re-shell-home,
+.ios-app .re-shell-sheets,
+.ios-app .re-shell-settle,
+.ios-app .re-shell-settings,
+.ios-app .re-shell-expenses{
+  padding-top:calc(82px + var(--safe-top));
+  padding-bottom:calc(88px + var(--safe-bottom));
+  padding-inline:12px;
+}
+.ios-app .re-top{
+  left:max(12px,calc((100vw - 820px)/2 + 12px));
+  right:max(12px,calc((100vw - 820px)/2 + 12px));
+}
+.ios-app .re-nav{left:8px;right:8px}
+.ios-app .re-dock{height:68px;border-radius:25px;padding:6px}
+.ios-app .re-dock button{height:56px;border-radius:18px;gap:4px}
+.ios-app .re-dock button .icon{width:22px;height:22px}
+.ios-app .re-dock button small{font-size:10px}
+.ios-app .re-add{right:12px;bottom:78px;width:50px;height:50px}
+.ios-app .re-house{height:52px;border-radius:26px}
+.ios-app .re-house small{font-size:9px}
+.ios-app .re-house strong{font-size:13px}
+.ios-app .re-profile{width:52px;height:52px}
+.ios-app .re-profile span{width:38px;height:38px;font-size:11px}
+.ios-app .re-inner-label small{font-size:9px}
+.ios-app .re-inner-label strong{font-size:13px}
+
+/* Normal readable headings and labels. */
+.ios-app .re-eyebrow{font-size:10px;letter-spacing:.10em}
+.ios-app .sp-page-head{margin:5px 0 14px}
+.ios-app .sp-page-head h1{font-size:31px}
+.ios-app .sp-section-head{margin:14px 2px 8px}
+.ios-app .sp-section-head small{font-size:9px}
+.ios-app .sp-section-head h2{font-size:17px}
+.ios-app .text-button{font-size:11px}
+.ios-app .re-round{width:46px;height:46px;min-width:46px}
+.ios-app .re-small-round{width:38px;height:38px;min-width:38px}
+
+/* Home fills the screen with larger content rather than compressed labels. */
+.ios-app .sp-home-head{margin:5px 0 12px}
+.ios-app .sp-home-head .re-eyebrow{font-size:9px}
+.ios-app .sp-home-head h1{font-size:29px;letter-spacing:-1.05px}
+.ios-app .sp-sheet-chip{height:44px;max-width:155px;border-radius:22px;padding-inline:11px}
+.ios-app .sp-sheet-chip span{font-size:11px}
+.ios-app .sp-balance{
+  padding:17px 18px 15px;
+  border-radius:24px;
+  background:linear-gradient(148deg,#35443e 0%,#405149 100%);
+  box-shadow:0 12px 30px rgba(55,71,65,.10);
+}
+.ios-app .sp-balance-top{font-size:9px}
+.ios-app .sp-balance-top em{font-size:8px}
+.ios-app .sp-balance-main{margin-top:9px}
+.ios-app .sp-balance-main strong{font-size:41px}
+.ios-app .sp-balance-main p{font-size:11px;margin-top:5px}
+.ios-app .sp-balance-main>button{width:44px;height:44px;min-width:44px}
+.ios-app .sp-balance-stats{margin-top:12px;padding-top:11px}
+.ios-app .sp-balance-stats small{font-size:9px}
+.ios-app .sp-balance-stats b{font-size:12px;margin-top:4px}
+.ios-app .sp-home>.liquid-expense-list{padding:0 13px;border-radius:18px}
+.ios-app .sp-home .liquid-expense{min-height:64px!important;padding:8px 0!important;gap:10px}
+.ios-app .sp-home .liquid-category{width:37px;height:37px}
+.ios-app .sp-home .liquid-category .icon{width:17px;height:17px}
+.ios-app .sp-home .expense-info strong{font-size:12px}
+.ios-app .sp-home .expense-info>span{font-size:10px;margin-top:3px}
+.ios-app .sp-home .expense-total strong{font-size:12px}
+.ios-app .sp-home .expense-more{width:30px!important;min-width:30px!important}
+.ios-app .sp-section-head.quick{margin-top:12px}
+.ios-app .sp-quick{gap:8px}
+.ios-app .sp-quick>button{height:62px;padding:8px;border-radius:16px;grid-template-columns:34px minmax(0,1fr);column-gap:8px}
+.ios-app .sp-quick>button>span{width:34px;height:34px;border-radius:10px}
+.ios-app .sp-quick strong{font-size:10.5px}
+.ios-app .sp-quick small{font-size:9px}
+
+/* Sheets uses almost the full width with comfortable rows. */
+.ios-app .sp-sheets-tools{gap:8px;margin-bottom:12px}
+.ios-app .sp-sheets-tools .re-search{height:46px}
+.ios-app .sp-sheets-tools .re-search input{height:42px!important;font-size:12px!important}
+.ios-app .sp-sheets-tools .re-segments button{min-height:35px!important;padding:6px 11px!important;font-size:10px!important}
+.ios-app .sp-featured{margin-bottom:11px}
+.ios-app .sp-featured .re-sheet-card.featured .re-sheet-open{
+  min-height:142px!important;
+  padding:17px!important;
+  border-radius:22px!important;
+  background:linear-gradient(148deg,#71877b,#82968b)!important;
+  box-shadow:0 12px 28px rgba(81,103,92,.10);
+}
+.ios-app .sp-featured .re-sheet-card.featured .re-folder{width:43px;height:43px}
+.ios-app .sp-featured .re-sheet-card.featured .re-sheet-copy strong{font-size:16px}
+.ios-app .sp-featured .re-sheet-card.featured .re-sheet-copy em{font-size:10px}
+.ios-app .sp-featured .re-sheet-card.featured .re-sheet-money{font-size:15px}
+.ios-app .sp-featured .re-sheet-card.featured .re-sheet-meta{font-size:9.5px}
+.ios-app .sp-sheet-scroll{gap:9px}
+.ios-app .sp-sheet-scroll .re-sheet-open{min-height:84px!important;padding:12px!important}
+.ios-app .sp-sheet-scroll .re-folder{width:40px;height:40px}
+.ios-app .sp-sheet-scroll .re-sheet-copy small{font-size:8.5px}
+.ios-app .sp-sheet-scroll .re-sheet-copy strong{font-size:12px}
+.ios-app .sp-sheet-scroll .re-sheet-copy em{font-size:9px}
+.ios-app .sp-sheet-scroll .re-sheet-money{font-size:12px}
+
+/* Inside a sheet keeps only the expense list scrollable, with normal text. */
+.ios-app .sp-detail-head{margin:4px 0 12px}
+.ios-app .sp-detail-head h1{font-size:29px;max-width:310px}
+.ios-app .sp-detail-head>div>p:last-child{font-size:10px;margin-top:5px}
+.ios-app .sp-sheet-summary{
+  padding:14px 15px;
+  border-radius:20px;
+  margin-bottom:10px;
+  background:linear-gradient(148deg,#35443e,#41524b);
+}
+.ios-app .sp-sheet-summary>div small,
+.ios-app .sp-sheet-summary>span small{font-size:9px}
+.ios-app .sp-sheet-summary>div strong{font-size:29px}
+.ios-app .sp-sheet-summary>div>span{font-size:9px}
+.ios-app .sp-sheet-summary>span b{font-size:12px}
+.ios-app .sp-sheet-summary>button{height:42px;min-width:82px;font-size:10px}
+.ios-app .sp-detail-controls{gap:7px;margin-bottom:9px}
+.ios-app .sp-detail-controls .re-search{height:44px}
+.ios-app .sp-detail-controls .re-search input{height:40px!important;font-size:12px!important}
+.ios-app .sp-detail-controls .re-segments button{min-height:34px!important;padding:5px 10px!important;font-size:9.5px!important}
+.ios-app .sp-filter{width:42px;height:42px}
+.ios-app .sp-detail-controls>select{height:42px!important;min-height:42px!important;font-size:10px!important}
+.ios-app .sp-result-head{min-height:30px;margin-bottom:7px}
+.ios-app .sp-result-head span{font-size:9.5px}
+.ios-app .sp-result-head strong{font-size:11.5px}
+.ios-app .sp-result-head .text-button{font-size:9.5px}
+.ios-app .sp-results .day-heading h2,
+.ios-app .sp-results .day-heading>span{font-size:9px!important}
+.ios-app .sp-results .liquid-expense-list{padding:0 13px;border-radius:18px}
+.ios-app .sp-results .liquid-expense{min-height:66px!important;padding:8px 0!important}
+.ios-app .sp-results .liquid-category{width:37px;height:37px}
+.ios-app .sp-results .expense-info strong{font-size:12px}
+.ios-app .sp-results .expense-info>span{font-size:9.5px}
+.ios-app .sp-results .expense-total strong{font-size:12px}
+.ios-app .sp-results .expense-total small{font-size:8.5px}
+
+/* Settle: calmer surface, normal labels, no black high-contrast block. */
+.ios-app .sp-head-actions .re-period{height:42px;max-width:165px}
+.ios-app .sp-head-actions .re-period select{height:40px!important;min-height:40px!important;font-size:10px!important;max-width:122px}
+.ios-app .sp-head-actions .re-small-round{width:40px;height:40px;min-width:40px}
+.ios-app .sp-settle-hero{padding:16px 18px 15px;border-radius:21px;background:var(--surface)}
+.ios-app .sp-settle-hero .re-status{font-size:8.5px;padding:6px 9px}
+.ios-app .sp-settle-hero>strong{font-size:43px;margin:10px 0 4px}
+.ios-app .sp-settle-hero>p{font-size:10px}
+.ios-app .sp-settle-hero .re-route{margin:11px 0}
+.ios-app .sp-settle-hero .liquid-face-stack i{width:27px;height:27px;font-size:7.5px}
+.ios-app .sp-settle-hero>.primary{min-height:44px!important;font-size:11px!important}
+.ios-app .sp-settle-stats{gap:7px;margin:8px 0}
+.ios-app .sp-settle-stats>span{padding:10px;border-radius:13px}
+.ios-app .sp-settle-stats small{font-size:9px}
+.ios-app .sp-settle-stats b{font-size:12px;margin-top:4px}
+.ios-app .sp-breakdown{padding:13px 14px;border-radius:18px}
+.ios-app .sp-breakdown-head{margin-bottom:7px}
+.ios-app .sp-breakdown-head h2{font-size:16px}
+.ios-app .sp-breakdown-head .re-eyebrow{font-size:8.5px}
+.ios-app .sp-breakdown-head label small{font-size:8.5px}
+.ios-app .sp-breakdown-head select{height:36px;min-height:36px!important;font-size:9.5px!important}
+.ios-app .sp-breakdown-list>button{min-height:56px;padding:7px 0;grid-template-columns:34px minmax(0,1fr) auto;gap:9px}
+.ios-app .sp-breakdown-list .re-cat{width:34px;height:34px}
+.ios-app .sp-breakdown-list strong{font-size:11px}
+.ios-app .sp-breakdown-list small{font-size:8.5px}
+.ios-app .sp-breakdown-list em b{font-size:11px}
+.ios-app .sp-more{height:31px;font-size:9px}
+.ios-app .sp-settle-foot{min-height:35px}
+.ios-app .sp-settle-foot button{font-size:9.5px}
+
+/* Settings fills the available height with normal-size tiles. */
+.ios-app .sp-profile{padding:13px 14px;border-radius:19px;margin-bottom:9px}
+.ios-app .sp-profile>span{width:47px;height:47px;font-size:11px}
+.ios-app .sp-profile strong{font-size:13.5px}
+.ios-app .sp-profile small{font-size:9.5px}
+.ios-app .sp-profile em{font-size:8.5px}
+.ios-app .sp-members{padding:9px;gap:6px;border-radius:16px;margin-bottom:9px}
+.ios-app .sp-members i{width:34px;height:34px;font-size:8px}
+.ios-app .sp-members b{font-size:9.5px}
+.ios-app .sp-settings-grid{gap:8px}
+.ios-app .sp-setting-tile{padding:12px;border-radius:16px;grid-template-columns:36px minmax(0,1fr);column-gap:9px}
+.ios-app .sp-setting-tile>span{width:36px;height:36px;border-radius:11px}
+.ios-app .sp-setting-tile>span .icon{width:17px}
+.ios-app .sp-setting-tile strong{font-size:11.5px}
+.ios-app .sp-setting-tile small{font-size:9.5px;margin-top:2px}
+.ios-app .sp-more-settings{min-height:45px;margin-top:8px;padding-inline:13px;border-radius:14px}
+.ios-app .sp-more-settings>span{font-size:10.5px}
+.ios-app .sp-signout{min-height:34px;font-size:10px}
+
+/* Forms should look like normal iOS controls, not micro UI. */
+.ios-app input,.ios-app select,.ios-app textarea{font-size:16px!important}
+.ios-app .field>span{font-size:11px}
+.ios-app .primary{font-size:12px;min-height:48px}
+.ios-app .secondary{font-size:11.5px;min-height:46px}
+.ios-app .entry-details>summary{font-size:11.5px!important}
+.ios-app .catalog-name{font-size:12px!important}
+.ios-app #toast{font-size:12px}
+
+/* On short phones, hide optional sections before reducing type. */
+@media(max-height:720px) and (max-width:699px){
+  .ios-app .re-shell-home,
+  .ios-app .re-shell-sheets,
+  .ios-app .re-shell-settle,
+  .ios-app .re-shell-settings,
+  .ios-app .re-shell-expenses{
+    padding-top:calc(76px + var(--safe-top));
+    padding-bottom:calc(84px + var(--safe-bottom));
+  }
+  .ios-app .sp-section-head.quick,.ios-app .sp-quick{display:none}
+  .ios-app .sp-home-head h1{font-size:27px}
+  .ios-app .sp-balance-main strong{font-size:38px}
+  .ios-app .sp-settings-grid{gap:6px}
+  .ios-app .sp-setting-tile{padding:10px}
+  .ios-app .sp-setting-tile small{font-size:9px}
+}
+@media(max-width:390px){
+  .ios-app .sp-detail-controls{grid-template-columns:minmax(0,1fr) 42px 88px}
+  .ios-app .sp-detail-controls .re-segments{grid-column:1/4;grid-row:2;justify-self:start}
+  .ios-app .sp-sheet-summary{grid-template-columns:1.2fr .8fr .7fr}
+  .ios-app .sp-sheet-summary>button{grid-column:1/4;width:100%;height:38px}
+}
+@media(max-width:360px){
+  .ios-app .re-shell{padding-inline:10px}
+  .ios-app .sp-home-head h1{font-size:26px}
+  .ios-app .sp-sheet-chip{max-width:118px}
+  .ios-app .sp-quick>button:nth-child(3){display:none}
+  .ios-app .sp-quick{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ios-app .sp-page-head h1{font-size:29px}
+}
