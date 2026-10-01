@@ -1277,3 +1277,285 @@
   .ios-app .ms-copy strong{font-size:12px}
   .ios-app .ms-copy small{font-size:9.5px}
 }
+
+
+/* Whole-app eye-comfort palette — low saturation, soft contrast, neutral blue-grey accent. */
+.ios-app{
+  --bg:#f4f4f1;
+  --surface:#fbfbf8;
+  --surface-2:#eeefec;
+  --text:#252a2c;
+  --muted:#6e7778;
+  --line:rgba(42,49,51,.075);
+  --line-strong:rgba(42,49,51,.13);
+  --accent:#708089;
+  --accent-2:#87969d;
+  --accent-soft:#e5e9eb;
+  --mint:#e7ece9;
+  --mint-ink:#667970;
+  --blue-soft:#e7eaed;
+  --blue-ink:#6c7a85;
+  --sand:#efebe6;
+  --sand-ink:#80766d;
+  --danger:#b76c75;
+  --glass:rgba(250,250,247,.80);
+  --glass-border:rgba(255,255,255,.86);
+  --glass-shadow:0 10px 28px rgba(35,42,44,.08);
+  background:var(--bg);
+  color:var(--text);
+}
+.ios-app.theme-dark{
+  --bg:#181c1d;
+  --surface:#212628;
+  --surface-2:#1d2224;
+  --text:#edf0f0;
+  --muted:#a8b0b1;
+  --line:rgba(255,255,255,.075);
+  --line-strong:rgba(255,255,255,.13);
+  --accent:#a9b7be;
+  --accent-2:#8e9ba1;
+  --accent-soft:#2a3236;
+  --mint:#29322f;
+  --mint-ink:#b4c5bd;
+  --blue-soft:#293035;
+  --blue-ink:#bac5cc;
+  --sand:#312e2a;
+  --sand-ink:#d1c6bc;
+  --danger:#de8a93;
+  --glass:rgba(29,34,36,.82);
+  --glass-border:rgba(255,255,255,.10);
+  --glass-shadow:0 12px 28px rgba(0,0,0,.22);
+}
+
+/* Remove coloured ambient haze; keep only a faint neutral lift at the top. */
+.ios-app .ambient{
+  background:
+    radial-gradient(circle at 18% 10%,rgba(222,225,222,.62),transparent 39%),
+    radial-gradient(circle at 82% 5%,rgba(224,228,230,.56),transparent 38%);
+  opacity:.48;
+  filter:blur(38px);
+}
+.ios-app.theme-dark .ambient{opacity:.07}
+
+/* Chrome */
+.ios-app .re-house-mark{
+  background:#76868e!important;
+}
+.ios-app .re-profile span{
+  background:#e6eaeb!important;
+  color:#596a72!important;
+}
+.ios-app.theme-dark .re-profile span{
+  background:#30383c!important;
+  color:#c6d0d4!important;
+}
+.ios-app .re-dock button.active{
+  background:rgba(255,255,255,.64)!important;
+  color:var(--accent)!important;
+}
+.ios-app.theme-dark .re-dock button.active{
+  background:rgba(255,255,255,.07)!important;
+}
+.ios-app .re-add{
+  background:#71818a!important;
+  box-shadow:0 8px 18px rgba(70,84,91,.20),inset 0 1px 1px rgba(255,255,255,.28)!important;
+}
+
+/* Main high-emphasis cards: softer graphite instead of green/black. */
+.ios-app .sp-balance,
+.ios-app .re-balance{
+  background:linear-gradient(148deg,#3c4245 0%,#474e51 100%)!important;
+  box-shadow:0 12px 28px rgba(50,57,60,.10)!important;
+}
+.ios-app.theme-dark .sp-balance,
+.ios-app.theme-dark .re-balance{
+  background:linear-gradient(148deg,#272d30 0%,#31383b 100%)!important;
+}
+.ios-app .sp-sheet-summary,
+.ios-app .re-sheet-summary{
+  background:linear-gradient(148deg,#3f4649,#4a5154)!important;
+  box-shadow:0 10px 24px rgba(48,56,59,.09)!important;
+}
+.ios-app.theme-dark .sp-sheet-summary,
+.ios-app.theme-dark .re-sheet-summary{
+  background:linear-gradient(148deg,#282e31,#333a3d)!important;
+}
+
+/* Featured/current sheet: muted blue-grey, not green. */
+.ios-app .re-sheet-card.featured .re-sheet-open,
+.ios-app .sp-featured .re-sheet-card.featured .re-sheet-open{
+  background:linear-gradient(148deg,#7b898f 0%,#8e999e 100%)!important;
+  box-shadow:0 11px 26px rgba(74,86,91,.10)!important;
+}
+.ios-app.theme-dark .re-sheet-card.featured .re-sheet-open,
+.ios-app.theme-dark .sp-featured .re-sheet-card.featured .re-sheet-open{
+  background:linear-gradient(148deg,#485358,#566268)!important;
+}
+
+/* Avatars and member accents */
+.ios-app .liquid-face-stack i{
+  background:#e8ebeb!important;
+  color:#66747a!important;
+}
+.ios-app .liquid-face-stack.warm i{
+  background:#eeeae5!important;
+  color:#81776f!important;
+}
+.ios-app.theme-dark .liquid-face-stack i{
+  background:#30383b!important;
+  color:#c5ced1!important;
+}
+.ios-app.theme-dark .liquid-face-stack.warm i{
+  background:#373330!important;
+  color:#d1c6bd!important;
+}
+
+/* Categories: distinguish gently, without bright colour blocks. */
+.ios-app .liquid-category,
+.ios-app .re-cat,
+.ios-app .catalog-icon,
+.ios-app .re-quick>button>span{
+  background:#eceeec!important;
+  color:#68777c!important;
+}
+.ios-app .liquid-category.groceries,
+.ios-app .re-cat.groceries{
+  background:#e7ece9!important;
+  color:#65786f!important;
+}
+.ios-app .liquid-category.food,
+.ios-app .re-cat.food{
+  background:#efebe6!important;
+  color:#80766d!important;
+}
+.ios-app .liquid-category.travel,
+.ios-app .re-cat.travel{
+  background:#e7eaed!important;
+  color:#6b7a85!important;
+}
+.ios-app .liquid-category.bills,
+.ios-app .re-cat.bills{
+  background:#e9eaec!important;
+  color:#70767e!important;
+}
+.ios-app.theme-dark .liquid-category,
+.ios-app.theme-dark .re-cat,
+.ios-app.theme-dark .catalog-icon,
+.ios-app.theme-dark .re-quick>button>span{
+  background:#293033!important;
+  color:#bbc5c9!important;
+}
+
+/* Buttons, pills and selection states */
+.ios-app .primary{
+  background:#708089!important;
+  color:#fff!important;
+}
+.ios-app.theme-dark .primary{
+  background:#87979e!important;
+  color:#151a1c!important;
+}
+.ios-app .re-status,
+.ios-app .settle-status{
+  background:#e7ebec!important;
+  color:#62747c!important;
+}
+.ios-app.theme-dark .re-status,
+.ios-app.theme-dark .settle-status{
+  background:#2b3438!important;
+  color:#becbd0!important;
+}
+.ios-app .re-segments .selected,
+.ios-app .switches .selected{
+  color:#5e7078!important;
+}
+.ios-app.theme-dark .re-segments .selected,
+.ios-app.theme-dark .switches .selected{
+  color:#c0cbd0!important;
+}
+.ios-app .sp-sheet-chip>.icon:first-child,
+.ios-app .re-current-sheet>.icon:first-child,
+.ios-app .sp-filter .icon,
+.ios-app .re-period>.icon{
+  color:#6e7f87!important;
+}
+
+/* Settings should match the rest of the app instead of using a separate colour world. */
+.ios-app .minimal-settings{
+  --ms-bg:#f4f4f1;
+  --ms-surface:#fbfbf8;
+  --ms-surface-2:#eeefec;
+  --ms-text:#252a2c;
+  --ms-muted:#6e7778;
+  --ms-line:#e4e6e3;
+  --ms-accent:#708089;
+}
+.ios-app.theme-dark .minimal-settings{
+  --ms-bg:#181c1d;
+  --ms-surface:#212628;
+  --ms-surface-2:#1d2224;
+  --ms-text:#edf0f0;
+  --ms-muted:#a8b0b1;
+  --ms-line:#303638;
+  --ms-accent:#a9b7be;
+}
+.ios-app .ms-avatar{
+  background:#3e4549!important;
+}
+.ios-app.theme-dark .ms-avatar{
+  background:#d7dde0!important;
+  color:#24292c!important;
+}
+.ios-app .ms-icon{
+  background:#eceeec!important;
+  color:#68777c!important;
+}
+.ios-app.theme-dark .ms-icon{
+  background:#293033!important;
+  color:#c0c9cd!important;
+}
+.ios-app .re-shell-settings{
+  background:#f4f4f1!important;
+}
+.ios-app.theme-dark .re-shell-settings{
+  background:#181c1d!important;
+}
+
+/* Dialogs and forms */
+.ios-app dialog{
+  background:rgba(250,250,248,.94)!important;
+}
+.ios-app.theme-dark dialog{
+  background:rgba(31,36,38,.95)!important;
+}
+.ios-app input,.ios-app select,.ios-app textarea{
+  background:#f0f1ee!important;
+  border-color:rgba(42,49,51,.08)!important;
+}
+.ios-app.theme-dark input,.ios-app.theme-dark select,.ios-app.theme-dark textarea{
+  background:#1d2224!important;
+  border-color:rgba(255,255,255,.08)!important;
+}
+.ios-app .entry-amount{
+  background:#ecefeb!important;
+}
+.ios-app.theme-dark .entry-amount{
+  background:#242b2d!important;
+}
+.ios-app .entry-amount .big-input,
+.ios-app .big-input{
+  color:#63757d!important;
+}
+.ios-app.theme-dark .entry-amount .big-input,
+.ios-app.theme-dark .big-input{
+  color:#b5c1c6!important;
+}
+
+/* Toasts and destructive actions */
+.ios-app #toast{
+  background:#3b4245!important;
+}
+.ios-app.theme-dark #toast{
+  background:#d5dade!important;
+  color:#202527!important;
+}
