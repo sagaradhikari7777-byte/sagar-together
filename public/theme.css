@@ -607,3 +607,383 @@
   .ios-app .sp-quick{grid-template-columns:repeat(2,minmax(0,1fr))}
   .ios-app .sp-page-head h1{font-size:29px}
 }
+
+
+/* Premium Settings revamp — household-first, calm, full-screen and readable. */
+.ios-app .premium-settings{
+  height:100%;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  width:100%;
+}
+.ios-app .ps-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex:none;
+  margin:5px 0 13px;
+}
+.ios-app .ps-head .re-eyebrow{font-size:10px;margin-bottom:4px}
+.ios-app .ps-head h1{
+  margin:0;
+  font-size:32px;
+  line-height:1.06;
+  letter-spacing:-1.15px;
+  font-weight:680;
+}
+.ios-app .ps-head .re-small-round{
+  width:42px;
+  height:42px;
+  min-width:42px;
+}
+
+/* Identity and member status live in one intentional surface. */
+.ios-app .ps-identity{
+  flex:none;
+  display:grid;
+  grid-template-columns:52px minmax(0,1fr) 36px;
+  grid-template-rows:auto auto;
+  gap:0 12px;
+  padding:14px 14px 12px;
+  border:1px solid color-mix(in srgb,var(--accent) 14%,var(--line));
+  border-radius:21px;
+  background:linear-gradient(135deg,var(--accent-soft),color-mix(in srgb,var(--surface) 86%,var(--accent-soft)));
+  box-shadow:0 7px 20px rgba(53,69,61,.045);
+}
+.ios-app .ps-avatar{
+  grid-column:1;
+  grid-row:1;
+  width:52px;
+  height:52px;
+  border-radius:17px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(145deg,#70877a,#82998c);
+  color:#fff;
+  font-size:12px;
+  font-weight:720;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3);
+}
+.ios-app .ps-identity-copy{
+  grid-column:2;
+  grid-row:1;
+  min-width:0;
+  align-self:center;
+}
+.ios-app .ps-identity-copy>div{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  min-width:0;
+}
+.ios-app .ps-identity-copy strong{
+  display:block;
+  font-size:15px;
+  font-weight:650;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ps-identity-copy em{
+  font-style:normal;
+  font-size:9px;
+  font-weight:650;
+  color:var(--accent);
+  background:var(--surface);
+  border:1px solid var(--line);
+  padding:4px 7px;
+  border-radius:999px;
+  flex:none;
+}
+.ios-app .ps-identity-copy>small{
+  display:block;
+  margin-top:4px;
+  font-size:10.5px;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ps-identity-copy p{
+  margin:4px 0 0;
+  font-size:9.5px;
+  color:var(--muted);
+}
+.ios-app .ps-identity>button{
+  grid-column:3;
+  grid-row:1;
+  align-self:center;
+  width:36px;
+  height:36px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:rgba(255,255,255,.42);
+  color:var(--muted);
+  display:grid;
+  place-items:center;
+}
+.ios-app.theme-dark .ps-identity>button{background:rgba(255,255,255,.055)}
+.ios-app .ps-identity>button .icon{width:13px;height:13px}
+.ios-app .ps-people{
+  grid-column:1 / 4;
+  grid-row:2;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:6px;
+  margin-top:12px;
+  padding-top:11px;
+  border-top:1px solid color-mix(in srgb,var(--accent) 10%,var(--line));
+}
+.ios-app .ps-people>span{
+  min-width:0;
+  text-align:center;
+}
+.ios-app .ps-people i{
+  width:32px;
+  height:32px;
+  margin:0 auto 5px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--surface);
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-style:normal;
+  font-size:8px;
+  font-weight:650;
+}
+.ios-app .ps-people .you i{
+  background:#71877b;
+  border-color:#71877b;
+  color:#fff;
+}
+.ios-app .ps-people b{
+  display:block;
+  font-size:9.5px;
+  font-weight:610;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ps-people small{
+  display:block;
+  margin-top:2px;
+  font-size:8.5px;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.ios-app .ps-section-title{
+  flex:none;
+  min-height:27px;
+  display:flex;
+  align-items:flex-end;
+  padding:0 4px 6px;
+  margin-top:9px;
+}
+.ios-app .ps-section-title span{
+  font-size:9.5px;
+  line-height:1;
+  letter-spacing:.10em;
+  font-weight:680;
+  color:var(--muted);
+}
+
+/* Household rows feel like native settings rather than dashboard tiles. */
+.ios-app .ps-group{
+  flex:none;
+  overflow:hidden;
+  padding:0 14px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:var(--surface);
+}
+.ios-app .ps-row{
+  width:100%;
+  min-height:58px;
+  padding:8px 0;
+  border:0;
+  border-bottom:1px solid var(--line);
+  background:transparent;
+  display:grid;
+  grid-template-columns:37px minmax(0,1fr) 12px;
+  gap:11px;
+  align-items:center;
+  text-align:left;
+}
+.ios-app .ps-row:last-child{border-bottom:0}
+.ios-app .ps-row-icon{
+  width:37px;
+  height:37px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:var(--surface-2);
+  color:var(--accent);
+}
+.ios-app .ps-row-icon .icon{width:17px;height:17px}
+.ios-app .ps-row>span:nth-child(2){min-width:0}
+.ios-app .ps-row strong{
+  display:block;
+  font-size:12.5px;
+  line-height:1.2;
+  font-weight:610;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ps-row small{
+  display:block;
+  margin-top:3px;
+  font-size:10px;
+  line-height:1.25;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ps-row>.icon{
+  width:11px;
+  height:11px;
+  color:var(--muted);
+}
+
+/* Preference actions use the remaining canvas cleanly. */
+.ios-app .ps-actions{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(62px,1fr));
+  gap:8px;
+}
+.ios-app .ps-action{
+  min-width:0;
+  min-height:62px;
+  padding:10px 11px;
+  border:1px solid var(--line);
+  border-radius:17px;
+  background:var(--surface);
+  display:grid;
+  grid-template-columns:36px minmax(0,1fr);
+  grid-template-rows:auto auto;
+  column-gap:9px;
+  align-items:center;
+  text-align:left;
+}
+.ios-app .ps-action>span{
+  grid-column:1;
+  grid-row:1 / 3;
+  width:36px;
+  height:36px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:var(--accent-soft);
+  color:var(--accent);
+}
+.ios-app .ps-action>span .icon{width:17px;height:17px}
+.ios-app .ps-action strong{
+  grid-column:2;
+  grid-row:1;
+  min-width:0;
+  align-self:end;
+  display:block;
+  font-size:11.5px;
+  line-height:1.2;
+  font-weight:620;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ps-action small{
+  grid-column:2;
+  grid-row:2;
+  min-width:0;
+  align-self:start;
+  display:block;
+  margin-top:2px;
+  font-size:9.5px;
+  line-height:1.2;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ps-signout{
+  flex:none;
+  width:100%;
+  min-height:34px;
+  margin-top:5px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:var(--danger);
+  font-size:10.5px;
+  font-weight:620;
+}
+
+/* The secondary settings sheet gets a cleaner grouped treatment too. */
+.ios-app .sp-more-settings-list{
+  display:grid;
+  gap:9px;
+}
+.ios-app .sp-more-settings-list .secondary{
+  min-height:58px!important;
+  padding:10px 12px!important;
+  border-radius:15px!important;
+  display:grid!important;
+  grid-template-columns:34px minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  column-gap:10px!important;
+  text-align:left!important;
+  align-items:center!important;
+}
+.ios-app .sp-more-settings-list .secondary>.icon{
+  grid-column:1;
+  grid-row:1 / 3;
+  width:18px;
+  height:18px;
+  margin:auto;
+  color:var(--accent);
+}
+.ios-app .sp-more-settings-list .secondary>span{
+  grid-column:2;
+  grid-row:2;
+  font-size:9.5px;
+  color:var(--muted);
+}
+
+/* Protect readability on shorter phones by trimming secondary copy first. */
+@media(max-height:740px) and (max-width:699px){
+  .ios-app .ps-head{margin-bottom:9px}
+  .ios-app .ps-head h1{font-size:30px}
+  .ios-app .ps-identity{padding:11px 12px 10px}
+  .ios-app .ps-avatar{width:47px;height:47px}
+  .ios-app .ps-identity-copy p{display:none}
+  .ios-app .ps-people{margin-top:9px;padding-top:9px}
+  .ios-app .ps-people i{width:29px;height:29px;margin-bottom:3px}
+  .ios-app .ps-people small{display:none}
+  .ios-app .ps-section-title{min-height:23px;margin-top:6px;padding-bottom:5px}
+  .ios-app .ps-row{min-height:53px}
+  .ios-app .ps-actions{gap:6px}
+  .ios-app .ps-action{min-height:56px;padding:8px 10px}
+  .ios-app .ps-action small{font-size:9px}
+}
+@media(max-width:360px){
+  .ios-app .ps-head h1{font-size:29px}
+  .ios-app .ps-identity{grid-template-columns:48px minmax(0,1fr) 32px;column-gap:9px}
+  .ios-app .ps-avatar{width:48px;height:48px}
+  .ios-app .ps-identity-copy strong{font-size:14px}
+  .ios-app .ps-row{grid-template-columns:35px minmax(0,1fr) 10px;gap:9px}
+  .ios-app .ps-row-icon{width:35px;height:35px}
+  .ios-app .ps-action{grid-template-columns:33px minmax(0,1fr);column-gap:7px;padding-inline:8px}
+  .ios-app .ps-action>span{width:33px;height:33px}
+  .ios-app .ps-action strong{font-size:10.8px}
+  .ios-app .ps-action small{font-size:9px}
+}
