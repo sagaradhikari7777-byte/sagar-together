@@ -2906,3 +2906,233 @@
 .ios-app .ha-signout{
   color:var(--danger)!important;
 }
+
+
+/* GLOBAL TYPOGRAPHY COMFORT PASS
+   Slightly larger everywhere while preserving the single-screen layout. */
+.ios-app{
+  font-size:16px;
+}
+.ios-app .re-eyebrow,
+.ios-app .ha-head .re-eyebrow,
+.ios-app .sp-home-head .re-eyebrow{
+  font-size:10px!important;
+}
+.ios-app .sp-home-head h1,
+.ios-app .ha-head h1{
+  font-size:30px!important;
+}
+.ios-app .sp-page-head h1,
+.ios-app .ms-head h1{
+  font-size:32px!important;
+}
+.ios-app .sp-section-head h2,
+.ios-app .ha-section-head h2{
+  font-size:16px!important;
+}
+.ios-app .sp-section-head small,
+.ios-app .ha-section-head small{
+  font-size:9px!important;
+}
+
+/* Hero / summary cards */
+.ios-app .sp-balance-top,
+.ios-app .ha-hero-top{
+  font-size:9px!important;
+}
+.ios-app .sp-balance-top em,
+.ios-app .ha-hero-top em{
+  font-size:8px!important;
+}
+.ios-app .sp-balance-main strong,
+.ios-app .ha-hero-main strong,
+.ios-app .ha-settle-main>div:first-child strong{
+  font-size:40px!important;
+}
+.ios-app .sp-balance-main p,
+.ios-app .ha-hero-main p,
+.ios-app .ha-settle-main>div:first-child p{
+  font-size:11px!important;
+}
+.ios-app .sp-balance-stats small,
+.ios-app .ha-hero-stats small{
+  font-size:9px!important;
+}
+.ios-app .sp-balance-stats b,
+.ios-app .ha-hero-stats b{
+  font-size:12px!important;
+}
+
+/* Expense rows and sheet lists */
+.ios-app .sp-home .expense-info strong,
+.ios-app .ha-scroll-list .expense-info strong,
+.ios-app .sp-results .expense-info strong{
+  font-size:12px!important;
+}
+.ios-app .sp-home .expense-info>span,
+.ios-app .ha-scroll-list .expense-info>span,
+.ios-app .sp-results .expense-info>span{
+  font-size:9.5px!important;
+}
+.ios-app .sp-home .expense-total strong,
+.ios-app .ha-scroll-list .expense-total strong,
+.ios-app .sp-results .expense-total strong{
+  font-size:12px!important;
+}
+.ios-app .ha-scroll-list .expense-total small,
+.ios-app .sp-results .expense-total small{
+  font-size:8.5px!important;
+}
+.ios-app .ha-sheet-list .re-sheet-copy strong,
+.ios-app .sp-sheet-scroll .re-sheet-copy strong{
+  font-size:11.5px!important;
+}
+.ios-app .ha-sheet-list .re-sheet-copy em,
+.ios-app .sp-sheet-scroll .re-sheet-copy em{
+  font-size:8.5px!important;
+}
+.ios-app .ha-sheet-list .re-sheet-money,
+.ios-app .sp-sheet-scroll .re-sheet-money{
+  font-size:11.5px!important;
+}
+.ios-app .ha-sheet-hero-main strong{
+  font-size:18px!important;
+}
+.ios-app .ha-sheet-hero-main small{
+  font-size:10px!important;
+}
+.ios-app .ha-sheet-hero-main>b{
+  font-size:18px!important;
+}
+
+/* Search, filters and small controls */
+.ios-app .re-search input,
+.ios-app .ha-filter-row .re-search input,
+.ios-app .ha-sheet-search input{
+  font-size:12px!important;
+}
+.ios-app .re-segments button,
+.ios-app .switches button,
+.ios-app .ha-filter-row .re-segments button{
+  font-size:9.5px!important;
+}
+.ios-app .ha-inline-actions>select,
+.ios-app .ha-share-select select,
+.ios-app .sp-detail-controls>select{
+  font-size:9.5px!important;
+}
+.ios-app .text-button{
+  font-size:10px!important;
+}
+.ios-app .ha-result-head span,
+.ios-app .sp-result-head span{
+  font-size:9px!important;
+}
+.ios-app .ha-result-head strong,
+.ios-app .sp-result-head strong{
+  font-size:11px!important;
+}
+
+/* Settle breakdown */
+.ios-app .ha-breakdown-list strong,
+.ios-app .sp-breakdown-list strong{
+  font-size:11px!important;
+}
+.ios-app .ha-breakdown-list small,
+.ios-app .sp-breakdown-list small{
+  font-size:8.5px!important;
+}
+.ios-app .ha-breakdown-list em b,
+.ios-app .sp-breakdown-list em b{
+  font-size:11px!important;
+}
+.ios-app .ha-more,
+.ios-app .sp-more{
+  font-size:9px!important;
+}
+.ios-app .ha-foot-actions button,
+.ios-app .sp-settle-foot button{
+  font-size:9.5px!important;
+}
+
+/* Settings */
+.ios-app .ha-settings-person small{
+  font-size:8px!important;
+}
+.ios-app .ha-settings-person strong{
+  font-size:16px!important;
+}
+.ios-app .ha-settings-person p{
+  font-size:9.5px!important;
+}
+.ios-app .ha-setting-row strong,
+.ios-app .ms-copy strong{
+  font-size:11.5px!important;
+}
+.ios-app .ha-setting-row small,
+.ios-app .ms-copy small{
+  font-size:9px!important;
+}
+.ios-app .ha-setting-row em,
+.ios-app .ms-row em{
+  font-size:9px!important;
+}
+.ios-app .ha-signout,
+.ios-app .ms-signout{
+  font-size:10px!important;
+}
+
+/* Quick add, top chrome and bottom navigation */
+.ios-app .sp-sheet-chip span{
+  font-size:11.5px!important;
+}
+.ios-app .sp-quick strong{
+  font-size:11px!important;
+}
+.ios-app .sp-quick small{
+  font-size:9.5px!important;
+}
+.ios-app .re-house small,
+.ios-app .re-inner-label small{
+  font-size:9.5px!important;
+}
+.ios-app .re-house strong,
+.ios-app .re-inner-label strong{
+  font-size:13.5px!important;
+}
+.ios-app .re-dock button small{
+  font-size:11px!important;
+}
+
+/* Forms, dialogs and actions */
+.ios-app .field>span{
+  font-size:11.5px!important;
+}
+.ios-app .primary{
+  font-size:12.5px!important;
+}
+.ios-app .secondary{
+  font-size:12px!important;
+}
+.ios-app .entry-details>summary{
+  font-size:12px!important;
+}
+.ios-app .catalog-name{
+  font-size:12.5px!important;
+}
+.ios-app #toast{
+  font-size:12.5px!important;
+}
+
+/* Smaller iPhones: keep the bump, only trim headlines slightly. */
+@media(max-height:720px) and (max-width:699px){
+  .ios-app .sp-home-head h1,
+  .ios-app .ha-head h1{
+    font-size:28px!important;
+  }
+  .ios-app .sp-balance-main strong,
+  .ios-app .ha-hero-main strong,
+  .ios-app .ha-settle-main>div:first-child strong{
+    font-size:36px!important;
+  }
+}
