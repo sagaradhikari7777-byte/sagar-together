@@ -3136,3 +3136,25 @@
     font-size:36px!important;
   }
 }
+
+
+/* Settings header theme control */
+.ios-app .ha-theme-toggle{
+  flex:none;
+  width:44px!important;
+  height:44px!important;
+  min-width:44px!important;
+  color:var(--accent)!important;
+  background:var(--surface)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:0 5px 16px rgba(63,92,136,.08)!important;
+}
+.ios-app .ha-theme-toggle .icon{
+  width:19px!important;
+  height:19px!important;
+}
+.ios-app.theme-dark .ha-theme-toggle{
+  background:var(--surface)!important;
+  color:var(--accent)!important;
+  box-shadow:0 5px 16px rgba(0,0,0,.18)!important;
+}
