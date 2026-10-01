@@ -1559,3 +1559,332 @@
   background:#d5dade!important;
   color:#202527!important;
 }
+
+
+/* FINAL UNIFORM PALETTE
+   One hue family across every screen. No green/sage/sand/blue category palette. */
+.ios-app{
+  --bg:#f3f4f5;
+  --surface:#fbfbfc;
+  --surface-2:#eceff1;
+  --text:#25292d;
+  --muted:#6f767c;
+  --line:rgba(42,47,52,.08);
+  --line-strong:rgba(42,47,52,.14);
+  --accent:#687783;
+  --accent-2:#7e8b95;
+  --accent-soft:#e6eaed;
+  --mint:#e6eaed;
+  --mint-ink:#687783;
+  --blue-soft:#e6eaed;
+  --blue-ink:#687783;
+  --sand:#e6eaed;
+  --sand-ink:#687783;
+  --danger:#b96a73;
+  --glass:rgba(250,251,252,.82);
+  --glass-border:rgba(255,255,255,.88);
+  --glass-shadow:0 10px 28px rgba(38,44,49,.075);
+  background:#f3f4f5!important;
+  color:var(--text);
+}
+.ios-app.theme-dark{
+  --bg:#181b1e;
+  --surface:#212529;
+  --surface-2:#2a2f34;
+  --text:#eff1f2;
+  --muted:#a5acb2;
+  --line:rgba(255,255,255,.075);
+  --line-strong:rgba(255,255,255,.13);
+  --accent:#aab5be;
+  --accent-2:#929da6;
+  --accent-soft:#30363b;
+  --mint:#30363b;
+  --mint-ink:#aab5be;
+  --blue-soft:#30363b;
+  --blue-ink:#aab5be;
+  --sand:#30363b;
+  --sand-ink:#aab5be;
+  --danger:#df8a93;
+  --glass:rgba(30,34,38,.84);
+  --glass-border:rgba(255,255,255,.10);
+  --glass-shadow:0 12px 28px rgba(0,0,0,.22);
+  background:#181b1e!important;
+}
+
+/* Neutral backdrop everywhere */
+.ios-app .ambient{
+  background:radial-gradient(circle at 50% 0%,rgba(225,228,231,.72),transparent 44%)!important;
+  opacity:.42!important;
+}
+.ios-app.theme-dark .ambient{
+  background:radial-gradient(circle at 50% 0%,rgba(86,94,101,.24),transparent 44%)!important;
+  opacity:.16!important;
+}
+
+/* Every regular surface */
+.ios-app .re-current-sheet,
+.ios-app .re-metrics article,
+.ios-app .liquid-expense-list,
+.ios-app .re-quick>button,
+.ios-app .re-sheet-card,
+.ios-app .re-sheet-card .sheet-front,
+.ios-app .re-sheet-open,
+.ios-app .re-search,
+.ios-app .re-settle-hero,
+.ios-app .re-settle-stats>span,
+.ios-app .re-breakdown,
+.ios-app .re-profile-card,
+.ios-app .re-members,
+.ios-app .re-settings-group,
+.ios-app .sp-sheet-scroll .re-sheet-card,
+.ios-app .sp-settle-hero,
+.ios-app .sp-settle-stats>span,
+.ios-app .sp-breakdown,
+.ios-app .ms-profile,
+.ios-app .ms-group,
+.ios-app .sp-more-settings-list .secondary{
+  background:var(--surface)!important;
+  border-color:var(--line)!important;
+}
+
+/* One emphasis colour for every hero / current item */
+.ios-app .sp-balance,
+.ios-app .re-balance,
+.ios-app .sp-sheet-summary,
+.ios-app .re-sheet-summary{
+  background:#4d5861!important;
+  color:#fff!important;
+  box-shadow:0 12px 26px rgba(48,56,62,.10)!important;
+}
+.ios-app.theme-dark .sp-balance,
+.ios-app.theme-dark .re-balance,
+.ios-app.theme-dark .sp-sheet-summary,
+.ios-app.theme-dark .re-sheet-summary{
+  background:#353c42!important;
+}
+.ios-app .re-sheet-card.featured .re-sheet-open,
+.ios-app .sp-featured .re-sheet-card.featured .re-sheet-open{
+  background:#78858e!important;
+  color:#fff!important;
+  box-shadow:0 11px 24px rgba(62,72,79,.10)!important;
+}
+.ios-app.theme-dark .re-sheet-card.featured .re-sheet-open,
+.ios-app.theme-dark .sp-featured .re-sheet-card.featured .re-sheet-open{
+  background:#515c64!important;
+}
+
+/* All accent-bearing controls use the same slate */
+.ios-app .primary,
+.ios-app .re-add{
+  background:#687783!important;
+  color:#fff!important;
+}
+.ios-app.theme-dark .primary,
+.ios-app.theme-dark .re-add{
+  background:#aab5be!important;
+  color:#1c2125!important;
+}
+.ios-app .text-button,
+.ios-app .re-eyebrow,
+.ios-app .sp-home-head h1 span,
+.ios-app .re-auth h1 span,
+.ios-app .re-sheet-copy small,
+.ios-app .sp-more,
+.ios-app .re-more-expenses{
+  color:var(--accent)!important;
+}
+
+/* Uniform icons: categories no longer change hue */
+.ios-app .liquid-category,
+.ios-app .re-cat,
+.ios-app .liquid-category.groceries,
+.ios-app .liquid-category.food,
+.ios-app .liquid-category.travel,
+.ios-app .liquid-category.bills,
+.ios-app .re-cat.groceries,
+.ios-app .re-cat.food,
+.ios-app .re-cat.travel,
+.ios-app .re-cat.bills,
+.ios-app .re-folder,
+.ios-app .re-current-sheet>.icon:first-child,
+.ios-app .re-quick>button>span,
+.ios-app .catalog-icon,
+.ios-app .re-setting-icon,
+.ios-app .ps-row-icon,
+.ios-app .ps-action>span,
+.ios-app .ms-icon,
+.ios-app .sicon,
+.ios-app .welcome-demo-icon,
+.ios-app .welcome-demo-icon.food{
+  background:var(--accent-soft)!important;
+  color:var(--accent)!important;
+}
+.ios-app .liquid-category .icon,
+.ios-app .re-cat .icon,
+.ios-app .re-folder .icon{
+  color:currentColor!important;
+}
+
+/* One treatment for selection/status pills */
+.ios-app .re-status,
+.ios-app .settle-status,
+.ios-app .badge,
+.ios-app .welcome-demo-head em{
+  background:var(--accent-soft)!important;
+  color:var(--accent)!important;
+}
+.ios-app .re-segments .selected,
+.ios-app .switches .selected{
+  background:var(--surface)!important;
+  color:var(--accent)!important;
+}
+.ios-app .sp-filter i{
+  background:var(--accent)!important;
+  color:#fff!important;
+}
+.ios-app .sp-balance-top i,
+.ios-app .re-balance-top i,
+.ios-app .dot,
+.ios-app .dot.b{
+  background:#b8c0c6!important;
+}
+
+/* People and avatars all share the same family */
+.ios-app .re-house-mark,
+.ios-app .ps-avatar{
+  background:#687783!important;
+  color:#fff!important;
+}
+.ios-app .ms-avatar{
+  background:#3f474e!important;
+  color:#fff!important;
+}
+.ios-app .re-profile span,
+.ios-app .avatar,
+.ios-app .avatar.b,
+.ios-app .people-faces span,
+.ios-app .liquid-face-stack i,
+.ios-app .liquid-face-stack.warm i{
+  background:var(--accent-soft)!important;
+  color:var(--accent)!important;
+  border-color:var(--surface)!important;
+}
+.ios-app.theme-dark .ms-avatar{
+  background:#d2d8dc!important;
+  color:#252a2e!important;
+}
+
+/* Navigation / glass stays neutral, active state only uses the same accent */
+.ios-app .re-house,
+.ios-app .re-profile,
+.ios-app .re-glass-circle,
+.ios-app .re-round,
+.ios-app .re-small-round,
+.ios-app .re-dock{
+  background:var(--glass)!important;
+  border-color:var(--glass-border)!important;
+}
+.ios-app .re-dock button{color:var(--muted)!important}
+.ios-app .re-dock button.active{
+  background:rgba(255,255,255,.68)!important;
+  color:var(--accent)!important;
+}
+.ios-app.theme-dark .re-dock button.active{
+  background:rgba(255,255,255,.07)!important;
+  color:var(--accent)!important;
+}
+
+/* Forms, modals and secondary surfaces */
+.ios-app dialog{
+  background:rgba(250,251,252,.96)!important;
+  color:var(--text)!important;
+}
+.ios-app.theme-dark dialog{
+  background:rgba(32,36,40,.96)!important;
+}
+.ios-app input,
+.ios-app select,
+.ios-app textarea,
+.ios-app .entry-details,
+.ios-app .split-preview{
+  background:var(--surface-2)!important;
+  color:var(--text)!important;
+  border-color:var(--line)!important;
+}
+.ios-app .entry-amount,
+.ios-app .insight-hero,
+.ios-app .insight-split>div{
+  background:var(--accent-soft)!important;
+  color:var(--text)!important;
+}
+.ios-app .entry-amount .big-input,
+.ios-app .big-input,
+.ios-app .insight-hero strong{
+  color:var(--accent)!important;
+}
+.ios-app .bar i{
+  background:var(--accent)!important;
+}
+
+/* Welcome/onboarding uses the same palette too */
+.ios-app .re-auth-preview,
+.ios-app .welcome-demo{
+  background:var(--surface)!important;
+  border-color:var(--line)!important;
+}
+.ios-app .welcome-share-note{
+  background:#687783!important;
+  color:#fff!important;
+}
+.ios-app .re-auth-points span,
+.ios-app .onboarding-steps>div{
+  background:var(--surface)!important;
+  border-color:var(--line)!important;
+}
+
+/* Settings cannot introduce its own palette anymore */
+.ios-app .minimal-settings{
+  --ms-bg:var(--bg)!important;
+  --ms-surface:var(--surface)!important;
+  --ms-surface-2:var(--surface-2)!important;
+  --ms-text:var(--text)!important;
+  --ms-muted:var(--muted)!important;
+  --ms-line:rgba(42,47,52,.08)!important;
+  --ms-accent:var(--accent)!important;
+}
+.ios-app.theme-dark .minimal-settings{
+  --ms-line:rgba(255,255,255,.075)!important;
+}
+.ios-app .re-shell-settings{
+  background:var(--bg)!important;
+}
+
+/* Only destructive actions keep a muted semantic red. */
+.ios-app .danger,
+.ios-app .ms-signout,
+.ios-app .ps-signout,
+.ios-app .sp-signout{
+  color:var(--danger)!important;
+}
+
+/* Keep white text consistent on all solid slate cards */
+.ios-app .sp-balance *,
+.ios-app .re-balance *,
+.ios-app .sp-sheet-summary *,
+.ios-app .re-sheet-summary *,
+.ios-app .re-sheet-card.featured .re-sheet-open *{
+  --muted:#dfe4e6;
+}
+.ios-app .sp-balance small,
+.ios-app .sp-balance p,
+.ios-app .sp-balance span,
+.ios-app .re-balance small,
+.ios-app .re-balance p,
+.ios-app .re-balance span,
+.ios-app .sp-sheet-summary small,
+.ios-app .sp-sheet-summary span,
+.ios-app .re-sheet-card.featured .re-sheet-copy small,
+.ios-app .re-sheet-card.featured .re-sheet-copy em,
+.ios-app .re-sheet-card.featured .re-sheet-meta{
+  color:#e2e6e8!important;
+}
