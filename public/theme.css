@@ -987,3 +987,293 @@
   .ios-app .ps-action strong{font-size:10.8px}
   .ios-app .ps-action small{font-size:9px}
 }
+
+
+/* Minimal iOS Settings — neutral palette, no gradients, no dashboard tile wall. */
+.ios-app .minimal-settings{
+  --ms-bg:#f5f6f8;
+  --ms-surface:#ffffff;
+  --ms-surface-2:#f1f2f4;
+  --ms-text:#17191d;
+  --ms-muted:#7b838c;
+  --ms-line:#e7e9ec;
+  --ms-accent:#5d7082;
+  height:100%;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  color:var(--ms-text);
+}
+.ios-app.theme-dark .minimal-settings{
+  --ms-bg:#181b1f;
+  --ms-surface:#22262b;
+  --ms-surface-2:#2a2f35;
+  --ms-text:#f2f4f6;
+  --ms-muted:#a6adb5;
+  --ms-line:#31363c;
+  --ms-accent:#afc0d0;
+}
+.ios-app .re-shell-settings{
+  background:var(--ms-bg,#f5f6f8);
+}
+.ios-app .ms-head{
+  flex:none;
+  margin:5px 2px 14px;
+}
+.ios-app .ms-head .re-eyebrow{
+  margin-bottom:4px;
+  font-size:10px;
+  color:var(--ms-muted);
+}
+.ios-app .ms-head h1{
+  margin:0;
+  font-size:33px;
+  line-height:1.04;
+  letter-spacing:-1.3px;
+  font-weight:690;
+  color:var(--ms-text);
+}
+
+/* Profile is deliberately plain — white card, graphite avatar, no coloured wash. */
+.ios-app .ms-profile{
+  flex:none;
+  min-height:78px;
+  padding:12px 14px;
+  display:grid;
+  grid-template-columns:52px minmax(0,1fr) 34px;
+  gap:12px;
+  align-items:center;
+  border:1px solid var(--ms-line);
+  border-radius:21px;
+  background:var(--ms-surface);
+  box-shadow:0 5px 18px rgba(20,24,28,.035);
+}
+.ios-app .ms-avatar{
+  width:52px;
+  height:52px;
+  border-radius:17px;
+  display:grid;
+  place-items:center;
+  background:#282d33;
+  color:#fff;
+  font-size:12px;
+  font-weight:720;
+}
+.ios-app.theme-dark .ms-avatar{
+  background:#e1e5e9;
+  color:#22262b;
+}
+.ios-app .ms-profile-copy{min-width:0}
+.ios-app .ms-profile-copy strong{
+  display:block;
+  font-size:15px;
+  line-height:1.2;
+  font-weight:650;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ms-profile-copy small{
+  display:block;
+  margin-top:5px;
+  font-size:10.5px;
+  line-height:1.25;
+  color:var(--ms-muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ms-profile>button{
+  width:34px;
+  height:34px;
+  border:0;
+  border-radius:50%;
+  background:var(--ms-surface-2);
+  color:var(--ms-muted);
+  display:grid;
+  place-items:center;
+}
+.ios-app .ms-profile>button .icon{width:12px;height:12px}
+
+/* Members read like status, not another colourful card. */
+.ios-app .ms-members{
+  flex:none;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:6px;
+  margin:9px 0 0;
+  padding:9px 8px;
+  border:1px solid var(--ms-line);
+  border-radius:17px;
+  background:var(--ms-surface);
+}
+.ios-app .ms-members>span{
+  min-width:0;
+  text-align:center;
+}
+.ios-app .ms-members i{
+  width:34px;
+  height:34px;
+  margin:0 auto 5px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--ms-surface-2);
+  color:#59636e;
+  font-style:normal;
+  font-size:8px;
+  font-weight:680;
+}
+.ios-app.theme-dark .ms-members i{color:#c6ccd2}
+.ios-app .ms-members .you i{
+  background:#dfe7ef;
+  color:#49627a;
+}
+.ios-app.theme-dark .ms-members .you i{
+  background:#33404b;
+  color:#c2d2df;
+}
+.ios-app .ms-members b{
+  display:block;
+  font-size:9.5px;
+  line-height:1.15;
+  font-weight:610;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ms-members small{
+  display:block;
+  margin-top:2px;
+  font-size:8.5px;
+  color:var(--ms-muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* Native grouped list treatment. */
+.ios-app .ms-label{
+  flex:none;
+  margin:14px 5px 7px!important;
+  font-size:10px!important;
+  line-height:1!important;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:680!important;
+  color:var(--ms-muted);
+}
+.ios-app .ms-group{
+  flex:none;
+  overflow:hidden;
+  padding:0 14px;
+  border:1px solid var(--ms-line);
+  border-radius:19px;
+  background:var(--ms-surface);
+}
+.ios-app .ms-row{
+  width:100%;
+  min-height:61px;
+  padding:8px 0;
+  border:0;
+  border-bottom:1px solid var(--ms-line);
+  background:transparent;
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr) auto 11px;
+  gap:11px;
+  align-items:center;
+  text-align:left;
+  color:var(--ms-text);
+}
+.ios-app .ms-row:last-child{border-bottom:0}
+.ios-app .ms-icon{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:var(--ms-surface-2);
+  color:#626d78;
+}
+.ios-app.theme-dark .ms-icon{color:#c0c8d0}
+.ios-app .ms-icon .icon{width:18px;height:18px}
+.ios-app .ms-copy{min-width:0}
+.ios-app .ms-copy strong{
+  display:block;
+  font-size:12.5px;
+  line-height:1.2;
+  font-weight:610;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ms-copy small{
+  display:block;
+  margin-top:3px;
+  font-size:10px;
+  line-height:1.25;
+  color:var(--ms-muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.ios-app .ms-row em{
+  font-style:normal;
+  font-size:10px;
+  color:var(--ms-muted);
+  white-space:nowrap;
+}
+.ios-app .ms-row>.icon{
+  width:11px;
+  height:11px;
+  color:#9aa1a9;
+}
+.ios-app .ms-appearance{
+  margin-bottom:0;
+}
+.ios-app .ms-signout{
+  flex:none;
+  width:100%;
+  min-height:38px;
+  margin-top:6px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#be5c66;
+  font-size:11px;
+  font-weight:620;
+}
+
+/* Secondary settings sheet uses the same neutral language. */
+.ios-app .sp-more-settings-list .secondary{
+  background:var(--surface)!important;
+  border-color:var(--line)!important;
+}
+.ios-app .sp-more-settings-list .secondary>.icon{
+  color:#687481!important;
+}
+
+/* Preserve readability. Hide secondary status before shrinking text on short displays. */
+@media(max-height:740px) and (max-width:699px){
+  .ios-app .ms-head{margin-bottom:10px}
+  .ios-app .ms-head h1{font-size:31px}
+  .ios-app .ms-profile{min-height:70px;padding-block:9px}
+  .ios-app .ms-avatar{width:47px;height:47px}
+  .ios-app .ms-members{padding-block:7px}
+  .ios-app .ms-members i{width:30px;height:30px;margin-bottom:3px}
+  .ios-app .ms-members small{display:none}
+  .ios-app .ms-label{margin-top:10px!important;margin-bottom:5px!important}
+  .ios-app .ms-row{min-height:55px}
+  .ios-app .ms-copy small{font-size:9.5px}
+}
+@media(max-width:360px){
+  .ios-app .ms-head h1{font-size:30px}
+  .ios-app .ms-profile{grid-template-columns:48px minmax(0,1fr) 32px;gap:9px}
+  .ios-app .ms-avatar{width:48px;height:48px}
+  .ios-app .ms-profile-copy strong{font-size:14px}
+  .ios-app .ms-row{grid-template-columns:36px minmax(0,1fr) auto 10px;gap:9px}
+  .ios-app .ms-icon{width:36px;height:36px}
+  .ios-app .ms-copy strong{font-size:12px}
+  .ios-app .ms-copy small{font-size:9.5px}
+}
