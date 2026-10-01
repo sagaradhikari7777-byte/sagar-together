@@ -936,3 +936,160 @@
  .ios-app .sheet-workspace-side strong{font-size:11px}
  .ios-app .sheet-status-tabs button{padding-inline:9px!important}
 }
+
+
+/* Welcome screen repair — replaces the legacy receipt mockup that was colliding with old CSS. */
+.ios-app .welcome-shell{
+ max-width:470px!important;
+ padding:calc(34px + var(--safe-top)) 22px calc(26px + var(--safe-bottom))!important;
+}
+.ios-app .new-onboarding{width:100%;margin:0 auto!important}
+.ios-app .new-onboarding .brand{
+ margin:0 0 34px!important;
+ font-size:23px!important;
+ line-height:1!important;
+}
+.ios-app .new-onboarding .brand img{width:38px!important;height:38px!important;border-radius:13px}
+.ios-app .new-onboarding .brand-dot{margin-left:-7px}
+.ios-app .welcome-kicker{font-size:9px!important;letter-spacing:.13em!important;margin:0 0 12px!important}
+.ios-app .new-onboarding h1{
+ font-size:42px!important;line-height:1.08!important;letter-spacing:-1.85px!important;
+ margin:0 0 16px!important;font-weight:690!important;
+}
+.ios-app .new-onboarding h1 span{color:var(--accent)!important}
+.ios-app .new-onboarding .welcome-copy{
+ max-width:390px!important;font-size:13.5px!important;line-height:1.68!important;
+ margin:0 0 22px!important;color:var(--muted)!important;
+}
+
+/* New sample expense card. */
+.ios-app .welcome-demo{
+ padding:15px;
+ border:1px solid color-mix(in srgb,var(--accent) 10%,var(--line));
+ border-radius:24px;
+ background:linear-gradient(145deg,color-mix(in srgb,var(--accent-soft) 68%,var(--surface)),var(--surface));
+ box-shadow:0 14px 34px rgba(36,56,61,.07);
+ margin:0;
+}
+.ios-app .welcome-demo-head{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ margin-bottom:11px;
+}
+.ios-app .welcome-demo-head>span{display:flex;align-items:center;gap:7px}
+.ios-app .welcome-demo-head .icon{width:15px;height:15px;color:var(--accent)}
+.ios-app .welcome-demo-head strong{font-size:10px;font-weight:650;letter-spacing:.02em}
+.ios-app .welcome-demo-head em{
+ font-style:normal;font-size:7.5px;font-weight:700;letter-spacing:.1em;
+ color:var(--mint-ink);background:var(--mint);padding:5px 7px;border-radius:999px;
+}
+.ios-app .welcome-demo-list{
+ overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:17px;
+}
+.ios-app .welcome-demo-list>div{
+ min-height:58px;padding:9px 11px;
+ display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:10px;
+ border-bottom:1px solid var(--line);
+}
+.ios-app .welcome-demo-list>div:last-child{border-bottom:0}
+.ios-app .welcome-demo-icon{
+ width:36px;height:36px;border-radius:11px;display:grid;place-items:center;
+ background:var(--mint);color:var(--mint-ink);
+}
+.ios-app .welcome-demo-icon.food{background:var(--peach);color:var(--peach-ink)}
+.ios-app .welcome-demo-icon .icon{width:17px;height:17px}
+.ios-app .welcome-demo-list>div>span:nth-child(2){min-width:0}
+.ios-app .welcome-demo-list strong{
+ display:block;font-size:11.5px;font-weight:610;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.ios-app .welcome-demo-list small{
+ display:block;font-size:8.5px;color:var(--muted);margin-top:4px;
+}
+.ios-app .welcome-demo-list>div>b{
+ font-size:12px;font-weight:630;white-space:nowrap;
+}
+.ios-app .welcome-demo-summary{
+ display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;
+}
+.ios-app .welcome-demo-summary>span{
+ padding:10px 11px;border-radius:13px;background:rgba(255,255,255,.58);
+ border:1px solid rgba(255,255,255,.7);
+}
+.ios-app.theme-dark .welcome-demo-summary>span{
+ background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.06);
+}
+.ios-app .welcome-demo-summary small{
+ display:block;font-size:8px;color:var(--muted);margin-bottom:3px;
+}
+.ios-app .welcome-demo-summary strong{
+ display:block;font-size:14px;font-weight:630;letter-spacing:-.25px;
+}
+
+/* Separate share message, no overlay/rotation. */
+.ios-app .welcome-share-note{
+ display:grid;grid-template-columns:36px minmax(0,1fr) 30px;align-items:center;gap:10px;
+ margin:10px 0 0;padding:11px 12px;border-radius:17px;
+ background:linear-gradient(145deg,#5c8189,#486d76);color:#fff;
+ box-shadow:0 10px 24px rgba(64,98,106,.16);
+}
+.ios-app .welcome-share-icon,.ios-app .welcome-check{
+ display:grid;place-items:center;border-radius:11px;background:rgba(255,255,255,.11);
+}
+.ios-app .welcome-share-icon{width:36px;height:36px}
+.ios-app .welcome-check{width:30px;height:30px;border-radius:50%}
+.ios-app .welcome-share-icon .icon{width:17px;height:17px}
+.ios-app .welcome-check .icon{width:15px;height:15px}
+.ios-app .welcome-share-note>span:nth-child(2){min-width:0}
+.ios-app .welcome-share-note small{
+ display:block;font-size:7.5px;letter-spacing:.1em;color:#d5e4e2;margin-bottom:3px;
+}
+.ios-app .welcome-share-note strong{
+ display:block;font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* Three clear onboarding steps. */
+.ios-app .onboarding-steps{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:8px!important;margin:18px 0 20px!important;
+}
+.ios-app .onboarding-steps>div{
+ min-width:0;min-height:58px;padding:9px 9px!important;
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;
+ gap:4px!important;border:1px solid var(--line);border-radius:14px;background:var(--surface);
+}
+.ios-app .onboarding-steps b{
+ font-size:8.5px!important;color:var(--accent)!important;font-weight:700!important;line-height:1!important;
+}
+.ios-app .onboarding-steps span{
+ font-size:9.5px!important;line-height:1.3!important;color:var(--ink);font-weight:560;
+}
+
+/* Clean action spacing. */
+.ios-app .new-onboarding>.primary{
+ min-height:50px!important;margin:0!important;border-radius:16px!important;font-size:12px!important;
+}
+.ios-app .new-onboarding>.secondary{
+ min-height:48px!important;margin:9px 0 0!important;border-radius:16px!important;font-size:11.5px!important;
+}
+.ios-app .new-onboarding>.text-button{
+ min-height:40px!important;margin:7px 0 0!important;justify-content:center!important;font-size:10.5px!important;
+}
+.ios-app .new-onboarding .welcome-footnote{
+ margin:6px 0 0!important;font-size:8.5px!important;text-align:center!important;color:var(--muted)!important;
+}
+
+@media(max-width:360px){
+ .ios-app .welcome-shell{padding-inline:18px!important}
+ .ios-app .new-onboarding .brand{margin-bottom:28px!important}
+ .ios-app .new-onboarding h1{font-size:38px!important}
+ .ios-app .new-onboarding .welcome-copy{font-size:12.5px!important;margin-bottom:18px!important}
+ .ios-app .welcome-demo{padding:12px;border-radius:21px}
+ .ios-app .welcome-demo-list>div{min-height:54px;padding-inline:9px;grid-template-columns:33px minmax(0,1fr) auto;gap:8px}
+ .ios-app .welcome-demo-icon{width:33px;height:33px}
+ .ios-app .welcome-demo-list strong{font-size:10.5px}
+ .ios-app .welcome-demo-list>div>b{font-size:11px}
+ .ios-app .welcome-share-note{grid-template-columns:33px minmax(0,1fr) 27px;padding:10px;gap:8px}
+ .ios-app .welcome-share-icon{width:33px;height:33px}.ios-app .welcome-check{width:27px;height:27px}
+ .ios-app .onboarding-steps{gap:6px!important;margin:14px 0 17px!important}
+ .ios-app .onboarding-steps>div{padding:8px 7px!important;min-height:54px}
+ .ios-app .onboarding-steps span{font-size:8.7px!important}
+}
