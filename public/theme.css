@@ -3615,3 +3615,619 @@
 .ios-app .ha-signout{
   color:var(--danger)!important;
 }
+
+
+/* REFERENCE-INSPIRED TOGETHER UI — keeps product logic, changes visual language only. */
+.ios-app{
+  --bg:#f2f1ef;
+  --surface:#ffffff;
+  --surface-2:#f6f5f3;
+  --surface-3:#faf9f7;
+  --text:#171a17;
+  --muted:#7b817b;
+  --line:#e5e3df;
+  --line-strong:#d8d5cf;
+  --accent:#2f8a45;
+  --accent-strong:#226b35;
+  --accent-soft:#e2f1df;
+  --accent-faint:#f2f8f0;
+  --mint:#dff0dc;
+  --mint-2:#ebf6e8;
+  --danger:#ba626e;
+  --glass:rgba(255,255,255,.92);
+  --glass-border:rgba(255,255,255,.96);
+  --glass-shadow:0 6px 20px rgba(38,49,40,.07);
+  background:var(--bg)!important;
+  color:var(--text)!important;
+}
+.ios-app.theme-dark{
+  --bg:#121613;
+  --surface:#1a201b;
+  --surface-2:#202721;
+  --surface-3:#171c18;
+  --text:#f2f5f2;
+  --muted:#9da59e;
+  --line:#2a342c;
+  --line-strong:#354038;
+  --accent:#79c887;
+  --accent-strong:#9bd5a5;
+  --accent-soft:#233a28;
+  --accent-faint:#19251c;
+  --mint:#203724;
+  --mint-2:#1b2c1e;
+  --danger:#df8791;
+  --glass:rgba(26,32,27,.94);
+  --glass-border:rgba(255,255,255,.08);
+  --glass-shadow:0 8px 24px rgba(0,0,0,.24);
+  background:var(--bg)!important;
+}
+
+/* Calm neutral background. */
+.ios-app .ambient{
+  background:radial-gradient(circle at 50% -8%,rgba(224,229,221,.76),transparent 38%)!important;
+  opacity:.34!important;
+  filter:blur(44px)!important;
+}
+.ios-app.theme-dark .ambient{
+  background:radial-gradient(circle at 50% -8%,rgba(74,104,78,.18),transparent 38%)!important;
+  opacity:.16!important;
+}
+
+/* Simple white top bar like the reference app. */
+.ios-app .re-top{
+  min-height:58px!important;
+  padding:8px 14px!important;
+  background:color-mix(in srgb,var(--surface) 94%,transparent)!important;
+  border-bottom:1px solid var(--line)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(18px) saturate(130%)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(130%)!important;
+}
+.ios-app .re-house{
+  min-height:40px!important;
+  padding:0!important;
+  gap:8px!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.ios-app .re-house-mark{
+  width:30px!important;
+  height:30px!important;
+  border-radius:8px!important;
+  background:var(--accent)!important;
+}
+.ios-app .re-house>span:nth-child(2) small{display:none!important}
+.ios-app .re-house strong{
+  font-size:15px!important;
+  color:var(--text)!important;
+  font-weight:700!important;
+}
+.ios-app .re-house>.icon{display:none!important}
+.ios-app .re-profile{
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.ios-app .re-profile span{
+  width:34px!important;
+  height:34px!important;
+  border-radius:9px!important;
+  background:var(--surface-2)!important;
+  color:var(--text)!important;
+  border:1px solid var(--line)!important;
+  font-size:9px!important;
+}
+
+/* Root content reads like a clean native list app. */
+.ios-app .re-shell-home,
+.ios-app .re-shell-sheets,
+.ios-app .re-shell-settle,
+.ios-app .re-shell-settings,
+.ios-app .re-shell-expenses{
+  background:var(--bg)!important;
+}
+
+/* Pale mint balance / summary cards. */
+.ios-app .sp-balance,
+.ios-app .re-balance,
+.ios-app .sp-sheet-summary,
+.ios-app .re-sheet-summary,
+.ios-app .ha-hero{
+  position:relative!important;
+  background:linear-gradient(180deg,var(--mint) 0%,var(--mint-2) 100%)!important;
+  color:var(--text)!important;
+  border:0!important;
+  border-radius:16px!important;
+  box-shadow:0 2px 8px rgba(42,71,47,.045)!important;
+}
+.ios-app .sp-balance:before,
+.ios-app .ha-hero:before,
+.ios-app .sp-sheet-summary:before,
+.ios-app .ha-hero:after{
+  display:none!important;
+}
+.ios-app .sp-balance strong,
+.ios-app .sp-balance b,
+.ios-app .sp-balance span,
+.ios-app .sp-balance p,
+.ios-app .re-balance strong,
+.ios-app .re-balance b,
+.ios-app .re-balance span,
+.ios-app .re-balance p,
+.ios-app .sp-sheet-summary strong,
+.ios-app .sp-sheet-summary b,
+.ios-app .sp-sheet-summary span,
+.ios-app .sp-sheet-summary p,
+.ios-app .ha-hero strong,
+.ios-app .ha-hero b,
+.ios-app .ha-hero span,
+.ios-app .ha-hero p,
+.ios-app .ha-hero em{
+  color:var(--text)!important;
+}
+.ios-app .sp-balance-main strong,
+.ios-app .ha-hero-main strong,
+.ios-app .ha-settle-main>div:first-child strong,
+.ios-app .ha-sheet-hero-main>b{
+  color:var(--accent-strong)!important;
+  font-weight:720!important;
+}
+.ios-app .sp-balance-top>span,
+.ios-app .ha-hero-top>span{
+  color:var(--accent-strong)!important;
+  font-weight:700!important;
+}
+.ios-app .sp-balance-top em,
+.ios-app .ha-hero-top em{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:5px!important;
+  padding:5px 8px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.68)!important;
+  color:var(--accent-strong)!important;
+  letter-spacing:.02em!important;
+}
+.ios-app .sp-balance-top em i{
+  background:var(--accent)!important;
+}
+.ios-app .sp-balance-main p,
+.ios-app .ha-hero-main p,
+.ios-app .ha-settle-main>div:first-child p,
+.ios-app .ha-sheet-hero-main small,
+.ios-app .ha-settings-person small,
+.ios-app .ha-settings-person p{
+  color:var(--muted)!important;
+}
+.ios-app .sp-balance-main>button,
+.ios-app .ha-hero-main>button,
+.ios-app .ha-settings-person>button{
+  background:var(--accent)!important;
+  color:#fff!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.ios-app.theme-dark .sp-balance-main>button,
+.ios-app.theme-dark .ha-hero-main>button,
+.ios-app.theme-dark .ha-settings-person>button{
+  color:#102014!important;
+}
+
+/* Summary stats are little white tiles inside mint card. */
+.ios-app .sp-balance-stats,
+.ios-app .ha-hero-stats{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:8px!important;
+  margin-top:12px!important;
+  padding-top:0!important;
+  border-top:0!important;
+}
+.ios-app .sp-balance-stats>span,
+.ios-app .ha-hero-stats>span{
+  min-width:0!important;
+  padding:9px 10px!important;
+  border:0!important;
+  border-radius:11px!important;
+  background:rgba(255,255,255,.68)!important;
+}
+.ios-app.theme-dark .sp-balance-stats>span,
+.ios-app.theme-dark .ha-hero-stats>span{
+  background:rgba(255,255,255,.055)!important;
+}
+.ios-app .sp-balance-stats small,
+.ios-app .ha-hero-stats small{
+  color:var(--muted)!important;
+}
+.ios-app .sp-balance-stats b,
+.ios-app .ha-hero-stats b{
+  color:var(--text)!important;
+}
+
+/* Primary action follows the reference's green action language. */
+.ios-app .primary,
+.ios-app .re-add{
+  background:var(--accent)!important;
+  color:#fff!important;
+  border-color:transparent!important;
+  box-shadow:0 5px 12px rgba(47,138,69,.17)!important;
+}
+.ios-app.theme-dark .primary,
+.ios-app.theme-dark .re-add{
+  color:#102014!important;
+}
+.ios-app .text-button,
+.ios-app .re-eyebrow,
+.ios-app .sp-home-head h1 span,
+.ios-app .re-auth h1 span,
+.ios-app .re-sheet-copy small,
+.ios-app .sp-more,
+.ios-app .re-more-expenses,
+.ios-app .ha-more{
+  color:var(--accent-strong)!important;
+}
+
+/* White cards with subtle borders, closer to the reference list cells. */
+.ios-app .liquid-expense-list{
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.ios-app .liquid-expense{
+  min-height:62px!important;
+  margin-bottom:8px!important;
+  padding:9px 11px!important;
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  background:var(--surface)!important;
+  box-shadow:0 2px 6px rgba(36,45,38,.045)!important;
+}
+.ios-app .liquid-expense:last-child{margin-bottom:0!important}
+.ios-app .liquid-category,
+.ios-app .re-cat,
+.ios-app .catalog-icon,
+.ios-app .re-folder,
+.ios-app .re-quick>button>span,
+.ios-app .ha-setting-row>span:first-child,
+.ios-app .ms-icon{
+  background:var(--accent-soft)!important;
+  color:var(--accent-strong)!important;
+  border:0!important;
+}
+.ios-app .sp-quick>button{
+  background:var(--surface)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:0 2px 6px rgba(36,45,38,.04)!important;
+}
+
+/* Sheets list = simple white cards. */
+.ios-app .ha-sheet-list{
+  gap:8px!important;
+}
+.ios-app .ha-sheet-list .re-sheet-card,
+.ios-app .sp-sheet-scroll .re-sheet-card{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.ios-app .ha-sheet-list .sheet-front,
+.ios-app .sp-sheet-scroll .sheet-front{
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  background:var(--surface)!important;
+  box-shadow:0 2px 6px rgba(36,45,38,.04)!important;
+}
+.ios-app .ha-sheet-list .re-sheet-open,
+.ios-app .sp-sheet-scroll .re-sheet-open{
+  background:transparent!important;
+  border:0!important;
+}
+.ios-app .re-sheet-card.featured .re-sheet-open,
+.ios-app .sp-featured .re-sheet-card.featured .re-sheet-open{
+  background:var(--mint)!important;
+  color:var(--text)!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.ios-app .re-sheet-card.featured .re-sheet-copy strong,
+.ios-app .re-sheet-card.featured .re-sheet-money{
+  color:var(--text)!important;
+}
+.ios-app .re-sheet-card.featured .re-sheet-copy small,
+.ios-app .re-sheet-card.featured .re-sheet-copy em,
+.ios-app .re-sheet-card.featured .re-sheet-meta{
+  color:var(--muted)!important;
+}
+
+/* Search + segmented chips. */
+.ios-app .re-search{
+  background:var(--surface)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:none!important;
+}
+.ios-app .re-search input{
+  background:transparent!important;
+}
+.ios-app .re-segments,
+.ios-app .switches{
+  background:transparent!important;
+  border:0!important;
+  gap:5px!important;
+}
+.ios-app .re-segments button,
+.ios-app .switches button{
+  border:1px solid var(--line)!important;
+  border-radius:999px!important;
+  background:var(--surface)!important;
+  color:var(--muted)!important;
+  box-shadow:none!important;
+}
+.ios-app .re-segments .selected,
+.ios-app .switches .selected{
+  background:#161916!important;
+  color:#fff!important;
+  border-color:#161916!important;
+  box-shadow:none!important;
+}
+.ios-app.theme-dark .re-segments .selected,
+.ios-app.theme-dark .switches .selected{
+  background:#f2f5f2!important;
+  color:#152017!important;
+  border-color:#f2f5f2!important;
+}
+
+/* Settle breakdown becomes individual cards, not one heavy panel. */
+.ios-app .ha-breakdown{
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+}
+.ios-app .ha-breakdown-list>button{
+  min-height:55px!important;
+  margin-bottom:8px!important;
+  padding:8px 10px!important;
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  background:var(--surface)!important;
+  box-shadow:0 2px 6px rgba(36,45,38,.04)!important;
+}
+.ios-app .ha-breakdown-list>button:last-child{
+  margin-bottom:0!important;
+  border-bottom:1px solid var(--line)!important;
+}
+.ios-app .ha-hero-action{
+  min-height:42px!important;
+  border-radius:12px!important;
+  background:var(--accent)!important;
+  color:#fff!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.ios-app.theme-dark .ha-hero-action{color:#102014!important}
+
+/* Settings groups stay simple and white. */
+.ios-app .ha-setting-group{
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  background:var(--surface)!important;
+  box-shadow:0 2px 6px rgba(36,45,38,.035)!important;
+}
+.ios-app .ha-setting-row{
+  border-bottom-color:var(--line)!important;
+}
+.ios-app .ha-settings-avatar{
+  background:var(--accent)!important;
+  color:#fff!important;
+  border:0!important;
+}
+.ios-app.theme-dark .ha-settings-avatar{color:#102014!important}
+.ios-app .ha-settings-person strong{color:var(--text)!important}
+
+/* Bottom navigation modeled after the reference: five evenly-spaced actions. */
+.ios-app .re-nav{
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:100%!important;
+  height:calc(68px + var(--safe-bottom))!important;
+  padding:0 8px var(--safe-bottom)!important;
+  background:var(--surface)!important;
+  border-top:1px solid var(--line)!important;
+  box-shadow:0 -5px 18px rgba(35,44,37,.055)!important;
+}
+.ios-app .re-dock{
+  width:min(100%,820px)!important;
+  height:68px!important;
+  margin:0 auto!important;
+  padding:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  align-items:end!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.ios-app .re-dock>button{
+  width:100%!important;
+  min-width:0!important;
+  height:62px!important;
+  padding:7px 2px 5px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:var(--muted)!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:3px!important;
+}
+.ios-app .re-dock>button>span:not(.sr-only){
+  width:22px!important;
+  height:22px!important;
+  display:grid!important;
+  place-items:center!important;
+}
+.ios-app .re-dock>button .icon{
+  width:19px!important;
+  height:19px!important;
+}
+.ios-app .re-dock>button small{
+  font-size:8px!important;
+  line-height:1!important;
+  font-weight:560!important;
+}
+.ios-app .re-dock>button.active{
+  background:transparent!important;
+  color:var(--accent)!important;
+  box-shadow:none!important;
+}
+.ios-app .re-add-nav{
+  position:relative!important;
+  top:0!important;
+  transform:none!important;
+  background:transparent!important;
+  color:var(--muted)!important;
+  box-shadow:none!important;
+}
+.ios-app .re-add-nav>span{
+  width:46px!important;
+  height:46px!important;
+  margin-top:-11px!important;
+  margin-bottom:-1px!important;
+  border-radius:50%!important;
+  background:var(--accent)!important;
+  color:#fff!important;
+  border:4px solid var(--surface)!important;
+  box-shadow:0 5px 12px rgba(47,138,69,.18)!important;
+}
+.ios-app.theme-dark .re-add-nav>span{color:#102014!important}
+.ios-app .re-add-nav .icon{
+  width:21px!important;
+  height:21px!important;
+}
+.ios-app .re-add-nav small{
+  color:var(--text)!important;
+  font-weight:600!important;
+}
+
+/* Dialogs and forms use the same warm-grey canvas with white controls. */
+.ios-app dialog{
+  background:var(--bg)!important;
+  color:var(--text)!important;
+  border-color:var(--line)!important;
+}
+.ios-app dialog::backdrop{
+  background:rgba(22,26,23,.34)!important;
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+.ios-app .dialog-head,
+.ios-app .catalog-head{
+  background:var(--surface)!important;
+  border-bottom:1px solid var(--line)!important;
+}
+.ios-app input,
+.ios-app select,
+.ios-app textarea{
+  background:var(--surface-2)!important;
+  color:var(--text)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:none!important;
+}
+.ios-app input:focus,
+.ios-app select:focus,
+.ios-app textarea:focus{
+  border-color:color-mix(in srgb,var(--accent) 50%,var(--line))!important;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 10%,transparent)!important;
+}
+.ios-app .entry-amount,
+.ios-app .entry-details,
+.ios-app .split-preview,
+.ios-app .amount-calculator{
+  background:var(--surface)!important;
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  box-shadow:0 2px 6px rgba(36,45,38,.035)!important;
+}
+.ios-app .entry-amount .big-input,
+.ios-app .big-input{
+  color:var(--accent-strong)!important;
+}
+.ios-app .field>span,
+.ios-app .entry-details>summary,
+.ios-app .receipt-label{
+  color:var(--accent-strong)!important;
+}
+.ios-app .split-preview{
+  color:var(--muted)!important;
+}
+.ios-app .split-preview strong{color:var(--text)!important}
+
+/* Full-screen expense entry on phones, matching the reference's flow. */
+@media(max-width:699px){
+  .ios-app #sheet:has(#expense-form){
+    width:100vw!important;
+    max-width:none!important;
+    height:100dvh!important;
+    max-height:100dvh!important;
+    margin:0!important;
+    padding:0 12px calc(16px + var(--safe-bottom))!important;
+    border:0!important;
+    border-radius:0!important;
+  }
+  .ios-app #sheet:has(#expense-form) .dialog-head{
+    position:sticky!important;
+    top:0!important;
+    z-index:5!important;
+    margin:0 -12px 10px!important;
+    padding:calc(8px + var(--safe-top)) 12px 8px!important;
+  }
+}
+
+/* Theme button follows the reference's small utility buttons. */
+.ios-app .ha-theme-toggle{
+  background:var(--surface)!important;
+  color:var(--accent)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:none!important;
+}
+
+/* Settle Summary / History remain real buttons. */
+.ios-app .ha-foot-actions button{
+  background:var(--surface)!important;
+  color:var(--text)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:0 2px 6px rgba(36,45,38,.035)!important;
+}
+.ios-app .ha-foot-actions button:first-child{
+  background:var(--accent-soft)!important;
+  color:var(--accent-strong)!important;
+  border-color:transparent!important;
+}
+
+/* Welcome and app mark use the same restrained green. */
+.ios-app .welcome-share-note{
+  background:var(--accent)!important;
+  color:#fff!important;
+}
+.ios-app.theme-dark .welcome-share-note{color:#102014!important}
+
+/* Destructive actions stay muted red. */
+.ios-app .danger,
+.ios-app .ms-signout,
+.ios-app .ps-signout,
+.ios-app .sp-signout,
+.ios-app .ha-signout{
+  color:var(--danger)!important;
+}
