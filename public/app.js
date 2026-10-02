@@ -43,7 +43,7 @@ let sheetSearch='',sheetFilter='open',settleCouple=null;
 let expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'},insightPeriod='sheet';
 let data=null,credentials=null,demo=false,tab='home',filter='all',search='',activeSheet='',joinInfo=null,busy=false;
 try{credentials=JSON.parse(localStorage.getItem('together-access'));document.body.classList.toggle('theme-dark',localStorage.getItem('together-theme')==='dark');}catch{}
-function syncThemeColor(){document.querySelector('meta[name=theme-color]').content=document.body.classList.contains('theme-dark')?'#0f1722':'#f7f9fc';}
+function syncThemeColor(){document.querySelector('meta[name=theme-color]').content=document.body.classList.contains('theme-dark')?'#0f141b':'#f5f7fa';}
 syncThemeColor();
 const initials=n=>n.split(' ').map(x=>x[0]).join('').slice(0,2);
 const couple=g=>data.names.slice(g==='a'?0:2,g==='a'?2:4).join(' & ');
