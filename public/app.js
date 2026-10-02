@@ -20,6 +20,7 @@ function backOneModal(){
  const previous=modalTrail.pop();
  if(!previous){sheet.close();return;}
  sheet.replaceChildren(...previous.nodes);sheet.oncancel=previous.cancel;sheet.scrollTop=previous.scroll;
+ document.body.classList.toggle('expense-entry-open',!!sheet.querySelector('#expense-form'));
  (sheet.querySelector('#dialog-title')||sheet.querySelector('button'))?.focus({preventScroll:true});
 }
 const isInnerPage=()=>tab==='expenses';
@@ -32,7 +33,10 @@ function goBack(){
  const previous=navigationTrail.back();if(!previous){tab='sheets';render();return;}
  ({tab,activeSheet,search,filter,expenseFilters,settleCouple,sheetSearch,sheetFilter}=previous);render();
 }
-sheet.addEventListener('close',()=>{if(!sheet.open)modalTrail=[];});
+sheet.addEventListener('close',()=>{
+ if(!sheet.open)modalTrail=[];
+ document.body.classList.remove('expense-entry-open');
+});
 sheet.addEventListener('click',ev=>{
  if(ev.target!==sheet||busy)return;
  const back=sheet.querySelector('[data-modal-back]');
@@ -312,6 +316,7 @@ function expenseForm(e=null,preset={}){
  </nav>`);
 
  const f=$('#expense-form');
+ document.body.classList.add('expense-entry-open');
  const headerSave=sheet.querySelector('[data-close]');
  headerSave.classList.add('ref-expense-save');
  headerSave.setAttribute('aria-label',e?'Save changes':'Save expense');
