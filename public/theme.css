@@ -3158,3 +3158,45 @@
   color:var(--accent)!important;
   box-shadow:0 5px 16px rgba(0,0,0,.18)!important;
 }
+
+
+/* Settle footer actions — proper compact buttons */
+.ios-app .ha-foot-actions{
+  flex:none;
+  width:100%;
+  min-height:42px;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px!important;
+  align-items:center;
+  margin-top:8px;
+}
+.ios-app .ha-foot-actions button{
+  width:100%;
+  min-height:40px;
+  padding:0 12px;
+  border:1px solid var(--line)!important;
+  border-radius:13px;
+  background:var(--surface)!important;
+  color:var(--text)!important;
+  box-shadow:0 3px 10px rgba(63,92,136,.055);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-size:10.5px!important;
+  font-weight:600;
+}
+.ios-app .ha-foot-actions button:first-child{
+  background:var(--accent-soft)!important;
+  border-color:color-mix(in srgb,var(--accent) 18%,var(--line))!important;
+  color:var(--accent)!important;
+}
+.ios-app .ha-foot-actions button .icon{
+  width:14px!important;
+  height:14px!important;
+  color:currentColor;
+}
+.ios-app .ha-foot-actions button:active{
+  transform:scale(.98);
+}
