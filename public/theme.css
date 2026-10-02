@@ -5908,3 +5908,127 @@
   visibility:visible!important;
   pointer-events:auto!important;
 }
+
+
+/* ADD EXPENSE — More options is now a full card like Amount & split */
+.ios-app .ref-expense-more-card{
+  display:block!important;
+  overflow:visible!important;
+}
+.ios-app .ref-expense-more-card h3{
+  margin-bottom:16px!important;
+}
+.ios-app .ref-expense-more-card .ref-expense-field{
+  margin-top:0!important;
+}
+.ios-app .ref-expense-more-card .ref-option-tool{
+  margin:15px 0 0!important;
+  padding:0!important;
+  border:1px solid #e3dfda!important;
+  border-radius:14px!important;
+  background:#faf9f7!important;
+  overflow:hidden!important;
+}
+.ios-app.theme-dark .ref-expense-more-card .ref-option-tool{
+  background:var(--surface-2)!important;
+  border-color:var(--line)!important;
+}
+.ios-app .ref-expense-more-card .ref-option-tool>summary{
+  min-height:48px!important;
+  padding:0 14px!important;
+  list-style:none!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  color:#2f7d37!important;
+  font-size:13px!important;
+  font-weight:700!important;
+  cursor:pointer!important;
+}
+.ios-app .ref-expense-more-card .ref-option-tool>summary::-webkit-details-marker{
+  display:none!important;
+}
+.ios-app.theme-dark .ref-expense-more-card .ref-option-tool>summary{
+  color:var(--accent)!important;
+}
+.ios-app .ref-expense-more-card .ref-option-tool>summary .icon{
+  width:16px!important;
+  height:16px!important;
+}
+.ios-app .ref-option-tool-body{
+  padding:0 12px 12px!important;
+  display:grid!important;
+  gap:10px!important;
+}
+.ios-app .ref-option-tool-body .field{
+  margin:0!important;
+}
+.ios-app .ref-option-tool-body input{
+  min-height:44px!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  border:1px solid #e1ddd8!important;
+}
+.ios-app.theme-dark .ref-option-tool-body input{
+  background:var(--surface)!important;
+  border-color:var(--line)!important;
+}
+.ios-app .ref-option-tool-body #use-calculation{
+  min-height:42px!important;
+  border-radius:12px!important;
+}
+
+.ios-app .ref-expense-more-card .split-preview{
+  margin:14px 0 0!important;
+  padding:12px 13px!important;
+  border:1px solid #e0eadc!important;
+  border-radius:13px!important;
+  background:#f2f7f0!important;
+  color:#656b65!important;
+  font-size:11px!important;
+  line-height:1.55!important;
+}
+.ios-app.theme-dark .ref-expense-more-card .split-preview{
+  background:var(--accent-faint)!important;
+  border-color:var(--line)!important;
+  color:var(--muted)!important;
+}
+.ios-app .ref-expense-more-card .split-preview strong{
+  color:var(--text)!important;
+}
+.ios-app .ref-expense-more-card .expense-visibility-note{
+  margin:12px 2px 0!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  color:var(--muted)!important;
+}
+.ios-app .ref-expense-more-card .expense-visibility-note .icon{
+  width:14px!important;
+  height:14px!important;
+}
+.ios-app .ref-expense-more-card .ref-option-receipt{
+  margin-top:13px!important;
+  padding:13px!important;
+  border:1px dashed #cddbc9!important;
+  border-radius:13px!important;
+  background:#f7faf6!important;
+  color:#2f7d37!important;
+  font-size:12px!important;
+  font-weight:650!important;
+}
+.ios-app.theme-dark .ref-expense-more-card .ref-option-receipt{
+  background:var(--accent-faint)!important;
+  border-color:var(--line-strong)!important;
+  color:var(--accent)!important;
+}
+.ios-app .ref-expense-more-card .ref-option-receipt input{
+  margin-top:8px!important;
+  padding:5px 0 0!important;
+  border:0!important;
+  background:transparent!important;
+  font-size:11px!important;
+}
+.ios-app .ref-expense-more-card #receipt-preview .receipt{
+  margin-top:12px!important;
+}
