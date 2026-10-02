@@ -4176,7 +4176,7 @@
 
 /* Full-screen expense entry on phones, matching the reference's flow. */
 @media(max-width:699px){
-  .ios-app #sheet:has(#expense-form){
+  .ios-app #sheet[open]:has(#expense-form){
     width:100vw!important;
     max-width:none!important;
     height:100dvh!important;
@@ -4186,7 +4186,7 @@
     border:0!important;
     border-radius:0!important;
   }
-  .ios-app #sheet:has(#expense-form) .dialog-head{
+  .ios-app #sheet[open]:has(#expense-form) .dialog-head{
     position:sticky!important;
     top:0!important;
     z-index:5!important;
@@ -4754,13 +4754,13 @@
 
 
 /* ADD EXPENSE — reference-inspired full-screen flow */
-.ios-app #sheet:has(#expense-form){
+.ios-app #sheet[open]:has(#expense-form){
   background:#f5f3f3!important;
 }
-.ios-app.theme-dark #sheet:has(#expense-form){
+.ios-app.theme-dark #sheet[open]:has(#expense-form){
   background:var(--bg)!important;
 }
-.ios-app #sheet:has(#expense-form) .dialog-head{
+.ios-app #sheet[open]:has(#expense-form) .dialog-head{
   position:sticky!important;
   top:0!important;
   z-index:20!important;
@@ -4775,11 +4775,11 @@
   border-bottom:1px solid #eceae8!important;
   box-shadow:none!important;
 }
-.ios-app.theme-dark #sheet:has(#expense-form) .dialog-head{
+.ios-app.theme-dark #sheet[open]:has(#expense-form) .dialog-head{
   background:var(--surface)!important;
   border-bottom-color:var(--line)!important;
 }
-.ios-app #sheet:has(#expense-form) .dialog-head h2{
+.ios-app #sheet[open]:has(#expense-form) .dialog-head h2{
   margin:0!important;
   align-self:center!important;
   text-align:center!important;
@@ -4789,10 +4789,10 @@
   letter-spacing:-.8px!important;
   font-weight:780!important;
 }
-.ios-app.theme-dark #sheet:has(#expense-form) .dialog-head h2{
+.ios-app.theme-dark #sheet[open]:has(#expense-form) .dialog-head h2{
   color:var(--text)!important;
 }
-.ios-app #sheet:has(#expense-form) .dialog-head .back-button{
+.ios-app #sheet[open]:has(#expense-form) .dialog-head .back-button{
   width:46px!important;
   height:46px!important;
   min-width:46px!important;
@@ -4805,16 +4805,16 @@
   place-items:center!important;
   box-shadow:none!important;
 }
-.ios-app.theme-dark #sheet:has(#expense-form) .dialog-head .back-button{
+.ios-app.theme-dark #sheet[open]:has(#expense-form) .dialog-head .back-button{
   background:var(--surface-2)!important;
   border-color:var(--line)!important;
   color:var(--text)!important;
 }
-.ios-app #sheet:has(#expense-form) .dialog-head .back-button .icon{
+.ios-app #sheet[open]:has(#expense-form) .dialog-head .back-button .icon{
   width:20px!important;
   height:20px!important;
 }
-.ios-app #sheet:has(#expense-form) .ref-expense-save{
+.ios-app #sheet[open]:has(#expense-form) .ref-expense-save{
   width:46px!important;
   height:46px!important;
   min-width:46px!important;
@@ -4827,11 +4827,11 @@
   place-items:center!important;
   box-shadow:none!important;
 }
-.ios-app.theme-dark #sheet:has(#expense-form) .ref-expense-save{
+.ios-app.theme-dark #sheet[open]:has(#expense-form) .ref-expense-save{
   background:var(--accent)!important;
   color:#102014!important;
 }
-.ios-app #sheet:has(#expense-form) .ref-expense-save .icon{
+.ios-app #sheet[open]:has(#expense-form) .ref-expense-save .icon{
   width:21px!important;
   height:21px!important;
 }
@@ -5134,7 +5134,7 @@
 
 /* Full screen phone behavior */
 @media(max-width:699px){
-  .ios-app #sheet:has(#expense-form){
+  .ios-app #sheet[open]:has(#expense-form){
     width:100vw!important;
     max-width:none!important;
     height:100dvh!important;
@@ -5146,25 +5146,25 @@
     overflow-y:auto!important;
     overscroll-behavior:contain!important;
   }
-  .ios-app #sheet:has(#expense-form)::backdrop{
+  .ios-app #sheet[open]:has(#expense-form)::backdrop{
     background:transparent!important;
     backdrop-filter:none!important;
     -webkit-backdrop-filter:none!important;
   }
-  .ios-app #sheet:has(#expense-form) .ref-expense-actions #save-expense{
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-actions #save-expense{
     display:none!important;
   }
 }
 @media(max-width:390px){
-  .ios-app #sheet:has(#expense-form) .dialog-head{
+  .ios-app #sheet[open]:has(#expense-form) .dialog-head{
     grid-template-columns:46px minmax(0,1fr) 46px!important;
     padding-inline:12px!important;
   }
-  .ios-app #sheet:has(#expense-form) .dialog-head h2{
+  .ios-app #sheet[open]:has(#expense-form) .dialog-head h2{
     font-size:24px!important;
   }
-  .ios-app #sheet:has(#expense-form) .dialog-head .back-button,
-  .ios-app #sheet:has(#expense-form) .ref-expense-save{
+  .ios-app #sheet[open]:has(#expense-form) .dialog-head .back-button,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-save{
     width:42px!important;
     height:42px!important;
     min-width:42px!important;
@@ -5205,14 +5205,14 @@
 
 /* FIX: Add Expense header/nav stay locked while only the form body scrolls. */
 @media(max-width:699px){
-  .ios-app #sheet:has(#expense-form){
+  .ios-app #sheet[open]:has(#expense-form){
     display:flex!important;
     flex-direction:column!important;
     overflow:hidden!important;
     overscroll-behavior:none!important;
   }
 
-  .ios-app #sheet:has(#expense-form) .dialog-head{
+  .ios-app #sheet[open]:has(#expense-form) .dialog-head{
     position:relative!important;
     top:auto!important;
     left:auto!important;
@@ -5221,7 +5221,7 @@
     z-index:20!important;
   }
 
-  .ios-app #sheet:has(#expense-form) .ref-expense-form{
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-form{
     flex:1 1 auto!important;
     min-height:0!important;
     overflow-y:auto!important;
@@ -5231,7 +5231,7 @@
     padding-bottom:24px!important;
   }
 
-  .ios-app #sheet:has(#expense-form) .ref-expense-nav{
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav{
     position:relative!important;
     inset:auto!important;
     left:auto!important;
@@ -5765,7 +5765,7 @@
 }
 
 @media(max-width:699px){
-  .ios-app #sheet:has(#expense-form){
+  .ios-app #sheet[open]:has(#expense-form){
     position:fixed!important;
     inset:0!important;
     width:100vw!important;
@@ -5784,21 +5784,21 @@
     contain:paint!important;
   }
 
-  .ios-app.theme-dark #sheet:has(#expense-form){
+  .ios-app.theme-dark #sheet[open]:has(#expense-form){
     background:var(--bg)!important;
   }
 
-  .ios-app #sheet:has(#expense-form)::backdrop{
+  .ios-app #sheet[open]:has(#expense-form)::backdrop{
     background:#f5f3f3!important;
     backdrop-filter:none!important;
     -webkit-backdrop-filter:none!important;
   }
 
-  .ios-app.theme-dark #sheet:has(#expense-form)::backdrop{
+  .ios-app.theme-dark #sheet[open]:has(#expense-form)::backdrop{
     background:var(--bg)!important;
   }
 
-  .ios-app #sheet:has(#expense-form) .dialog-head{
+  .ios-app #sheet[open]:has(#expense-form) .dialog-head{
     grid-row:1!important;
     position:relative!important;
     inset:auto!important;
@@ -5808,11 +5808,11 @@
     background:#fff!important;
   }
 
-  .ios-app.theme-dark #sheet:has(#expense-form) .dialog-head{
+  .ios-app.theme-dark #sheet[open]:has(#expense-form) .dialog-head{
     background:var(--surface)!important;
   }
 
-  .ios-app #sheet:has(#expense-form) .ref-expense-form{
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-form{
     grid-row:2!important;
     min-height:0!important;
     height:auto!important;
@@ -5826,11 +5826,11 @@
     z-index:1!important;
   }
 
-  .ios-app.theme-dark #sheet:has(#expense-form) .ref-expense-form{
+  .ios-app.theme-dark #sheet[open]:has(#expense-form) .ref-expense-form{
     background:var(--bg)!important;
   }
 
-  .ios-app #sheet:has(#expense-form) .ref-expense-nav{
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav{
     grid-row:3!important;
     position:relative!important;
     inset:auto!important;
@@ -5843,7 +5843,7 @@
     border-top:1px solid #eceae8!important;
   }
 
-  .ios-app.theme-dark #sheet:has(#expense-form) .ref-expense-nav{
+  .ios-app.theme-dark #sheet[open]:has(#expense-form) .ref-expense-nav{
     background:var(--surface)!important;
     border-top-color:var(--line)!important;
   }
@@ -5888,4 +5888,23 @@
   .ios-app #catalog-dialog[open]::backdrop{
     background:var(--bg)!important;
   }
+}
+
+
+/* DIALOG LIFECYCLE GUARD
+   Never allow styled closed dialogs to remain painted after navigation. */
+.ios-app dialog:not([open]){
+  display:none!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+/* Any screen-style rules must only exist while the native dialog is open. */
+.ios-app #sheet[open]:has(#expense-form){
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
+.ios-app #catalog-dialog[open]{
+  visibility:visible!important;
+  pointer-events:auto!important;
 }
