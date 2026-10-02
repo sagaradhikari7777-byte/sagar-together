@@ -208,32 +208,35 @@ function settlementBreakdown(){
 }
 
 function settleView(){
- const b=balance(scope()),items=scope().filter(e=>!e.settlement),selected=settleCouple||group(data.seat),o=settlementOverview(scope(),selected),other=selected==='a'?'b':'a',from=o.net>0?selected:other,to=o.net>0?other:selected,remaining=Math.abs(o.net),history=data.settlements.filter(s=>s.sheet===activeSheet);
- return `<section class="re-page sp-page home-aligned ha-settle"><div class="ha-head"><div><p class="re-eyebrow">FAIR & SQUARE</p><h1>Settle up</h1><p>One clear number for this sheet.</p></div><div class="ha-head-actions">${periodPicker()}<button class="re-small-round" data-action="settlement-history" aria-label="Payment history">${icon('receipt')}</button></div></div>
- <section class="ha-hero ha-settle-hero"><div class="ha-hero-top"><span>${o.net===0?'ALL BALANCED':o.net>0?'YOU PAY':'YOU RECEIVE'}</span><em>${items.length} OPEN</em></div><div class="ha-settle-main"><div><strong>${money(remaining)}</strong><p>${o.net===0?'No payment is needed.':`${esc(couple(from))} → ${esc(couple(to))}`}</p></div><div class="re-route"><span class="liquid-face-stack warm">${data.names.slice(from==='a'?0:2,from==='a'?2:4).map(n=>`<i>${esc(initials(n))}</i>`).join('')}</span><b>→</b><span class="liquid-face-stack">${data.names.slice(to==='a'?0:2,to==='a'?2:4).map(n=>`<i>${esc(initials(n))}</i>`).join('')}</span></div></div><div class="ha-hero-stats"><span><small>Total</small><b>${money(o.total)}</b></span><span><small>Your share</small><b>${money(o.share)}</b></span><span><small>Paid</small><b>${money(o.paid)}</b></span></div><button class="ha-hero-action" data-action="settle" ${items.length?'':'disabled'}>${icon('check')} ${b.net?'Record payment':'Close balanced expenses'}</button></section>
- <div class="ha-section-head"><div><small>UNSETTLED</small><h2>What makes this up</h2></div><label class="ha-share-select"><span>Share for</span><select id="settle-couple">${['a','b'].map(g=>`<option value="${g}" ${g===selected?'selected':''}>${esc(couple(g))}${g===group(data.seat)?' · yours':''}</option>`).join('')}</select></label></div>
- ${settlementBreakdown()}<div class="ha-foot-actions"><button data-action="settlement-summary">${icon('copy')} Summary</button><button data-action="settlement-history">${icon('receipt')} History${history.length?` · ${history.length}`:''}</button></div></section>`;
-}
-
-function settingsHouseholdDialog(){
- modal('Household & names',`<p class="small muted">Update the household name or member names. These changes are visible to everyone.</p><form id="settings-household-form"><label class="field"><span>Household name</span><input name="name" value="${esc(data.name)}" maxlength="100" required></label>${data.names.map((n,i)=>`<label class="field"><span>${esc(couple(group(i)))} · Member ${i%2+1}</span><input name="n${i}" value="${esc(n)}" maxlength="40" required></label>`).join('')}<p class="error" role="alert"></p><button class="primary full">Save changes</button></form>`);
- const form=sheet.querySelector('#settings-household-form');
- form.onsubmit=async e=>{e.preventDefault();const v=new FormData(form),button=form.querySelector('.primary');button.disabled=true;try{await save({action:'settings',name:v.get('name'),names:[0,1,2,3].map(i=>v.get('n'+i))});sheet.close();toast('Household updated');}catch(err){errorIn(form,err);button.disabled=false;}};
-}
-function settingsMoreDialog(){
- modal('More settings',`<div class="sp-more-settings-list"><button class="secondary full" data-more-action="merchants">${icon('store')} Merchants <span>Places you spend</span></button><button class="secondary full" data-more-action="categories">${icon('tag')} Categories <span>Organise expenses</span></button><button class="secondary full" data-more-action="export">${icon('receipt')} Export expenses <span>Download CSV</span></button></div>`);
- sheet.querySelectorAll('[data-more-action]').forEach(b=>b.onclick=()=>{const a=b.dataset.moreAction;sheet.close();setTimeout(()=>action(a),0);});
+ const b=balance(scope()),items=scope().filter(e=>!e.settlement),selected=settleCouple||group(data.seat),o=settlementOverview(scope(),selected),other=selected==='a'?'b':'a',from=o.net>0?selected:other,to=o.net>0?other:selected,remaining=Math.abs(o.net),history=data.settlements.filter(s=>s.sheet===activeSheet),current=data.sheets.find(s=>s.id===activeSheet);
+ const status=o.net===0?'balanced':o.net>0?'pay':'receive';
+ const statusLabel=status==='balanced'?'All balanced':status==='pay'?'You pay':'You receive';
+ return `<section class="re-page sp-page ref-settle">
+  <header class="ref-settle-header"><div class="ref-settle-title"><span class="ref-settle-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Settle</strong></div><div class="ref-settle-tools"><button class="ref-settle-history" data-action="settlement-history" aria-label="Payment history">${icon('receipt')}</button><button class="ref-settle-record" data-action="settle" ${items.length?'':'disabled'}>${icon('check')}<span>${b.net?'Record':'Close'}</span></button></div></header>
+  <div class="ref-settle-progress"><i></i></div>
+  <div class="ref-settle-body">
+   <section class="ref-settle-summary ${status}"><div class="ref-settle-summary-head"><span><i></i>TO SETTLE</span><em>${statusLabel}</em></div><strong class="ref-settle-amount">${money(remaining)}</strong><p>${o.net===0?'No payment is needed.':`${esc(couple(from))} → ${esc(couple(to))}`}</p><div class="ref-settle-stats"><span><small>Your share</small><b>${money(o.share)}</b></span><span><small>Paid</small><b>${money(o.paid)}</b></span></div></section>
+   <div class="ref-settle-controls"><label class="ref-settle-sheet"><span>Sheet</span><div>${icon('folder')}${selectSheet()}</div></label><label class="ref-settle-couple"><span>Share for</span><select id="settle-couple">${['a','b'].map(g=>`<option value="${g}" ${g===selected?'selected':''}>${esc(couple(g))}${g===group(data.seat)?' · yours':''}</option>`).join('')}</select></label></div>
+   <div class="ref-settle-section-head"><div><small>UNSETTLED</small><h2>What makes this up</h2></div><span>${items.length} open</span></div>
+   <div class="ref-settle-breakdown">${settlementBreakdown()}</div>
+   <div class="ref-settle-actions"><button data-action="settlement-summary">${icon('copy')}<span><strong>Summary</strong><small>Copy the balance</small></span></button><button data-action="settlement-history">${icon('receipt')}<span><strong>History</strong><small>${history.length?history.length+' payment'+(history.length===1?'':'s'):'No payments yet'}</small></span></button></div>
+  </div>
+ </section>`;
 }
 function settings(){
  const dark=document.body.classList.contains('theme-dark');
- const row=(action,ic,title,sub,tail='')=>`<button class="ha-setting-row" data-action="${action}"><span>${icon(ic)}</span><span><strong>${title}</strong><small>${sub}</small></span>${tail?`<em>${tail}</em>`:''}${icon('chevron')}</button>`;
- return `<section class="re-page sp-page home-aligned ha-settings"><div class="ha-head"><div><p class="re-eyebrow">YOUR SPACE</p><h1>Settings</h1><p>Your household, preferences and app controls.</p></div><button class="re-small-round ha-theme-toggle" data-action="theme" aria-label="${dark?'Switch to light mode':'Switch to dark mode'}">${icon(dark?'sun':'moon')}</button></div>
- <section class="ha-hero ha-settings-hero"><div class="ha-settings-person"><span class="ha-settings-avatar">${esc(initials(data.names[data.seat]))}</span><div><small>SIGNED IN AS</small><strong>${esc(data.names[data.seat])}</strong><p>${esc(data.name)} · ${esc(couple(group(data.seat)))}</p></div><button data-action="settings-household" aria-label="Edit household">${icon('chevron')}</button></div><div class="ha-hero-stats"><span><small>People</small><b>4</b></span><span><small>Couples</small><b>2</b></span><span><small>Mode</small><b>${dark?'Dark':'Light'}</b></span></div></section>
- <div class="ha-section-head"><div><small>HOUSEHOLD</small><h2>Shared space</h2></div></div><section class="ha-setting-group">${row('settings-household','people','Household & names','Members, couples and household name')}${row('invite','plus','Invite members','Share access safely')}${row('access','lock','Private access link','Your personal sign-in link')}</section>
- <div class="ha-section-head"><div><small>APP</small><h2>Preferences</h2></div></div><section class="ha-setting-group">${row('entry-preferences','settings','Expense preferences','Defaults for faster entry')}${row('settings-more','tag','Journal tools','Merchants, categories and export')}${row('insights','chart','Insights','Review your shared spending')}</section>
- <button class="ha-signout" data-action="signout">${demo?'Leave demo':'Sign out'}</button></section>`;
+ const row=(action,ic,title,sub)=>`<button class="ref-settings-row" data-action="${action}"><span class="ref-settings-icon">${icon(ic)}</span><span class="ref-settings-copy"><strong>${title}</strong><small>${sub}</small></span>${icon('chevron')}</button>`;
+ return `<section class="re-page sp-page ref-settings">
+  <header class="ref-settings-header"><div class="ref-settings-title"><span class="ref-settings-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Settings</strong></div><div class="ref-settings-tools"><button class="ref-settings-theme" data-action="theme" aria-label="${dark?'Switch to light mode':'Switch to dark mode'}">${icon(dark?'sun':'moon')}</button><button class="ref-settings-edit" data-action="settings-household">${icon('edit')}<span>Edit</span></button></div></header>
+  <div class="ref-settings-progress"><i></i></div>
+  <div class="ref-settings-body">
+   <section class="ref-settings-summary"><div class="ref-settings-summary-head"><span><i></i>YOUR SPACE</span><em>${dark?'Dark mode':'Light mode'}</em></div><div class="ref-settings-person"><span>${esc(initials(data.names[data.seat]))}</span><div><small>SIGNED IN AS</small><strong>${esc(data.names[data.seat])}</strong><p>${esc(data.name)}</p></div></div><div class="ref-settings-stats"><span><small>Household</small><b>${esc(data.name)}</b></span><span><small>Your couple</small><b>${esc(couple(group(data.seat)))}</b></span></div></section>
+   <div class="ref-settings-section-head"><small>HOUSEHOLD</small><h2>Shared space</h2></div><section class="ref-settings-group">${row('settings-household','people','Household & names','Members, couples and household name')}${row('invite','plus','Invite members','Share access safely')}${row('access','lock','Private access link','Your personal sign-in link')}</section>
+   <div class="ref-settings-section-head"><small>APP</small><h2>Preferences</h2></div><section class="ref-settings-group">${row('entry-preferences','settings','Expense preferences','Defaults for faster entry')}${row('settings-more','tag','Journal tools','Merchants, categories and export')}${row('insights','chart','Insights','Review your shared spending')}</section>
+   <button class="ref-settings-signout" data-action="signout">${icon('arrow')}<span>${demo?'Leave demo':'Sign out'}</span></button>
+  </div>
+ </section>`;
 }
-
 function render(){
  if(!data)return auth();
  if(activeSheet&&!data.sheets.some(s=>s.id===activeSheet))activeSheet=data.sheets.find(s=>!s.archived)?.id||'';
