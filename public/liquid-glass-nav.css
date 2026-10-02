@@ -1,111 +1,203 @@
 
-/* LIQUID GLASS NAVIGATION — reference-matched floating iOS capsule */
+/* TOGETHER LIQUID GLASS NAV — web/PWA fallback for iOS 26-style glass */
 @media(max-width:699px){
 
-  /* Leave content clear of the floating glass dock. */
+  /* Let content visually continue behind the floating dock. */
   .ios-app .re-shell-home,
   .ios-app .re-shell-sheets,
   .ios-app .re-shell-expenses,
   .ios-app .re-shell-settle,
   .ios-app .re-shell-settings{
-    padding-bottom:calc(96px + var(--safe-bottom))!important;
+    padding-bottom:calc(84px + var(--safe-bottom))!important;
+    scroll-padding-bottom:calc(92px + var(--safe-bottom))!important;
   }
 
-  /* Transparent footer wrapper — only the glass capsule is visible. */
-  .ios-app .re-nav,
-  .ios-app.theme-dark .re-nav{
+  .ios-app .re-nav{
     position:fixed!important;
-    z-index:80!important;
+    z-index:90!important;
     left:12px!important;
     right:12px!important;
     bottom:calc(8px + var(--safe-bottom))!important;
     width:auto!important;
-    height:70px!important;
-    padding:0!important;
+    height:72px!important;
     margin:0!important;
-    background:transparent!important;
+    padding:0!important;
     border:0!important;
+    background:transparent!important;
     box-shadow:none!important;
     pointer-events:none!important;
     overflow:visible!important;
   }
 
-  /* The liquid-glass capsule. */
+  /* Soft scroll-edge fade above the floating capsule. */
+  .ios-app .re-nav::before{
+    content:""!important;
+    position:absolute!important;
+    pointer-events:none!important;
+    left:-12px!important;
+    right:-12px!important;
+    bottom:-8px!important;
+    height:108px!important;
+    z-index:-2!important;
+    background:linear-gradient(to bottom,transparent 0%,rgba(242,241,239,.28) 58%,rgba(242,241,239,.66) 100%)!important;
+  }
+  .ios-app.theme-dark .re-nav::before{
+    background:linear-gradient(to bottom,transparent 0%,rgba(18,22,19,.24) 58%,rgba(18,22,19,.72) 100%)!important;
+  }
+
   .ios-app .re-dock,
-  .ios-app.theme-dark .re-dock{
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav{
+    --glass-fg:#17191a;
+    --glass-dim:rgba(23,25,26,.64);
+    --glass-base:rgba(236,239,240,.62);
+    --glass-top:rgba(255,255,255,.46);
+    --glass-bottom:rgba(190,194,197,.24);
+    --glass-rim:rgba(255,255,255,.72);
+    --glass-inner:rgba(255,255,255,.23);
+    --selected-base:rgba(255,255,255,.36);
+    --selected-rim:rgba(255,255,255,.50);
+
     position:relative!important;
     isolation:isolate!important;
     width:min(100%,720px)!important;
-    height:70px!important;
+    height:72px!important;
     margin:0 auto!important;
     padding:5px!important;
     display:grid!important;
     grid-template-columns:repeat(5,minmax(0,1fr))!important;
     gap:2px!important;
     align-items:stretch!important;
-    border:1px solid rgba(255,255,255,.24)!important;
-    border-radius:35px!important;
+    border:1px solid var(--glass-rim)!important;
+    border-radius:36px!important;
     background:
-      linear-gradient(180deg,rgba(255,255,255,.20) 0%,rgba(255,255,255,.07) 18%,rgba(255,255,255,.025) 58%,rgba(0,0,0,.10) 100%),
-      rgba(42,43,43,.66)!important;
+      linear-gradient(180deg,var(--glass-top) 0%,rgba(255,255,255,.13) 20%,rgba(255,255,255,.04) 57%,var(--glass-bottom) 100%),
+      var(--glass-base)!important;
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.34),
-      inset 0 -1px 0 rgba(0,0,0,.28),
-      inset 1px 0 0 rgba(255,255,255,.08),
-      inset -1px 0 0 rgba(255,255,255,.06),
-      0 10px 28px rgba(0,0,0,.20)!important;
-    backdrop-filter:blur(26px) saturate(170%) brightness(1.06)!important;
-    -webkit-backdrop-filter:blur(26px) saturate(170%) brightness(1.06)!important;
+      inset 0 1px 0 rgba(255,255,255,.76),
+      inset 0 -1px 0 rgba(78,84,88,.20),
+      inset 1px 0 0 rgba(255,255,255,.25),
+      inset -1px 0 0 rgba(255,255,255,.17),
+      0 12px 28px rgba(18,20,21,.16),
+      0 2px 7px rgba(18,20,21,.08)!important;
+    backdrop-filter:blur(20px) saturate(180%)!important;
+    -webkit-backdrop-filter:blur(20px) saturate(180%)!important;
     pointer-events:auto!important;
     overflow:hidden!important;
   }
 
-  /* Glass sheen along the top surface. */
+  .ios-app.theme-dark .re-dock,
+  .ios-app.theme-dark #sheet[open]:has(#expense-form) .ref-expense-nav{
+    --glass-fg:#fff;
+    --glass-dim:rgba(255,255,255,.72);
+    --glass-base:rgba(48,49,50,.64);
+    --glass-top:rgba(255,255,255,.18);
+    --glass-bottom:rgba(0,0,0,.16);
+    --glass-rim:rgba(255,255,255,.25);
+    --glass-inner:rgba(255,255,255,.08);
+    --selected-base:rgba(18,19,20,.74);
+    --selected-rim:rgba(255,255,255,.11);
+
+    background:
+      linear-gradient(180deg,var(--glass-top) 0%,rgba(255,255,255,.07) 20%,rgba(255,255,255,.02) 58%,var(--glass-bottom) 100%),
+      var(--glass-base)!important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.31),
+      inset 0 -1px 0 rgba(0,0,0,.35),
+      inset 1px 0 0 rgba(255,255,255,.08),
+      inset -1px 0 0 rgba(255,255,255,.05),
+      0 13px 32px rgba(0,0,0,.28),
+      0 2px 8px rgba(0,0,0,.18)!important;
+  }
+
+  /* SVG displacement layer gives the glass surface a refractive/lensing texture. */
+  .ios-app .liquid-refract-layer{
+    position:absolute!important;
+    inset:-8px!important;
+    z-index:0!important;
+    pointer-events:none!important;
+    border-radius:inherit!important;
+    background:
+      radial-gradient(70% 52% at 22% 0%,rgba(255,255,255,.34),transparent 60%),
+      radial-gradient(45% 65% at 78% 105%,rgba(255,255,255,.09),transparent 66%),
+      linear-gradient(90deg,rgba(255,255,255,.08),transparent 18%,rgba(255,255,255,.05) 52%,transparent 82%)!important;
+    filter:url(#liquidGlassRefraction)!important;
+    opacity:.55!important;
+    mix-blend-mode:screen!important;
+    transform:translateZ(0)!important;
+  }
+  .ios-app.theme-dark .liquid-refract-layer{
+    opacity:.42!important;
+  }
+
+  /* Thin specular rim, brightest at the top. */
   .ios-app .re-dock::before,
-  .ios-app.theme-dark .re-dock::before{
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav::before{
     content:""!important;
     position:absolute!important;
-    z-index:-1!important;
-    pointer-events:none!important;
-    left:18px!important;
-    right:18px!important;
-    top:2px!important;
-    height:18px!important;
-    border-radius:999px!important;
-    background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0))!important;
-    opacity:.65!important;
-    filter:blur(.2px)!important;
-  }
-
-  .ios-app .re-dock::after,
-  .ios-app.theme-dark .re-dock::after{
-    content:""!important;
-    position:absolute!important;
-    z-index:-1!important;
-    pointer-events:none!important;
     inset:1px!important;
-    border-radius:34px!important;
-    border:1px solid rgba(255,255,255,.07)!important;
-    box-shadow:inset 0 0 18px rgba(255,255,255,.035)!important;
+    z-index:1!important;
+    pointer-events:none!important;
+    border-radius:35px!important;
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.45),rgba(255,255,255,.06) 25%,transparent 46%) border-box!important;
+    -webkit-mask:
+      linear-gradient(#000 0 0) padding-box,
+      linear-gradient(#000 0 0)!important;
+    -webkit-mask-composite:xor!important;
+    mask-composite:exclude!important;
+    padding:1px!important;
+    opacity:.92!important;
   }
 
-  /* Every tab is a clean icon + label, like the reference. */
+  /* One shared selected capsule; it springs between slots. */
+  .ios-app .liquid-selection{
+    position:absolute!important;
+    z-index:1!important;
+    top:5px!important;
+    left:5px!important;
+    width:calc((100% - 18px)/5)!important;
+    height:62px!important;
+    border:1px solid var(--selected-rim)!important;
+    border-radius:31px!important;
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.01)),
+      var(--selected-base)!important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.15),
+      inset 0 -1px 0 rgba(0,0,0,.13),
+      0 2px 10px rgba(0,0,0,.12)!important;
+    backdrop-filter:blur(12px) saturate(145%)!important;
+    -webkit-backdrop-filter:blur(12px) saturate(145%)!important;
+    pointer-events:none!important;
+    transform:translateX(0)!important;
+    transition:
+      transform .48s cubic-bezier(.34,1.56,.64,1),
+      width .34s cubic-bezier(.34,1.35,.64,1),
+      border-radius .34s ease!important;
+    will-change:transform!important;
+  }
+  .ios-app [data-active-index="0"]>.liquid-selection{transform:translateX(0)!important}
+  .ios-app [data-active-index="1"]>.liquid-selection{transform:translateX(calc(100% + 2px))!important}
+  .ios-app [data-active-index="2"]>.liquid-selection{transform:translateX(calc(200% + 4px))!important}
+  .ios-app [data-active-index="3"]>.liquid-selection{transform:translateX(calc(300% + 6px))!important}
+  .ios-app [data-active-index="4"]>.liquid-selection{transform:translateX(calc(400% + 8px))!important}
+
   .ios-app .re-dock>button,
-  .ios-app.theme-dark .re-dock>button,
-  .ios-app .re-add-nav,
-  .ios-app.theme-dark .re-add-nav{
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button{
     position:relative!important;
+    z-index:2!important;
     width:100%!important;
     min-width:0!important;
-    height:60px!important;
+    height:62px!important;
+    min-height:62px!important;
     margin:0!important;
     padding:5px 2px 4px!important;
     border:0!important;
-    border-radius:29px!important;
+    border-radius:31px!important;
     background:transparent!important;
     background-color:transparent!important;
-    color:rgba(255,255,255,.95)!important;
     box-shadow:none!important;
+    color:var(--glass-dim)!important;
     display:flex!important;
     flex-direction:column!important;
     align-items:center!important;
@@ -114,209 +206,149 @@
     -webkit-appearance:none!important;
     appearance:none!important;
     -webkit-tap-highlight-color:transparent!important;
-    transition:background .18s ease,box-shadow .18s ease,transform .16s ease!important;
+    transition:
+      color .18s ease,
+      transform .18s cubic-bezier(.2,.9,.3,1.35)!important;
+  }
+
+  .ios-app .re-dock>button.active,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button.active{
+    color:var(--glass-fg)!important;
+    background:transparent!important;
+    box-shadow:none!important;
   }
 
   .ios-app .re-dock>button>span:not(.sr-only),
-  .ios-app.theme-dark .re-dock>button>span:not(.sr-only){
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button>span{
     width:28px!important;
     height:28px!important;
-    display:grid!important;
-    place-items:center!important;
+    min-width:28px!important;
+    min-height:28px!important;
     margin:0!important;
-    background:transparent!important;
+    padding:0!important;
     border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
     box-shadow:none!important;
     color:inherit!important;
+    display:grid!important;
+    place-items:center!important;
+  }
+
+  /* plus.circle treatment */
+  .ios-app .re-add-nav>span,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button[data-nav-index="2"]>span{
+    border:1.8px solid currentColor!important;
+    border-radius:50%!important;
   }
 
   .ios-app .re-dock>button .icon,
-  .ios-app.theme-dark .re-dock>button .icon{
-    width:25px!important;
-    height:25px!important;
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button .icon{
+    width:24px!important;
+    height:24px!important;
     color:inherit!important;
     stroke:currentColor!important;
-    stroke-width:1.9!important;
+    stroke-width:1.85!important;
     opacity:1!important;
+  }
+  .ios-app .re-add-nav .icon,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button[data-nav-index="2"] .icon{
+    width:16px!important;
+    height:16px!important;
+    stroke-width:2!important;
   }
 
   .ios-app .re-dock>button small,
-  .ios-app.theme-dark .re-dock>button small{
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button small{
     margin:0!important;
     padding:0!important;
     color:inherit!important;
     background:transparent!important;
-    font-size:10.5px!important;
-    line-height:1!important;
-    font-weight:560!important;
-    letter-spacing:.005em!important;
+    font:500 11px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",system-ui,sans-serif!important;
+    letter-spacing:0!important;
     white-space:nowrap!important;
-    opacity:1!important;
   }
 
-  /* Active tab becomes the darker inner glass capsule. */
-  .ios-app .re-dock>button.active,
-  .ios-app.theme-dark .re-dock>button.active{
-    background:
-      linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.012)),
-      rgba(18,19,19,.72)!important;
-    color:#fff!important;
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.13),
-      inset 0 -1px 0 rgba(255,255,255,.025),
-      0 2px 10px rgba(0,0,0,.13)!important;
+  .ios-app .re-dock>button:active,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button:active{
+    transform:scale(.94)!important;
   }
 
-  /* Remove the old active dot. */
-  .ios-app .re-dock>button.active:not(.re-add-nav)::after,
-  .ios-app.theme-dark .re-dock>button.active:not(.re-add-nav)::after{
+  .ios-app .re-dock>button:focus,
+  .ios-app .re-dock>button:focus-visible,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button:focus,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button:focus-visible{
+    outline:none!important;
+  }
+
+  .ios-app .re-dock>button.active:not(.re-add-nav)::after{
     content:none!important;
     display:none!important;
   }
 
-  /* Add is part of the glass dock — outlined circle, not a raised green FAB. */
-  .ios-app .re-add-nav>span,
-  .ios-app.theme-dark .re-add-nav>span{
-    width:28px!important;
-    height:28px!important;
-    min-width:28px!important;
-    min-height:28px!important;
-    margin:0!important;
-    border:2px solid currentColor!important;
-    border-radius:50%!important;
-    background:transparent!important;
-    background-color:transparent!important;
-    color:inherit!important;
-    box-shadow:none!important;
-  }
-  .ios-app .re-add-nav .icon,
-  .ios-app.theme-dark .re-add-nav .icon{
-    width:17px!important;
-    height:17px!important;
-    stroke-width:2!important;
-  }
-
-  .ios-app .re-dock>button:active{
-    transform:scale(.97)!important;
-  }
-  .ios-app .re-dock>button:focus,
-  .ios-app .re-dock>button:focus-visible{
-    outline:none!important;
-  }
-
-  /* =========================================================
-     The same liquid-glass dock inside Add Expense
-     ========================================================= */
-  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav,
-  .ios-app.theme-dark #sheet[open]:has(#expense-form) .ref-expense-nav{
-    position:relative!important;
+  /* Add Expense owns a floating glass dock too, never an opaque footer. */
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav{
     grid-row:3!important;
+    position:relative!important;
+    inset:auto!important;
     z-index:30!important;
     width:calc(100% - 24px)!important;
-    height:70px!important;
-    min-height:70px!important;
+    min-height:72px!important;
+    height:72px!important;
     margin:8px 12px calc(8px + var(--safe-bottom))!important;
-    padding:5px!important;
-    display:grid!important;
-    grid-template-columns:repeat(5,minmax(0,1fr))!important;
-    gap:2px!important;
-    align-items:stretch!important;
-    border:1px solid rgba(255,255,255,.24)!important;
-    border-radius:35px!important;
-    background:
-      linear-gradient(180deg,rgba(255,255,255,.20) 0%,rgba(255,255,255,.07) 18%,rgba(255,255,255,.025) 58%,rgba(0,0,0,.10) 100%),
-      rgba(42,43,43,.66)!important;
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.34),
-      inset 0 -1px 0 rgba(0,0,0,.28),
-      0 10px 28px rgba(0,0,0,.20)!important;
-    backdrop-filter:blur(26px) saturate(170%) brightness(1.06)!important;
-    -webkit-backdrop-filter:blur(26px) saturate(170%) brightness(1.06)!important;
-    overflow:hidden!important;
   }
-
-  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button,
-  .ios-app.theme-dark #sheet[open]:has(#expense-form) .ref-expense-nav>button{
-    width:100%!important;
-    height:60px!important;
-    min-height:60px!important;
-    margin:0!important;
-    padding:5px 2px 4px!important;
-    border:0!important;
-    border-radius:29px!important;
-    background:transparent!important;
-    color:rgba(255,255,255,.95)!important;
-    box-shadow:none!important;
-    display:flex!important;
-    flex-direction:column!important;
-    align-items:center!important;
-    justify-content:center!important;
-    gap:3px!important;
-    -webkit-tap-highlight-color:transparent!important;
-  }
-
-  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button>.icon{
-    width:25px!important;
-    height:25px!important;
-    stroke-width:1.9!important;
-  }
-
-  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button>small{
-    color:inherit!important;
-    font-size:10.5px!important;
-    line-height:1!important;
-    font-weight:560!important;
-  }
-
-  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button.active{
-    background:
-      linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.012)),
-      rgba(18,19,19,.72)!important;
-    color:#fff!important;
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.13),
-      0 2px 10px rgba(0,0,0,.13)!important;
-  }
-
-  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button.active>span{
-    width:28px!important;
-    height:28px!important;
-    min-width:28px!important;
-    min-height:28px!important;
-    margin:0!important;
-    border:2px solid currentColor!important;
-    border-radius:50%!important;
-    background:transparent!important;
-    color:inherit!important;
-    box-shadow:none!important;
-    display:grid!important;
-    place-items:center!important;
-  }
-
-  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button.active>span .icon{
-    width:17px!important;
-    height:17px!important;
-    stroke-width:2!important;
-  }
-
-  /* Give the form enough space without reintroducing the old fixed nav. */
   .ios-app #sheet[open]:has(#expense-form){
     grid-template-rows:auto minmax(0,1fr) auto!important;
   }
 }
 
-/* Slightly tighter dock on narrow iPhones. */
-@media(max-width:380px){
-  .ios-app .re-nav{
-    left:8px!important;
-    right:8px!important;
+/* Accessibility fallbacks */
+@media(prefers-reduced-motion:reduce){
+  .ios-app .liquid-selection,
+  .ios-app .re-dock>button,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button{
+    transition:none!important;
+    animation:none!important;
   }
+}
+
+@media(prefers-contrast:more){
   .ios-app .re-dock,
   .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav{
-    border-radius:32px!important;
+    border-color:rgba(255,255,255,.72)!important;
+  }
+  .ios-app.theme-dark .re-dock,
+  .ios-app.theme-dark #sheet[open]:has(#expense-form) .ref-expense-nav{
+    border-color:rgba(255,255,255,.48)!important;
+  }
+  .ios-app .re-dock>button,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button{
+    color:var(--glass-fg)!important;
+  }
+}
+
+@media(prefers-reduced-transparency:reduce){
+  .ios-app .re-dock,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav{
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+    background:#eef0f1!important;
+  }
+  .ios-app.theme-dark .re-dock,
+  .ios-app.theme-dark #sheet[open]:has(#expense-form) .ref-expense-nav{
+    background:#303132!important;
+  }
+  .ios-app .liquid-refract-layer{display:none!important}
+}
+
+@media(max-width:380px){
+  .ios-app .re-nav{left:8px!important;right:8px!important}
+  .ios-app .re-dock,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav{
+    border-radius:34px!important;
   }
   .ios-app .re-dock>button small,
-  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button>small{
-    font-size:9.7px!important;
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button small{
+    font-size:10px!important;
   }
 }
