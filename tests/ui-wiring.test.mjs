@@ -41,3 +41,17 @@ test('spending chart keeps settled purchases in historical spending totals',()=>
  assert.match(app,/function settlementSpendChart\(\)\{\s*const expenses=scope\(\),total=/);
  assert.doesNotMatch(app,/function settlementSpendChart\(\)\{\s*const expenses=scope\(\)\.filter\(e=>!e\.settlement\)/);
 });
+
+
+test('Home overall balance uses all active sheets, not only the last selected sheet',()=>{
+ assert.match(app,/const activeSheetIds=new Set\(data\.sheets\.filter\(s=>!s\.archived\)\.map\(s=>s\.id\)\)/);
+ assert.match(app,/entries=data\.expenses\.filter\(e=>activeSheetIds\.has\(e\.sheet\)\)/);
+});
+
+test('Home search opens a global all-sheets expense search',()=>{
+ assert.match(app,/a==='home-search'\)\{activeSheet='';tab='expenses'/);
+});
+
+test('Settle spending chart includes settled spending history',()=>{
+ assert.match(app,/function settlementSpendChart\(\)\{\s*const expenses=scope\(\),total=/);
+});
