@@ -250,21 +250,159 @@ function deleteExpense(id){
  $('#confirm-action').classList.add('delete-confirm');
  const cancel=document.createElement('button');cancel.type='button';cancel.className='secondary full expense-delete-cancel';cancel.textContent='Cancel';cancel.onclick=backOneModal;sheet.append(cancel);
 }
-function expenseForm(e=null,preset={}){if(!e&&!data.sheets.some(s=>!s.archived))return newSheet();const defaults=entryPreferences();const x=e||{merchant:preset.merchant||'',cents:preset.cents||0,category:preset.category||defaults.category||'Groceries',payer:preset.payer??data.seat,visibility:'shared',split:preset.split||defaults.split||'half',date:today(),sheet:data.sheets.find(s=>s.id===activeSheet&&!s.archived)?.id||data.sheets.find(s=>!s.archived).id,notes:preset.notes||'',receipt:''};const archived=e&&data.sheets.find(s=>s.id===e.sheet)?.archived;const editable=!e||(canManageExpense(e)&&!archived);if(!editable){modal(x.merchant,`<div class="amount" style="font-size:38px;font-weight:700">${money(x.cents)}</div><p class="muted">Paid by ${esc(data.names[x.payer])} · ${esc(x.date)}</p><p class="small muted">Added by ${esc(expenseAuthor(x))}</p><div class="glass panel"><p class="small">${esc(x.category)} · ${x.split==='half'?'Split equally':`Assigned to ${esc(couple(x.split))}`}</p><p class="small">${esc(x.notes||'No notes')}</p></div>${x.receipt?`<img class="receipt" alt="Expense receipt" src="${esc(x.receipt)}">`:''}<p class="small muted">${x.settlement?'This expense is settled and locked.':archived?'Reopen this sheet before editing the expense.':'Only the person who added this expense can edit or delete it.'}</p>`);return;}
-let receipt=x.receipt||'',receiptBusy=false;
-modal(e?'Edit expense':preset.repeat?'Repeat expense':'Add expense',`<form id="expense-form">${preset.repeat?'<p class="entry-note">A new expense for today. Check the amount and save when ready.</p>':''}<label class="field entry-amount"><span>Amount · AUD</span><input class="big-input" name="amount" inputmode="decimal" placeholder="$0.00" value="${x.cents?(x.cents/100).toFixed(2):''}" pattern="[0-9]+([.][0-9]{1,2})?" required aria-label="Amount in Australian dollars"></label><details class="amount-calculator"><summary>${icon('calculator')} Calculate an amount</summary><label class="field"><span>e.g. 24.50 + 18 + 6 / 2</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="24.50 + 18" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></details><label class="field entry-merchant"><span>Merchant</span><input name="merchant" class="picker-control" readonly data-pick="merchants" placeholder="Choose merchant" value="${esc(x.merchant)}" required aria-haspopup="dialog"></label><label class="field"><span>Paid by</span><select name="payer">${data.names.map((n,i)=>`<option value="${i}" ${x.payer===i?'selected':''}>${esc(n)}</option>`).join('')}</select></label><label class="field"><span>Split between couples</span><select name="split">${splitOptions(x.split)}</select></label><p class="small muted expense-visibility-note">${icon('people')} Shared with your household · ${e?`Added by ${esc(expenseAuthor(e))}`:`Adding as ${esc(data.names[data.seat])}`}</p><div class="split-preview" id="split-preview"></div><details class="entry-details" ${e?'open':''}><summary><span>${icon('receipt')} More details<small id="entry-detail-summary">Category, date, sheet & receipt</small></span>${icon('chevron')}</summary><div class="entry-details-body"><div class="two"><label class="field"><span>Category</span><input name="category" class="picker-control" readonly data-pick="categories" value="${esc(x.category)}" required aria-haspopup="dialog"></label><label class="field"><span>Date</span><input type="date" name="date" value="${x.date}" required></label></div><label class="field" style="margin-top:16px"><span>Expense sheet</span><select name="sheet">${data.sheets.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label><label class="field"><span>Notes · optional</span><textarea name="notes" rows="2" maxlength="500" placeholder="Anything to remember?">${esc(x.notes)}</textarea></label><label class="receipt-label">${icon('receipt')} Attach a receipt · optional<input type="file" id="receipt-file" accept="image/*"></label><div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div><button type="button" class="text-button" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button></div></details><p class="error form-error" role="alert"></p><p class="duplicate-warning" hidden role="alert"></p><div class="form-actions">${e?'<button type="button" class="secondary danger" id="delete-expense">Delete</button>':''}<button class="primary" id="save-expense">${icon('check')} Save expense</button></div>${!e?'<button class="secondary full save-another" type="submit" name="saveMode" value="another">Save & add another</button>':''}</form>`);
-const f=$('#expense-form');
+function expenseForm(e=null,preset={}){
+ if(!e&&!data.sheets.some(s=>!s.archived))return newSheet();
+ const defaults=entryPreferences();
+ const x=e||{merchant:preset.merchant||'',cents:preset.cents||0,category:preset.category||defaults.category||'Groceries',payer:preset.payer??data.seat,visibility:'shared',split:preset.split||defaults.split||'half',date:today(),sheet:data.sheets.find(s=>s.id===activeSheet&&!s.archived)?.id||data.sheets.find(s=>!s.archived).id,notes:preset.notes||'',receipt:''};
+ const archived=e&&data.sheets.find(s=>s.id===e.sheet)?.archived;
+ const editable=!e||(canManageExpense(e)&&!archived);
+ if(!editable){
+  modal(x.merchant,`<div class="amount" style="font-size:38px;font-weight:700">${money(x.cents)}</div><p class="muted">Paid by ${esc(data.names[x.payer])} · ${esc(x.date)}</p><p class="small muted">Added by ${esc(expenseAuthor(x))}</p><div class="glass panel"><p class="small">${esc(x.category)} · ${x.split==='half'?'Split equally':`Assigned to ${esc(couple(x.split))}`}</p><p class="small">${esc(x.notes||'No notes')}</p></div>${x.receipt?`<img class="receipt" alt="Expense receipt" src="${esc(x.receipt)}">`:''}<p class="small muted">${x.settlement?'This expense is settled and locked.':archived?'Reopen this sheet before editing the expense.':'Only the person who added this expense can edit or delete it.'}</p>`);
+  return;
+ }
+ let receipt=x.receipt||'',receiptBusy=false;
+ const title=e?'Edit expense':preset.repeat?'Repeat expense':'Add an expense';
+ modal(title,`<form id="expense-form" class="ref-expense-form">
+  ${preset.repeat?'<p class="entry-note">A new expense for today. Check the amount and save when ready.</p>':''}
+  <section class="ref-expense-card">
+   <h3>Who is this with?</h3>
+   <label class="ref-expense-field"><span class="ref-expense-label">Split it with...</span><span class="ref-expense-control"><i>${icon('people')}</i><span class="ref-fixed-value">Household</span></span></label>
+   <label class="ref-expense-field"><span class="ref-expense-label">Paid by...</span><span class="ref-expense-control"><i>${icon('people')}</i><select name="payer">${data.names.map((n,i)=>`<option value="${i}" ${x.payer===i?'selected':''}>${i===data.seat?'You · ':''}${esc(n)}</option>`).join('')}</select></span></label>
+  </section>
+
+  <section class="ref-expense-card">
+   <h3>Expense details</h3>
+   <label class="ref-expense-field"><span class="ref-expense-label">Date of expense</span><span class="ref-expense-control"><i>${icon('calendar')}</i><input type="date" name="date" value="${x.date}" required></span></label>
+   <label class="ref-expense-field"><span class="ref-expense-label">Merchant</span><span class="ref-expense-control"><i>${icon('store')}</i><input name="merchant" class="picker-control" readonly data-pick="merchants" placeholder="e.g. Aldi" value="${esc(x.merchant)}" required aria-haspopup="dialog"></span></label>
+   <label class="ref-expense-field"><span class="ref-expense-label">Description</span><span class="ref-expense-control"><i>${icon('receipt')}</i><input name="notes" maxlength="500" placeholder="e.g. Dinner at Chin Chin" value="${esc(x.notes)}"></span></label>
+  </section>
+
+  <section class="ref-expense-card">
+   <h3>Amount & split</h3>
+   <label class="ref-expense-field"><span class="ref-expense-label">Amount</span><span class="ref-expense-amount-row"><span class="ref-currency-pill">$ AUD</span><span class="ref-expense-control amount-control"><input class="big-input" name="amount" inputmode="decimal" placeholder="0.00" value="${x.cents?(x.cents/100).toFixed(2):''}" pattern="[0-9]+([.][0-9]{1,2})?" required aria-label="Amount in Australian dollars"></span></span></label>
+   <label class="ref-expense-field"><span class="ref-expense-label">Split equally</span><span class="ref-expense-control"><i>${icon('chart')}</i><select name="split">${splitOptions(x.split)}</select></span></label>
+  </section>
+
+  <details class="ref-expense-more" ${e?'open':''}>
+   <summary><span>${icon('settings')} More options</span>${icon('chevron')}</summary>
+   <div class="ref-expense-more-body">
+    <label class="field"><span>Category</span><input name="category" class="picker-control" readonly data-pick="categories" value="${esc(x.category)}" required aria-haspopup="dialog"></label>
+    <label class="field"><span>Expense sheet</span><select name="sheet">${data.sheets.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label>
+    <details class="amount-calculator"><summary>${icon('calculator')} Calculate an amount</summary><label class="field"><span>e.g. 24.50 + 18 + 6 / 2</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="24.50 + 18" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></details>
+    <div class="split-preview" id="split-preview"></div>
+    <p class="small muted expense-visibility-note">${icon('people')} Shared with your household · ${e?`Added by ${esc(expenseAuthor(e))}`:`Adding as ${esc(data.names[data.seat])}`}</p>
+    <label class="receipt-label">${icon('receipt')} Attach a receipt · optional<input type="file" id="receipt-file" accept="image/*"></label>
+    <div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div>
+    <button type="button" class="text-button" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button>
+   </div>
+  </details>
+  <p class="error form-error" role="alert"></p>
+  <p class="duplicate-warning" hidden role="alert"></p>
+  <div class="form-actions ref-expense-actions">${e?'<button type="button" class="secondary danger" id="delete-expense">Delete</button>':''}<button class="primary" id="save-expense">${icon('check')} Save expense</button></div>
+  ${!e?'<button class="secondary full save-another" type="submit" name="saveMode" value="another">Save & add another</button>':''}
+ </form>
+ <nav class="ref-expense-nav" aria-label="Expense navigation">
+  <button type="button" data-expense-tab="home">${icon('home')}<small>Home</small></button>
+  <button type="button" data-expense-tab="sheets">${icon('folder')}<small>Sheets</small></button>
+  <button type="button" class="active"><span>${icon('plus')}</span><small>Add expense</small></button>
+  <button type="button" data-expense-tab="settle">${icon('settle')}<small>Settle</small></button>
+  <button type="button" data-expense-tab="settings">${icon('settings')}<small>Settings</small></button>
+ </nav>`);
+
+ const f=$('#expense-form');
+ const headerSave=sheet.querySelector('[data-close]');
+ headerSave.classList.add('ref-expense-save');
+ headerSave.setAttribute('aria-label',e?'Save changes':'Save expense');
+ headerSave.innerHTML=icon('check');
+
  f.addEventListener('invalid',ev=>{const details=ev.target.closest('details');if(details)details.open=true;},true);
  const snapshot=()=>JSON.stringify([...new FormData(f)].filter(([name])=>name!=='saveMode'))+receipt;
  const originalSnapshot=snapshot();
  const requestClose=(leave=()=>sheet.close())=>{if(busy||receiptBusy)return;if(snapshot()===originalSnapshot)return leave();let prompt=f.querySelector('.discard-prompt');if(!prompt){prompt=document.createElement('section');prompt.className='discard-prompt';prompt.setAttribute('role','alert');prompt.innerHTML='<strong>Keep this expense?</strong><p>Your changes haven’t been saved.</p><div><button type="button" class="secondary" data-keep>Keep editing</button><button type="button" class="secondary danger" data-discard>Discard</button></div>';f.prepend(prompt);prompt.querySelector('[data-discard]').onclick=leave;prompt.querySelector('[data-keep]').onclick=()=>{prompt.remove();f.elements.amount.focus();};}prompt.querySelector('[data-discard]').onclick=leave;prompt.scrollIntoView({block:'start'});prompt.querySelector('[data-keep]').focus();};
- sheet.querySelector('[data-close]').onclick=()=>requestClose();sheet.querySelector('[data-modal-back]').onclick=()=>requestClose(backOneModal);sheet.oncancel=ev=>{ev.preventDefault();requestClose(backOneModal);};
- f.querySelectorAll('[data-pick]').forEach(input=>{const choose=()=>openCatalog(input.dataset.pick,value=>{input.value=value;if(!e&&input.dataset.pick==='merchants'){const last=data.expenses.filter(item=>item.merchant===value).sort((a,b)=>b.date.localeCompare(a.date))[0];if(last&&catalogValues(data,'categories').includes(last.category))f.elements.category.value=last.category;}input.dispatchEvent(new Event('input',{bubbles:true}));});input.onclick=choose;input.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();choose();}};});const update=()=>{$('#entry-detail-summary').textContent=f.elements.category.value+' · '+new Date(f.elements.date.value+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'});const amount=Math.round(Number(f.elements.amount.value)*100)||0,split=f.elements.split.value;$('#split-preview').innerHTML=`${esc(couple('a'))}: <strong>${money(split==='half'?Math.floor(amount/2):split==='a'?amount:0)}</strong><br>${esc(couple('b'))}: <strong>${money(split==='half'?amount-Math.floor(amount/2):split==='b'?amount:0)}</strong>`;};let duplicateAccepted='';f.oninput=()=>{duplicateAccepted='';f.querySelector('.duplicate-warning').hidden=true;$('#save-expense').innerHTML=icon('check')+' Save expense';update();};update();$('#use-calculation').onclick=()=>{try{f.elements.amount.value=(calculateAmount($('#amount-expression').value)/100).toFixed(2);$('#calculation-error').textContent='';f.querySelector('.amount-calculator').open=false;f.elements.amount.dispatchEvent(new Event('input',{bubbles:true}));}catch(err){$('#calculation-error').textContent=err.message;}};
-$('#amount-expression').onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();$('#use-calculation').click();}};
-$('#receipt-file').onchange=async ev=>{if(!ev.target.files[0])return;receiptBusy=true;$('#save-expense').disabled=true;try{receipt=await compressImage(ev.target.files[0]);$('#receipt-preview').innerHTML=`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`;$('#remove-receipt').hidden=false;f.querySelector('.form-error').textContent='';}catch(err){errorIn(f,err);}finally{receiptBusy=false;$('#save-expense').disabled=false;}};
-$('#remove-receipt').onclick=()=>{receipt='';$('#receipt-preview').innerHTML='';$('#receipt-file').value='';$('#remove-receipt').hidden=true;};
-if(e)$('#delete-expense').onclick=()=>deleteExpense(e.id);
-f.onsubmit=async ev=>{ev.preventDefault();if(receiptBusy)return;const v=new FormData(f),raw=String(v.get('amount'));if(!/^\d+(\.\d{1,2})?$/.test(raw))return errorIn(f,'Enter an amount with no more than two decimal places.');if(!v.get('merchant')||!v.get('category'))return errorIn(f,'Choose a merchant and category.');const cents=Math.round(Number(raw)*100);if(cents<=0||cents>999999999)return errorIn(f,'Enter an amount from $0.01 to $9,999,999.99.');const duplicateKey=JSON.stringify([v.get('merchant'),cents,v.get('date'),v.get('payer'),v.get('sheet')]);if(!e&&duplicateAccepted!==duplicateKey&&data.expenses.some(item=>item.merchant.toLowerCase()===v.get('merchant').toLowerCase()&&item.cents===cents&&item.date===v.get('date')&&item.payer===Number(v.get('payer'))&&item.sheet===v.get('sheet'))){duplicateAccepted=duplicateKey;const warning=f.querySelector('.duplicate-warning');warning.hidden=false;warning.textContent='A matching expense already exists for this person, date and sheet. Save again only if this is a separate purchase.';$('#save-expense').textContent='Save anyway';warning.scrollIntoView({block:'nearest'});return;}const another=ev.submitter?.value==='another';try{const saved=await save({action:'expense',expense:{id:e?.id,creator:e?.creator,merchant:v.get('merchant'),cents,category:v.get('category'),date:v.get('date'),payer:Number(v.get('payer')),visibility:'shared',split:v.get('split')||'half',sheet:v.get('sheet'),notes:v.get('notes'),receipt}});if(saved){activeSheet=v.get('sheet');render();if(another)expenseForm(null,{category:v.get('category'),payer:Number(v.get('payer')),visibility:'shared',split:v.get('split')||'half'});else sheet.close();toast(another?'Saved. Ready for the next one.':'Expense saved');}}catch(err){errorIn(f,err);}};}
+
+ sheet.querySelector('[data-modal-back]').onclick=()=>requestClose(backOneModal);
+ sheet.oncancel=ev=>{ev.preventDefault();requestClose(backOneModal);};
+ headerSave.onclick=()=>f.requestSubmit(f.querySelector('#save-expense'));
+
+ sheet.querySelectorAll('[data-expense-tab]').forEach(b=>b.onclick=()=>requestClose(()=>{sheet.close();tab=b.dataset.expenseTab;render();}));
+
+ f.querySelectorAll('[data-pick]').forEach(input=>{
+  const choose=()=>openCatalog(input.dataset.pick,value=>{
+   input.value=value;
+   if(!e&&input.dataset.pick==='merchants'){
+    const last=data.expenses.filter(item=>item.merchant===value).sort((a,b)=>b.date.localeCompare(a.date))[0];
+    if(last&&catalogValues(data,'categories').includes(last.category))f.elements.category.value=last.category;
+   }
+   input.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+  input.onclick=choose;
+  input.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();choose();}};
+ });
+ const update=()=>{
+  const amount=Math.round(Number(f.elements.amount.value)*100)||0,split=f.elements.split.value;
+  $('#split-preview').innerHTML=`${esc(couple('a'))}: <strong>${money(split==='half'?Math.floor(amount/2):split==='a'?amount:0)}</strong><br>${esc(couple('b'))}: <strong>${money(split==='half'?amount-Math.floor(amount/2):split==='b'?amount:0)}</strong>`;
+ };
+ let duplicateAccepted='';
+ f.oninput=()=>{
+  duplicateAccepted='';
+  f.querySelector('.duplicate-warning').hidden=true;
+  $('#save-expense').innerHTML=icon('check')+' Save expense';
+  update();
+ };
+ update();
+ $('#use-calculation').onclick=()=>{
+  try{
+   f.elements.amount.value=(calculateAmount($('#amount-expression').value)/100).toFixed(2);
+   $('#calculation-error').textContent='';
+   f.querySelector('.amount-calculator').open=false;
+   f.elements.amount.dispatchEvent(new Event('input',{bubbles:true}));
+  }catch(err){$('#calculation-error').textContent=err.message;}
+ };
+ $('#amount-expression').onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();$('#use-calculation').click();}};
+ $('#receipt-file').onchange=async ev=>{
+  if(!ev.target.files[0])return;
+  receiptBusy=true;$('#save-expense').disabled=true;headerSave.disabled=true;
+  try{
+   receipt=await compressImage(ev.target.files[0]);
+   $('#receipt-preview').innerHTML=`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`;
+   $('#remove-receipt').hidden=false;
+   f.querySelector('.form-error').textContent='';
+  }catch(err){errorIn(f,err);}
+  finally{receiptBusy=false;$('#save-expense').disabled=false;headerSave.disabled=false;}
+ };
+ $('#remove-receipt').onclick=()=>{receipt='';$('#receipt-preview').innerHTML='';$('#receipt-file').value='';$('#remove-receipt').hidden=true;};
+ if(e)$('#delete-expense').onclick=()=>deleteExpense(e.id);
+ f.onsubmit=async ev=>{
+  ev.preventDefault();
+  if(receiptBusy)return;
+  const v=new FormData(f),raw=String(v.get('amount'));
+  if(!/^\d+(\.\d{1,2})?$/.test(raw))return errorIn(f,'Enter an amount with no more than two decimal places.');
+  if(!v.get('merchant')||!v.get('category'))return errorIn(f,'Choose a merchant and category.');
+  const cents=Math.round(Number(raw)*100);
+  if(cents<=0||cents>999999999)return errorIn(f,'Enter an amount from $0.01 to $9,999,999.99.');
+  const duplicateKey=JSON.stringify([v.get('merchant'),cents,v.get('date'),v.get('payer'),v.get('sheet')]);
+  if(!e&&duplicateAccepted!==duplicateKey&&data.expenses.some(item=>item.merchant.toLowerCase()===v.get('merchant').toLowerCase()&&item.cents===cents&&item.date===v.get('date')&&item.payer===Number(v.get('payer'))&&item.sheet===v.get('sheet'))){
+   duplicateAccepted=duplicateKey;
+   const warning=f.querySelector('.duplicate-warning');
+   warning.hidden=false;
+   warning.textContent='A matching expense already exists for this person, date and sheet. Save again only if this is a separate purchase.';
+   $('#save-expense').textContent='Save anyway';
+   warning.scrollIntoView({block:'nearest'});
+   return;
+  }
+  const another=ev.submitter?.value==='another';
+  try{
+   const saved=await save({action:'expense',expense:{id:e?.id,creator:e?.creator,merchant:v.get('merchant'),cents,category:v.get('category'),date:v.get('date'),payer:Number(v.get('payer')),visibility:'shared',split:v.get('split')||'half',sheet:v.get('sheet'),notes:v.get('notes'),receipt}});
+   if(saved){
+    activeSheet=v.get('sheet');
+    render();
+    if(another)expenseForm(null,{category:v.get('category'),payer:Number(v.get('payer')),visibility:'shared',split:v.get('split')||'half'});
+    else sheet.close();
+    toast(another?'Saved. Ready for the next one.':'Expense saved');
+   }
+  }catch(err){errorIn(f,err);}
+ };
+}
 async function compressImage(file){if(file.size>20000000)throw new Error('Please choose a receipt under 20 MB.');const url=URL.createObjectURL(file);try{const img=new Image();img.src=url;await img.decode();const scale=Math.min(1,1300/Math.max(img.width,img.height));const canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);let output;for(const q of [.8,.65,.5,.35]){output=canvas.toDataURL('image/jpeg',q);if(output.length<390000)return output;}throw new Error('Receipt is too detailed. Try cropping the image.');}catch(e){throw new Error(e.message.includes('Receipt')?e.message:'This image could not be opened. Try a screenshot or JPEG receipt.');}finally{URL.revokeObjectURL(url);}}
 function newSheet(edit=null){modal(edit?'Edit sheet':'New sheet',`<form id="new-sheet-form"><label class="field"><span>Sheet name</span><input name="name" placeholder="October expenses" value="${esc(edit?.name||'')}" required maxlength="60"></label><div class="two"><label class="field"><span>Starts on</span><input name="start" type="date" value="${edit?.start||today()}" required></label><label class="field"><span>Ends on · optional</span><input name="end" type="date" value="${edit?.end||''}"></label></div><p class="error" role="alert"></p><button class="primary full">${edit?'Save changes':'Create sheet'}</button></form>`);$('#new-sheet-form').onsubmit=async e=>{e.preventDefault();const f=e.target,v=new FormData(f);if(v.get('end')&&v.get('end')<v.get('start'))return errorIn(f,'End date must follow start date.');try{await save({action:edit?'sheet-edit':'sheet',id:edit?.id,name:v.get('name'),start:v.get('start'),end:v.get('end')});activeSheet=edit?.id||data.sheets[0].id;tab='sheets';sheetFilter='open';render();sheet.close();toast(edit?'Sheet updated':'Sheet created');}catch(err){errorIn(f,err);}};}
 function confirmDialog(title,description,run,label='Confirm'){modal(title,`<p class="muted">${esc(description)}</p><p class="error" role="alert"></p><button class="primary full" id="confirm-action">${esc(label)}</button>`);$('#confirm-action').onclick=async()=>{const b=$('#confirm-action');b.disabled=true;try{await run();}catch(e){sheet.querySelector('.error').textContent=e.message;b.disabled=false;}};}
