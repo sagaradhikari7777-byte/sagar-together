@@ -35,3 +35,9 @@ test('Add Expense keeps navigation and required pickers wired',()=>{
  assert.match(app,/data-pick="categories"/);
  assert.match(app,/id="save-expense"/);
 });
+
+
+test('spending chart keeps settled purchases in historical spending totals',()=>{
+ assert.match(app,/function settlementSpendChart\(\)\{\s*const expenses=scope\(\),total=/);
+ assert.doesNotMatch(app,/function settlementSpendChart\(\)\{\s*const expenses=scope\(\)\.filter\(e=>!e\.settlement\)/);
+});
