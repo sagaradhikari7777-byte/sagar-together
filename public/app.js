@@ -452,19 +452,53 @@ function openCatalog(kind,onPick=null){
   document.body.append(catalogDialog);
  }
  const dlg=catalogDialog,title=kind==='merchants'?'Merchants':'Categories',field=kind==='merchants'?'merchant':'category';let query='';
- const head=(heading,back,plus)=>{dlg.innerHTML=`<div class="catalog-handle" aria-hidden="true"></div><header class="catalog-head"><button type="button" class="back-button" id="catalog-back" aria-label="Back">${backIcon()}</button><h2 id="catalog-title" tabindex="-1">${heading}</h2>${plus?`<button type="button" class="icon-button" id="catalog-add" aria-label="Add ${field}">${icon('plus')}</button>`:'<span class="head-spacer"></span>'}</header>`;dlg.setAttribute('aria-labelledby','catalog-title');dlg.querySelector('#catalog-back').onclick=back;dlg.oncancel=ev=>{ev.preventDefault();back();};};
+ dlg.dataset.catalogKind=kind;
+ const head=(heading,back,plus)=>{
+  dlg.innerHTML=`<div class="catalog-handle" aria-hidden="true"></div><header class="catalog-head"><button type="button" class="catalog-back" id="catalog-back" aria-label="Back">${backIcon()}</button><h2 id="catalog-title" tabindex="-1">${heading}</h2>${plus?`<button type="button" class="catalog-add" id="catalog-add" aria-label="Add ${field}">${icon('plus')}</button>`:'<span class="head-spacer"></span>'}</header>`;
+  dlg.setAttribute('aria-labelledby','catalog-title');
+  dlg.querySelector('#catalog-back').onclick=back;
+  dlg.oncancel=ev=>{ev.preventDefault();back();};
+ };
  const browse=()=>{
-  head(title,()=>dlg.close(),true);dlg.insertAdjacentHTML('beforeend',`<input id="catalog-search" type="search" placeholder="Search" aria-label="Search ${title.toLowerCase()}" value="${esc(query)}"><p class="small muted">All ${title.toLowerCase()}</p><div class="catalog-list"></div><p class="small muted catalog-note">Counts include all household expenses. Editing or removing a choice keeps past expenses unchanged.</p>`);
+  head(title,()=>dlg.close(),true);
+  dlg.insertAdjacentHTML('beforeend',`<div class="catalog-body"><label class="catalog-search-wrap">${icon('search')}<input id="catalog-search" type="search" placeholder="Search ${title.toLowerCase()}" aria-label="Search ${title.toLowerCase()}" value="${esc(query)}"></label><div class="catalog-section-head"><span>All ${title.toLowerCase()}</span><small>${catalogValues(data,kind).length} saved</small></div><div class="catalog-list"></div><p class="catalog-note">Usage counts include all household expenses. Renaming or removing an option does not change past expenses.</p></div>`);
   dlg.querySelector('#catalog-add').onclick=()=>edit();
-  const rows=()=>{const names=catalogValues(data,kind).filter(n=>n.toLowerCase().includes(query.toLowerCase()));if(kind==='merchants')names.sort((a,b)=>a.localeCompare(b));dlg.querySelector('.catalog-list').innerHTML=names.length?names.map(n=>`<div class="catalog-row"><button type="button" class="catalog-choice" data-choice="${esc(n)}"><span class="catalog-icon ${kind==='merchants'?'merchant-icon':catalogIcon(n)}">${icon(kind==='merchants'?'store':catalogIcon(n))}</span><span class="catalog-name">${esc(n)}</span><span class="catalog-count">${data.expenses.filter(e=>e[field]===n).length}</span></button><button type="button" class="catalog-edit" data-edit-choice="${esc(n)}" aria-label="Edit ${esc(n)}">${icon('edit')}</button></div>`).join(''):'<p class="empty muted">No matches. Tap + to add one.</p>';dlg.querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>{if(onPick){onPick(b.dataset.choice);dlg.close();}else edit(b.dataset.choice);});dlg.querySelectorAll('[data-edit-choice]').forEach(b=>b.onclick=()=>edit(b.dataset.editChoice));};
-  rows();dlg.querySelector('#catalog-search').oninput=e=>{query=e.target.value;rows();};dlg.scrollTop=0;
+  const rows=()=>{
+   const names=catalogValues(data,kind).filter(n=>n.toLowerCase().includes(query.toLowerCase()));
+   if(kind==='merchants')names.sort((a,b)=>a.localeCompare(b));
+   dlg.querySelector('.catalog-list').innerHTML=names.length?names.map(n=>{
+    const count=data.expenses.filter(e=>e[field]===n).length;
+    return `<div class="catalog-row"><button type="button" class="catalog-choice" data-choice="${esc(n)}"><span class="catalog-icon ${kind==='merchants'?'merchant-icon':catalogIcon(n)}">${icon(kind==='merchants'?'store':catalogIcon(n))}</span><span class="catalog-name">${esc(n)}</span><span class="catalog-count" aria-label="${count} uses">${count}</span></button><button type="button" class="catalog-edit" data-edit-choice="${esc(n)}" aria-label="Edit ${esc(n)}">${icon('edit')}</button></div>`;
+   }).join(''):'<div class="catalog-empty"><span>'+icon('search')+'</span><strong>No matches</strong><p>Try another search or add a new '+field+'.</p></div>';
+   dlg.querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>{if(onPick){onPick(b.dataset.choice);dlg.close();}else edit(b.dataset.choice);});
+   dlg.querySelectorAll('[data-edit-choice]').forEach(b=>b.onclick=()=>edit(b.dataset.editChoice));
+  };
+  rows();
+  dlg.querySelector('#catalog-search').oninput=e=>{query=e.target.value;rows();};
+  dlg.scrollTop=0;
  };
  const edit=(previous=null)=>{
-  head(`${previous?'Edit':'Add'} ${field}`,browse,false);dlg.insertAdjacentHTML('beforeend',`<form id="catalog-form"><label class="field"><span>Name</span><input name="name" value="${esc(previous||'')}" required maxlength="${kind==='merchants'?80:40}" autocomplete="off"></label><p class="error" role="alert"></p><button class="primary full">${previous?'Save changes':'Add '+field}</button>${previous?'<button type="button" id="catalog-remove" class="secondary full danger" style="margin-top:12px">Remove from list</button>':''}</form>`);
-  const form=dlg.querySelector('form');form.onsubmit=async ev=>{ev.preventDefault();const button=form.querySelector('.primary');button.disabled=true;try{const name=new FormData(form).get('name').trim();await save({action:'catalog',kind,operation:previous?'rename':'add',name,previous});if(onPick){onPick(name);dlg.close();}else{query='';browse();}}catch(e){errorIn(form,e);button.disabled=false;}};
-  if(previous)dlg.querySelector('#catalog-remove').onclick=async()=>{const button=dlg.querySelector('#catalog-remove');button.disabled=true;try{await save({action:'catalog',kind,operation:'remove',previous});browse();}catch(e){errorIn(form,e);button.disabled=false;}};
+  head(`${previous?'Edit':'Add'} ${field}`,browse,false);
+  dlg.insertAdjacentHTML('beforeend',`<div class="catalog-body"><section class="catalog-edit-card"><span class="catalog-edit-icon">${icon(kind==='merchants'?'store':'tag')}</span><div><p class="catalog-edit-kicker">${previous?'UPDATE':'NEW'} ${field.toUpperCase()}</p><h3>${previous?'Rename '+field:'Add '+field}</h3></div><form id="catalog-form"><label class="field"><span>Name</span><input name="name" value="${esc(previous||'')}" required maxlength="${kind==='merchants'?80:40}" autocomplete="off" placeholder="${kind==='merchants'?'e.g. Woolworths':'e.g. Groceries'}"></label><p class="error" role="alert"></p><button class="primary full">${previous?'Save changes':'Add '+field}</button>${previous?'<button type="button" id="catalog-remove" class="secondary full danger">Remove from list</button>':''}</form></section></div>`);
+  const form=dlg.querySelector('form');
+  form.onsubmit=async ev=>{
+   ev.preventDefault();
+   const button=form.querySelector('.primary');button.disabled=true;
+   try{
+    const name=new FormData(form).get('name').trim();
+    await save({action:'catalog',kind,operation:previous?'rename':'add',name,previous});
+    if(onPick){onPick(name);dlg.close();}else{query='';browse();}
+   }catch(e){errorIn(form,e);button.disabled=false;}
+  };
+  if(previous)dlg.querySelector('#catalog-remove').onclick=async()=>{
+   const button=dlg.querySelector('#catalog-remove');button.disabled=true;
+   try{await save({action:'catalog',kind,operation:'remove',previous});browse();}
+   catch(e){errorIn(form,e);button.disabled=false;}
+  };
  };
- browse();if(!dlg.open)dlg.showModal();dlg.querySelector('#catalog-title').focus({preventScroll:true});
+ browse();
+ if(!dlg.open)dlg.showModal();
+ dlg.querySelector('#catalog-title').focus({preventScroll:true});
 }
 
 // Journal tools: derived from all household expenses.
