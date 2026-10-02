@@ -3200,3 +3200,418 @@
 .ios-app .ha-foot-actions button:active{
   transform:scale(.98);
 }
+
+
+/* FROSTED COBALT — refined app-wide colour system.
+   Mostly neutral. Blue is an accent, never the canvas. */
+.ios-app{
+  --bg:#f5f7fa;
+  --surface:#ffffff;
+  --surface-2:#f1f4f8;
+  --surface-3:#f8fafc;
+  --text:#172033;
+  --muted:#748094;
+  --line:#e5eaf1;
+  --line-strong:#d7dfea;
+  --accent:#4f74e8;
+  --accent-strong:#355bc7;
+  --accent-soft:#edf2ff;
+  --accent-faint:#f6f8ff;
+  --hero:#ffffff;
+  --hero-2:#f7f9ff;
+  --hero-text:#172033;
+  --hero-muted:#6f7d91;
+  --danger:#bd6672;
+  --glass:rgba(255,255,255,.84);
+  --glass-border:rgba(255,255,255,.94);
+  --glass-shadow:0 10px 30px rgba(32,48,74,.08);
+  background:var(--bg)!important;
+  color:var(--text)!important;
+}
+.ios-app.theme-dark{
+  --bg:#0f141b;
+  --surface:#171e27;
+  --surface-2:#1e2732;
+  --surface-3:#131a22;
+  --text:#f3f6fb;
+  --muted:#98a6b8;
+  --line:#283442;
+  --line-strong:#344354;
+  --accent:#7fa2ff;
+  --accent-strong:#a3baff;
+  --accent-soft:#24334c;
+  --accent-faint:#1b2638;
+  --hero:#171e27;
+  --hero-2:#1b2430;
+  --hero-text:#f5f8fc;
+  --hero-muted:#a6b3c3;
+  --danger:#df8792;
+  --glass:rgba(23,30,39,.88);
+  --glass-border:rgba(255,255,255,.085);
+  --glass-shadow:0 12px 30px rgba(0,0,0,.26);
+  background:var(--bg)!important;
+  color:var(--text)!important;
+}
+
+/* Quiet canvas */
+.ios-app .ambient{
+  background:
+    radial-gradient(circle at 18% 0%,rgba(226,233,244,.72),transparent 36%),
+    radial-gradient(circle at 84% 4%,rgba(239,243,250,.82),transparent 38%)!important;
+  opacity:.46!important;
+  filter:blur(44px)!important;
+}
+.ios-app.theme-dark .ambient{
+  background:radial-gradient(circle at 50% -5%,rgba(72,95,138,.22),transparent 42%)!important;
+  opacity:.16!important;
+}
+
+/* Cards and content surfaces */
+.ios-app .re-current-sheet,
+.ios-app .re-metrics article,
+.ios-app .liquid-expense-list,
+.ios-app .re-quick>button,
+.ios-app .re-sheet-card,
+.ios-app .re-sheet-card .sheet-front,
+.ios-app .re-sheet-open,
+.ios-app .re-search,
+.ios-app .re-settle-hero,
+.ios-app .re-settle-stats>span,
+.ios-app .re-breakdown,
+.ios-app .sp-settle-hero,
+.ios-app .sp-settle-stats>span,
+.ios-app .sp-breakdown,
+.ios-app .ha-breakdown,
+.ios-app .ha-setting-group,
+.ios-app .re-profile-card,
+.ios-app .re-members,
+.ios-app .re-settings-group,
+.ios-app .ms-profile,
+.ios-app .ms-group,
+.ios-app .sp-more-settings-list .secondary,
+.ios-app .re-auth-preview,
+.ios-app .welcome-demo,
+.ios-app .re-auth-points span,
+.ios-app .onboarding-steps>div{
+  background:var(--surface)!important;
+  border-color:var(--line)!important;
+}
+
+/* The big cards are now frosted white, not slabs of blue. */
+.ios-app .sp-balance,
+.ios-app .re-balance,
+.ios-app .sp-sheet-summary,
+.ios-app .re-sheet-summary,
+.ios-app .ha-hero{
+  background:linear-gradient(145deg,var(--hero) 0%,var(--hero-2) 100%)!important;
+  color:var(--hero-text)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:0 12px 30px rgba(31,48,77,.075)!important;
+}
+.ios-app.theme-dark .sp-balance,
+.ios-app.theme-dark .re-balance,
+.ios-app.theme-dark .sp-sheet-summary,
+.ios-app.theme-dark .re-sheet-summary,
+.ios-app.theme-dark .ha-hero{
+  box-shadow:0 14px 32px rgba(0,0,0,.22)!important;
+}
+
+/* Very subtle blue highlight line gives hierarchy without flooding the card. */
+.ios-app .sp-balance:before,
+.ios-app .ha-hero:before,
+.ios-app .sp-sheet-summary:before{
+  content:"";
+  position:absolute;
+  left:18px;
+  right:18px;
+  top:0;
+  height:2px;
+  border-radius:999px;
+  background:linear-gradient(90deg,var(--accent),rgba(79,116,232,.06))!important;
+  opacity:.62;
+  pointer-events:none;
+}
+
+/* Hero text switches back to dark/light content colours. */
+.ios-app .sp-balance strong,
+.ios-app .sp-balance b,
+.ios-app .sp-balance span,
+.ios-app .sp-balance p,
+.ios-app .re-balance strong,
+.ios-app .re-balance b,
+.ios-app .re-balance span,
+.ios-app .re-balance p,
+.ios-app .sp-sheet-summary strong,
+.ios-app .sp-sheet-summary b,
+.ios-app .sp-sheet-summary span,
+.ios-app .sp-sheet-summary p,
+.ios-app .ha-hero strong,
+.ios-app .ha-hero b,
+.ios-app .ha-hero span,
+.ios-app .ha-hero p,
+.ios-app .ha-hero em{
+  color:var(--hero-text)!important;
+}
+.ios-app .sp-balance small,
+.ios-app .re-balance small,
+.ios-app .sp-sheet-summary small,
+.ios-app .ha-hero small,
+.ios-app .ha-hero-top,
+.ios-app .ha-hero-top em{
+  color:var(--hero-muted)!important;
+}
+.ios-app .sp-balance-stats,
+.ios-app .ha-hero-stats{
+  border-top-color:var(--line)!important;
+}
+.ios-app .sp-balance-stats>span,
+.ios-app .ha-hero-stats>span{
+  border-left-color:var(--line)!important;
+}
+
+/* Hero action icons become small cobalt controls. */
+.ios-app .sp-balance-main>button,
+.ios-app .ha-hero-main>button,
+.ios-app .ha-settings-person>button{
+  background:var(--accent-soft)!important;
+  border-color:transparent!important;
+  color:var(--accent)!important;
+}
+.ios-app .ha-hero-action{
+  background:var(--accent)!important;
+  border-color:transparent!important;
+  color:#fff!important;
+  box-shadow:0 6px 16px rgba(79,116,232,.18)!important;
+}
+.ios-app.theme-dark .ha-hero-action{color:#0f141b!important}
+
+/* Featured/current sheet is also neutral; selection is shown with a blue edge. */
+.ios-app .re-sheet-card.featured .re-sheet-open,
+.ios-app .sp-featured .re-sheet-card.featured .re-sheet-open{
+  background:linear-gradient(145deg,var(--surface) 0%,var(--accent-faint) 100%)!important;
+  color:var(--text)!important;
+  border:1px solid color-mix(in srgb,var(--accent) 24%,var(--line))!important;
+  box-shadow:0 10px 24px rgba(42,63,96,.07)!important;
+}
+.ios-app .re-sheet-card.featured .re-sheet-copy strong,
+.ios-app .re-sheet-card.featured .re-sheet-money{
+  color:var(--text)!important;
+}
+.ios-app .re-sheet-card.featured .re-sheet-copy small,
+.ios-app .re-sheet-card.featured .re-sheet-copy em,
+.ios-app .re-sheet-card.featured .re-sheet-meta{
+  color:var(--muted)!important;
+}
+.ios-app .re-sheet-card.featured .re-folder{
+  background:var(--accent-soft)!important;
+  color:var(--accent)!important;
+}
+
+/* Icons/categories stay quiet and consistent. */
+.ios-app .liquid-category,
+.ios-app .re-cat,
+.ios-app .liquid-category.groceries,
+.ios-app .liquid-category.food,
+.ios-app .liquid-category.travel,
+.ios-app .liquid-category.bills,
+.ios-app .re-cat.groceries,
+.ios-app .re-cat.food,
+.ios-app .re-cat.travel,
+.ios-app .re-cat.bills,
+.ios-app .re-folder,
+.ios-app .re-current-sheet>.icon:first-child,
+.ios-app .re-quick>button>span,
+.ios-app .catalog-icon,
+.ios-app .re-setting-icon,
+.ios-app .ps-row-icon,
+.ios-app .ps-action>span,
+.ios-app .ms-icon,
+.ios-app .sicon,
+.ios-app .welcome-demo-icon,
+.ios-app .welcome-demo-icon.food,
+.ios-app .ha-setting-row>span:first-child{
+  background:var(--accent-soft)!important;
+  color:var(--accent)!important;
+}
+
+/* Blue is reserved for actions, links and selection. */
+.ios-app .primary,
+.ios-app .re-add{
+  background:var(--accent)!important;
+  color:#fff!important;
+  border-color:transparent!important;
+  box-shadow:0 8px 18px rgba(79,116,232,.18)!important;
+}
+.ios-app.theme-dark .primary,
+.ios-app.theme-dark .re-add{
+  color:#0f141b!important;
+}
+.ios-app .text-button,
+.ios-app .re-eyebrow,
+.ios-app .sp-home-head h1 span,
+.ios-app .re-auth h1 span,
+.ios-app .re-sheet-copy small,
+.ios-app .sp-more,
+.ios-app .re-more-expenses,
+.ios-app .ha-more{
+  color:var(--accent)!important;
+}
+.ios-app .re-status,
+.ios-app .settle-status,
+.ios-app .badge,
+.ios-app .welcome-demo-head em{
+  background:var(--accent-soft)!important;
+  color:var(--accent)!important;
+}
+.ios-app .re-segments,
+.ios-app .switches{
+  background:var(--surface-2)!important;
+  border-color:var(--line)!important;
+}
+.ios-app .re-segments .selected,
+.ios-app .switches .selected{
+  background:var(--surface)!important;
+  color:var(--accent)!important;
+  box-shadow:0 2px 8px rgba(38,54,78,.06)!important;
+}
+.ios-app .sp-filter i{
+  background:var(--accent)!important;
+  color:#fff!important;
+}
+
+/* Top/bottom chrome becomes neutral glass with one cobalt active state. */
+.ios-app .re-house,
+.ios-app .re-profile,
+.ios-app .re-glass-circle,
+.ios-app .re-round,
+.ios-app .re-small-round,
+.ios-app .re-dock{
+  background:var(--glass)!important;
+  border-color:var(--glass-border)!important;
+  box-shadow:var(--glass-shadow)!important;
+}
+.ios-app .re-house-mark{background:var(--accent)!important}
+.ios-app .re-profile span{
+  background:var(--accent-soft)!important;
+  color:var(--accent)!important;
+}
+.ios-app .re-dock button{color:var(--muted)!important}
+.ios-app .re-dock button.active{
+  background:var(--accent-soft)!important;
+  color:var(--accent)!important;
+  box-shadow:none!important;
+}
+.ios-app.theme-dark .re-dock button.active{
+  background:var(--accent-soft)!important;
+  color:var(--accent)!important;
+}
+
+/* Avatars: graphite first, cobalt only as a supporting accent. */
+.ios-app .ps-avatar,
+.ios-app .ms-avatar,
+.ios-app .ha-settings-avatar{
+  background:#273247!important;
+  color:#fff!important;
+}
+.ios-app.theme-dark .ps-avatar,
+.ios-app.theme-dark .ms-avatar,
+.ios-app.theme-dark .ha-settings-avatar{
+  background:#dce4ef!important;
+  color:#172033!important;
+}
+.ios-app .avatar,
+.ios-app .avatar.b,
+.ios-app .people-faces span,
+.ios-app .liquid-face-stack i,
+.ios-app .liquid-face-stack.warm i{
+  background:var(--surface-2)!important;
+  color:var(--text)!important;
+  border-color:var(--surface)!important;
+}
+
+/* Inputs are neutral, focus/amount gets the blue cue. */
+.ios-app dialog{
+  background:rgba(255,255,255,.97)!important;
+  color:var(--text)!important;
+  border-color:var(--line)!important;
+}
+.ios-app.theme-dark dialog{
+  background:rgba(23,30,39,.98)!important;
+}
+.ios-app input,
+.ios-app select,
+.ios-app textarea,
+.ios-app .entry-details,
+.ios-app .split-preview{
+  background:var(--surface-2)!important;
+  color:var(--text)!important;
+  border-color:var(--line)!important;
+}
+.ios-app input:focus,
+.ios-app select:focus,
+.ios-app textarea:focus{
+  border-color:color-mix(in srgb,var(--accent) 46%,var(--line))!important;
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 9%,transparent)!important;
+}
+.ios-app .entry-amount,
+.ios-app .insight-hero,
+.ios-app .insight-split>div{
+  background:var(--accent-faint)!important;
+  color:var(--text)!important;
+  border-color:var(--line)!important;
+}
+.ios-app .entry-amount .big-input,
+.ios-app .big-input,
+.ios-app .insight-hero strong{
+  color:var(--accent-strong)!important;
+}
+.ios-app .bar i{background:var(--accent)!important}
+
+/* Settings uses the same colour system, no separate palette. */
+.ios-app .minimal-settings{
+  --ms-bg:var(--bg)!important;
+  --ms-surface:var(--surface)!important;
+  --ms-surface-2:var(--surface-2)!important;
+  --ms-text:var(--text)!important;
+  --ms-muted:var(--muted)!important;
+  --ms-line:var(--line)!important;
+  --ms-accent:var(--accent)!important;
+}
+.ios-app .re-shell-settings{background:var(--bg)!important}
+.ios-app .ha-settings-person small,
+.ios-app .ha-settings-person p{
+  color:var(--hero-muted)!important;
+}
+.ios-app .ha-settings-person strong{color:var(--hero-text)!important}
+
+/* Settle footer: both are real buttons; only Summary gets a gentle blue fill. */
+.ios-app .ha-foot-actions button{
+  background:var(--surface)!important;
+  color:var(--text)!important;
+  border-color:var(--line)!important;
+  box-shadow:0 3px 10px rgba(31,48,77,.045)!important;
+}
+.ios-app .ha-foot-actions button:first-child{
+  background:var(--accent-soft)!important;
+  color:var(--accent)!important;
+  border-color:transparent!important;
+}
+
+/* Welcome/onboarding */
+.ios-app .welcome-share-note{
+  background:#273247!important;
+  color:#fff!important;
+}
+.ios-app.theme-dark .welcome-share-note{
+  background:#dce4ef!important;
+  color:#172033!important;
+}
+
+/* Only destructive actions remain muted red. */
+.ios-app .danger,
+.ios-app .ms-signout,
+.ios-app .ps-signout,
+.ios-app .sp-signout,
+.ios-app .ha-signout{
+  color:var(--danger)!important;
+}
