@@ -218,8 +218,27 @@ function sheetsView(){
  </section>`;
 }
 function settlementBreakdown(){
- const selected=settleCouple||group(data.seat),o=settlementOverview(scope(),selected),rows=o.rows.slice(0,3),more=Math.max(0,o.rows.length-rows.length);
- return `<section class="ha-breakdown">${rows.length?`<div class="ha-breakdown-list">${rows.map(e=>`<button data-expense="${e.id}"><span class="re-cat ${catIcon(e.category)}">${icon(catIcon(e.category))}</span><span><strong>${esc(e.merchant)}</strong><small>${esc(new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}))} · ${esc(data.names[e.payer])}</small></span><em><small>Your share</small><b>${money(e.share)}</b></em></button>`).join('')}</div>${more?`<button class="ha-more" data-action="expenses">+${more} more · View sheet</button>`:''}`:'<div class="ha-balanced">'+icon('check')+'<span>Nothing left to settle.</span></div>'}</section>`;
+ const selected=settleCouple||group(data.seat),o=settlementOverview(scope(),selected),rows=o.rows.slice(0,4),more=Math.max(0,o.rows.length-rows.length);
+ return `<section class="ha-breakdown">${rows.length?`<div class="ha-breakdown-list">${rows.map(e=>`<button data-expense="${e.id}"><span class="re-cat ${catIcon(e.category)}">${icon(catIcon(e.category))}</span><span><strong>${esc(e.merchant)}</strong><small>${esc(new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}))} · ${esc(data.names[e.payer])}</small><i>${esc(e.category||'Other')}</i></span><em><small>Your share</small><b>${money(e.share)}</b></em></button>`).join('')}</div>${more?`<button class="ha-more" data-action="expenses">+${more} more · View sheet</button>`:''}`:'<div class="ha-balanced">'+icon('check')+'<span>Nothing left to settle.</span></div>'}</section>`;
+}
+
+function settlementGraph(selected){
+ const expenses=scope(),a=settlementOverview(expenses,'a'),b=settlementOverview(expenses,'b'),max=Math.max(a.paid,a.share,b.paid,b.share,1);
+ const pct=v=>v?Math.max(5,Math.round(v/max*100)):0;
+ const row=(g,o)=>`<div class="ref-settle-chart-row ${g===selected?'selected':''}">
+  <div class="ref-settle-chart-name"><strong>${esc(couple(g))}</strong><small>${g===selected?'Selected':'Other couple'}</small></div>
+  <div class="ref-settle-chart-bars">
+   <div class="ref-settle-chart-line"><span>Paid</span><div><i class="paid" style="--bar:${pct(o.paid)}%"></i></div><b>${money(o.paid)}</b></div>
+   <div class="ref-settle-chart-line"><span>Share</span><div><i class="share" style="--bar:${pct(o.share)}%"></i></div><b>${money(o.share)}</b></div>
+  </div>
+ </div>`;
+ const chosen=selected==='a'?a:b,delta=chosen.paid-chosen.share;
+ return `<section class="ref-settle-chart" aria-label="Settlement contribution comparison">
+  <div class="ref-settle-chart-head"><div><small>LIVE BALANCE</small><h2>Paid vs share</h2></div><span class="${delta>0?'ahead':delta<0?'behind':'even'}">${delta===0?'Even':`${delta>0?'+':'−'}${money(Math.abs(delta))}`}</span></div>
+  <p>Compare what each couple has paid with what their share should be.</p>
+  <div class="ref-settle-chart-legend"><span><i class="paid"></i>Paid</span><span><i class="share"></i>Share</span></div>
+  <div class="ref-settle-chart-plot">${row('a',a)}${row('b',b)}</div>
+ </section>`;
 }
 
 function settleView(){
@@ -232,6 +251,7 @@ function settleView(){
   <div class="ref-settle-body">
    <section class="ref-settle-summary ${status}"><div class="ref-settle-summary-head"><span><i></i>TO SETTLE</span><em>${statusLabel}</em></div><strong class="ref-settle-amount">${money(remaining)}</strong><p>${o.net===0?'No payment is needed.':`${esc(couple(from))} → ${esc(couple(to))}`}</p><div class="ref-settle-stats"><span><small>Your share</small><b>${money(o.share)}</b></span><span><small>Paid</small><b>${money(o.paid)}</b></span></div></section>
    <div class="ref-settle-controls"><label class="ref-settle-sheet"><span>Sheet</span><div>${icon('folder')}${selectSheet()}</div></label><label class="ref-settle-couple"><span>Share for</span><select id="settle-couple">${['a','b'].map(g=>`<option value="${g}" ${g===selected?'selected':''}>${esc(couple(g))}${g===group(data.seat)?' · yours':''}</option>`).join('')}</select></label></div>
+   ${settlementGraph(selected)}
    <div class="ref-settle-section-head"><div><small>UNSETTLED</small><h2>What makes this up</h2></div><span>${items.length} open</span></div>
    <div class="ref-settle-breakdown">${settlementBreakdown()}</div>
    <div class="ref-settle-actions"><button data-action="settlement-summary">${icon('copy')}<span><strong>Summary</strong><small>Copy the balance</small></span></button><button data-action="settlement-history">${icon('receipt')}<span><strong>History</strong><small>${history.length?history.length+' payment'+(history.length===1?'':'s'):'No payments yet'}</small></span></button></div>
