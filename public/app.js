@@ -228,7 +228,7 @@ function settlementBreakdown(){
 }
 
 function settlementSpendChart(){
- const expenses=scope().filter(e=>!e.settlement),total=expenses.reduce((sum,e)=>sum+e.cents,0);
+ const expenses=scope(),total=expenses.reduce((sum,e)=>sum+e.cents,0);
  const mode=settleSpendMode==='merchant'?'merchant':'category';
  const categoryMap=new Map(),merchantMap=new Map();
  const bump=(map,key,e,relatedKey)=>{
