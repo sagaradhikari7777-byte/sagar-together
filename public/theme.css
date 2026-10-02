@@ -5756,3 +5756,95 @@
   background:transparent!important;
   font-size:11px!important;
 }
+
+
+/* FIX: fully isolate Add Expense from the underlying app on iPhone/WebKit. */
+.ios-app.expense-entry-open #app{
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+@media(max-width:699px){
+  .ios-app #sheet:has(#expense-form){
+    position:fixed!important;
+    inset:0!important;
+    width:100vw!important;
+    height:100dvh!important;
+    max-width:none!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:#f5f3f3!important;
+    overflow:hidden!important;
+    display:grid!important;
+    grid-template-rows:auto minmax(0,1fr) auto!important;
+    isolation:isolate!important;
+    contain:paint!important;
+  }
+
+  .ios-app.theme-dark #sheet:has(#expense-form){
+    background:var(--bg)!important;
+  }
+
+  .ios-app #sheet:has(#expense-form)::backdrop{
+    background:#f5f3f3!important;
+    backdrop-filter:none!important;
+    -webkit-backdrop-filter:none!important;
+  }
+
+  .ios-app.theme-dark #sheet:has(#expense-form)::backdrop{
+    background:var(--bg)!important;
+  }
+
+  .ios-app #sheet:has(#expense-form) .dialog-head{
+    grid-row:1!important;
+    position:relative!important;
+    inset:auto!important;
+    margin:0!important;
+    flex:none!important;
+    z-index:30!important;
+    background:#fff!important;
+  }
+
+  .ios-app.theme-dark #sheet:has(#expense-form) .dialog-head{
+    background:var(--surface)!important;
+  }
+
+  .ios-app #sheet:has(#expense-form) .ref-expense-form{
+    grid-row:2!important;
+    min-height:0!important;
+    height:auto!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    background:#f5f3f3!important;
+    padding:18px 14px 24px!important;
+    position:relative!important;
+    z-index:1!important;
+  }
+
+  .ios-app.theme-dark #sheet:has(#expense-form) .ref-expense-form{
+    background:var(--bg)!important;
+  }
+
+  .ios-app #sheet:has(#expense-form) .ref-expense-nav{
+    grid-row:3!important;
+    position:relative!important;
+    inset:auto!important;
+    width:100%!important;
+    height:calc(78px + var(--safe-bottom))!important;
+    min-height:calc(78px + var(--safe-bottom))!important;
+    margin:0!important;
+    z-index:30!important;
+    background:#fff!important;
+    border-top:1px solid #eceae8!important;
+  }
+
+  .ios-app.theme-dark #sheet:has(#expense-form) .ref-expense-nav{
+    background:var(--surface)!important;
+    border-top-color:var(--line)!important;
+  }
+}
