@@ -5848,3 +5848,44 @@
     border-top-color:var(--line)!important;
   }
 }
+
+
+/* GLOBAL OVERLAY ISOLATION — prevents page bleed-through on every dialog/picker screen. */
+.ios-app.overlay-open #app{
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+.ios-app.catalog-layer-open #sheet[open]{
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+
+.ios-app #sheet[open],
+.ios-app #catalog-dialog[open]{
+  isolation:isolate!important;
+  contain:paint!important;
+  backface-visibility:hidden!important;
+  -webkit-backface-visibility:hidden!important;
+  transform:translateZ(0)!important;
+  opacity:1!important;
+}
+
+.ios-app #sheet[open]::backdrop,
+.ios-app #catalog-dialog[open]::backdrop{
+  background:color-mix(in srgb,var(--bg) 92%,transparent)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+@media(max-width:699px){
+  .ios-app #sheet[open]{
+    background:var(--bg)!important;
+  }
+  .ios-app #catalog-dialog[open]{
+    background:var(--bg)!important;
+  }
+  .ios-app #sheet[open]::backdrop,
+  .ios-app #catalog-dialog[open]::backdrop{
+    background:var(--bg)!important;
+  }
+}
