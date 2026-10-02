@@ -293,6 +293,40 @@ function settleView(){
   </div>
  </section>`;
 }
+function settingsHouseholdDialog(){
+ modal('Household & names',`<form id="settings-household-form">
+  <label class="field"><span>Household name</span><input name="name" value="${esc(data.name)}" required maxlength="100" autocomplete="organization"></label>
+  <div class="two"><label class="field"><span>Person 1</span><input name="n0" value="${esc(data.names[0])}" required maxlength="40"></label><label class="field"><span>Person 2</span><input name="n1" value="${esc(data.names[1])}" required maxlength="40"></label></div>
+  <div class="two"><label class="field"><span>Person 3</span><input name="n2" value="${esc(data.names[2])}" required maxlength="40"></label><label class="field"><span>Person 4</span><input name="n3" value="${esc(data.names[3])}" required maxlength="40"></label></div>
+  <p class="small muted">Changing a name updates how that person appears across the household. Existing expenses keep the same ownership and payer seat.</p>
+  <p class="error" role="alert"></p>
+  <button class="primary full">Save household</button>
+ </form>`);
+ const form=$('#settings-household-form');
+ form.onsubmit=async ev=>{
+  ev.preventDefault();
+  const v=new FormData(form);
+  try{
+   await save({action:'settings',name:v.get('name'),names:[0,1,2,3].map(i=>v.get('n'+i))});
+   sheet.close();
+   toast('Household updated');
+  }catch(err){errorIn(form,err);}
+ };
+}
+
+function settingsMoreDialog(){
+ modal('Journal tools',`<p class="small muted">Manage the lists used when adding expenses or export a copy of your household journal.</p>
+  <div class="sheet-option-list">
+   <button type="button" class="secondary" id="settings-merchants">${icon('store')} Merchants</button>
+   <button type="button" class="secondary" id="settings-categories">${icon('tag')} Categories</button>
+   <button type="button" class="secondary" id="settings-export">${icon('receipt')} Export all expenses</button>
+  </div>
+  <p class="small muted">Renaming or removing a merchant/category does not rewrite historical expenses.</p>`);
+ $('#settings-merchants').onclick=()=>openCatalog('merchants');
+ $('#settings-categories').onclick=()=>openCatalog('categories');
+ $('#settings-export').onclick=()=>exportCSV();
+}
+
 function settings(){
  const dark=document.body.classList.contains('theme-dark');
  const row=(action,ic,title,sub)=>`<button class="ref-settings-row" data-action="${action}"><span class="ref-settings-icon">${icon(ic)}</span><span class="ref-settings-copy"><strong>${title}</strong><small>${sub}</small></span>${icon('chevron')}</button>`;
