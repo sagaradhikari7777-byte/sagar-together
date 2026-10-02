@@ -143,14 +143,28 @@ function expenseGroups(es){
  return [...groups].map(([day,items])=>`<section class="day-group"><div class="day-heading"><h2>${day===today()?'Today':day===yd?'Yesterday':esc(new Date(day+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}))}</h2><span>${money(items.reduce((n,e)=>n+e.cents,0))}</span></div>${expenseRows(items)}</section>`).join('');
 }
 function expenses(){
- const es=filteredExpenses(),count=[expenseFilters.payer,expenseFilters.category,expenseFilters.from,expenseFilters.to].filter(Boolean).length,items=scope(),overview=settlementOverview(items,group(data.seat)),current=data.sheets.find(s=>s.id===activeSheet),total=items.reduce((n,e)=>n+e.cents,0),unsettled=items.filter(e=>!e.settlement).length;
- return `<section class="re-page sp-page home-aligned ha-detail"><div class="ha-head"><div><p class="re-eyebrow">SHEET</p><h1>${esc(currentName())}</h1><p>${current?esc(sheetDateRange(current)):'All household expenses'}</p></div><button class="re-round" data-action="add" aria-label="Add expense">${icon('plus')}</button></div>
- <section class="ha-hero ha-detail-hero"><div class="ha-hero-top"><span>SHEET TOTAL</span><em>${items.length} EXPENSE${items.length===1?'':'S'}</em></div><div class="ha-hero-main"><div><strong>${money(total)}</strong><p>${unsettled?unsettled+' unsettled expense'+(unsettled===1?'':'s'):'Everything on this sheet is settled.'}</p></div><button data-action="open-settle" aria-label="Open settle">${icon('settle')}</button></div><div class="ha-hero-stats"><span><small>Your share</small><b>${money(overview.share)}</b></span><span><small>You paid</small><b>${money(overview.paid)}</b></span><span><small>Unsettled</small><b>${unsettled}</b></span></div></section>
- <div class="ha-section-head"><div><small>ACTIVITY</small><h2>Expenses</h2></div><div class="ha-inline-actions"><button class="text-button" data-action="filters">Filters${count?` · ${count}`:''}</button><select id="expense-sort" aria-label="Sort expenses">${[['newest','Newest'],['oldest','Oldest'],['largest','Highest'],['smallest','Lowest']].map(([v,t])=>`<option value="${v}" ${expenseFilters.sort===v?'selected':''}>${t}</option>`).join('')}</select></div></div>
- <div class="ha-filter-row"><div class="re-search">${icon('search')}<input id="search" type="search" placeholder="Search expenses" aria-label="Search expenses" value="${esc(search)}"></div><div class="switches re-segments">${[['all','All'],['open','Open'],['settled','Settled']].map(([v,t])=>`<button data-filter="${v}" class="${filter===v?'selected':''}">${t}</button>`).join('')}</div></div>
- <div class="ha-result-head"><span>${es.length} expense${es.length===1?'':'s'}</span><strong>${money(es.reduce((sum,e)=>sum+e.cents,0))}</strong>${count||search||filter!=='all'?'<button class="text-button" data-action="reset-filters">Clear</button>':''}</div><div id="expense-results" class="ha-scroll-list">${expenseGroups(es)}</div></section>`;
+ const es=filteredExpenses(),count=[expenseFilters.payer,expenseFilters.category,expenseFilters.from,expenseFilters.to].filter(Boolean).length,items=scope(),overview=settlementOverview(items,group(data.seat)),current=data.sheets.find(s=>s.id===activeSheet),total=items.reduce((n,e)=>n+e.cents,0),unsettled=items.filter(e=>!e.settlement).length,settled=items.length-unsettled,archived=!!current?.archived;
+ const resultTotal=es.reduce((sum,e)=>sum+e.cents,0),range=current?sheetDateRange(current):'All household expenses';
+ const chip=(id,label,dot='')=>`<button data-filter="${id}" class="${filter===id?'active':''}">${dot?`<i class="${dot}"></i>`:''}${label} (${id==='all'?items.length:id==='open'?unsettled:settled})</button>`;
+ return `<section class="re-page sp-page ref-inside-sheet">
+  <header class="ref-inside-header">
+   <div class="ref-inside-left"><button class="ref-inside-back" data-action="back" aria-label="Back to Sheets">${backIcon()}</button><div><strong>${esc(currentName())}</strong><small>${esc(range)}</small></div></div>
+   <div class="ref-inside-tools">${archived?'<span class="ref-archived-pill">Archived</span>':`<button class="ref-inside-add" data-action="add">${icon('plus')}<span>Add</span></button>`}</div>
+  </header>
+  <div class="ref-inside-progress"><i></i></div>
+  <div class="ref-inside-body">
+   <section class="ref-inside-summary">
+    <div class="ref-inside-summary-head"><span><i></i>SHEET TOTAL</span><em>${archived?'Archived':unsettled?unsettled+' unsettled':'Settled'}</em></div>
+    <strong class="ref-inside-total">${money(total)}</strong><p>${esc(range)}</p>
+    <div class="ref-inside-stats"><span><small>Your share</small><b>${money(overview.share)}</b></span><span><small>You paid</small><b>${money(overview.paid)}</b></span></div>
+   </section>
+   <div class="ref-inside-filters">${chip('all','All')}${chip('open','Open','amber')}${chip('settled','Settled','green')}<button data-action="filters" class="${count?'has-count':''}">${icon('settings')} Filters${count?` (${count})`:''}</button></div>
+   <div class="ref-inside-search">${icon('search')}<input id="search" type="search" placeholder="Search expenses" aria-label="Search expenses" value="${esc(search)}"><select id="expense-sort" aria-label="Sort expenses">${[['newest','Newest'],['oldest','Oldest'],['largest','Highest'],['smallest','Lowest']].map(([v,t])=>`<option value="${v}" ${expenseFilters.sort===v?'selected':''}>${t}</option>`).join('')}</select></div>
+   <div class="ref-inside-result"><span>${es.length} expense${es.length===1?'':'s'}</span><strong>${money(resultTotal)}</strong>${count||search||filter!=='all'?'<button class="text-button" data-action="reset-filters">Clear</button>':''}</div>
+   <div id="expense-results" class="ref-inside-list">${expenseGroups(es)}</div>
+  </div>
+ </section>`;
 }
-
 function sheetsView(){
  const expenseMap=new Map(data.sheets.map(sh=>[sh.id,data.expenses.filter(e=>e.sheet===sh.id)]));
  const stateFor=sh=>{
