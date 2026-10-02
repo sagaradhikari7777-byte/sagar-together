@@ -424,3 +424,421 @@
     font-size:14.5px!important;
   }
 }
+
+
+/* SPENDING CHART — category / merchant breakdown */
+@media(max-width:699px){
+
+  .ios-app .ref-spend-chart{
+    margin:12px 0 14px!important;
+    padding:15px 14px 14px!important;
+    border:1px solid #e7e3df!important;
+    border-radius:19px!important;
+    background:#fff!important;
+    box-shadow:
+      0 7px 18px rgba(45,42,38,.055),
+      0 1px 2px rgba(45,42,38,.03)!important;
+  }
+  .ios-app.theme-dark .ref-spend-chart{
+    background:#1a211b!important;
+    border-color:#344137!important;
+    box-shadow:
+      0 9px 20px rgba(0,0,0,.16),
+      inset 0 1px 0 rgba(255,255,255,.018)!important;
+  }
+
+  .ios-app .ref-spend-head{
+    display:flex!important;
+    align-items:flex-start!important;
+    justify-content:space-between!important;
+    gap:10px!important;
+  }
+  .ios-app .ref-spend-head>div small{
+    display:block!important;
+    color:#2f7d37!important;
+    font-size:8.5px!important;
+    line-height:1!important;
+    letter-spacing:.09em!important;
+    font-weight:760!important;
+  }
+  .ios-app.theme-dark .ref-spend-head>div small{
+    color:#72cb82!important;
+  }
+  .ios-app .ref-spend-head h2{
+    margin:3px 0 0!important;
+    color:#171917!important;
+    font-size:16px!important;
+    line-height:1.1!important;
+    font-weight:740!important;
+    letter-spacing:-.25px!important;
+  }
+  .ios-app.theme-dark .ref-spend-head h2{
+    color:#f2f5f2!important;
+  }
+  .ios-app .ref-spend-head>strong{
+    color:#277a35!important;
+    font-size:17px!important;
+    line-height:1!important;
+    font-weight:760!important;
+    white-space:nowrap!important;
+  }
+  .ios-app.theme-dark .ref-spend-head>strong{
+    color:#72cb82!important;
+  }
+
+  .ios-app .ref-spend-switch{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:4px!important;
+    margin-top:12px!important;
+    padding:4px!important;
+    border-radius:13px!important;
+    background:#f0f1ee!important;
+  }
+  .ios-app.theme-dark .ref-spend-switch{
+    background:#222b24!important;
+  }
+  .ios-app .ref-spend-switch button{
+    height:34px!important;
+    padding:0 10px!important;
+    border:0!important;
+    border-radius:10px!important;
+    background:transparent!important;
+    color:#747a75!important;
+    font-size:10.5px!important;
+    line-height:1!important;
+    font-weight:680!important;
+    box-shadow:none!important;
+  }
+  .ios-app.theme-dark .ref-spend-switch button{
+    color:#98a09a!important;
+  }
+  .ios-app .ref-spend-switch button.active{
+    background:#fff!important;
+    color:#202420!important;
+    box-shadow:0 2px 6px rgba(43,39,35,.08)!important;
+  }
+  .ios-app.theme-dark .ref-spend-switch button.active{
+    background:#313b33!important;
+    color:#f2f5f2!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.025),0 3px 8px rgba(0,0,0,.15)!important;
+  }
+
+  .ios-app .ref-spend-insight{
+    display:grid!important;
+    grid-template-columns:44px minmax(0,1fr)!important;
+    gap:10px!important;
+    align-items:center!important;
+    margin-top:10px!important;
+    padding:11px 12px!important;
+    border:1px solid #dce9d8!important;
+    border-radius:15px!important;
+    background:#f2f8f0!important;
+  }
+  .ios-app.theme-dark .ref-spend-insight{
+    background:#203224!important;
+    border-color:#35523a!important;
+  }
+  .ios-app .ref-spend-insight>span{
+    width:44px!important;
+    height:44px!important;
+    border-radius:13px!important;
+    background:#dff0dc!important;
+    color:#2f7d37!important;
+    display:grid!important;
+    place-items:center!important;
+  }
+  .ios-app.theme-dark .ref-spend-insight>span{
+    background:#29472f!important;
+    color:#72cb82!important;
+  }
+  .ios-app .ref-spend-insight>span .icon{
+    width:20px!important;
+    height:20px!important;
+  }
+  .ios-app .ref-spend-insight small{
+    display:block!important;
+    color:#6e796f!important;
+    font-size:8px!important;
+    line-height:1!important;
+    letter-spacing:.07em!important;
+    font-weight:740!important;
+  }
+  .ios-app.theme-dark .ref-spend-insight small{
+    color:#9aaa9d!important;
+  }
+  .ios-app .ref-spend-insight strong{
+    display:block!important;
+    margin-top:3px!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    color:#1b1f1b!important;
+    font-size:13px!important;
+    line-height:1.1!important;
+    font-weight:720!important;
+  }
+  .ios-app.theme-dark .ref-spend-insight strong{
+    color:#f1f4f1!important;
+  }
+  .ios-app .ref-spend-insight p{
+    margin:3px 0 0!important;
+    color:#7e857f!important;
+    font-size:9.5px!important;
+    line-height:1.2!important;
+  }
+  .ios-app.theme-dark .ref-spend-insight p{
+    color:#98a09a!important;
+  }
+
+  .ios-app .ref-spend-bars{
+    display:grid!important;
+    gap:11px!important;
+    margin-top:12px!important;
+  }
+  .ios-app .ref-spend-row{
+    display:grid!important;
+    gap:7px!important;
+  }
+  .ios-app .ref-spend-row-head{
+    display:grid!important;
+    grid-template-columns:38px minmax(0,1fr) auto!important;
+    gap:9px!important;
+    align-items:center!important;
+  }
+
+  .ios-app .ref-spend-icon{
+    width:38px!important;
+    height:38px!important;
+    border-radius:11px!important;
+    display:grid!important;
+    place-items:center!important;
+  }
+  .ios-app .ref-spend-icon .icon{
+    width:17px!important;
+    height:17px!important;
+  }
+
+  .ios-app .ref-spend-icon.groceries{
+    background:#e1f0df!important;
+    color:#2f7d37!important;
+  }
+  .ios-app .ref-spend-icon.food{
+    background:#f6eadc!important;
+    color:#a66a24!important;
+  }
+  .ios-app .ref-spend-icon.bills{
+    background:#e3ebf3!important;
+    color:#4d718f!important;
+  }
+  .ios-app .ref-spend-icon.travel{
+    background:#ece5f3!important;
+    color:#745f91!important;
+  }
+  .ios-app .ref-spend-icon.other,
+  .ios-app .ref-spend-icon.merchant{
+    background:#eceeeb!important;
+    color:#686e69!important;
+  }
+
+  .ios-app.theme-dark .ref-spend-icon.groceries{
+    background:#25422c!important;
+    color:#72cb82!important;
+  }
+  .ios-app.theme-dark .ref-spend-icon.food{
+    background:#443624!important;
+    color:#e5ad67!important;
+  }
+  .ios-app.theme-dark .ref-spend-icon.bills{
+    background:#263847!important;
+    color:#8eb8d6!important;
+  }
+  .ios-app.theme-dark .ref-spend-icon.travel{
+    background:#352e43!important;
+    color:#b4a0d0!important;
+  }
+  .ios-app.theme-dark .ref-spend-icon.other,
+  .ios-app.theme-dark .ref-spend-icon.merchant{
+    background:#2a302b!important;
+    color:#aeb5af!important;
+  }
+
+  .ios-app .ref-spend-copy{
+    min-width:0!important;
+  }
+  .ios-app .ref-spend-copy strong{
+    display:block!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    color:#1d201d!important;
+    font-size:12px!important;
+    line-height:1.1!important;
+    font-weight:700!important;
+  }
+  .ios-app.theme-dark .ref-spend-copy strong{
+    color:#eef2ee!important;
+  }
+  .ios-app .ref-spend-copy small{
+    display:block!important;
+    margin-top:3px!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    color:#8c918d!important;
+    font-size:9px!important;
+    line-height:1.1!important;
+  }
+  .ios-app.theme-dark .ref-spend-copy small{
+    color:#919b93!important;
+  }
+
+  .ios-app .ref-spend-value{
+    min-width:62px!important;
+    text-align:right!important;
+  }
+  .ios-app .ref-spend-value b{
+    display:block!important;
+    color:#303530!important;
+    font-size:11.5px!important;
+    line-height:1!important;
+    font-weight:720!important;
+    white-space:nowrap!important;
+  }
+  .ios-app.theme-dark .ref-spend-value b{
+    color:#e9ede9!important;
+  }
+  .ios-app .ref-spend-value small{
+    display:block!important;
+    margin-top:3px!important;
+    color:#989d98!important;
+    font-size:8.5px!important;
+    line-height:1!important;
+  }
+
+  .ios-app .ref-spend-track{
+    position:relative!important;
+    height:8px!important;
+    overflow:hidden!important;
+    border-radius:999px!important;
+    background:#eceeeb!important;
+  }
+  .ios-app.theme-dark .ref-spend-track{
+    background:#2a322c!important;
+  }
+  .ios-app .ref-spend-track i{
+    display:block!important;
+    width:var(--bar)!important;
+    height:100%!important;
+    border-radius:inherit!important;
+  }
+
+  .ios-app .ref-spend-track i.groceries{
+    background:linear-gradient(90deg,#2f8a45,#6fc27a)!important;
+  }
+  .ios-app .ref-spend-track i.food{
+    background:linear-gradient(90deg,#b2762f,#dfa861)!important;
+  }
+  .ios-app .ref-spend-track i.bills{
+    background:linear-gradient(90deg,#527b9c,#84abc6)!important;
+  }
+  .ios-app .ref-spend-track i.travel{
+    background:linear-gradient(90deg,#735e91,#9f8abb)!important;
+  }
+  .ios-app .ref-spend-track i.other{
+    background:linear-gradient(90deg,#7c837d,#a4aaa5)!important;
+  }
+  .ios-app .ref-spend-track i.merchant{
+    background:linear-gradient(90deg,#2f8a45,#72c77f)!important;
+  }
+
+  .ios-app.theme-dark .ref-spend-track i.groceries{
+    background:linear-gradient(90deg,#4fa960,#78d088)!important;
+  }
+  .ios-app.theme-dark .ref-spend-track i.food{
+    background:linear-gradient(90deg,#c18a49,#ebb66f)!important;
+  }
+  .ios-app.theme-dark .ref-spend-track i.bills{
+    background:linear-gradient(90deg,#6792b1,#9abed7)!important;
+  }
+  .ios-app.theme-dark .ref-spend-track i.travel{
+    background:linear-gradient(90deg,#9079ae,#bea9d6)!important;
+  }
+  .ios-app.theme-dark .ref-spend-track i.other{
+    background:linear-gradient(90deg,#687169,#929b93)!important;
+  }
+  .ios-app.theme-dark .ref-spend-track i.merchant{
+    background:linear-gradient(90deg,#4fa960,#7bd18a)!important;
+  }
+
+  .ios-app .ref-spend-foot{
+    margin:11px 0 0!important;
+    color:#959a95!important;
+    font-size:8.5px!important;
+    line-height:1.2!important;
+    text-align:center!important;
+  }
+
+  .ios-app .ref-spend-empty{
+    min-height:150px!important;
+    margin-top:12px!important;
+    padding:18px!important;
+    border:1px dashed #ddd9d4!important;
+    border-radius:15px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    text-align:center!important;
+  }
+  .ios-app.theme-dark .ref-spend-empty{
+    border-color:#344137!important;
+  }
+  .ios-app .ref-spend-empty>.icon{
+    width:24px!important;
+    height:24px!important;
+    color:#2f7d37!important;
+  }
+  .ios-app.theme-dark .ref-spend-empty>.icon{
+    color:#72cb82!important;
+  }
+  .ios-app .ref-spend-empty strong{
+    margin-top:8px!important;
+    color:#222622!important;
+    font-size:12px!important;
+  }
+  .ios-app.theme-dark .ref-spend-empty strong{
+    color:#eef2ee!important;
+  }
+  .ios-app .ref-spend-empty p{
+    max-width:250px!important;
+    margin:4px 0 0!important;
+    color:#8f948f!important;
+    font-size:9.5px!important;
+    line-height:1.35!important;
+  }
+}
+
+@media(max-width:375px){
+  .ios-app .ref-spend-chart{
+    padding-inline:12px!important;
+  }
+  .ios-app .ref-spend-row-head{
+    grid-template-columns:35px minmax(0,1fr) auto!important;
+    gap:8px!important;
+  }
+  .ios-app .ref-spend-icon{
+    width:35px!important;
+    height:35px!important;
+    border-radius:10px!important;
+  }
+  .ios-app .ref-spend-copy strong{
+    font-size:11.5px!important;
+  }
+  .ios-app .ref-spend-value{
+    min-width:57px!important;
+  }
+  .ios-app .ref-spend-value b{
+    font-size:11px!important;
+  }
+}
