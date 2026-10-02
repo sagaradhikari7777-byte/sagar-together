@@ -283,9 +283,11 @@ function expenseForm(e=null,preset={}){
    <label class="ref-expense-field"><span class="ref-expense-label">Split equally</span><span class="ref-expense-control"><i>${icon('chart')}</i><select name="split">${splitOptions(x.split)}</select></span></label>
   </section>
 
-  <details class="ref-expense-more" ${e?'open':''}>
-   <summary><span>${icon('settings')} More options</span>${icon('chevron')}</summary>
-   <div class="ref-expense-more-body">
+  <section class="ref-expense-more ${e?'open':''}">
+   <button type="button" class="ref-expense-more-toggle" aria-expanded="${e?'true':'false'}">
+    <span>${icon('settings')} More options</span>${icon('chevron')}
+   </button>
+   <div class="ref-expense-more-body" ${e?'':'hidden'}>
     <label class="field"><span>Category</span><input name="category" class="picker-control" readonly data-pick="categories" value="${esc(x.category)}" required aria-haspopup="dialog"></label>
     <label class="field"><span>Expense sheet</span><select name="sheet">${data.sheets.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label>
     <details class="amount-calculator"><summary>${icon('calculator')} Calculate an amount</summary><label class="field"><span>e.g. 24.50 + 18 + 6 / 2</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="24.50 + 18" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></details>
@@ -295,7 +297,7 @@ function expenseForm(e=null,preset={}){
     <div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div>
     <button type="button" class="text-button" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button>
    </div>
-  </details>
+  </section>
   <p class="error form-error" role="alert"></p>
   <p class="duplicate-warning" hidden role="alert"></p>
   <div class="form-actions ref-expense-actions">${e?'<button type="button" class="secondary danger" id="delete-expense">Delete</button>':''}<button class="primary" id="save-expense">${icon('check')} Save expense</button></div>
@@ -325,6 +327,16 @@ function expenseForm(e=null,preset={}){
  headerSave.onclick=()=>f.requestSubmit(f.querySelector('#save-expense'));
 
  sheet.querySelectorAll('[data-expense-tab]').forEach(b=>b.onclick=()=>requestClose(()=>{sheet.close();tab=b.dataset.expenseTab;render();}));
+
+ const moreToggle=f.querySelector('.ref-expense-more-toggle');
+ const morePanel=f.querySelector('.ref-expense-more-body');
+ moreToggle.onclick=()=>{
+  const open=morePanel.hidden;
+  morePanel.hidden=!open;
+  moreToggle.setAttribute('aria-expanded',String(open));
+  moreToggle.closest('.ref-expense-more').classList.toggle('open',open);
+  if(open)requestAnimationFrame(()=>moreToggle.scrollIntoView({block:'nearest',behavior:'smooth'}));
+ };
 
  f.querySelectorAll('[data-pick]').forEach(input=>{
   const choose=()=>openCatalog(input.dataset.pick,value=>{
