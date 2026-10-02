@@ -20,10 +20,18 @@ function backOneModal(){
  const previous=modalTrail.pop();
  if(!previous){sheet.close();return;}
  sheet.replaceChildren(...previous.nodes);sheet.oncancel=previous.cancel;sheet.scrollTop=previous.scroll;
- document.body.classList.toggle('expense-entry-open',!!sheet.querySelector('#expense-form'));
+ syncOverlayLayers();
  (sheet.querySelector('#dialog-title')||sheet.querySelector('button'))?.focus({preventScroll:true});
 }
 const isInnerPage=()=>tab==='expenses';
+function syncOverlayLayers(){
+ const sheetOpen=sheet.open;
+ const catalogOpen=!!document.querySelector('#catalog-dialog[open]');
+ const expenseOpen=sheetOpen&&!!sheet.querySelector('#expense-form');
+ document.body.classList.toggle('overlay-open',sheetOpen||catalogOpen);
+ document.body.classList.toggle('expense-entry-open',expenseOpen);
+ document.body.classList.toggle('catalog-layer-open',catalogOpen);
+}
 function goBack(){
  if(busy)return;
  const catalog=document.querySelector('#catalog-dialog[open]');
@@ -35,7 +43,7 @@ function goBack(){
 }
 sheet.addEventListener('close',()=>{
  if(!sheet.open)modalTrail=[];
- document.body.classList.remove('expense-entry-open');
+ syncOverlayLayers();
 });
 sheet.addEventListener('click',ev=>{
  if(ev.target!==sheet||busy)return;
@@ -70,7 +78,9 @@ function modal(title,body){
  sheet.querySelector('[data-modal-back]').onclick=backOneModal;
  sheet.oncancel=ev=>{ev.preventDefault();sheet.querySelector('[data-modal-back]').click();};
  sheet.querySelector('[data-close]').onclick=()=>sheet.close();sheet.setAttribute('aria-labelledby','dialog-title');
- if(!sheet.open)sheet.showModal();sheet.scrollTop=0;sheet.querySelector('#dialog-title').focus({preventScroll:true});
+ if(!sheet.open)sheet.showModal();
+ syncOverlayLayers();
+ sheet.scrollTop=0;sheet.querySelector('#dialog-title').focus({preventScroll:true});
 }
 function errorIn(form,e){const el=form.querySelector('.form-error')||form.querySelector('.error');if(el)el.textContent=e.message||e;else toast(e.message||e);}
 async function api(body){const res=await fetch('/api/household',{method:'POST',headers:{'Content-Type':'application/json',...(credentials?{Authorization:`Bearer ${credentials.key}`}:{})},body:JSON.stringify({house:credentials?.house,rev:data?.rev,...body}),signal:AbortSignal.timeout(20000)});const j=await res.json();if(!res.ok)throw Object.assign(new Error(j.error||'Could not save changes.'),{status:res.status});return j;}
@@ -316,7 +326,7 @@ function expenseForm(e=null,preset={}){
  </nav>`);
 
  const f=$('#expense-form');
- document.body.classList.add('expense-entry-open');
+ syncOverlayLayers();
  const headerSave=sheet.querySelector('[data-close]');
  headerSave.classList.add('ref-expense-save');
  headerSave.setAttribute('aria-label',e?'Save changes':'Save expense');
@@ -466,6 +476,7 @@ function openCatalog(kind,onPick=null){
    const back=catalogDialog.querySelector('#catalog-back');
    if(back)back.click();else catalogDialog.close();
   });
+  catalogDialog.addEventListener('close',syncOverlayLayers);
   document.body.append(catalogDialog);
  }
  const dlg=catalogDialog,title=kind==='merchants'?'Merchants':'Categories',field=kind==='merchants'?'merchant':'category';let query='';
@@ -515,6 +526,7 @@ function openCatalog(kind,onPick=null){
  };
  browse();
  if(!dlg.open)dlg.showModal();
+ syncOverlayLayers();
  dlg.querySelector('#catalog-title').focus({preventScroll:true});
 }
 
