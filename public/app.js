@@ -84,7 +84,7 @@ function header(){
 
 function nav(){
  const item=(id,label,ic)=>`<button data-tab="${id}" class="${tab===id||(id==='sheets'&&tab==='expenses')?'active':''}" ${tab===id||(id==='sheets'&&tab==='expenses')?'aria-current="page"':''}><span>${icon(ic)}</span><small>${label}</small></button>`;
- return `<footer class="re-nav"><nav class="re-dock" aria-label="Main navigation">${item('home','Home','home')}${item('sheets','Sheets','folder')}${item('settle','Settle','settle')}${item('settings','Settings','settings')}</nav><button class="re-add" data-action="add" aria-label="Add expense">${icon('plus')}</button></footer>`;
+ return `<footer class="re-nav"><nav class="re-dock" aria-label="Main navigation">${item('home','Home','home')}${item('sheets','Sheets','folder')}<button class="re-add re-add-nav" data-action="add" aria-label="Add expense"><span>${icon('plus')}</span><small>Add</small></button>${item('settle','Settle','settle')}${item('settings','Settings','settings')}</nav></footer>`;
 }
 
 function pageIntro(kicker,title,subtitle='',actionButton=''){return `<div class="new-page-head"><div><p class="page-kicker">${kicker}</p><h1>${title}</h1>${subtitle?`<p class="new-page-subtitle">${subtitle}</p>`:''}</div>${actionButton}</div>`;}
