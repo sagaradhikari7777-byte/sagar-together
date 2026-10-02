@@ -33,6 +33,11 @@ function goBack(){
  ({tab,activeSheet,search,filter,expenseFilters,settleCouple,sheetSearch,sheetFilter}=previous);render();
 }
 sheet.addEventListener('close',()=>{if(!sheet.open)modalTrail=[];});
+sheet.addEventListener('click',ev=>{
+ if(ev.target!==sheet||busy)return;
+ const back=sheet.querySelector('[data-modal-back]');
+ if(back)back.click();else sheet.close();
+});
 installEdgeBack({canGoBack:()=>!busy&&(sheet.open||!!document.querySelector('#catalog-dialog[open]')||isInnerPage()),goBack});
 let sheetSearch='',sheetFilter='open',settleCouple=null;
 let expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'},insightPeriod='sheet';
@@ -284,7 +289,17 @@ function deleteSheet(id){if(!canDeleteSheet(id))return toast('This sheet contain
 let catalogDialog=null;
 function catalogIcon(name){return /internet/i.test(name)?'wifi':/rent/i.test(name)?'home':/entertain|movie/i.test(name)?'movie':/shopping/i.test(name)?'gift':/other/i.test(name)?'tag':/bills/i.test(name)?'receipt':catIcon(name);}
 function openCatalog(kind,onPick=null){
- if(!catalogDialog){catalogDialog=document.createElement('dialog');catalogDialog.id='catalog-dialog';catalogDialog.className='catalog-dialog';document.body.append(catalogDialog);}
+ if(!catalogDialog){
+  catalogDialog=document.createElement('dialog');
+  catalogDialog.id='catalog-dialog';
+  catalogDialog.className='catalog-dialog';
+  catalogDialog.addEventListener('click',ev=>{
+   if(ev.target!==catalogDialog||busy)return;
+   const back=catalogDialog.querySelector('#catalog-back');
+   if(back)back.click();else catalogDialog.close();
+  });
+  document.body.append(catalogDialog);
+ }
  const dlg=catalogDialog,title=kind==='merchants'?'Merchants':'Categories',field=kind==='merchants'?'merchant':'category';let query='';
  const head=(heading,back,plus)=>{dlg.innerHTML=`<div class="catalog-handle" aria-hidden="true"></div><header class="catalog-head"><button type="button" class="back-button" id="catalog-back" aria-label="Back">${backIcon()}</button><h2 id="catalog-title" tabindex="-1">${heading}</h2>${plus?`<button type="button" class="icon-button" id="catalog-add" aria-label="Add ${field}">${icon('plus')}</button>`:'<span class="head-spacer"></span>'}</header>`;dlg.setAttribute('aria-labelledby','catalog-title');dlg.querySelector('#catalog-back').onclick=back;dlg.oncancel=ev=>{ev.preventDefault();back();};};
  const browse=()=>{
