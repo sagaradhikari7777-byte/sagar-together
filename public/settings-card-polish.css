@@ -1,0 +1,233 @@
+
+/* SETTINGS POLISH — match Home / Sheets / Settle visual scale */
+@media(max-width:699px){
+
+  /* Natural page scroll like the other main tabs. */
+  .ios-app .re-shell-settings{
+    height:100dvh!important;
+    min-height:100dvh!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior-y:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  .ios-app .ref-settings{
+    height:auto!important;
+    min-height:100%!important;
+    display:block!important;
+    overflow:visible!important;
+  }
+  .ios-app .ref-settings-body{
+    height:auto!important;
+    min-height:auto!important;
+    overflow:visible!important;
+    padding:10px 10px calc(104px + var(--safe-bottom))!important;
+  }
+
+  /* Summary card: same proportions as Home/Settle, but readable. */
+  .ios-app .ref-settings-summary{
+    padding:16px 16px 15px!important;
+    border-radius:24px!important;
+    background:#e5f3e5!important;
+  }
+  .ios-app.theme-dark .ref-settings-summary{
+    background:#203724!important;
+  }
+
+  .ios-app .ref-settings-summary-head>span,
+  .ios-app .ref-settings-summary-head>em{
+    min-height:24px!important;
+    padding:0 10px!important;
+    font-size:11px!important;
+  }
+
+  .ios-app .ref-settings-person{
+    grid-template-columns:54px minmax(0,1fr)!important;
+    gap:12px!important;
+    margin-top:15px!important;
+  }
+  .ios-app .ref-settings-person>span{
+    width:54px!important;
+    height:54px!important;
+    border-radius:15px!important;
+    font-size:14px!important;
+    font-weight:760!important;
+  }
+  .ios-app .ref-settings-person small{
+    font-size:9px!important;
+  }
+  .ios-app .ref-settings-person strong{
+    margin-top:3px!important;
+    font-size:19px!important;
+    line-height:1.08!important;
+    letter-spacing:-.3px!important;
+  }
+  .ios-app .ref-settings-person p{
+    margin-top:4px!important;
+    font-size:12px!important;
+  }
+
+  .ios-app .ref-settings-stats{
+    gap:10px!important;
+    margin-top:14px!important;
+  }
+  .ios-app .ref-settings-stats>span{
+    min-height:56px!important;
+    padding:10px 12px!important;
+    border-radius:15px!important;
+  }
+  .ios-app.theme-dark .ref-settings-stats>span{
+    background:#2b4430!important;
+  }
+  .ios-app .ref-settings-stats small{
+    font-size:11.5px!important;
+  }
+  .ios-app .ref-settings-stats b{
+    margin-top:4px!important;
+    font-size:14px!important;
+    line-height:1.12!important;
+  }
+
+  /* Section headings use the same hierarchy as Settle. */
+  .ios-app .ref-settings-section-head{
+    margin:16px 4px 8px!important;
+  }
+  .ios-app .ref-settings-section-head small{
+    font-size:9px!important;
+    letter-spacing:.09em!important;
+  }
+  .ios-app .ref-settings-section-head h2{
+    margin-top:3px!important;
+    font-size:16px!important;
+    line-height:1.1!important;
+    font-weight:730!important;
+  }
+
+  /* Turn compressed grouped rows into individual floating cards. */
+  .ios-app .ref-settings-group{
+    padding:0!important;
+    border:0!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    display:grid!important;
+    gap:10px!important;
+  }
+  .ios-app.theme-dark .ref-settings-group{
+    background:transparent!important;
+    border:0!important;
+  }
+
+  .ios-app .ref-settings-row{
+    width:100%!important;
+    min-height:78px!important;
+    padding:12px!important;
+    border:1px solid #e7e3df!important;
+    border-radius:18px!important;
+    background:#fff!important;
+    box-shadow:
+      0 7px 17px rgba(45,42,38,.06),
+      0 1px 2px rgba(45,42,38,.025)!important;
+    display:grid!important;
+    grid-template-columns:48px minmax(0,1fr) 18px!important;
+    gap:12px!important;
+    align-items:center!important;
+    text-align:left!important;
+  }
+  .ios-app .ref-settings-row:last-child{
+    border-bottom:1px solid #e7e3df!important;
+  }
+  .ios-app.theme-dark .ref-settings-row{
+    background:#1a211b!important;
+    border-color:#344137!important;
+    box-shadow:
+      0 8px 18px rgba(0,0,0,.16),
+      inset 0 1px 0 rgba(255,255,255,.018)!important;
+  }
+
+  .ios-app .ref-settings-icon{
+    width:48px!important;
+    height:48px!important;
+    border-radius:14px!important;
+    background:#e0f1df!important;
+    color:#2e7d39!important;
+  }
+  .ios-app.theme-dark .ref-settings-icon{
+    background:#25422c!important;
+    color:#72cb82!important;
+  }
+  .ios-app .ref-settings-icon .icon{
+    width:21px!important;
+    height:21px!important;
+    stroke-width:1.9!important;
+  }
+
+  .ios-app .ref-settings-copy strong{
+    display:block!important;
+    color:#171917!important;
+    font-size:14.5px!important;
+    line-height:1.15!important;
+    font-weight:730!important;
+    letter-spacing:-.15px!important;
+  }
+  .ios-app.theme-dark .ref-settings-copy strong{
+    color:#f3f5f3!important;
+  }
+  .ios-app .ref-settings-copy small{
+    display:block!important;
+    margin-top:5px!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+    white-space:normal!important;
+    color:#858b86!important;
+    font-size:11px!important;
+    line-height:1.3!important;
+  }
+  .ios-app.theme-dark .ref-settings-copy small{
+    color:#9ca49d!important;
+  }
+
+  .ios-app .ref-settings-row>.icon{
+    width:16px!important;
+    height:16px!important;
+    color:#9aa09a!important;
+  }
+  .ios-app.theme-dark .ref-settings-row>.icon{
+    color:#7f8981!important;
+  }
+
+  /* Sign out should feel like a real card/action, not tiny utility text. */
+  .ios-app .ref-settings-signout{
+    min-height:54px!important;
+    margin-top:16px!important;
+    padding:0 16px!important;
+    border-radius:16px!important;
+    font-size:13px!important;
+    font-weight:700!important;
+  }
+  .ios-app .ref-settings-signout .icon{
+    width:18px!important;
+    height:18px!important;
+  }
+}
+
+/* Narrow iPhones stay readable without becoming oversized. */
+@media(max-width:375px){
+  .ios-app .ref-settings-row{
+    min-height:74px!important;
+    padding:10px!important;
+    grid-template-columns:44px minmax(0,1fr) 16px!important;
+    gap:10px!important;
+  }
+  .ios-app .ref-settings-icon{
+    width:44px!important;
+    height:44px!important;
+    border-radius:13px!important;
+  }
+  .ios-app .ref-settings-copy strong{
+    font-size:13.5px!important;
+  }
+  .ios-app .ref-settings-copy small{
+    font-size:10.5px!important;
+  }
+}
