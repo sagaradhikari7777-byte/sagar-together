@@ -51,7 +51,7 @@ sheet.addEventListener('click',ev=>{
  if(back)back.click();else sheet.close();
 });
 installEdgeBack({canGoBack:()=>!busy&&(sheet.open||!!document.querySelector('#catalog-dialog[open]')||isInnerPage()),goBack});
-let sheetSearch='',sheetFilter='all',sheetSearchOpen=false,settleCouple=null;
+let sheetSearch='',sheetFilter='all',sheetSearchOpen=false,settleCouple=null,settleSpendMode='category';
 let expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'},insightPeriod='sheet';
 let data=null,credentials=null,demo=false,tab='home',filter='all',search='',activeSheet='',joinInfo=null,busy=false,homeBalanceFilter='all';
 try{credentials=JSON.parse(localStorage.getItem('together-access'));document.body.classList.toggle('theme-dark',localStorage.getItem('together-theme')==='dark');}catch{}
@@ -222,22 +222,52 @@ function settlementBreakdown(){
  return `<section class="ha-breakdown">${rows.length?`<div class="ha-breakdown-list">${rows.map(e=>`<button data-expense="${e.id}"><span class="re-cat ${catIcon(e.category)}">${icon(catIcon(e.category))}</span><span><strong>${esc(e.merchant)}</strong><small>${esc(new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}))} · ${esc(data.names[e.payer])}</small><i>${esc(e.category||'Other')}</i></span><em><small>Your share</small><b>${money(e.share)}</b></em></button>`).join('')}</div>${more?`<button class="ha-more" data-action="expenses">+${more} more · View sheet</button>`:''}`:'<div class="ha-balanced">'+icon('check')+'<span>Nothing left to settle.</span></div>'}</section>`;
 }
 
-function settlementGraph(selected){
- const expenses=scope(),a=settlementOverview(expenses,'a'),b=settlementOverview(expenses,'b'),max=Math.max(a.paid,a.share,b.paid,b.share,1);
- const pct=v=>v?Math.max(5,Math.round(v/max*100)):0;
- const row=(g,o)=>`<div class="ref-settle-chart-row ${g===selected?'selected':''}">
-  <div class="ref-settle-chart-name"><strong>${esc(couple(g))}</strong><small>${g===selected?'Selected':'Other couple'}</small></div>
-  <div class="ref-settle-chart-bars">
-   <div class="ref-settle-chart-line"><span>Paid</span><div><i class="paid" style="--bar:${pct(o.paid)}%"></i></div><b>${money(o.paid)}</b></div>
-   <div class="ref-settle-chart-line"><span>Share</span><div><i class="share" style="--bar:${pct(o.share)}%"></i></div><b>${money(o.share)}</b></div>
-  </div>
- </div>`;
- const chosen=selected==='a'?a:b,delta=chosen.paid-chosen.share;
- return `<section class="ref-settle-chart" aria-label="Settlement contribution comparison">
-  <div class="ref-settle-chart-head"><div><small>LIVE BALANCE</small><h2>Paid vs share</h2></div><span class="${delta>0?'ahead':delta<0?'behind':'even'}">${delta===0?'Even':`${delta>0?'+':'−'}${money(Math.abs(delta))}`}</span></div>
-  <p>Compare what each couple has paid with what their share should be.</p>
-  <div class="ref-settle-chart-legend"><span><i class="paid"></i>Paid</span><span><i class="share"></i>Share</span></div>
-  <div class="ref-settle-chart-plot">${row('a',a)}${row('b',b)}</div>
+function settlementSpendChart(){
+ const expenses=scope().filter(e=>!e.settlement),total=expenses.reduce((sum,e)=>sum+e.cents,0);
+ const mode=settleSpendMode==='merchant'?'merchant':'category';
+ const categoryMap=new Map(),merchantMap=new Map();
+ const bump=(map,key,e,relatedKey)=>{
+  const safe=String(key||'Other').trim()||'Other';
+  const row=map.get(safe)||{name:safe,total:0,count:0,related:new Map()};
+  row.total+=e.cents;row.count++;
+  const related=String(relatedKey||'Other').trim()||'Other';
+  row.related.set(related,(row.related.get(related)||0)+e.cents);
+  map.set(safe,row);
+ };
+ expenses.forEach(e=>{
+  bump(categoryMap,e.category||'Other',e,e.merchant||'Unknown merchant');
+  bump(merchantMap,e.merchant||'Unknown merchant',e,e.category||'Other');
+ });
+ const source=mode==='category'?categoryMap:merchantMap;
+ let rows=[...source.values()].sort((a,b)=>b.total-a.total);
+ const rowCount=rows.length;
+ if(rows.length>5){
+  const keep=rows.slice(0,5),rest=rows.slice(5);
+  keep.push({name:'Other',total:rest.reduce((n,r)=>n+r.total,0),count:rest.reduce((n,r)=>n+r.count,0),related:new Map()});
+  rows=keep;
+ }
+ const max=Math.max(...rows.map(r=>r.total),1);
+ const top=rows[0];
+ const relatedLabel=r=>{
+  if(!r.related?.size)return mode==='category'?(r.count+' expense'+(r.count===1?'':'s')):'Mixed spending';
+  const entry=[...r.related.entries()].sort((a,b)=>b[1]-a[1])[0],name=entry[0];
+  return mode==='category'?('Top merchant · '+name):(name+' · '+r.count+' expense'+(r.count===1?'':'s'));
+ };
+ const barClass=r=>mode==='category'?catIcon(r.name):'merchant';
+ const row=r=>{
+  const pct=total?Math.round(r.total/total*100):0,bar=Math.max(6,Math.round(r.total/max*100));
+  return `<div class="ref-spend-row">
+   <div class="ref-spend-row-head"><span class="ref-spend-icon ${barClass(r)}">${icon(mode==='category'?catIcon(r.name):'store')}</span><span class="ref-spend-copy"><strong>${esc(r.name)}</strong><small>${esc(relatedLabel(r))}</small></span><span class="ref-spend-value"><b>${money(r.total)}</b><small>${pct}%</small></span></div>
+   <div class="ref-spend-track"><i class="${barClass(r)}" style="--bar:${bar}%"></i></div>
+  </div>`;
+ };
+ if(!expenses.length)return `<section class="ref-settle-chart ref-spend-chart"><div class="ref-spend-head"><div><small>SPENDING</small><h2>Where the money went</h2></div><strong>${money(0)}</strong></div><div class="ref-spend-empty">${icon('chart')}<strong>No spending yet</strong><p>Add expenses to see the category and merchant breakdown.</p></div></section>`;
+ return `<section class="ref-settle-chart ref-spend-chart" aria-label="Spending breakdown">
+  <div class="ref-spend-head"><div><small>SPENDING</small><h2>Where the money went</h2></div><strong>${money(total)}</strong></div>
+  <div class="ref-spend-switch" role="group" aria-label="Spending chart view"><button data-spend-chart="category" class="${mode==='category'?'active':''}">Categories</button><button data-spend-chart="merchant" class="${mode==='merchant'?'active':''}">Merchants</button></div>
+  <div class="ref-spend-insight"><span>${icon(mode==='category'?catIcon(top.name):'store')}</span><div><small>TOP ${mode==='category'?'CATEGORY':'MERCHANT'}</small><strong>${esc(top.name)}</strong><p>${money(top.total)} · ${Math.round(top.total/total*100)}% of this sheet</p></div></div>
+  <div class="ref-spend-bars">${rows.map(row).join('')}</div>
+  ${rowCount>5?'<p class="ref-spend-foot">Top 5 shown · remaining spending grouped as Other</p>':''}
  </section>`;
 }
 
@@ -251,7 +281,7 @@ function settleView(){
   <div class="ref-settle-body">
    <section class="ref-settle-summary ${status}"><div class="ref-settle-summary-head"><span><i></i>TO SETTLE</span><em>${statusLabel}</em></div><strong class="ref-settle-amount">${money(remaining)}</strong><p>${o.net===0?'No payment is needed.':`${esc(couple(from))} → ${esc(couple(to))}`}</p><div class="ref-settle-stats"><span><small>Your share</small><b>${money(o.share)}</b></span><span><small>Paid</small><b>${money(o.paid)}</b></span></div></section>
    <div class="ref-settle-controls"><label class="ref-settle-sheet"><span>Sheet</span><div>${icon('folder')}${selectSheet()}</div></label><label class="ref-settle-couple"><span>Share for</span><select id="settle-couple">${['a','b'].map(g=>`<option value="${g}" ${g===selected?'selected':''}>${esc(couple(g))}${g===group(data.seat)?' · yours':''}</option>`).join('')}</select></label></div>
-   ${settlementGraph(selected)}
+   ${settlementSpendChart()}
    <div class="ref-settle-section-head"><div><small>UNSETTLED</small><h2>What makes this up</h2></div><span>${items.length} open</span></div>
    <div class="ref-settle-breakdown">${settlementBreakdown()}</div>
    <div class="ref-settle-actions"><button data-action="settlement-summary">${icon('copy')}<span><strong>Summary</strong><small>Copy the balance</small></span></button><button data-action="settlement-history">${icon('receipt')}<span><strong>History</strong><small>${history.length?history.length+' payment'+(history.length===1?'':'s'):'No payments yet'}</small></span></button></div>
@@ -302,7 +332,7 @@ function render(){
  bind();app.querySelector('main').scrollTop=scrollTop;
  if(!wasOpen)window.scrollTo(0,0);
 }
-function bind(){app.querySelectorAll('[data-home-filter]').forEach(b=>b.onclick=()=>{homeBalanceFilter=b.dataset.homeFilter;render();});app.querySelectorAll('[data-couple-overview]').forEach(b=>b.onclick=()=>{settleCouple=b.dataset.coupleOverview;tab='settle';render();});if($('#settle-couple'))$('#settle-couple').onchange=e=>{settleCouple=e.target.value;render();$('#settle-couple').focus();};bindJournal();bindSheetControls();bindExpenseSwipes();app.querySelectorAll('[data-expense-options]').forEach(b=>b.onclick=()=>expenseOptions(b.dataset.expenseOptions));app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>springToTab(b.dataset.tab,b));app.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action,b));app.querySelectorAll('[data-expense]').forEach(b=>b.onclick=()=>expenseForm(data.expenses.find(e=>e.id===b.dataset.expense)));app.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>expenseForm(null,{merchant:b.dataset.quick,category:b.dataset.category}));app.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;render();});if($('#sheet-select'))$('#sheet-select').onchange=e=>{activeSheet=e.target.value;render();};if($('#search'))$('#search').oninput=e=>{const pos=e.target.selectionStart;search=e.target.value;render();$('#search').focus();$('#search').setSelectionRange(pos,pos);};app.querySelectorAll('[data-view-sheet]').forEach(b=>b.onclick=()=>{activeSheet=b.dataset.viewSheet;tab='expenses';render();});app.querySelectorAll('[data-pin]').forEach(b=>b.onclick=async()=>{try{await save({action:'pin',id:b.dataset.pin});activeSheet=b.dataset.pin;toast('Sheet pinned');}catch(e){toast(e.message);}});app.querySelectorAll('[data-archive]').forEach(b=>b.onclick=async()=>{try{await save({action:'archive',id:b.dataset.archive});toast('Sheet updated');}catch(e){toast(e.message);}});if($('#settings-form'))$('#settings-form').onsubmit=async e=>{e.preventDefault();const f=e.target,v=new FormData(f);try{await save({action:'settings',name:v.get('name'),names:[0,1,2,3].map(i=>v.get('n'+i))});toast('Household updated');}catch(err){errorIn(f,err);}};}
+function bind(){app.querySelectorAll('[data-home-filter]').forEach(b=>b.onclick=()=>{homeBalanceFilter=b.dataset.homeFilter;render();});app.querySelectorAll('[data-couple-overview]').forEach(b=>b.onclick=()=>{settleCouple=b.dataset.coupleOverview;tab='settle';render();});if($('#settle-couple'))$('#settle-couple').onchange=e=>{settleCouple=e.target.value;render();$('#settle-couple').focus();};app.querySelectorAll('[data-spend-chart]').forEach(b=>b.onclick=()=>{settleSpendMode=b.dataset.spendChart;render();requestAnimationFrame(()=>document.querySelector('.ref-spend-chart')?.scrollIntoView({block:'nearest'}));});bindJournal();bindSheetControls();bindExpenseSwipes();app.querySelectorAll('[data-expense-options]').forEach(b=>b.onclick=()=>expenseOptions(b.dataset.expenseOptions));app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>springToTab(b.dataset.tab,b));app.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action,b));app.querySelectorAll('[data-expense]').forEach(b=>b.onclick=()=>expenseForm(data.expenses.find(e=>e.id===b.dataset.expense)));app.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>expenseForm(null,{merchant:b.dataset.quick,category:b.dataset.category}));app.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;render();});if($('#sheet-select'))$('#sheet-select').onchange=e=>{activeSheet=e.target.value;render();};if($('#search'))$('#search').oninput=e=>{const pos=e.target.selectionStart;search=e.target.value;render();$('#search').focus();$('#search').setSelectionRange(pos,pos);};app.querySelectorAll('[data-view-sheet]').forEach(b=>b.onclick=()=>{activeSheet=b.dataset.viewSheet;tab='expenses';render();});app.querySelectorAll('[data-pin]').forEach(b=>b.onclick=async()=>{try{await save({action:'pin',id:b.dataset.pin});activeSheet=b.dataset.pin;toast('Sheet pinned');}catch(e){toast(e.message);}});app.querySelectorAll('[data-archive]').forEach(b=>b.onclick=async()=>{try{await save({action:'archive',id:b.dataset.archive});toast('Sheet updated');}catch(e){toast(e.message);}});if($('#settings-form'))$('#settings-form').onsubmit=async e=>{e.preventDefault();const f=e.target,v=new FormData(f);try{await save({action:'settings',name:v.get('name'),names:[0,1,2,3].map(i=>v.get('n'+i))});toast('Household updated');}catch(err){errorIn(f,err);}};}
 function action(a,source=null){if(a==='back')return goBack();if(a==='home-search'){tab='expenses';render();requestAnimationFrame(()=>document.querySelector('#search')?.focus());return;}if(a==='sheet-search-toggle'){sheetSearchOpen=!sheetSearchOpen;if(!sheetSearchOpen)sheetSearch='';render();if(sheetSearchOpen)requestAnimationFrame(()=>document.querySelector('#sheet-search')?.focus());return;}if(journalAction(a))return;if(['settings','expenses','sheets'].includes(a)){tab=a;render();return;}if(a==='open-settle'){tab='settle';render();app.querySelector('main')?.scrollTo(0,0);return;}if(a==='settings-household')settingsHouseholdDialog();if(a==='settings-more')settingsMoreDialog();if(a==='merchants'||a==='categories')openCatalog(a);if(a==='add'){
  if(source?.classList.contains('re-add-nav')){
   selectionHaptic();
