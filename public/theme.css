@@ -5201,3 +5201,45 @@
     font-size:15px;
   }
 }
+
+
+/* FIX: Add Expense header/nav stay locked while only the form body scrolls. */
+@media(max-width:699px){
+  .ios-app #sheet:has(#expense-form){
+    display:flex!important;
+    flex-direction:column!important;
+    overflow:hidden!important;
+    overscroll-behavior:none!important;
+  }
+
+  .ios-app #sheet:has(#expense-form) .dialog-head{
+    position:relative!important;
+    top:auto!important;
+    left:auto!important;
+    right:auto!important;
+    flex:0 0 auto!important;
+    z-index:20!important;
+  }
+
+  .ios-app #sheet:has(#expense-form) .ref-expense-form{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    padding-bottom:24px!important;
+  }
+
+  .ios-app #sheet:has(#expense-form) .ref-expense-nav{
+    position:relative!important;
+    inset:auto!important;
+    left:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    flex:0 0 calc(78px + var(--safe-bottom))!important;
+    width:100%!important;
+    margin:0!important;
+    z-index:25!important;
+  }
+}
