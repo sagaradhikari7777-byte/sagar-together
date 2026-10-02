@@ -169,15 +169,20 @@ function expenses(){
 function sheetsView(){
  const expenseMap=new Map(data.sheets.map(sh=>[sh.id,data.expenses.filter(e=>e.sheet===sh.id)]));
  const stateFor=sh=>{
-  const es=expenseMap.get(sh.id)||[];
-  return {es,total:es.reduce((sum,e)=>sum+e.cents,0),unsettled:es.some(e=>!e.settlement)};
+  const es=expenseMap.get(sh.id)||[],unsettledEs=es.filter(e=>!e.settlement);
+  return {
+   es,
+   unsettledEs,
+   unsettledTotal:unsettledEs.reduce((sum,e)=>sum+e.cents,0),
+   unsettled:unsettledEs.length>0
+  };
  };
  const allSheets=[...data.sheets].sort((a,b)=>Number(b.pinned)-Number(a.pinned)||b.start.localeCompare(a.start));
  const currentSheets=allSheets.filter(sh=>!sh.archived);
  const currentExpenses=currentSheets.flatMap(sh=>expenseMap.get(sh.id)||[]);
- const currentTotal=currentExpenses.reduce((sum,e)=>sum+e.cents,0);
- const openTotal=currentExpenses.filter(e=>!e.settlement).reduce((sum,e)=>sum+e.cents,0);
- const settledTotal=currentExpenses.filter(e=>e.settlement).reduce((sum,e)=>sum+e.cents,0);
+ const unsettledExpenses=currentExpenses.filter(e=>!e.settlement);
+ const unsettledTotal=unsettledExpenses.reduce((sum,e)=>sum+e.cents,0);
+ const unsettledSheets=currentSheets.filter(sh=>stateFor(sh).unsettled);
  const counts={
   all:allSheets.length,
   open:currentSheets.length,
@@ -192,16 +197,16 @@ function sheetsView(){
  };
  const items=allSheets.filter(sh=>matchesFilter(sh)&&sh.name.toLowerCase().includes(sheetSearch.toLowerCase()));
  const card=(sh,index)=>{
-  const {es,total,unsettled}=stateFor(sh);
+  const {es,unsettledEs,unsettledTotal,unsettled}=stateFor(sh);
   const cardIcon=sh.pinned?'pin':index%3===0?'calendar':index%3===1?'home':'people';
-  const status=sh.archived?'Archived':unsettled?'Unsettled':'Open';
+  const status=sh.archived?'Archived':unsettled?`${unsettledEs.length} unsettled`:'Settled';
   return `<div class="swipe-sheet ref-sheet-card" data-swipe-sheet="${sh.id}">
    <div class="swipe-actions left" aria-hidden="true"><button tabindex="-1" data-sheet-edit="${sh.id}">${icon('edit')}</button><button tabindex="-1" class="pin-action" data-sheet-pin="${sh.id}">${icon('pin')}</button></div>
    <div class="swipe-actions right" aria-hidden="true"><button tabindex="-1" data-sheet-archive="${sh.id}">${icon('archive')}</button><button tabindex="-1" class="delete-action" data-sheet-delete="${sh.id}" ${canDeleteSheet(sh.id)?'':'disabled'}>${icon('trash')}</button></div>
    <div class="sheet-front ref-sheet-front"><button class="ref-sheet-open" data-view-sheet="${sh.id}">
     <span class="ref-sheet-icon">${icon(cardIcon)}</span>
-    <span class="ref-sheet-copy"><strong>${esc(sh.name)}</strong><small>${esc(sheetDateRange(sh))}</small><em>${es.length} expense${es.length===1?'':'s'} · ${status}</em></span>
-    <span class="ref-sheet-amount">${money(total)}</span>
+    <span class="ref-sheet-copy"><strong>${esc(sh.name)}</strong><small>${esc(sheetDateRange(sh))}</small><em>${status}${unsettled?' · unsettled only':''}</em></span>
+    <span class="ref-sheet-amount">${money(unsettledTotal)}</span>
    </button><button class="sheet-more ref-sheet-more" data-sheet-options="${sh.id}" aria-label="Actions for ${esc(sh.name)}">•••</button></div>
   </div>`;
  };
@@ -210,7 +215,7 @@ function sheetsView(){
   <header class="ref-sheets-header"><div class="ref-sheets-title"><span class="ref-sheets-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Sheets</strong></div><div class="ref-sheets-tools"><button class="ref-sheets-search-btn" data-action="sheet-search-toggle" aria-label="Search sheets">${icon('search')}</button><button class="ref-sheets-add" data-action="new-sheet">${icon('plus')}<span>Add</span></button></div></header>
   <div class="ref-sheets-progress"><i></i></div>
   <div class="ref-sheets-body">
-   <section class="ref-sheets-summary"><div class="ref-sheets-summary-head"><span><i></i>CURRENT SHEETS</span><em>${currentSheets.length} open</em></div><strong class="ref-sheets-total">${money(currentTotal)}</strong><p>Across ${currentSheets.length} sheet${currentSheets.length===1?'':'s'}</p><div class="ref-sheets-stats"><span><small>Open total</small><b>${money(openTotal)}</b></span><span><small>Settled total</small><b>${money(settledTotal)}</b></span></div></section>
+   <section class="ref-sheets-summary"><div class="ref-sheets-summary-head"><span><i></i>UNSETTLED</span><em>${unsettledSheets.length} sheet${unsettledSheets.length===1?'':'s'}</em></div><strong class="ref-sheets-total">${money(unsettledTotal)}</strong><p>${unsettledExpenses.length} unsettled expense${unsettledExpenses.length===1?'':'s'} across current sheets</p><div class="ref-sheets-stats"><span><small>Unsettled sheets</small><b>${unsettledSheets.length}</b></span><span><small>Unsettled expenses</small><b>${unsettledExpenses.length}</b></span></div></section>
    <div class="ref-sheets-filters">${filterChip('all','All')}${filterChip('open','Open','green')}${filterChip('unsettled','Unsettled','amber')}${filterChip('archived','Archived','grey')}</div>
    ${sheetSearchOpen||sheetSearch?`<div class="ref-sheets-search">${icon('search')}<input id="sheet-search" type="search" placeholder="Search sheets" aria-label="Search sheets" value="${esc(sheetSearch)}"><button type="button" data-action="sheet-search-toggle" aria-label="Close search">${icon('close')}</button></div>`:''}
    <div class="ref-sheets-list">${items.length?items.map(card).join(''):`<div class="ref-sheets-empty"><span>${icon('folder')}</span><strong>${sheetSearch?'No matching sheets':sheetFilter==='archived'?'No archived sheets':'No sheets here'}</strong><p>${sheetSearch?'Try another search.':'Create a sheet to start a new shared period.'}</p>${!sheetSearch&&sheetFilter!=='archived'?'<button class="primary" data-action="new-sheet">Create sheet</button>':''}</div>`}</div>
