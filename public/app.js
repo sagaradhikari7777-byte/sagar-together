@@ -478,7 +478,7 @@ function expenseForm(e=null,preset={}){
    <div class="ref-expense-options-head"><span><small>OPTIONAL</small><h3>Extra details</h3></span><em>${esc(data.sheets.find(s=>s.id===x.sheet)?.name||'Current sheet')}</em></div>
    <label class="ref-expense-field"><span class="ref-expense-label">Expense sheet</span><span class="ref-expense-control"><i>${icon('folder')}</i><select name="sheet">${data.sheets.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></span></label>
    <label class="ref-expense-field"><span class="ref-expense-label">Description · optional</span><span class="ref-expense-control"><i>${icon('receipt')}</i><input name="notes" maxlength="500" placeholder="Add a note" value="${esc(x.notes)}"></span></label>
-   <label class="ref-receipt-row">${icon('receipt')}<span class="ref-receipt-copy"><strong>Attach receipt</strong><small>Photo or screenshot · optional</small></span><span class="ref-receipt-action">Choose</span><input type="file" id="receipt-file" accept="image/*"></label>
+   <div class="ref-receipt-row">${icon('receipt')}<span class="ref-receipt-copy"><strong>Attach receipt</strong><small>Photo or screenshot · optional</small></span><button type="button" class="ref-receipt-action" id="choose-receipt">Choose</button><input type="file" id="receipt-file" class="ref-receipt-file" accept="image/*" hidden></div>
    <div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div>
    <button type="button" class="text-button ref-remove-receipt" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button>
    <details class="ref-calc-row"><summary>${icon('calculator')}<span>Calculate an amount</span>${icon('chevron')}</summary><div class="ref-calc-body"><label class="field"><span>Calculation</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="e.g. 24.50 + 18 + 6 / 2" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></div></details>
@@ -549,6 +549,7 @@ const headerSave=sheet.querySelector('[data-close]');
   }catch(err){$('#calculation-error').textContent=err.message;}
  };
  $('#amount-expression').onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();$('#use-calculation').click();}};
+ $('#choose-receipt').onclick=()=>$('#receipt-file').click();
  $('#receipt-file').onchange=async ev=>{
   if(!ev.target.files[0])return;
   receiptBusy=true;$('#save-expense').disabled=true;headerSave.disabled=true;
