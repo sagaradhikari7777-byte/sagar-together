@@ -22,7 +22,7 @@
 .ios-app.theme-dark .ref-sheets-progress{background:#252c27}
 .ios-app .ref-sheets-progress i{display:block;width:40%;height:100%;border-radius:0 999px 999px 0;background:#53b75f}
 .ios-app .ref-sheets-body{flex:1;min-height:0;padding:14px 14px 12px;display:flex;flex-direction:column;overflow:hidden}
-.ios-app .ref-sheets-summary{flex:none;padding:20px 18px 18px;border-radius:23px;background:#e5f3e5}
+.ios-app .ref-sheets-summary{flex:none;padding:20px 18px 18px;border:1px solid color-mix(in srgb,var(--ui-green) 10%,var(--ui-card-border));border-radius:var(--ui-card-radius);background:#e5f3e5;box-shadow:var(--ui-card-shadow)}
 .ios-app.theme-dark .ref-sheets-summary{background:var(--mint)}
 .ios-app .ref-sheets-summary-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .ios-app .ref-sheets-summary-head>span,.ios-app .ref-sheets-summary-head>em{min-height:30px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);color:#2b7734;display:inline-flex;align-items:center;gap:7px;font-size:12px;font-style:normal;font-weight:740;white-space:nowrap}
@@ -48,9 +48,9 @@
 .ios-app .ref-sheets-search>.icon{width:17px;height:17px;color:#858985}.ios-app .ref-sheets-search input{width:100%;height:42px;padding:0;border:0;background:transparent;box-shadow:none;color:var(--text);font-size:14px}
 .ios-app .ref-sheets-search button{width:32px;height:32px;padding:0;border:0;border-radius:50%;background:#f4f4f2;color:#747874;display:grid;place-items:center}.ios-app.theme-dark .ref-sheets-search button{background:var(--surface-2);color:var(--muted)}.ios-app .ref-sheets-search button .icon{width:14px;height:14px}
 .ios-app .ref-sheets-list{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:1px 0 8px}.ios-app .ref-sheets-list::-webkit-scrollbar{display:none}
-.ios-app .ref-sheet-card{position:relative;margin:0 0 9px;border:0;border-radius:16px;background:#dfe6df;overflow:hidden}
+.ios-app .ref-sheet-card{position:relative;margin:0 0 9px;border:0;border-radius:var(--ui-card-radius);background:#dfe6df;overflow:hidden}
 .ios-app.theme-dark .ref-sheet-card{background:#263028}
-.ios-app .ref-sheet-front{position:relative;z-index:1;min-height:104px;border:1px solid #ece9e6;border-radius:16px;background:#fff;box-shadow:0 7px 14px rgba(48,43,39,.075);overflow:hidden}
+.ios-app .ref-sheet-front{position:relative;z-index:1;min-height:104px;border:1px solid var(--ui-card-border);border-radius:var(--ui-card-radius);background:#fff;box-shadow:var(--ui-card-shadow);overflow:hidden}
 .ios-app.theme-dark .ref-sheet-front{background:var(--surface);border-color:var(--line);box-shadow:0 8px 18px rgba(0,0,0,.15)}
 .ios-app .ref-sheet-open{width:100%;min-height:104px;padding:13px 48px 13px 12px;border:0;background:transparent;display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left}
 .ios-app .ref-sheet-icon{width:58px;height:58px;border-radius:16px;background:#dff2df;color:#2f7d37;display:grid;place-items:center}.ios-app.theme-dark .ref-sheet-icon{background:var(--accent-soft);color:var(--accent)}.ios-app .ref-sheet-icon .icon{width:26px;height:26px}

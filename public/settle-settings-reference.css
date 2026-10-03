@@ -28,7 +28,7 @@
 
 /* Settle */
 .ios-app .ref-settle-body{flex:1;min-height:0;padding:14px 14px 12px;display:flex;flex-direction:column;overflow:hidden}
-.ios-app .ref-settle-summary{flex:none;padding:20px 18px 18px;border-radius:23px;background:#e5f3e5}
+.ios-app .ref-settle-summary{flex:none;padding:20px 18px 18px;border:1px solid color-mix(in srgb,var(--ui-green) 10%,var(--ui-card-border));border-radius:var(--ui-card-radius);background:#e5f3e5;box-shadow:var(--ui-card-shadow)}
 .ios-app.theme-dark .ref-settle-summary{background:var(--mint)}
 .ios-app .ref-settle-summary-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .ios-app .ref-settle-summary-head>span,.ios-app .ref-settle-summary-head>em{min-height:30px;padding:0 12px;border-radius:999px;background:rgba(255,255,255,.72);color:#2b7734;display:inline-flex;align-items:center;gap:7px;font-size:12px;line-height:1;font-style:normal;font-weight:740;white-space:nowrap}
@@ -65,14 +65,14 @@
 .ios-app .ref-settle-breakdown .ha-more{height:38px!important;border:1px solid #dedad5!important;border-radius:12px!important;background:#fff!important;color:#2f7d37!important}
 .ios-app.theme-dark .ref-settle-breakdown .ha-more{background:var(--surface)!important;border-color:var(--line)!important;color:var(--accent)!important}
 .ios-app .ref-settle-breakdown .ha-balanced{min-height:100px;border:1px dashed #d8d5cf;border-radius:15px;background:#fff}.ios-app.theme-dark .ref-settle-breakdown .ha-balanced{background:var(--surface);border-color:var(--line)}
-.ios-app .ref-unsettled-card{flex:none;margin-top:2px;padding:15px 14px 14px;border:1px solid #e7e3df;border-radius:19px;background:#fff;box-shadow:0 7px 18px rgba(45,42,38,.055),0 1px 2px rgba(45,42,38,.03)}
+.ios-app .ref-unsettled-card{flex:none;margin-top:2px;padding:15px 14px 14px;border:1px solid var(--ui-card-border);border-radius:var(--ui-card-radius);background:#fff;box-shadow:var(--ui-card-shadow)}
 .ios-app.theme-dark .ref-unsettled-card{background:#1a211b;border-color:#344137;box-shadow:0 9px 20px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.018)}
 .ios-app .ref-unsettled-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
 .ios-app .ref-unsettled-head small{display:block;color:#2f7d37;font-size:8.5px;line-height:1;letter-spacing:.09em;font-weight:760}.ios-app.theme-dark .ref-unsettled-head small{color:#72cb82}
 .ios-app .ref-unsettled-head h2{margin:3px 0 0;color:#171917;font-size:16px;line-height:1.1;font-weight:740;letter-spacing:-.25px}.ios-app.theme-dark .ref-unsettled-head h2{color:#f2f5f2}
 .ios-app .ref-unsettled-head>strong{min-height:28px;padding:0 10px;border-radius:999px;background:#eef5ed;color:#2f7d37;display:inline-flex;align-items:center;font-size:9.5px;font-weight:740}.ios-app.theme-dark .ref-unsettled-head>strong{background:#25422c;color:#72cb82}
 .ios-app .ref-settle-actions{flex:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
-.ios-app .ref-settle-tool-card{min-width:0;padding:14px;border:1px solid #e7e3df;border-radius:19px;background:#fff;color:inherit;text-align:left;box-shadow:0 7px 18px rgba(45,42,38,.055),0 1px 2px rgba(45,42,38,.03)}
+.ios-app .ref-settle-tool-card{min-width:0;padding:14px;border:1px solid var(--ui-card-border);border-radius:var(--ui-card-radius);background:#fff;color:inherit;text-align:left;box-shadow:var(--ui-card-shadow)}
 .ios-app.theme-dark .ref-settle-tool-card{background:#1a211b;border-color:#344137;box-shadow:0 9px 20px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.018)}
 .ios-app .ref-settle-tool-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .ios-app .ref-settle-tool-head>span:first-child{min-width:0}
@@ -115,7 +115,7 @@
 .ios-app .ref-settings-section-head{margin:14px 3px 7px}
 .ios-app .ref-settings-section-head small{display:block;color:#2f7d37;font-size:8.5px;letter-spacing:.09em;font-weight:740}
 .ios-app .ref-settings-section-head h2{margin:2px 0 0;color:#171917;font-size:16px;font-weight:720}.ios-app.theme-dark .ref-settings-section-head h2{color:var(--text)}
-.ios-app .ref-settings-group{padding:0 12px;border:1px solid #e8e4df;border-radius:15px;background:#fff;box-shadow:0 3px 9px rgba(43,39,35,.035)}
+.ios-app .ref-settings-group{padding:0 12px;border:1px solid var(--ui-card-border);border-radius:var(--ui-card-radius);background:#fff;box-shadow:var(--ui-card-shadow)}
 .ios-app.theme-dark .ref-settings-group{background:var(--surface);border-color:var(--line)}
 .ios-app .ref-settings-row{width:100%;min-height:59px;padding:7px 0;border:0;border-bottom:1px solid #ece9e5;background:transparent;display:grid;grid-template-columns:38px minmax(0,1fr) 11px;gap:10px;align-items:center;text-align:left}
 .ios-app .ref-settings-row:last-child{border-bottom:0}.ios-app.theme-dark .ref-settings-row{border-bottom-color:var(--line)}

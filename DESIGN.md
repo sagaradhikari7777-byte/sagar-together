@@ -80,3 +80,12 @@ Do not solve regressions by continually appending higher-specificity `!important
 `public/premium-system.css` is the final cross-screen layer. It owns shared card radii/elevation, category icon tinting, press motion, saving feedback, toast material and reduced-motion behavior. Screen styles continue to own layout.
 
 Use the shared premium variables before creating a new card shell. Category colour stays on compact icon tiles rather than full cards.
+
+
+## Shared visual tokens
+
+The core screens share `--ui-card-radius`, `--ui-card-border`, `--ui-card-shadow`, `--ui-green`, `--ui-green-soft`, `--ui-motion` and `--ui-ease` from `theme.css`. Use these before introducing another hard-coded card shell.
+
+Category colour is restrained and functional: green groceries, warm dining, blue bills, violet travel, neutral other. The category tint belongs to the icon tile, not the entire transaction card.
+
+System feedback must be visible but quiet: short press compression, glass toast feedback, a thin saving progress indicator, and reduced-motion support.

@@ -35,19 +35,15 @@
 
   .ios-app .ref-inside-list .expense-front{
     min-height:80px!important;
-    border:1px solid #e7e3df!important;
-    border-radius:18px!important;
+    border:1px solid var(--ui-card-border)!important;
+    border-radius:var(--ui-card-radius)!important;
     background:#fff!important;
-    box-shadow:
-      0 7px 17px rgba(45,42,38,.07),
-      0 1px 2px rgba(45,42,38,.035)!important;
+    box-shadow:var(--ui-card-shadow)!important;
   }
   .ios-app.theme-dark .ref-inside-list .expense-front{
     background:#1a211b!important;
-    border-color:#344137!important;
-    box-shadow:
-      0 8px 18px rgba(0,0,0,.17),
-      inset 0 1px 0 rgba(255,255,255,.018)!important;
+    border-color:var(--ui-card-border)!important;
+    box-shadow:var(--ui-card-shadow)!important;
   }
 
   .ios-app .ref-inside-list .liquid-expense{
@@ -197,3 +193,18 @@
 }
 
 .ios-app .sheet-outstanding {font-size:14px!important;line-height:1.4!important;color:var(--text)!important;}
+
+
+/* CATEGORY TINTS — subtle differentiation without turning the journal into a rainbow */
+@media(max-width:699px){
+ .ios-app .ref-inside-list .liquid-category.groceries{background:#e1f0df!important;color:#2f7d37!important}
+ .ios-app .ref-inside-list .liquid-category.food{background:#f6eadc!important;color:#a66a24!important}
+ .ios-app .ref-inside-list .liquid-category.bills{background:#e3ebf3!important;color:#4d718f!important}
+ .ios-app .ref-inside-list .liquid-category.travel{background:#ece5f3!important;color:#745f91!important}
+ .ios-app .ref-inside-list .liquid-category.other{background:#eceeeb!important;color:#686e69!important}
+ .ios-app.theme-dark .ref-inside-list .liquid-category.groceries{background:#25422c!important;color:#72cb82!important}
+ .ios-app.theme-dark .ref-inside-list .liquid-category.food{background:#443624!important;color:#e5ad67!important}
+ .ios-app.theme-dark .ref-inside-list .liquid-category.bills{background:#263847!important;color:#8eb8d6!important}
+ .ios-app.theme-dark .ref-inside-list .liquid-category.travel{background:#352e43!important;color:#b4a0d0!important}
+ .ios-app.theme-dark .ref-inside-list .liquid-category.other{background:#2a302b!important;color:#aeb5af!important}
+}
