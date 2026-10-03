@@ -798,3 +798,113 @@
     margin-top:0!important;
   }
 }
+
+
+/* FINAL ADD EXPENSE STRUCTURE — standalone receipt/calculator + no iOS focus zoom */
+@media(max-width:699px){
+  .ios-app #sheet[open]:has(#expense-form) input[name="notes"],
+  .ios-app #sheet[open]:has(#expense-form) #amount-expression{
+    font-size:16px!important;
+  }
+
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-receipt-card,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-calc-card{
+    position:static!important;
+    inset:auto!important;
+    float:none!important;
+    clear:both!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0!important;
+    transform:none!important;
+    overflow:visible!important;
+    contain:none!important;
+    box-sizing:border-box!important;
+  }
+
+  .ios-app .ref-expense-receipt-card{
+    padding:10px!important;
+    border:1px solid #e7e3df!important;
+    border-radius:18px!important;
+    background:#fff!important;
+    box-shadow:0 6px 16px rgba(45,42,38,.05),0 1px 2px rgba(45,42,38,.025)!important;
+  }
+
+  .ios-app.theme-dark .ref-expense-receipt-card{
+    background:#1a211b!important;
+    border-color:#344137!important;
+  }
+
+  .ios-app .ref-expense-receipt-card .ref-receipt-row{
+    position:relative!important;
+    display:grid!important;
+    grid-template-columns:30px minmax(0,1fr) auto!important;
+    gap:8px!important;
+    align-items:center!important;
+    width:100%!important;
+    min-height:52px!important;
+    margin:0!important;
+    padding:9px 10px!important;
+    box-sizing:border-box!important;
+    border:1px dashed #cddbc9!important;
+    border-radius:12px!important;
+    background:#f7faf6!important;
+    color:#2f7d37!important;
+    visibility:visible!important;
+    opacity:1!important;
+  }
+
+  .ios-app.theme-dark .ref-expense-receipt-card .ref-receipt-row{
+    background:#202821!important;
+    border-color:#344137!important;
+    color:#72cb82!important;
+  }
+
+  .ios-app .ref-expense-receipt-card .ref-receipt-file{
+    display:none!important;
+  }
+
+  .ios-app .ref-expense-receipt-card #receipt-preview:empty{
+    display:none!important;
+  }
+
+  .ios-app .ref-expense-receipt-card .ref-remove-receipt[hidden]{
+    display:none!important;
+  }
+
+  .ios-app .ref-expense-calc-card{
+    padding:0!important;
+    border:1px solid #e7e3df!important;
+    border-radius:18px!important;
+    background:#fff!important;
+    box-shadow:0 6px 16px rgba(45,42,38,.05),0 1px 2px rgba(45,42,38,.025)!important;
+  }
+
+  .ios-app.theme-dark .ref-expense-calc-card{
+    background:#1a211b!important;
+    border-color:#344137!important;
+  }
+
+  .ios-app .ref-expense-calc-card .ref-calc-row{
+    position:relative!important;
+    display:block!important;
+    width:100%!important;
+    margin:0!important;
+    border:0!important;
+    border-radius:18px!important;
+    background:transparent!important;
+    box-sizing:border-box!important;
+  }
+
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-submit-card{
+    position:static!important;
+    flex:0 0 auto!important;
+    order:initial!important;
+    width:100%!important;
+    margin:0!important;
+  }
+}
