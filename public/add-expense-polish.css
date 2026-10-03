@@ -180,8 +180,13 @@
     padding:0!important;
     overflow:hidden!important;
   }
-  .ios-app .ref-expense-more-card>summary{
+  .ios-app .ref-expense-more-card>.ref-expense-more-summary{
+    width:100%!important;
     min-height:60px!important;
+    border:0!important;
+    background:transparent!important;
+    color:inherit!important;
+    text-align:left!important;
     padding:11px 13px!important;
     list-style:none!important;
     display:grid!important;
@@ -190,7 +195,7 @@
     align-items:center!important;
     cursor:pointer!important;
   }
-  .ios-app .ref-expense-more-card>summary::-webkit-details-marker{
+  .ios-app .ref-expense-more-card>.ref-expense-more-summary::-webkit-details-marker{
     display:none!important;
   }
   .ios-app .ref-expense-more-summary>span{
@@ -224,17 +229,23 @@
     color:#8e948f!important;
     transition:transform .18s ease!important;
   }
-  .ios-app .ref-expense-more-card[open] .ref-expense-more-summary>.icon{
+  .ios-app .ref-expense-more-card.open .ref-expense-more-summary>.icon{
     transform:rotate(90deg)!important;
   }
-  .ios-app .ref-expense-more-card:not([open]) > .ref-expense-more-body{
+  .ios-app .ref-expense-more-card:not(.open) > .ref-expense-more-body{
     display:none!important;
   }
-  .ios-app .ref-expense-more-card[open] > .ref-expense-more-body{
+  .ios-app .ref-expense-more-card.open > .ref-expense-more-body{
     display:grid!important;
     gap:10px!important;
   }
+  .ios-app .ref-expense-more-body[hidden]{
+    display:none!important;
+  }
   .ios-app .ref-expense-more-body{
+    min-height:0!important;
+    height:auto!important;
+    overflow:visible!important;
     padding:0 13px 13px!important;
     border-top:1px solid #ece9e5!important;
   }
