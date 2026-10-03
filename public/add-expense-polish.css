@@ -309,7 +309,7 @@
 .ios-app #sheet[open]:has(#expense-form) .ref-expense-final-actions.single #save-expense{
   width:100%!important;
 }
-.ios-app .catalog-dialog.selection-mode .catalog-edit{
+.ios-app #catalog-dialog.selection-mode .catalog-edit{
   display:none!important;
 }
 

@@ -331,8 +331,8 @@
   .ios-app .ref-settle-breakdown .ha-breakdown-list>button>span:nth-child(2)>small{
     display:block!important;
     margin-top:4px!important;
-    color:#858b86!important;
-    font-size:10.5px!important;
+    color:#647169!important;
+    font-size:12px!important;
     line-height:1.2!important;
   }
   .ios-app.theme-dark .ref-settle-breakdown .ha-breakdown-list>button>span:nth-child(2)>small{
@@ -505,7 +505,7 @@
     border-radius:10px!important;
     background:transparent!important;
     color:#747a75!important;
-    font-size:10.5px!important;
+    font-size:12px!important;
     line-height:1!important;
     font-weight:680!important;
     box-shadow:none!important;

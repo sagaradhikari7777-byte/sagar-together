@@ -37,7 +37,7 @@
 .ios-app .ref-settle-amount{display:block;margin-top:17px;color:#277735;font-size:43px;line-height:.96;letter-spacing:-1.7px;font-weight:790}
 .ios-app .ref-settle-summary.pay .ref-settle-amount{color:#c9262e}
 .ios-app.theme-dark .ref-settle-amount{color:var(--accent)}.ios-app.theme-dark .ref-settle-summary.pay .ref-settle-amount{color:#ef8e96}
-.ios-app .ref-settle-summary>p{margin:12px 0 0;color:#979b97;font-size:13px}.ios-app.theme-dark .ref-settle-summary>p{color:var(--muted)}
+.ios-app .ref-settle-summary>p{margin:12px 0 0;color:#55665a;font-size:13px}.ios-app.theme-dark .ref-settle-summary>p{color:var(--muted)}
 .ios-app .ref-settle-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px}
 .ios-app .ref-settle-stats>span{padding:13px 14px 12px;border-radius:16px;background:rgba(255,255,255,.76)}
 .ios-app.theme-dark .ref-settle-stats>span{background:rgba(255,255,255,.065)}
@@ -122,7 +122,7 @@
 .ios-app .ref-settings-icon{width:38px;height:38px;border-radius:11px;background:#e4f2e1;color:#2f7d37;display:grid;place-items:center}.ios-app.theme-dark .ref-settings-icon{background:var(--accent-soft);color:var(--accent)}
 .ios-app .ref-settings-icon .icon{width:17px;height:17px}
 .ios-app .ref-settings-copy{min-width:0}.ios-app .ref-settings-copy strong{display:block;color:#1c1f1c;font-size:12.5px;font-weight:680}.ios-app.theme-dark .ref-settings-copy strong{color:var(--text)}
-.ios-app .ref-settings-copy small{display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#919691;font-size:9.5px}
+.ios-app .ref-settings-copy small{display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:normal;color:#647169;font-size:13px}
 .ios-app .ref-settings-row>.icon{width:11px;height:11px;color:#a1a6a1}
 .ios-app .ref-settings-signout{width:100%;min-height:48px;margin-top:14px;padding:0 14px;border:1px solid #eddcdf;border-radius:14px;background:#fff;color:#ba626e;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:680}
 .ios-app.theme-dark .ref-settings-signout{background:var(--surface);border-color:#513139;color:var(--danger)}
