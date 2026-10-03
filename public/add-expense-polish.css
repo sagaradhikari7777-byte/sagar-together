@@ -313,6 +313,12 @@
 @media(max-width:699px) {
   .ios-app #sheet[open]:has(#expense-form) {width:100%!important;height:100dvh!important;margin:0!important;border:0!important;border-radius:0!important}
 }
+@media(min-width:700px) {
+  /* Glass decoration is positioned only by the mobile dock stylesheet. It must
+     not occupy two extra desktop grid cells and push tabs into a hidden row. */
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav > .liquid-refract-layer,
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav > .liquid-selection {display:none!important}
+}
 @media(max-width:440px) {
   .ios-app #sheet[open] #expense-form .ref-expense-pair .ref-expense-control {grid-template-columns:minmax(0,1fr)!important}
   .ios-app #sheet[open] #expense-form .ref-expense-pair .ref-expense-control > i {display:none!important}

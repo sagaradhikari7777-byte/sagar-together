@@ -26,7 +26,8 @@ async function layout(page,label){
   const r=e=>{const b=e.getBoundingClientRect();return {top:b.top,bottom:b.bottom,left:b.left,right:b.right,height:b.height};};
   const cards=[...f.querySelectorAll(':scope > section')].map(e=>({name:e.className,...r(e),scrollHeight:e.scrollHeight,children:[...e.children].filter(c=>getComputedStyle(c).display!=='none').map(c=>({...r(c),tag:c.tagName}))}));
   const inputs=[...f.querySelectorAll('input:not([type=file]),select')].map(e=>({name:e.name||e.id,size:parseFloat(getComputedStyle(e).fontSize),...r(e)}));
-  return {cards,inputs,form:{width:f.clientWidth,scrollWidth:f.scrollWidth},note:r(f.elements.notes),receipt:r(f.querySelector('.ref-receipt-row')),calc:r(f.querySelector('.ref-calc-row')),save:r(f.querySelector('.ref-expense-submit-card'))};
+  const nav=document.querySelector('.ref-expense-nav');
+  return {cards,inputs,nav:r(nav),navButtons:[...nav.querySelectorAll('button')].map(r),form:{width:f.clientWidth,scrollWidth:f.scrollWidth},note:r(f.elements.notes),receipt:r(f.querySelector('.ref-receipt-row')),calc:r(f.querySelector('.ref-calc-row')),save:r(f.querySelector('.ref-expense-submit-card'))};
  });
  for(const card of report.cards){
   assert.ok(card.height>=card.scrollHeight-2,`${label}: ${card.name} collapsed (${card.height} < ${card.scrollHeight})`);
@@ -38,6 +39,8 @@ async function layout(page,label){
  assert.ok(report.receipt.top>=report.note.bottom,`${label}: receipt covers note`);
  assert.ok(report.calc.top>=report.receipt.bottom,`${label}: calculator covers receipt`);
  assert.ok(report.save.top>=report.calc.bottom,`${label}: Save covers calculator`);
+ assert.equal(report.navButtons.length,5,`${label}: all navigation actions exist`);
+ for(const button of report.navButtons)assert.ok(button.top>=report.nav.top-1&&button.bottom<=report.nav.bottom+1&&button.left>=report.nav.left-1&&button.right<=report.nav.right+1,`${label}: navigation action extends outside the dock`);
  return report;
 }
 (async()=>{
