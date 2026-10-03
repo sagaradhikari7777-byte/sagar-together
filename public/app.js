@@ -455,40 +455,42 @@ function expenseForm(e=null,preset={}){
  const title=e?'Edit expense':preset.repeat?'Repeat expense':'Add an expense';
  modal(title,`<form id="expense-form" class="ref-expense-form">
   ${preset.repeat?'<p class="entry-note">A new expense for today. Check the amount and save when ready.</p>':''}
-  <section class="ref-expense-card">
-   <h3>Who is this with?</h3>
-   <label class="ref-expense-field"><span class="ref-expense-label">Split it with...</span><span class="ref-expense-control"><i>${icon('people')}</i><span class="ref-fixed-value">Household</span></span></label>
-   <label class="ref-expense-field"><span class="ref-expense-label">Paid by...</span><span class="ref-expense-control"><i>${icon('user')}</i><select name="payer">${data.names.map((n,i)=>`<option value="${i}" ${x.payer===i?'selected':''}>${i===data.seat?'You · ':''}${esc(n)}</option>`).join('')}</select></span></label>
+  <section class="ref-expense-card ref-expense-main-card">
+   <div class="ref-expense-card-title"><span><small>EXPENSE</small><h3>Expense details</h3></span></div>
+   <label class="ref-expense-field ref-expense-merchant"><span class="ref-expense-label">Merchant</span><span class="ref-expense-control"><i>${icon('store')}</i><input name="merchant" class="picker-control" readonly data-pick="merchants" placeholder="Choose merchant" value="${esc(x.merchant)}" required aria-haspopup="dialog"></span></label>
+   <label class="ref-expense-field ref-expense-amount"><span class="ref-expense-label">Amount</span><span class="ref-expense-amount-row"><span class="ref-currency-pill">$ AUD</span><span class="ref-expense-control amount-control"><input class="big-input" name="amount" inputmode="decimal" placeholder="0.00" value="${x.cents?(x.cents/100).toFixed(2):''}" pattern="[0-9]+([.][0-9]{1,2})?" required aria-label="Amount in Australian dollars"></span></span></label>
+   <div class="ref-expense-pair">
+    <label class="ref-expense-field"><span class="ref-expense-label">Category</span><span class="ref-expense-control"><i>${icon('tag')}</i><input name="category" class="picker-control" readonly data-pick="categories" value="${esc(x.category)}" required aria-haspopup="dialog"></span></label>
+    <label class="ref-expense-field"><span class="ref-expense-label">Date</span><span class="ref-expense-control"><i>${icon('calendar')}</i><input type="date" name="date" value="${x.date}" required></span></label>
+   </div>
   </section>
 
-  <section class="ref-expense-card">
-   <h3>Expense details</h3>
-   <label class="ref-expense-field"><span class="ref-expense-label">Date of expense</span><span class="ref-expense-control"><i>${icon('calendar')}</i><input type="date" name="date" value="${x.date}" required></span></label>
-   <label class="ref-expense-field"><span class="ref-expense-label">Merchant</span><span class="ref-expense-control"><i>${icon('store')}</i><input name="merchant" class="picker-control" readonly data-pick="merchants" placeholder="e.g. Aldi" value="${esc(x.merchant)}" required aria-haspopup="dialog"></span></label>
-   <label class="ref-expense-field"><span class="ref-expense-label">Category</span><span class="ref-expense-control"><i>${icon('tag')}</i><input name="category" class="picker-control" readonly data-pick="categories" value="${esc(x.category)}" required aria-haspopup="dialog"></span></label>
-   <label class="ref-expense-field"><span class="ref-expense-label">Description</span><span class="ref-expense-control"><i>${icon('receipt')}</i><input name="notes" maxlength="500" placeholder="e.g. Dinner at Chin Chin" value="${esc(x.notes)}"></span></label>
+  <section class="ref-expense-card ref-expense-split-card">
+   <div class="ref-expense-card-title"><span><small>SPLIT</small><h3>Payment & split</h3></span></div>
+   <div class="ref-expense-pair ref-expense-pair-split">
+    <label class="ref-expense-field"><span class="ref-expense-label">Paid by</span><span class="ref-expense-control"><i>${icon('user')}</i><select name="payer">${data.names.map((n,i)=>`<option value="${i}" ${x.payer===i?'selected':''}>${i===data.seat?'You · ':''}${esc(n)}</option>`).join('')}</select></span></label>
+    <label class="ref-expense-field"><span class="ref-expense-label">Split</span><span class="ref-expense-control"><i>${icon('chart')}</i><select name="split">${splitOptions(x.split)}</select></span></label>
+   </div>
   </section>
 
-  <section class="ref-expense-card">
-   <h3>Amount & split</h3>
-   <label class="ref-expense-field"><span class="ref-expense-label">Amount</span><span class="ref-expense-amount-row"><span class="ref-currency-pill">$ AUD</span><span class="ref-expense-control amount-control"><input class="big-input" name="amount" inputmode="decimal" placeholder="0.00" value="${x.cents?(x.cents/100).toFixed(2):''}" pattern="[0-9]+([.][0-9]{1,2})?" required aria-label="Amount in Australian dollars"></span></span></label>
-   <label class="ref-expense-field"><span class="ref-expense-label">Split equally</span><span class="ref-expense-control"><i>${icon('chart')}</i><select name="split">${splitOptions(x.split)}</select></span></label>
-  </section>
-
-  <section class="ref-expense-card ref-expense-more-card">
-   <h3>More options</h3>
-   <label class="ref-expense-field"><span class="ref-expense-label">Expense sheet</span><span class="ref-expense-control"><i>${icon('folder')}</i><select name="sheet">${data.sheets.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></span></label>
-   <details class="amount-calculator ref-option-tool"><summary>${icon('calculator')} Calculate an amount</summary><div class="ref-option-tool-body"><label class="field"><span>Calculation</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="e.g. 24.50 + 18 + 6 / 2" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></div></details>
-   <div class="split-preview" id="split-preview"></div>
-   <p class="small muted expense-visibility-note">${icon('people')} Shared with your household · ${e?`Added by ${esc(expenseAuthor(e))}`:`Adding as ${esc(data.names[data.seat])}`}</p>
-   <label class="receipt-label ref-option-receipt">${icon('receipt')} Attach a receipt · optional<input type="file" id="receipt-file" accept="image/*"></label>
-   <div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div>
-   <button type="button" class="text-button" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button>
-  </section>
+  <details class="ref-expense-card ref-expense-more-card" ${e&&(x.notes||receipt)?'open':''}>
+   <summary class="ref-expense-more-summary"><span><small>MORE OPTIONS</small><strong>Sheet, notes & receipt</strong><em>${esc(data.sheets.find(s=>s.id===x.sheet)?.name||'Current sheet')}</em></span>${icon('chevron')}</summary>
+   <div class="ref-expense-more-body">
+    <label class="ref-expense-field"><span class="ref-expense-label">Expense sheet</span><span class="ref-expense-control"><i>${icon('folder')}</i><select name="sheet">${data.sheets.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></span></label>
+    <label class="ref-expense-field"><span class="ref-expense-label">Description · optional</span><span class="ref-expense-control"><i>${icon('receipt')}</i><input name="notes" maxlength="500" placeholder="Add a note" value="${esc(x.notes)}"></span></label>
+    <details class="amount-calculator ref-option-tool"><summary>${icon('calculator')} Calculate an amount</summary><div class="ref-option-tool-body"><label class="field"><span>Calculation</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="e.g. 24.50 + 18 + 6 / 2" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></div></details>
+    <div class="split-preview" id="split-preview"></div>
+    <p class="small muted expense-visibility-note">${icon('people')} Shared with your household · ${e?`Added by ${esc(expenseAuthor(e))}`:`Adding as ${esc(data.names[data.seat])}`}</p>
+    <label class="receipt-label ref-option-receipt">${icon('receipt')}<span class="ref-receipt-copy"><strong>Attach receipt</strong><small>Photo or screenshot · optional</small></span><span class="ref-receipt-action">Choose</span><input type="file" id="receipt-file" accept="image/*"></label>
+    <div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div>
+    <button type="button" class="text-button" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button>
+   </div>
+  </details>
   <p class="error form-error" role="alert"></p>
   <p class="duplicate-warning" hidden role="alert"></p>
-  <div class="form-actions ref-expense-actions">${e?'<button type="button" class="secondary danger" id="delete-expense">Delete</button>':''}<button class="primary" id="save-expense">${icon('check')} Save expense</button></div>
-  ${!e?'<button class="secondary full save-another" type="submit" name="saveMode" value="another">Save & add another</button>':''}
+  <section class="ref-expense-submit-card">
+   <div class="ref-expense-final-actions">${e?'<button type="button" class="secondary danger" id="delete-expense">Delete</button>':''}<button class="primary" id="save-expense">${icon('check')} ${e?'Save changes':'Save expense'}</button>${!e?'<button class="secondary save-another" type="submit" name="saveMode" value="another">Save & add another</button>':''}</div>
+  </section>
  </form>
  <nav class="ref-expense-nav" aria-label="Expense navigation" data-active-index="2">
   <span class="liquid-refract-layer" aria-hidden="true"></span><span class="liquid-selection" aria-hidden="true"></span>
