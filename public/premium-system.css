@@ -1,0 +1,111 @@
+/* Together Premium System — shared cross-screen finish.
+   This file intentionally loads last and owns only common visual primitives. */
+.ios-app{
+  --ui-green:#2f7d37;
+  --ui-green-soft:#e1f0df;
+  --ui-card-bg:#fff;
+  --ui-card-border:#e7e3df;
+  --ui-card-radius:19px;
+  --ui-hero-radius:22px;
+  --ui-control-radius:13px;
+  --ui-card-shadow:0 7px 18px rgba(45,42,38,.055),0 1px 2px rgba(45,42,38,.03);
+  --ui-card-shadow-strong:0 10px 26px rgba(45,42,38,.085),0 2px 5px rgba(45,42,38,.035);
+  --ui-motion:180ms;
+  --ui-ease:cubic-bezier(.2,.8,.2,1);
+}
+.ios-app.theme-dark{
+  --ui-green:#72cb82;
+  --ui-green-soft:#25422c;
+  --ui-card-bg:#1a211b;
+  --ui-card-border:#344137;
+  --ui-card-shadow:0 9px 20px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.018);
+  --ui-card-shadow-strong:0 12px 28px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+/* Common card hierarchy */
+.ios-app :is(
+ .home-recent-card,.home-period-card,.draft-banner,
+ .ref-sheet-front,.ref-unsettled-card,.ref-settle-tool-card,
+ .ref-settings-group,.ref-inside-list .expense-front
+){
+  border-color:var(--ui-card-border)!important;
+  border-radius:var(--ui-card-radius)!important;
+  background:var(--ui-card-bg)!important;
+  box-shadow:var(--ui-card-shadow)!important;
+}
+.ios-app :is(.ref-balance-card,.ref-sheets-summary,.ref-settle-summary,.ref-inside-summary){
+  border:1px solid color-mix(in srgb,var(--ui-green) 10%,var(--ui-card-border))!important;
+  border-radius:var(--ui-hero-radius)!important;
+  box-shadow:var(--ui-card-shadow)!important;
+}
+.ios-app #sheet[open]:has(#expense-form) #expense-form>section{
+  border-radius:var(--ui-card-radius)!important;
+  box-shadow:var(--ui-card-shadow)!important;
+}
+
+/* Category colour is functional and kept to the icon tile. */
+.ios-app :is(.re-cat,.liquid-category).groceries{background:#e1f0df!important;color:#2f7d37!important}
+.ios-app :is(.re-cat,.liquid-category).food{background:#f6eadc!important;color:#a66a24!important}
+.ios-app :is(.re-cat,.liquid-category).bills{background:#e3ebf3!important;color:#4d718f!important}
+.ios-app :is(.re-cat,.liquid-category).travel{background:#ece5f3!important;color:#745f91!important}
+.ios-app :is(.re-cat,.liquid-category).other{background:#eceeeb!important;color:#686e69!important}
+.ios-app.theme-dark :is(.re-cat,.liquid-category).groceries{background:#25422c!important;color:#72cb82!important}
+.ios-app.theme-dark :is(.re-cat,.liquid-category).food{background:#443624!important;color:#e5ad67!important}
+.ios-app.theme-dark :is(.re-cat,.liquid-category).bills{background:#263847!important;color:#8eb8d6!important}
+.ios-app.theme-dark :is(.re-cat,.liquid-category).travel{background:#352e43!important;color:#b4a0d0!important}
+.ios-app.theme-dark :is(.re-cat,.liquid-category).other{background:#2a302b!important;color:#aeb5af!important}
+
+/* Numeric columns feel steadier while values change. */
+.ios-app :is(
+ .ref-balance-amount,.ref-sheets-total,.ref-settle-amount,.ref-inside-total,
+ .expense-total strong,.home-recent-amount strong,.home-period-main>strong,.ref-sheet-amount
+){font-variant-numeric:tabular-nums}
+
+/* Native-like press response without noisy animation. */
+.ios-app :is(
+ button,.ref-sheet-open,.home-recent-row,.ref-settings-row,
+ .settlement-sheet-list button,.ref-settle-tool-card
+){
+  -webkit-tap-highlight-color:transparent;
+  transition:transform var(--ui-motion) var(--ui-ease),opacity var(--ui-motion) ease,box-shadow var(--ui-motion) ease,background-color var(--ui-motion) ease;
+}
+@media(hover:none){
+ .ios-app :is(
+  .ref-search,.ref-sheets-search-btn,.ref-sheets-add,.ref-inside-add,
+  .ref-sheet-open,.home-recent-row,.home-period-head button,
+  .ref-settings-row,.ref-settings-theme,.ref-settings-signout,
+  .ref-settle-tool-card,.settlement-sheet-list button,.settlement-record,
+  .ref-spend-switch button,.primary,.secondary
+ ):active{transform:scale(.985)}
+}
+
+/* Saving is explicit, small, and does not move the form. */
+.ios-app #sheet.saving .dialog-head{overflow:hidden}
+.ios-app #sheet.saving .dialog-head::after{
+  content:"";position:absolute;left:0;bottom:0;width:34%;height:2px;border-radius:999px;
+  background:var(--ui-green);animation:together-saving 900ms ease-in-out infinite;
+}
+@keyframes together-saving{0%{transform:translateX(-110%)}100%{transform:translateX(330%)}}
+
+/* System feedback uses the same liquid material as navigation. */
+.ios-app #toast{
+  max-width:min(420px,calc(100vw - 32px))!important;
+  padding:10px 14px!important;
+  border:1px solid var(--glass-border)!important;
+  border-radius:14px!important;
+  background:color-mix(in srgb,var(--surface) 82%,transparent)!important;
+  color:var(--text)!important;
+  box-shadow:var(--glass-shadow)!important;
+  backdrop-filter:blur(22px) saturate(155%)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(155%)!important;
+}
+
+/* Accessibility: premium motion is optional. */
+@media(prefers-reduced-motion:reduce){
+ .ios-app *, .ios-app *::before, .ios-app *::after{
+  scroll-behavior:auto!important;
+  animation-duration:.001ms!important;
+  animation-iteration-count:1!important;
+  transition-duration:.001ms!important;
+ }
+}

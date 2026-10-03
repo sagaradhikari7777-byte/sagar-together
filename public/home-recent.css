@@ -57,3 +57,28 @@
 .ios-app .draft-banner strong,.ios-app .draft-banner small {display:block;overflow-wrap:anywhere;}
 .ios-app .draft-banner strong {font-size:15px;}.ios-app .draft-banner small {margin-top:4px;font-size:13px;color:var(--muted);}
 .ios-app .draft-banner button {min-height:44px;}
+
+
+/* HOME PERIOD PULSE */
+.ios-app .home-period-card{
+  margin:14px 0 0;padding:15px 14px;
+  border:1px solid var(--ui-card-border);border-radius:var(--ui-card-radius);
+  background:var(--ui-card-bg);box-shadow:var(--ui-card-shadow);
+}
+.ios-app .home-period-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.ios-app .home-period-head small{display:block;color:var(--ui-green);font-size:9px;line-height:1;letter-spacing:.09em;font-weight:760}
+.ios-app .home-period-head h2{margin:3px 0 0;font-size:17px;line-height:1.15;font-weight:750;letter-spacing:-.25px}
+.ios-app .home-period-head button{width:36px;height:36px;min-width:36px;padding:0;border:0;border-radius:11px;background:var(--ui-green-soft);color:var(--ui-green);display:grid;place-items:center}
+.ios-app .home-period-head button .icon{width:14px;height:14px}
+.ios-app .home-period-main{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:13px}
+.ios-app .home-period-main>strong{font-size:30px;line-height:1;font-weight:780;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.ios-app .home-period-main>span{max-width:52%;padding:6px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted);font-size:10.5px;line-height:1.25;text-align:right}
+.ios-app .home-period-detail{display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:center;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
+.ios-app .home-period-detail>.re-cat{width:40px;height:40px;border-radius:12px}
+.ios-app .home-period-detail small{display:block;color:var(--muted);font-size:8px;letter-spacing:.08em;font-weight:740}
+.ios-app .home-period-detail strong{display:block;margin-top:2px;font-size:13px;font-weight:720}
+.ios-app .home-period-detail p{margin:2px 0 0;color:var(--muted);font-size:10px}
+@media(max-width:360px){
+ .ios-app .home-period-main{align-items:flex-start;flex-direction:column;gap:8px}
+ .ios-app .home-period-main>span{max-width:100%;text-align:left}
+}

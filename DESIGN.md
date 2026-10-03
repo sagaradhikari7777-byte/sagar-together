@@ -73,3 +73,10 @@ Minimum interactive target remains 44px. Swipe actions must retain visible butto
 `public/add-expense-polish.css` owns Add Expense layout. Other screen-specific stylesheets own their respective screens.
 
 Do not solve regressions by continually appending higher-specificity `!important` patches. Consolidate obsolete selectors when touching a component. Delete unreferenced legacy stylesheets rather than keeping multiple dormant design systems.
+
+
+## Premium system layer
+
+`public/premium-system.css` is the final cross-screen layer. It owns shared card radii/elevation, category icon tinting, press motion, saving feedback, toast material and reduced-motion behavior. Screen styles continue to own layout.
+
+Use the shared premium variables before creating a new card shell. Category colour stays on compact icon tiles rather than full cards.

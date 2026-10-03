@@ -128,6 +128,24 @@ function homeRecentTransactions(){
   return `<button type="button" class="home-recent-row" data-expense="${esc(e.id)}"><span class="re-cat ${catIcon(e.category)}">${icon(catIcon(e.category))}</span><span class="home-recent-copy"><strong>${esc(e.merchant)}</strong><span class="home-recent-author">${Number.isInteger(e.creator)?'Added by '+esc(expenseAuthor(e)):esc(expenseAuthor(e))}</span><small>${esc(e.category||'Other')} · ${esc(dateLabel)}</small><small class="home-recent-sheet">${esc(sheetName)}</small></span><span class="home-recent-amount"><strong>${money(e.cents)}</strong>${icon('chevron')}</span></button>`;
  }).join('')}</div>`:`<div class="home-recent-empty">${icon('receipt')}<strong>No transactions yet</strong><p>Your latest expenses and who added them will appear here.</p><button type="button" class="secondary" data-action="add">Add an expense</button></div>`}</section>`;
 }
+function homeSpendingPulse(){
+ const ordered=[...data.sheets].sort((a,b)=>Number(b.pinned)-Number(a.pinned)||String(b.start||'').localeCompare(String(a.start||'')));
+ const current=ordered.find(s=>!s.archived);
+ if(!current)return '';
+ const entries=data.expenses.filter(e=>e.sheet===current.id),total=entries.reduce((sum,e)=>sum+e.cents,0);
+ const older=ordered.filter(s=>s.id!==current.id&&String(s.start||'')<String(current.start||'')).sort((a,b)=>String(b.start||'').localeCompare(String(a.start||'')));
+ const previous=older[0]||ordered.find(s=>s.id!==current.id);
+ const previousTotal=previous?data.expenses.filter(e=>e.sheet===previous.id).reduce((sum,e)=>sum+e.cents,0):0;
+ const delta=previous&&previousTotal>0?Math.round((total-previousTotal)/previousTotal*100):null;
+ const categories=new Map();entries.forEach(e=>categories.set(e.category||'Other',(categories.get(e.category||'Other')||0)+e.cents));
+ const top=[...categories.entries()].sort((a,b)=>b[1]-a[1])[0];
+ const comparison=delta===null?`${entries.length} expense${entries.length===1?'':'s'} in this period`:`${delta>0?'+':''}${delta}% vs ${previous.name}`;
+ return `<section class="home-period-card" aria-label="Current period spending">
+  <div class="home-period-head"><div><small>THIS PERIOD</small><h2>${esc(current.name)}</h2></div><button type="button" data-view-sheet="${esc(current.id)}" aria-label="Open ${esc(current.name)}">${icon('chevron')}</button></div>
+  <div class="home-period-main"><strong>${money(total)}</strong><span>${esc(comparison)}</span></div>
+  <div class="home-period-detail"><span class="re-cat ${top?catIcon(top[0]):'other'}">${icon(top?catIcon(top[0]):'chart')}</span><div><small>${top?'TOP CATEGORY':'GET STARTED'}</small><strong>${top?esc(top[0]):'No spending yet'}</strong><p>${top?money(top[1]):'Add an expense to start this period.'}</p></div></div>
+ </section>`;
+}
 function home(){
  const o=householdOverview(data,group(data.seat)),other=group(data.seat)==='a'?'b':'a';
  const status=o.net===0?'settled':o.net>0?'owe':'owed';
@@ -137,6 +155,7 @@ function home(){
  <div class="ref-home-body">
   <section class="ref-balance-card ${status}"><div class="ref-balance-head"><span>OVERALL BALANCE</span></div><strong class="ref-balance-amount">${money(Math.abs(o.net))}</strong><p class="home-balance-direction">${esc(direction)}</p><p>${o.rows.length} outstanding expense${o.rows.length===1?'':'s'} across ${o.sheets.length} open sheet${o.sheets.length===1?'':'s'}</p><button class="secondary home-balance-action" data-action="open-settle">View settlement overview</button></section>
   ${draftBanner()}
+  ${homeSpendingPulse()}
   ${homeRecentTransactions()}
  </div></section>`;
 }

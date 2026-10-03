@@ -4,6 +4,8 @@ import {readFileSync} from 'node:fs';
 
 const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
 const addExpenseCss=readFileSync(new URL('../public/add-expense-polish.css',import.meta.url),'utf8');
+const premiumCss=readFileSync(new URL('../public/premium-system.css',import.meta.url),'utf8');
+const homeCss=readFileSync(new URL('../public/home-recent.css',import.meta.url),'utf8');
 const vercel=JSON.parse(readFileSync(new URL('../vercel.json',import.meta.url),'utf8'));
 
 test('critical UI action targets are defined',()=>{
@@ -25,6 +27,8 @@ test('Home is focused on balance, search and recent activity without duplicate f
  assert.match(app,/OVERALL BALANCE/);
  assert.match(app,/data-action="home-search"/);
  assert.match(app,/Recent transactions/);
+ assert.match(app,/function homeSpendingPulse\(\)/);
+ assert.match(app,/THIS PERIOD/);
  assert.doesNotMatch(app,/data-home-filter=/);
  assert.doesNotMatch(app,/ref-home-tools[^\n]*data-action="add"/);
 });
@@ -85,4 +89,13 @@ test('Expense picker selection mode hides catalog maintenance controls',()=>{
 
 test('Vercel blocks production deployment when unit tests fail',()=>{
  assert.equal(vercel.buildCommand,'npm test && npm run build');
+});
+
+
+test('premium UI system stays accessible and consistent',()=>{
+ assert.match(premiumCss,/--ui-card-radius:19px/);
+ assert.match(premiumCss,/#sheet\.saving \.dialog-head::after/);
+ assert.match(premiumCss,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.match(premiumCss,/\.liquid-category\)\.food/);
+ assert.match(homeCss,/HOME PERIOD PULSE/);
 });
