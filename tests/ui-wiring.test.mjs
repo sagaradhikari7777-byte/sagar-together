@@ -70,3 +70,17 @@ test('Settle unsettled section uses the spending-style card shell',()=>{
  assert.match(app,/class="ref-unsettled-head".*UNSETTLED.*What makes this up/s);
  assert.match(app,/class="ref-settle-breakdown">\$\{settlementBreakdown\(\)\}/);
 });
+
+test('Add Expense keeps a compact primary flow with optional details collapsed',()=>{
+ assert.match(app,/ref-expense-main-card/);
+ assert.match(app,/ref-expense-pair ref-expense-pair-split/);
+ assert.match(app,/details class="ref-expense-card ref-expense-more-card"/);
+ assert.match(app,/Sheet, notes & receipt/);
+ assert.doesNotMatch(app,/Who is this with\?/);
+});
+
+test('Add Expense exposes both final save actions at the end of the form',()=>{
+ assert.match(app,/section class="ref-expense-submit-card"/);
+ assert.match(app,/id="save-expense".*Save expense/s);
+ assert.match(app,/class="secondary save-another" type="submit" name="saveMode" value="another">Save & add another/);
+});
