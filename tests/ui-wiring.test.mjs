@@ -75,7 +75,7 @@ test('Settle unsettled section uses the spending-style card shell',()=>{
 test('Add Expense keeps a compact primary flow with optional details collapsed',()=>{
  assert.match(app,/ref-expense-main-card/);
  assert.match(app,/ref-expense-pair ref-expense-pair-split/);
- assert.match(app,/details class="ref-expense-card ref-expense-more-card"/);
+ assert.match(app,/section class="ref-expense-card ref-expense-more-card/);
  assert.match(app,/Sheet, notes & receipt/);
  assert.doesNotMatch(app,/Who is this with\?/);
 });
@@ -86,7 +86,10 @@ test('Add Expense exposes both final save actions at the end of the form',()=>{
  assert.match(app,/class="secondary save-another" type="submit" name="saveMode" value="another">Save & add another/);
 });
 
-test('Add Expense More options stays truly collapsed until opened',()=>{
- assert.match(addExpenseCss,/ref-expense-more-card:not\(\[open\]\) > \.ref-expense-more-body\{\s*display:none!important/);
- assert.match(addExpenseCss,/ref-expense-more-card\[open\] > \.ref-expense-more-body\{\s*display:grid!important/);
+test('Add Expense More options uses the custom iPhone-safe accordion',()=>{
+ assert.match(app,/class="ref-expense-more-summary" aria-expanded=/);
+ assert.match(app,/const setMoreOpen=open=>\{moreCard\.classList\.toggle\('open',open\);moreBody\.hidden=!open/);
+ assert.match(addExpenseCss,/ref-expense-more-card:not\(\.open\) > \.ref-expense-more-body\{\s*display:none!important/);
+ assert.match(addExpenseCss,/ref-expense-more-card\.open > \.ref-expense-more-body\{\s*display:grid!important/);
+ assert.match(addExpenseCss,/ref-expense-more-body\{[\s\S]*height:auto!important;[\s\S]*overflow:visible!important/);
 });
