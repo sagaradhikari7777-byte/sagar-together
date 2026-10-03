@@ -55,3 +55,7 @@ test('Home search opens a global all-sheets expense search',()=>{
 test('Settle spending chart includes settled spending history',()=>{
  assert.match(app,/function settlementSpendChart\(\)\{\s*const expenses=scope\(\),total=/);
 });
+
+test('Settle always resolves global all-sheets state to a concrete sheet',()=>{
+ assert.match(app,/if\(tab==='settle'&&!activeSheet\)activeSheet=data\.sheets\.find\(s=>s\.pinned&&!s\.archived\)\?\.id\|\|data\.sheets\.find\(s=>!s\.archived\)\?\.id\|\|data\.sheets\[0\]\?\.id\|\|''/);
+});
