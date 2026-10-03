@@ -843,6 +843,186 @@
   }
 }
 
+/* UNSETTLED — same card shell and hierarchy as Spending */
+@media(max-width:699px){
+  .ios-app .ref-unsettled-card{
+    margin:0 0 14px!important;
+    padding:15px 14px 14px!important;
+    border:1px solid #e7e3df!important;
+    border-radius:19px!important;
+    background:#fff!important;
+    box-shadow:
+      0 7px 18px rgba(45,42,38,.055),
+      0 1px 2px rgba(45,42,38,.03)!important;
+  }
+  .ios-app.theme-dark .ref-unsettled-card{
+    background:#1a211b!important;
+    border-color:#344137!important;
+    box-shadow:
+      0 9px 20px rgba(0,0,0,.16),
+      inset 0 1px 0 rgba(255,255,255,.018)!important;
+  }
+
+  .ios-app .ref-unsettled-head{
+    display:flex!important;
+    align-items:flex-start!important;
+    justify-content:space-between!important;
+    gap:10px!important;
+    margin-bottom:10px!important;
+  }
+  .ios-app .ref-unsettled-head small{
+    display:block!important;
+    color:#2f7d37!important;
+    font-size:8.5px!important;
+    line-height:1!important;
+    letter-spacing:.09em!important;
+    font-weight:760!important;
+  }
+  .ios-app.theme-dark .ref-unsettled-head small{
+    color:#72cb82!important;
+  }
+  .ios-app .ref-unsettled-head h2{
+    margin:3px 0 0!important;
+    color:#171917!important;
+    font-size:16px!important;
+    line-height:1.1!important;
+    font-weight:740!important;
+    letter-spacing:-.25px!important;
+  }
+  .ios-app.theme-dark .ref-unsettled-head h2{
+    color:#f2f5f2!important;
+  }
+  .ios-app .ref-unsettled-head>strong{
+    min-height:28px!important;
+    padding:0 10px!important;
+    border-radius:999px!important;
+    background:#eef5ed!important;
+    color:#2f7d37!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    font-size:9.5px!important;
+    line-height:1!important;
+    font-weight:740!important;
+    white-space:nowrap!important;
+  }
+  .ios-app.theme-dark .ref-unsettled-head>strong{
+    background:#25422c!important;
+    color:#72cb82!important;
+  }
+
+  .ios-app .ref-unsettled-card .ref-settle-breakdown{
+    margin:0!important;
+    padding:0!important;
+  }
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .ha-breakdown{
+    padding:0!important;
+    border:0!important;
+    background:transparent!important;
+  }
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .ha-breakdown-list{
+    display:block!important;
+    border-top:1px solid #ece9e5!important;
+  }
+  .ios-app.theme-dark .ref-unsettled-card .ref-settle-breakdown .ha-breakdown-list{
+    border-top-color:#303a32!important;
+  }
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .ha-breakdown-list>button{
+    min-height:72px!important;
+    margin:0!important;
+    padding:10px 0!important;
+    border:0!important;
+    border-bottom:1px solid #ece9e5!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+    grid-template-columns:42px minmax(0,1fr) auto!important;
+    gap:10px!important;
+  }
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .ha-breakdown-list>button:last-child{
+    border-bottom:0!important;
+  }
+  .ios-app.theme-dark .ref-unsettled-card .ref-settle-breakdown .ha-breakdown-list>button{
+    background:transparent!important;
+    border-bottom-color:#303a32!important;
+    box-shadow:none!important;
+  }
+
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .re-cat{
+    width:42px!important;
+    height:42px!important;
+    min-width:42px!important;
+    border-radius:12px!important;
+  }
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .re-cat .icon{
+    width:18px!important;
+    height:18px!important;
+  }
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .ha-breakdown-list>button>span:nth-child(2)>strong{
+    font-size:12.5px!important;
+    font-weight:710!important;
+  }
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .ha-breakdown-list>button>span:nth-child(2)>small{
+    margin-top:3px!important;
+    font-size:9.5px!important;
+  }
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .ha-breakdown-list>button>span:nth-child(2)>i{
+    margin-top:3px!important;
+    font-size:8.8px!important;
+  }
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .ha-breakdown-list>button>em small{
+    font-size:8.5px!important;
+  }
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .ha-breakdown-list>button>em b{
+    margin-top:3px!important;
+    font-size:13.5px!important;
+  }
+
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .ha-more{
+    width:100%!important;
+    min-height:40px!important;
+    margin:10px 0 0!important;
+    border:1px solid #e7e3df!important;
+    border-radius:12px!important;
+    background:#f7f9f6!important;
+    color:#2f7d37!important;
+    font-size:10px!important;
+    font-weight:680!important;
+    box-shadow:none!important;
+  }
+  .ios-app.theme-dark .ref-unsettled-card .ref-settle-breakdown .ha-more{
+    background:#202821!important;
+    border-color:#344137!important;
+    color:#72cb82!important;
+  }
+
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .ha-balanced{
+    min-height:120px!important;
+    border:1px dashed #ddd9d4!important;
+    border-radius:15px!important;
+    background:transparent!important;
+  }
+  .ios-app.theme-dark .ref-unsettled-card .ref-settle-breakdown .ha-balanced{
+    border-color:#344137!important;
+    background:transparent!important;
+  }
+}
+
+@media(max-width:375px){
+  .ios-app .ref-unsettled-card{
+    padding-inline:12px!important;
+  }
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .ha-breakdown-list>button{
+    grid-template-columns:40px minmax(0,1fr) auto!important;
+    gap:9px!important;
+  }
+  .ios-app .ref-unsettled-card .ref-settle-breakdown .re-cat{
+    width:40px!important;
+    height:40px!important;
+    min-width:40px!important;
+  }
+}
+
 /* SETTLEMENT TOOLS — same visual language as the Spending card */
 @media(max-width:699px){
   .ios-app .ref-settle-actions{
