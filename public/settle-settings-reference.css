@@ -65,24 +65,26 @@
 .ios-app .ref-settle-breakdown .ha-more{height:38px!important;border:1px solid #dedad5!important;border-radius:12px!important;background:#fff!important;color:#2f7d37!important}
 .ios-app.theme-dark .ref-settle-breakdown .ha-more{background:var(--surface)!important;border-color:var(--line)!important;color:var(--accent)!important}
 .ios-app .ref-settle-breakdown .ha-balanced{min-height:100px;border:1px dashed #d8d5cf;border-radius:15px;background:#fff}.ios-app.theme-dark .ref-settle-breakdown .ha-balanced{background:var(--surface);border-color:var(--line)}
-.ios-app .ref-settle-tools-head{margin:14px 3px 7px}
-.ios-app .ref-settle-actions{flex:none;margin:0;padding:0 12px;border:1px solid #e8e4df;border-radius:16px;background:#fff;overflow:hidden;box-shadow:0 4px 12px rgba(43,39,35,.045)}
-.ios-app.theme-dark .ref-settle-actions{background:var(--surface);border-color:var(--line);box-shadow:0 7px 18px rgba(0,0,0,.12)}
-.ios-app .ref-settle-actions button{width:100%;min-height:64px;padding:8px 0;border:0;border-bottom:1px solid #ece9e5;border-radius:0;background:transparent;color:inherit;display:grid;grid-template-columns:40px minmax(0,1fr) 11px;gap:10px;align-items:center;text-align:left;box-shadow:none;transition:background .16s ease,transform .12s ease}
-.ios-app .ref-settle-actions button:last-child{border-bottom:0}
-.ios-app.theme-dark .ref-settle-actions button{border-bottom-color:var(--line)}
-.ios-app .ref-settle-actions button:active{background:rgba(47,125,55,.055);transform:scale(.995)}
-.ios-app.theme-dark .ref-settle-actions button:active{background:rgba(114,203,130,.055)}
-.ios-app .ref-settle-actions button:focus-visible{outline:2px solid rgba(47,125,55,.3);outline-offset:-2px;border-radius:10px}
-.ios-app .ref-settle-action-icon{width:40px;height:40px;border-radius:12px;background:#e4f2e1;color:#2f7d37;display:grid;place-items:center}
-.ios-app.theme-dark .ref-settle-action-icon{background:var(--accent-soft);color:var(--accent)}
-.ios-app .ref-settle-action-icon .icon{width:18px;height:18px}
-.ios-app .ref-settle-action-copy{min-width:0}
-.ios-app .ref-settle-action-copy strong{display:block;color:#1c1f1c;font-size:12.5px;line-height:1.15;font-weight:680}
-.ios-app.theme-dark .ref-settle-action-copy strong{color:var(--text)}
-.ios-app .ref-settle-action-copy small{display:block;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#919691;font-size:9.5px;line-height:1.2}
-.ios-app .ref-settle-actions button>.icon{width:11px;height:11px;color:#a1a6a1}
-.ios-app.theme-dark .ref-settle-actions button>.icon{color:#788078}
+.ios-app .ref-settle-actions{flex:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.ios-app .ref-settle-tool-card{min-width:0;padding:14px;border:1px solid #e7e3df;border-radius:19px;background:#fff;color:inherit;text-align:left;box-shadow:0 7px 18px rgba(45,42,38,.055),0 1px 2px rgba(45,42,38,.03)}
+.ios-app.theme-dark .ref-settle-tool-card{background:#1a211b;border-color:#344137;box-shadow:0 9px 20px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.018)}
+.ios-app .ref-settle-tool-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.ios-app .ref-settle-tool-head>span:first-child{min-width:0}
+.ios-app .ref-settle-tool-head small{display:block;color:#2f7d37;font-size:8.5px;line-height:1;letter-spacing:.09em;font-weight:760}
+.ios-app.theme-dark .ref-settle-tool-head small{color:#72cb82}
+.ios-app .ref-settle-tool-head strong{display:block;margin-top:3px;color:#171917;font-size:15px;line-height:1.1;font-weight:740;letter-spacing:-.2px}
+.ios-app.theme-dark .ref-settle-tool-head strong{color:#f2f5f2}
+.ios-app .ref-settle-tool-icon{width:36px;height:36px;flex:none;border-radius:11px;background:#e1f0df;color:#2f7d37;display:grid;place-items:center}
+.ios-app.theme-dark .ref-settle-tool-icon{background:#25422c;color:#72cb82}
+.ios-app .ref-settle-tool-icon .icon{width:17px;height:17px}
+.ios-app .ref-settle-tool-card>p{margin:10px 0 12px;color:#8b908b;font-size:10px;line-height:1.4}
+.ios-app.theme-dark .ref-settle-tool-card>p{color:#99a19a}
+.ios-app .ref-settle-tool-foot{padding-top:10px;border-top:1px solid #ece9e5;color:#2f7d37;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:9.5px;font-weight:650}
+.ios-app.theme-dark .ref-settle-tool-foot{border-top-color:#303a32;color:#72cb82}
+.ios-app .ref-settle-tool-foot .icon{width:11px;height:11px}
+.ios-app .ref-settle-tool-card:active{transform:scale(.994);background:#fafbf9}
+.ios-app.theme-dark .ref-settle-tool-card:active{background:#202921}
+
 
 /* Settings */
 .ios-app .ref-settings-body{flex:1;min-height:0;padding:14px 14px 16px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
