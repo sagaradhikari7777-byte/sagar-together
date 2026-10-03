@@ -360,6 +360,7 @@ function springToTab(next,button){
 function render(){
  if(!data)return auth();
  if(activeSheet&&!data.sheets.some(s=>s.id===activeSheet))activeSheet=data.sheets.find(s=>!s.archived)?.id||'';
+ if(tab==='settle'&&!activeSheet)activeSheet=data.sheets.find(s=>s.pinned&&!s.archived)?.id||data.sheets.find(s=>!s.archived)?.id||data.sheets[0]?.id||'';
  const owner=data.id+':'+data.seat;if(owner!==navigationOwner){navigationOwner=owner;navigationTrail.reset();}
  navigationTrail.visit({tab,activeSheet,search,filter,expenseFilters,settleCouple,sheetSearch,sheetFilter});
  const viewKey=tab+':'+activeSheet,previous=app.querySelector('main');
