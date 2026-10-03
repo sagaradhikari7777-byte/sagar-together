@@ -13,10 +13,10 @@ Do not add features unless they materially improve one of those jobs.
 
 ## Primary navigation
 
-- **Home** — overall balance, the other couple's net position, search, recent activity.
-- **Sheets** — Open by default, with Open / Unsettled / Archived views.
+- **Home** — one overall balance across open sheets, draft recovery and recent activity.
+- **Sheets** — Open by default, with Open / Archived views and an outstanding-only checkbox.
 - **Add** — focused modal expense entry. It is not a fifth navigable page while open.
-- **Settle** — sheet balance, category/merchant spending, unsettled breakdown, summary, payment history, settlement.
+- **Settle** — overall and per-sheet balances, sheet payment recording, summary, payment history with corrections, then spending.
 - **Settings** — household identity, invitations/access, entry defaults, merchant/category management, export, appearance.
 
 Avoid duplicate controls across these destinations.
@@ -33,12 +33,14 @@ Keep Add Expense naturally scrolling and compact:
 - Editable inputs remain at least 16px on iPhone.
 - Cancelling the iOS receipt picker must keep the draft open.
 - Draft guards, receipt previews and validation errors stay in normal document flow.
+- Save unfinished entries locally, isolated by household and person. Recover them after reload, and offer a choice before replacing a draft.
 
 ## Data rules
 
 - Everyone in the household sees shared expenses.
 - Only the creator can edit or delete an eligible expense.
-- Settled expenses are locked.
+- Settled expenses are locked. Only the recorder may reverse a settlement with a reason; keep the original and correction in history and unlock only its linked entries.
+- Archived sheets show settled entries and historical shares by default.
 - Splits are 50/50 or 100% assigned to either couple.
 - Recording a settlement marks the sheet's unsettled expenses as settled; it does not transfer money.
 - Preserve receipts, merchant/category catalogs, CSV export, archive/pin, dark mode, invitations and private access links.

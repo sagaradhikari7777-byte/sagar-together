@@ -1,5 +1,6 @@
 import {createNavigationTrail,installEdgeBack} from './back-navigation.js';
-import {settlementOverview} from './settlement-overview.js';
+import {settlementOverview,householdOverview} from './settlement-overview.js';
+import {draftKey,readDraft,writeDraft} from './drafts.js';
 import {householdExpense,canManageExpenseAs} from './expense-policy.js';
 import {catalogValues,changeCatalog} from './catalog.js';
 import {filterExpenses,repeatPreset} from './journal.js';
@@ -42,7 +43,7 @@ function goBack(){
  ({tab,activeSheet,search,filter,expenseFilters,settleCouple,sheetSearch,sheetFilter}=previous);render();
 }
 sheet.addEventListener('close',()=>{
- if(!sheet.open)modalTrail=[];
+ if(!sheet.open){modalTrail=[];if(data&&!busy)render();}
  syncOverlayLayers();
 });
 sheet.addEventListener('click',ev=>{
@@ -51,7 +52,9 @@ sheet.addEventListener('click',ev=>{
  if(back)back.click();else sheet.close();
 });
 installEdgeBack({canGoBack:()=>!busy&&(sheet.open||!!document.querySelector('#catalog-dialog[open]')||isInnerPage()),goBack});
-let sheetSearch='',sheetFilter='open',sheetSearchOpen=false,settleCouple=null,settleSpendMode='category';
+let sheetSearch='',sheetFilter='open',sheetSearchOpen=false,settleCouple=null,settleSpendMode='category',settleAll=true,unsettledOnly=false;
+let flushExpenseDraft=null,refreshing=false;
+const receiptCache=new Map();
 let expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'};
 let data=null,credentials=null,demo=false,tab='home',filter='open',search='',activeSheet='',joinInfo=null,busy=false;
 try{credentials=JSON.parse(localStorage.getItem('together-access'));document.body.classList.toggle('theme-dark',localStorage.getItem('together-theme')==='dark');}catch{}
@@ -83,12 +86,22 @@ function modal(title,body){
  sheet.scrollTop=0;sheet.querySelector('#dialog-title').focus({preventScroll:true});
 }
 function errorIn(form,e){const el=form.querySelector('.form-error')||form.querySelector('.error');if(el)el.textContent=e.message||e;else toast(e.message||e);}
-async function api(body){const res=await fetch('/api/household',{method:'POST',headers:{'Content-Type':'application/json',...(credentials?{Authorization:`Bearer ${credentials.key}`}:{})},body:JSON.stringify({house:credentials?.house,rev:data?.rev,...body}),signal:AbortSignal.timeout(20000)});const j=await res.json();if(!res.ok)throw Object.assign(new Error(j.error||'Could not save changes.'),{status:res.status});return j;}
-function demoMutation(b){if(b.action==='catalog')changeCatalog(data,b);if(b.action==='sheet-edit')Object.assign(data.sheets.find(s=>s.id===b.id),{name:b.name,start:b.start,end:b.end});if(b.action==='sheet-delete'){if(data.expenses.some(e=>e.sheet===b.id&&!canManageExpense(e)))throw new Error('This sheet contains protected records. Archive it instead.');data.expenses=data.expenses.filter(e=>e.sheet!==b.id);data.sheets=data.sheets.filter(s=>s.id!==b.id);}if(b.action==='expense'){const previous=data.expenses.find(e=>e.id===b.expense.id);if(previous&&!canManageExpense(previous))throw new Error('Only the person who added this expense can edit it.');const e={...householdExpense(b.expense),id:b.expense.id||uid(),creator:previous?.creator??data.seat,created:previous?.created||new Date().toISOString(),settlement:null};data.expenses=data.expenses.filter(x=>x.id!==e.id);data.expenses.unshift(e);}if(b.action==='delete'){if(!canManageExpense(data.expenses.find(e=>e.id===b.id)))throw new Error('This expense cannot be deleted.');data.expenses=data.expenses.filter(x=>x.id!==b.id);}if(b.action==='settings'){data.name=b.name;data.names=b.names;}if(b.action==='sheet')data.sheets.unshift({id:uid(),name:b.name,start:b.start,end:b.end,pinned:false,archived:false});if(b.action==='pin'){const was=data.sheets.find(s=>s.id===b.id)?.pinned;data.sheets.forEach(s=>s.pinned=s.id===b.id&&!was);}if(b.action==='archive'){const s=data.sheets.find(s=>s.id===b.id);if(!s.archived&&data.expenses.some(e=>e.sheet===s.id&&!e.settlement))throw new Error('Settle expenses before archiving.');s.archived=!s.archived;}if(b.action==='settle'){const es=data.expenses.filter(e=>e.sheet===b.sheet&&!e.settlement);const record={id:uid(),sheet:b.sheet,net:balance(es).net,date:new Date().toISOString(),count:es.length,by:data.seat};es.forEach(e=>e.settlement=record.id);data.settlements.unshift(record);}data.rev++;}
+async function api(body){const res=await fetch('/api/household',{method:'POST',headers:{'Content-Type':'application/json',...(credentials?{Authorization:`Bearer ${credentials.key}`}:{})},body:JSON.stringify({house:credentials?.house,rev:data?.rev,receiptMode:'reference',...body}),signal:AbortSignal.timeout(20000)});const j=await res.json();if(!res.ok)throw Object.assign(new Error(j.error||'Could not save changes.'),{status:res.status});return j;}
+function demoMutation(b){if(b.action==='catalog')changeCatalog(data,b);if(b.action==='sheet-edit')Object.assign(data.sheets.find(s=>s.id===b.id),{name:b.name,start:b.start,end:b.end});if(b.action==='sheet-delete'){if(data.expenses.some(e=>e.sheet===b.id&&!canManageExpense(e)))throw new Error('This sheet contains protected records. Archive it instead.');data.expenses=data.expenses.filter(e=>e.sheet!==b.id);data.sheets=data.sheets.filter(s=>s.id!==b.id);}if(b.action==='expense'){const previous=data.expenses.find(e=>e.id===b.expense.id);if(previous&&!canManageExpense(previous))throw new Error('Only the person who added this expense can edit it.');const e={...householdExpense(b.expense),id:b.expense.id||uid(),creator:previous?.creator??data.seat,created:previous?.created||new Date().toISOString(),settlement:null};data.expenses=data.expenses.filter(x=>x.id!==e.id);data.expenses.unshift(e);}if(b.action==='delete'){if(!canManageExpense(data.expenses.find(e=>e.id===b.id)))throw new Error('This expense cannot be deleted.');data.expenses=data.expenses.filter(x=>x.id!==b.id);}if(b.action==='settings'){data.name=b.name;data.names=b.names;}if(b.action==='sheet')data.sheets.unshift({id:uid(),name:b.name,start:b.start,end:b.end,pinned:false,archived:false});if(b.action==='pin'){const was=data.sheets.find(s=>s.id===b.id)?.pinned;data.sheets.forEach(s=>s.pinned=s.id===b.id&&!was);}if(b.action==='archive'){const s=data.sheets.find(s=>s.id===b.id);if(!s.archived&&data.expenses.some(e=>e.sheet===s.id&&!e.settlement))throw new Error('Settle expenses before archiving.');s.archived=!s.archived;}if(b.action==='settle'){const es=data.expenses.filter(e=>e.sheet===b.sheet&&!e.settlement);const record={id:uid(),sheet:b.sheet,net:balance(es).net,date:new Date().toISOString(),count:es.length,by:data.seat,names:[...data.names],expenses:es.map(e=>e.id)};es.forEach(e=>e.settlement=record.id);data.settlements.unshift(record);}if(b.action==='settlement-reverse'){const r=data.settlements.find(r=>r.id===b.id);if(!r||r.by!==data.seat||r.reversed)throw new Error('This settlement cannot be reversed.');r.reversed={by:data.seat,date:new Date().toISOString(),reason:b.reason};data.expenses.filter(e=>e.settlement===r.id).forEach(e=>e.settlement=null);const sh=data.sheets.find(s=>s.id===r.sheet);if(sh)sh.archived=false;}data.rev++;}
 async function save(b){if(busy)return;busy=true;sheet.classList.add('saving');try{if(demo)demoMutation(b);else data=(await api(b)).data;render();return true;}catch(e){if(e.status===409){await refresh(false);e.message='New changes arrived. Review your entry and save again.';}throw e;}finally{busy=false;sheet.classList.remove('saving');}}
-async function refresh(notify=true){try{data=(await api({action:'read'})).data;if(!activeSheet)activeSheet=data.sheets.find(s=>s.pinned&&!s.archived)?.id||data.sheets.find(s=>!s.archived)?.id||'';render();if(notify)toast('Up to date');}catch(e){if(!data)auth();toast(e.message);}}
-function keepAccess(j){modalTrail=[];if(sheet.open)sheet.close();settleCouple=null;credentials={house:j.data.id,key:j.key};try{localStorage.setItem('together-access',JSON.stringify(credentials));}catch{toast('Save your private access link; this browser cannot remember it.');}data=j.data;activeSheet=data.sheets[0]?.id;demo=false;render();accessDialog(true);}
+async function refresh(notify=true){
+ if(refreshing)return;refreshing=true;
+ try{
+  const result=await api({action:'read',knownRev:data?.rev});
+  if(result.data){data=result.data;if(!activeSheet)activeSheet=data.sheets.find(s=>s.pinned&&!s.archived)?.id||data.sheets.find(s=>!s.archived)?.id||'';render();}
+  if(notify)toast('Up to date');
+ }catch(e){if(!data)auth();if(notify||!data)toast(navigator.onLine?e.message:'You’re offline. Reconnect to load your household.');}
+ finally{refreshing=false;}
+}
+function keepAccess(j){modalTrail=[];if(sheet.open)sheet.close();settleCouple=null;settleAll=true;flushExpenseDraft=null;receiptCache.clear();credentials={house:j.data.id,key:j.key};try{localStorage.setItem('together-access',JSON.stringify(credentials));}catch{toast('Save your private access link; this browser cannot remember it.');}data=j.data;activeSheet=data.sheets[0]?.id;demo=false;render();accessDialog(true);}
 function balance(es){let net=0,aPaid=0,bPaid=0;for(const e of es){if(e.settlement)continue;const aShare=e.split==='half'?Math.floor(e.cents/2):e.split==='a'?e.cents:0;if(group(e.payer)==='a'){aPaid+=e.cents;net+=e.cents-aShare;}else{bPaid+=e.cents;net-=aShare;}}return{net,aPaid,bPaid,amount:Math.abs(net)};}
+function settleScope(){return settleAll?householdOverview(data,group(data.seat)).expenses:scope();}
+function settleName(){return settleAll?'All open sheets':currentName();}
 function scope(){return data.expenses.filter(e=>!activeSheet||e.sheet===activeSheet);}
 function currentName(){return data.sheets.find(s=>s.id===activeSheet)?.name||'All sheets';}
 function header(){
@@ -116,16 +129,14 @@ function homeRecentTransactions(){
  }).join('')}</div>`:`<div class="home-recent-empty">${icon('receipt')}<strong>No transactions yet</strong><p>Your latest expenses and who added them will appear here.</p><button type="button" class="secondary" data-action="add">Add an expense</button></div>`}</section>`;
 }
 function home(){
- const activeSheetIds=new Set(data.sheets.filter(s=>!s.archived).map(s=>s.id)),entries=data.expenses.filter(e=>activeSheetIds.has(e.sheet)),mine=group(data.seat),o=settlementOverview(entries,mine),other=mine==='a'?'b':'a',openSheets=activeSheetIds.size;
- const status=o.net===0?'settled':o.net>0?'owe':'owed',owe=o.net>0?Math.abs(o.net):0,owed=o.net<0?Math.abs(o.net):0;
- const otherNames=couple(other),otherSeats=data.names.slice(other==='a'?0:2,other==='a'?2:4),otherInitials=otherSeats.map(n=>(n.trim()[0]||'').toUpperCase()).join('').slice(0,2);
- const statusLabel=status==='owe'?'You owe':status==='owed'?'You are owed':'All settled';
+ const o=householdOverview(data,group(data.seat)),other=group(data.seat)==='a'?'b':'a';
+ const status=o.net===0?'settled':o.net>0?'owe':'owed';
+ const direction=o.net===0?(o.rows.length?'Your couples are balanced':'No outstanding expenses'):o.net>0?`You owe ${couple(other)}`:`${couple(other)} owes you`;
  return `<section class="re-page sp-page sp-home ref-home">
  <header class="ref-home-header"><div class="ref-home-title"><span class="ref-home-avatar">${esc(initials(data.names[data.seat]))}</span><strong>${esc(data.name||'Together')}</strong></div><div class="ref-home-tools"><button class="ref-search" data-action="home-search" aria-label="Search expenses">${icon('search')}</button></div></header>
- <div class="ref-home-progress"><i></i></div>
  <div class="ref-home-body">
-  <section class="ref-balance-card ${status}"><div class="ref-balance-head"><span><i></i> OVERALL BALANCE</span><em>${statusLabel}</em></div><strong class="ref-balance-amount">${money(Math.abs(o.net))}</strong><p>Across ${openSheets} active sheet${openSheets===1?'':'s'} and shared expenses</p><div class="ref-balance-mini"><span><small>You owe</small><b class="owe">${money(owe)}</b></span><span><small>You are owed</small><b class="owed">${money(owed)}</b></span></div></section>
-  <div class="ref-balance-list"><section class="ref-couple-card"><span class="ref-couple-avatar"><i>${esc(otherInitials)}</i></span><div class="ref-couple-copy"><strong>${esc(otherNames)}</strong><p>Net balance: <b class="${status}">${money(Math.abs(o.net))}</b></p><span class="ref-shared-badge">${icon('people')} Shared household balance</span></div><strong class="ref-couple-amount ${status}">${money(Math.abs(o.net))}</strong><button class="ref-settle-go" data-action="open-settle" aria-label="Open settle details">${icon('settle')}</button></section></div>
+  <section class="ref-balance-card ${status}"><div class="ref-balance-head"><span>OVERALL BALANCE</span></div><strong class="ref-balance-amount">${money(Math.abs(o.net))}</strong><p class="home-balance-direction">${esc(direction)}</p><p>${o.rows.length} outstanding expense${o.rows.length===1?'':'s'} across ${o.sheets.length} open sheet${o.sheets.length===1?'':'s'}</p><button class="secondary home-balance-action" data-action="open-settle">View settlement overview</button></section>
+  ${draftBanner()}
   ${homeRecentTransactions()}
  </div></section>`;
 }
@@ -139,7 +150,7 @@ function expenseGroups(es){
 }
 function expenses(){
  if(!['open','settled'].includes(filter))filter='open';
- const es=filteredExpenses(),count=[expenseFilters.payer,expenseFilters.category,expenseFilters.from,expenseFilters.to].filter(Boolean).length,items=scope(),overview=settlementOverview(items,group(data.seat)),current=data.sheets.find(s=>s.id===activeSheet),total=items.reduce((n,e)=>n+e.cents,0),unsettled=items.filter(e=>!e.settlement).length,settled=items.length-unsettled,archived=!!current?.archived;
+ const es=filteredExpenses(),count=[expenseFilters.payer,expenseFilters.category,expenseFilters.from,expenseFilters.to].filter(Boolean).length,items=scope(),overview=settlementOverview(items,group(data.seat),{includeSettled:true}),current=data.sheets.find(s=>s.id===activeSheet),total=items.reduce((n,e)=>n+e.cents,0),unsettled=items.filter(e=>!e.settlement).length,settled=items.length-unsettled,archived=!!current?.archived;
  const resultTotal=es.reduce((sum,e)=>sum+e.cents,0),range=current?sheetDateRange(current):'All household expenses';
  const chip=(id,label,dot='')=>`<button data-filter="${id}" class="${filter===id?'active':''}">${dot?`<i class="${dot}"></i>`:''}${label} (${id==='open'?unsettled:settled})</button>`;
  return `<section class="re-page sp-page ref-inside-sheet">
@@ -147,12 +158,11 @@ function expenses(){
    <div class="ref-inside-left"><button class="ref-inside-back" data-action="back" aria-label="Back to Sheets">${backIcon()}</button><div><strong>${esc(currentName())}</strong><small>${esc(range)}</small></div></div>
    <div class="ref-inside-tools">${archived?'<span class="ref-archived-pill">Archived</span>':`<button class="ref-inside-add" data-action="add">${icon('plus')}<span>Add</span></button>`}</div>
   </header>
-  <div class="ref-inside-progress"><i></i></div>
   <div class="ref-inside-body">
    <section class="ref-inside-summary">
-    <div class="ref-inside-summary-head"><span><i></i>SHEET TOTAL</span><em>${archived?'Archived':unsettled?unsettled+' unsettled':'Settled'}</em></div>
-    <strong class="ref-inside-total">${money(total)}</strong><p>${esc(range)}</p>
-    <div class="ref-inside-stats"><span><small>Your share</small><b>${money(overview.share)}</b></span><span><small>You paid</small><b>${money(overview.paid)}</b></span></div>
+    <div class="ref-inside-summary-head"><span><i></i>SHEET TOTAL</span><em>${archived?'Archived':unsettled?unsettled+' unsettled':items.length?'Settled':'No expenses'}</em></div>
+    <strong class="ref-inside-total">${money(total)}</strong><p>Total spending · ${esc(range)}</p><p class="sheet-outstanding">Outstanding expenses: ${money(items.filter(e=>!e.settlement).reduce((n,e)=>n+e.cents,0))}</p>
+    <div class="ref-inside-stats"><span><small>Your total share</small><b>${money(overview.share)}</b></span><span><small>Total you paid</small><b>${money(overview.paid)}</b></span></div>
    </section>
    <div class="ref-inside-filters">${chip('open','Open','amber')}${chip('settled','Settled','green')}<button data-action="filters" class="${count?'has-count':''}">${icon('settings')} Filters${count?` (${count})`:''}</button></div>
    <div class="ref-inside-search">${icon('search')}<input id="search" type="search" placeholder="Search expenses" aria-label="Search expenses" value="${esc(search)}"><select id="expense-sort" aria-label="Sort expenses">${[['newest','Newest'],['oldest','Oldest'],['largest','Highest'],['smallest','Lowest']].map(([v,t])=>`<option value="${v}" ${expenseFilters.sort===v?'selected':''}>${t}</option>`).join('')}</select></div>
@@ -184,46 +194,45 @@ function sheetsView(){
   unsettled:currentSheets.filter(sh=>stateFor(sh).unsettled).length,
   archived:allSheets.filter(sh=>sh.archived).length
  };
- if(!['open','unsettled','archived'].includes(sheetFilter))sheetFilter='open';
+ if(!['open','archived'].includes(sheetFilter))sheetFilter='open';
  const matchesFilter=sh=>{
-  if(sheetFilter==='unsettled')return !sh.archived&&stateFor(sh).unsettled;
   if(sheetFilter==='archived')return sh.archived;
-  return !sh.archived;
+  return !sh.archived&&(!unsettledOnly||stateFor(sh).unsettled);
  };
  const items=allSheets.filter(sh=>matchesFilter(sh)&&sh.name.toLowerCase().includes(sheetSearch.toLowerCase()));
  const card=(sh,index)=>{
   const {es,unsettledEs,unsettledTotal,unsettled}=stateFor(sh);
   const cardIcon=sh.pinned?'pin':index%3===0?'calendar':index%3===1?'home':'people';
-  const status=sh.archived?'Archived':unsettled?`${unsettledEs.length} unsettled`:'Settled';
+  const status=sh.archived?'Archived':unsettled?`${unsettledEs.length} unsettled`:es.length?'Settled':'No expenses';
   return `<div class="swipe-sheet ref-sheet-card" data-swipe-sheet="${sh.id}">
    <div class="swipe-actions left" aria-hidden="true"><button tabindex="-1" data-sheet-edit="${sh.id}">${icon('edit')}</button><button tabindex="-1" class="pin-action" data-sheet-pin="${sh.id}">${icon('pin')}</button></div>
    <div class="swipe-actions right" aria-hidden="true"><button tabindex="-1" data-sheet-archive="${sh.id}">${icon('archive')}</button><button tabindex="-1" class="delete-action" data-sheet-delete="${sh.id}" ${canDeleteSheet(sh.id)?'':'disabled'}>${icon('trash')}</button></div>
    <div class="sheet-front ref-sheet-front"><button class="ref-sheet-open" data-view-sheet="${sh.id}">
     <span class="ref-sheet-icon">${icon(cardIcon)}</span>
-    <span class="ref-sheet-copy"><strong>${esc(sh.name)}</strong><small>${esc(sheetDateRange(sh))}</small><em>${status}${unsettled?' · unsettled only':''}</em></span>
-    <span class="ref-sheet-amount">${money(unsettledTotal)}</span>
+    <span class="ref-sheet-copy"><strong>${esc(sh.name)}</strong><small>${esc(sheetDateRange(sh))}</small><em>${status}</em></span>
+    <span class="ref-sheet-amount"><strong>${money(sh.archived?es.reduce((n,e)=>n+e.cents,0):unsettledTotal)}</strong><small>${sh.archived?'Total spent':'Outstanding'}</small></span>
    </button><button class="sheet-more ref-sheet-more" data-sheet-options="${sh.id}" aria-label="Actions for ${esc(sh.name)}">•••</button></div>
   </div>`;
  };
  const filterChip=(id,label,dot='')=>`<button data-sheet-filter="${id}" class="${sheetFilter===id?'active':''}">${dot?`<i class="${dot}"></i>`:''}${label} (${counts[id]})</button>`;
  return `<section class="re-page sp-page ref-sheets">
   <header class="ref-sheets-header"><div class="ref-sheets-title"><span class="ref-sheets-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Sheets</strong></div><div class="ref-sheets-tools"><button class="ref-sheets-search-btn" data-action="sheet-search-toggle" aria-label="Search sheets">${icon('search')}</button><button class="ref-sheets-add" data-action="new-sheet">${icon('plus')}<span>Add</span></button></div></header>
-  <div class="ref-sheets-progress"><i></i></div>
   <div class="ref-sheets-body">
    <section class="ref-sheets-summary"><div class="ref-sheets-summary-head"><span><i></i>UNSETTLED</span><em>${unsettledSheets.length} sheet${unsettledSheets.length===1?'':'s'}</em></div><strong class="ref-sheets-total">${money(unsettledTotal)}</strong><p>${unsettledExpenses.length} unsettled expense${unsettledExpenses.length===1?'':'s'} across current sheets</p><div class="ref-sheets-stats"><span><small>Unsettled sheets</small><b>${unsettledSheets.length}</b></span><span><small>Unsettled expenses</small><b>${unsettledExpenses.length}</b></span></div></section>
-   <div class="ref-sheets-filters">${filterChip('open','Open','green')}${filterChip('unsettled','Unsettled','amber')}${filterChip('archived','Archived','grey')}</div>
+   <div class="ref-sheets-filters">${filterChip('open','Open','green')}${filterChip('archived','Archived','grey')}</div>
+   ${sheetFilter==='open'?`<label class="sheet-unsettled-toggle"><input type="checkbox" id="unsettled-only" ${unsettledOnly?'checked':''}>Unsettled only (${counts.unsettled})</label>`:''}
    ${sheetSearchOpen||sheetSearch?`<div class="ref-sheets-search">${icon('search')}<input id="sheet-search" type="search" placeholder="Search sheets" aria-label="Search sheets" value="${esc(sheetSearch)}"><button type="button" data-action="sheet-search-toggle" aria-label="Close search">${icon('close')}</button></div>`:''}
    <div class="ref-sheets-list">${items.length?items.map(card).join(''):`<div class="ref-sheets-empty"><span>${icon('folder')}</span><strong>${sheetSearch?'No matching sheets':sheetFilter==='archived'?'No archived sheets':'No sheets here'}</strong><p>${sheetSearch?'Try another search.':'Create a sheet to start a new shared period.'}</p>${!sheetSearch&&sheetFilter!=='archived'?'<button class="primary" data-action="new-sheet">Create sheet</button>':''}</div>`}</div>
   </div>
  </section>`;
 }
 function settlementBreakdown(){
- const selected=settleCouple||group(data.seat),o=settlementOverview(scope(),selected),rows=o.rows.slice(0,4),more=Math.max(0,o.rows.length-rows.length);
+ const selected=settleCouple||group(data.seat),o=settlementOverview(settleScope(),selected),rows=o.rows.slice(0,4),more=Math.max(0,o.rows.length-rows.length);
  return `<section class="ha-breakdown">${rows.length?`<div class="ha-breakdown-list">${rows.map(e=>`<button data-expense="${e.id}"><span class="re-cat ${catIcon(e.category)}">${icon(catIcon(e.category))}</span><span><strong>${esc(e.merchant)}</strong><small>${esc(new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}))} · ${esc(data.names[e.payer])}</small><i>${esc(e.category||'Other')}</i></span><em><small>Your share</small><b>${money(e.share)}</b></em></button>`).join('')}</div>${more?`<button class="ha-more" data-action="expenses">+${more} more · View sheet</button>`:''}`:'<div class="ha-balanced">'+icon('check')+'<span>Nothing left to settle.</span></div>'}</section>`;
 }
 
 function settlementSpendChart(){
- const expenses=scope(),total=expenses.reduce((sum,e)=>sum+e.cents,0);
+ const expenses=settleScope(),total=expenses.reduce((sum,e)=>sum+e.cents,0);
  const mode=settleSpendMode==='merchant'?'merchant':'category';
  const categoryMap=new Map(),merchantMap=new Map();
  const bump=(map,key,e,relatedKey)=>{
@@ -265,31 +274,30 @@ function settlementSpendChart(){
  return `<section class="ref-settle-chart ref-spend-chart" aria-label="Spending breakdown">
   <div class="ref-spend-head"><div><small>SPENDING</small><h2>Where the money went</h2></div><strong>${money(total)}</strong></div>
   <div class="ref-spend-switch" role="group" aria-label="Spending chart view"><button data-spend-chart="category" class="${mode==='category'?'active':''}">Categories</button><button data-spend-chart="merchant" class="${mode==='merchant'?'active':''}">Merchants</button></div>
-  <div class="ref-spend-insight"><span>${icon(mode==='category'?catIcon(top.name):'store')}</span><div><small>TOP ${mode==='category'?'CATEGORY':'MERCHANT'}</small><strong>${esc(top.name)}</strong><p>${money(top.total)} · ${Math.round(top.total/total*100)}% of this sheet</p></div></div>
+  <div class="ref-spend-insight"><span>${icon(mode==='category'?catIcon(top.name):'store')}</span><div><small>TOP ${mode==='category'?'CATEGORY':'MERCHANT'}</small><strong>${esc(top.name)}</strong><p>${money(top.total)} · ${Math.round(top.total/total*100)}% of ${settleAll?'open sheets':'this sheet'}</p></div></div>
   <div class="ref-spend-bars">${rows.map(row).join('')}</div>
   ${rowCount>5?'<p class="ref-spend-foot">Top 5 shown · remaining spending grouped as Other</p>':''}
  </section>`;
 }
 
+function settlementSheets(selected){
+ const rows=householdOverview(data,selected).sheets.filter(row=>row.rows.length);
+ return `<section class="ref-unsettled-card"><div class="ref-unsettled-head"><div><small>OPEN SHEETS</small><h2>Balances by sheet</h2></div><strong>${rows.length}</strong></div><div class="settlement-sheet-list">${rows.length?rows.map(row=>`<button data-settle-sheet="${esc(row.sheet.id)}"><span><strong>${esc(row.sheet.name)}</strong><small>${row.rows.length} outstanding expenses · ${esc(sheetDateRange(row.sheet))}</small></span><span><b>${money(Math.abs(row.net))}</b><small>${row.net>0?'To pay':row.net<0?'To receive':'Balanced'}</small></span>${icon('chevron')}</button>`).join(''):'<p class="settlement-empty">No outstanding expenses. Past payments remain in history.</p>'}</div></section>`;
+}
 function settleView(){
- const b=balance(scope()),items=scope().filter(e=>!e.settlement),selected=settleCouple||group(data.seat),o=settlementOverview(scope(),selected),other=selected==='a'?'b':'a',from=o.net>0?selected:other,to=o.net>0?other:selected,remaining=Math.abs(o.net),history=data.settlements.filter(s=>s.sheet===activeSheet),current=data.sheets.find(s=>s.id===activeSheet);
- const status=o.net===0?'balanced':o.net>0?'pay':'receive';
- const statusLabel=status==='balanced'?'All balanced':status==='pay'?'You pay':'You receive';
+ const entries=settleScope(),items=entries.filter(e=>!e.settlement),selected=settleCouple||group(data.seat),o=settlementOverview(entries,selected),other=selected==='a'?'b':'a',from=o.net>0?selected:other,to=o.net>0?other:selected;
+ const status=o.net===0?'balanced':o.net>0?'pay':'receive',mine=selected===group(data.seat);
+ const statusLabel=status==='balanced'?'Balanced':status==='pay'?(mine?'You pay':'To pay'):(mine?'You receive':'To receive');
+ const history=data.settlements.filter(s=>settleAll||s.sheet===activeSheet);
+ const outstanding=householdOverview(data,selected).sheets.filter(row=>row.rows.length);
  return `<section class="re-page sp-page ref-settle">
-  <header class="ref-settle-header"><div class="ref-settle-title"><span class="ref-settle-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Settle</strong></div><div class="ref-settle-tools"><button class="ref-settle-record" data-action="settle" ${items.length?'':'disabled'}>${icon('check')}<span>${b.net?'Record':'Close'}</span></button></div></header>
-  <div class="ref-settle-progress"><i></i></div>
+  <header class="ref-settle-header"><div class="ref-settle-title"><span class="ref-settle-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Settle</strong></div></header>
   <div class="ref-settle-body">
-   <section class="ref-settle-summary ${status}"><div class="ref-settle-summary-head"><span><i></i>TO SETTLE</span><em>${statusLabel}</em></div><strong class="ref-settle-amount">${money(remaining)}</strong><p>${o.net===0?'No payment is needed.':`${esc(couple(from))} → ${esc(couple(to))}`}</p><div class="ref-settle-stats"><span><small>Your share</small><b>${money(o.share)}</b></span><span><small>Paid</small><b>${money(o.paid)}</b></span></div></section>
-   <div class="ref-settle-controls"><label class="ref-settle-sheet"><span>Sheet</span><div>${icon('folder')}${selectSheet()}</div></label><label class="ref-settle-couple"><span>Share for</span><select id="settle-couple">${['a','b'].map(g=>`<option value="${g}" ${g===selected?'selected':''}>${esc(couple(g))}${g===group(data.seat)?' · yours':''}</option>`).join('')}</select></label></div>
+   <div class="ref-settle-controls"><label class="ref-settle-sheet"><span>View</span><div>${icon('folder')}<select aria-label="Expense sheet" id="sheet-select"><option value="overall" ${settleAll?'selected':''}>All open sheets</option>${data.sheets.map(s=>`<option value="${esc(s.id)}" ${!settleAll&&s.id===activeSheet?'selected':''}>${esc(s.name)}${s.archived?' · Archived':''}</option>`).join('')}</select></div></label><label class="ref-settle-couple"><span>Share for</span><select id="settle-couple">${['a','b'].map(g=>`<option value="${g}" ${g===selected?'selected':''}>${esc(couple(g))}${g===group(data.seat)?' · yours':''}</option>`).join('')}</select></label></div>
+   <section class="ref-settle-summary ${status}"><div class="ref-settle-summary-head"><span>${settleAll?'OVERALL BALANCE':'REMAINING BALANCE'}</span><em>${statusLabel}</em></div><strong class="ref-settle-amount">${money(Math.abs(o.net))}</strong><p>${o.net===0?(items.length?'These expenses balance; no payment is needed.':'Nothing outstanding.'):`${esc(couple(from))} → ${esc(couple(to))}`}</p><p>${esc(settleName())}${settleAll?' · net across sheets':''}</p><div class="ref-settle-stats"><span><small>Outstanding share</small><b>${money(o.share)}</b></span><span><small>Already paid for these</small><b>${money(o.paid)}</b></span></div>${!settleAll&&items.length?`<button class="primary settlement-record" data-action="settle">${icon('check')} ${o.net?'Record payment':'Close balanced expenses'}</button><p class="settlement-help">Records a completed payment and locks these ${items.length} expenses.</p>`:''}${settleAll&&outstanding.length>1?'<p class="settlement-help">Open a sheet below to record its payment. Opposite balances can offset in this overall total.</p>':''}</section>
+   ${settleAll?settlementSheets(selected):`<section class="ref-unsettled-card" aria-label="Unsettled expenses"><div class="ref-unsettled-head"><div><small>UNSETTLED</small><h2>What makes this up</h2></div><strong>${items.length} open</strong></div><div class="ref-settle-breakdown">${settlementBreakdown()}</div></section>`}
+   <section class="ref-settle-actions" aria-label="Settlement tools"><button class="ref-settle-tool-card" data-action="settlement-summary"><span class="ref-settle-tool-head"><span><small>SUMMARY</small><strong>Settlement summary</strong></span><span class="ref-settle-tool-icon">${icon('copy')}</span></span><p>Copy the balance and both couples’ shares.</p></button><button class="ref-settle-tool-card" data-action="settlement-history"><span class="ref-settle-tool-head"><span><small>HISTORY</small><strong>Payment history</strong></span><span class="ref-settle-tool-icon">${icon('receipt')}</span></span><p>${history.length?history.length+' records, including corrections.':'No payments recorded yet.'}</p></button></section>
    ${settlementSpendChart()}
-   <section class="ref-unsettled-card" aria-label="Unsettled expenses">
-    <div class="ref-unsettled-head"><div><small>UNSETTLED</small><h2>What makes this up</h2></div><strong>${items.length} open</strong></div>
-    <div class="ref-settle-breakdown">${settlementBreakdown()}</div>
-   </section>
-   <section class="ref-settle-actions" aria-label="Settlement tools">
-    <button class="ref-settle-tool-card" data-action="settlement-summary"><span class="ref-settle-tool-head"><span><small>SUMMARY</small><strong>Settlement summary</strong></span><span class="ref-settle-tool-icon">${icon('copy')}</span></span><p>Copy the current balance and shares in one clean summary.</p><span class="ref-settle-tool-foot"><span>Ready to share</span>${icon('chevron')}</span></button>
-    <button class="ref-settle-tool-card" data-action="settlement-history"><span class="ref-settle-tool-head"><span><small>HISTORY</small><strong>Payment history</strong></span><span class="ref-settle-tool-icon">${icon('receipt')}</span></span><p>${history.length?history.length+' recorded payment'+(history.length===1?'':'s')+' for this sheet.':'No payments have been recorded for this sheet yet.'}</p><span class="ref-settle-tool-foot"><span>View settlement records</span>${icon('chevron')}</span></button>
-   </section>
   </div>
  </section>`;
 }
@@ -331,10 +339,9 @@ function settings(){
  const dark=document.body.classList.contains('theme-dark');
  const row=(action,ic,title,sub)=>`<button class="ref-settings-row" data-action="${action}"><span class="ref-settings-icon">${icon(ic)}</span><span class="ref-settings-copy"><strong>${title}</strong><small>${sub}</small></span>${icon('chevron')}</button>`;
  return `<section class="re-page sp-page ref-settings">
-  <header class="ref-settings-header"><div class="ref-settings-title"><span class="ref-settings-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Settings</strong></div><div class="ref-settings-tools"><button class="ref-settings-theme" data-action="theme" aria-label="${dark?'Switch to light mode':'Switch to dark mode'}">${icon(dark?'sun':'moon')}</button><button class="ref-settings-edit" data-action="settings-household">${icon('edit')}<span>Edit</span></button></div></header>
-  <div class="ref-settings-progress"><i></i></div>
+  <header class="ref-settings-header"><div class="ref-settings-title"><span class="ref-settings-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Settings</strong></div><div class="ref-settings-tools"><button class="ref-settings-theme" data-action="theme" aria-label="${dark?'Switch to light mode':'Switch to dark mode'}">${icon(dark?'sun':'moon')}</button></div></header>
   <div class="ref-settings-body">
-   <section class="ref-settings-summary"><div class="ref-settings-summary-head"><span><i></i>YOUR SPACE</span><em>${dark?'Dark mode':'Light mode'}</em></div><div class="ref-settings-person"><span>${esc(initials(data.names[data.seat]))}</span><div><small>SIGNED IN AS</small><strong>${esc(data.names[data.seat])}</strong><p>${esc(data.name)}</p></div></div><div class="ref-settings-stats"><span><small>Household</small><b>${esc(data.name)}</b></span><span><small>Your couple</small><b>${esc(couple(group(data.seat)))}</b></span></div></section>
+   <section class="settings-identity"><span>${esc(initials(data.names[data.seat]))}</span><div><small>Signed in as</small><strong>${esc(data.names[data.seat])}</strong><p>${esc(couple(group(data.seat)))} · ${esc(data.name)}</p></div></section>
    <div class="ref-settings-section-head"><small>HOUSEHOLD</small><h2>Shared space</h2></div><section class="ref-settings-group">${row('settings-household','people','Household & names','Members, couples and household name')}${row('invite','plus','Invite members','Share access safely')}${row('access','lock','Private access link','Your personal sign-in link')}</section>
    <div class="ref-settings-section-head"><small>APP</small><h2>Preferences</h2></div><section class="ref-settings-group">${row('entry-preferences','settings','Expense preferences','Defaults for faster entry')}${row('settings-more','tag','Journal tools','Merchants, categories and export')}</section>
    <button class="ref-settings-signout" data-action="signout">${icon('arrow')}<span>${demo?'Leave demo':'Sign out'}</span></button>
@@ -360,7 +367,7 @@ function springToTab(next,button){
 function render(){
  if(!data)return auth();
  if(activeSheet&&!data.sheets.some(s=>s.id===activeSheet))activeSheet=data.sheets.find(s=>!s.archived)?.id||'';
- if(tab==='settle'&&!activeSheet)activeSheet=data.sheets.find(s=>s.pinned&&!s.archived)?.id||data.sheets.find(s=>!s.archived)?.id||data.sheets[0]?.id||'';
+ if(tab==='settle'&&!settleAll&&!activeSheet)activeSheet=data.sheets.find(s=>s.pinned&&!s.archived)?.id||data.sheets.find(s=>!s.archived)?.id||data.sheets[0]?.id||'';
  const owner=data.id+':'+data.seat;if(owner!==navigationOwner){navigationOwner=owner;navigationTrail.reset();}
  navigationTrail.visit({tab,activeSheet,search,filter,expenseFilters,settleCouple,sheetSearch,sheetFilter});
  const viewKey=tab+':'+activeSheet,previous=app.querySelector('main');
@@ -372,16 +379,10 @@ function render(){
  bind();app.querySelector('main').scrollTop=scrollTop;
  if(!wasOpen)window.scrollTo(0,0);
 }
-function bind(){app.querySelectorAll('[data-couple-overview]').forEach(b=>b.onclick=()=>{settleCouple=b.dataset.coupleOverview;tab='settle';render();});if($('#settle-couple'))$('#settle-couple').onchange=e=>{settleCouple=e.target.value;render();$('#settle-couple').focus();};app.querySelectorAll('[data-spend-chart]').forEach(b=>b.onclick=()=>{settleSpendMode=b.dataset.spendChart;render();requestAnimationFrame(()=>document.querySelector('.ref-spend-chart')?.scrollIntoView({block:'nearest'}));});bindJournal();bindSheetControls();bindExpenseSwipes();app.querySelectorAll('[data-expense-options]').forEach(b=>b.onclick=()=>expenseOptions(b.dataset.expenseOptions));app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>springToTab(b.dataset.tab,b));app.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action,b));app.querySelectorAll('[data-expense]').forEach(b=>b.onclick=()=>expenseForm(data.expenses.find(e=>e.id===b.dataset.expense)));app.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;render();});if($('#sheet-select'))$('#sheet-select').onchange=e=>{activeSheet=e.target.value;render();};if($('#search'))$('#search').oninput=e=>{const pos=e.target.selectionStart;search=e.target.value;render();$('#search').focus();$('#search').setSelectionRange(pos,pos);};app.querySelectorAll('[data-view-sheet]').forEach(b=>b.onclick=()=>{activeSheet=b.dataset.viewSheet;filter='open';tab='expenses';render();});app.querySelectorAll('[data-pin]').forEach(b=>b.onclick=async()=>{try{await save({action:'pin',id:b.dataset.pin});activeSheet=b.dataset.pin;toast('Sheet pinned');}catch(e){toast(e.message);}});app.querySelectorAll('[data-archive]').forEach(b=>b.onclick=async()=>{try{await save({action:'archive',id:b.dataset.archive});toast('Sheet updated');}catch(e){toast(e.message);}});if($('#settings-form'))$('#settings-form').onsubmit=async e=>{e.preventDefault();const f=e.target,v=new FormData(f);try{await save({action:'settings',name:v.get('name'),names:[0,1,2,3].map(i=>v.get('n'+i))});toast('Household updated');}catch(err){errorIn(f,err);}};}
-function action(a,source=null){if(a==='back')return goBack();if(a==='home-search'){activeSheet='';filter='open';tab='expenses';render();requestAnimationFrame(()=>document.querySelector('#search')?.focus());return;}if(a==='sheet-search-toggle'){sheetSearchOpen=!sheetSearchOpen;if(!sheetSearchOpen)sheetSearch='';render();if(sheetSearchOpen)requestAnimationFrame(()=>document.querySelector('#sheet-search')?.focus());return;}if(journalAction(a))return;if(['settings','expenses','sheets'].includes(a)){if(a==='expenses')filter='open';tab=a;render();return;}if(a==='open-settle'){tab='settle';render();app.querySelector('main')?.scrollTo(0,0);return;}if(a==='settings-household')settingsHouseholdDialog();if(a==='settings-more')settingsMoreDialog();if(a==='merchants'||a==='categories')openCatalog(a);if(a==='add'){
- if(source?.classList.contains('re-add-nav')){
-  selectionHaptic();
-  const dock=source.closest('.re-dock');
-  const reduce=window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-  if(dock&&!reduce){dock.dataset.activeIndex='2';window.setTimeout(()=>expenseForm(),160);}
-  else expenseForm();
- }else expenseForm();
-}if(a==='new-sheet')newSheet();if(a==='settle')settleDialog();if(a==='invite')inviteDialog();if(a==='access')accessDialog();if(a==='export')exportCSV();if(a==='theme'){document.body.classList.toggle('theme-dark');syncThemeColor();try{localStorage.setItem('together-theme',document.body.classList.contains('theme-dark')?'dark':'light');}catch{}render();}if(a==='exit-demo'){demo=false;data=null;auth();}if(a==='signout'){if(demo){demo=false;data=null;auth();}else confirmDialog('Sign out?', 'Keep your private access link so you can sign in again.',async()=>{credentials=null;data=null;try{localStorage.removeItem('together-access');}catch{}sheet.close();auth();},'Sign out');}}
+function bind(){app.querySelectorAll('[data-settle-sheet]').forEach(b=>b.onclick=()=>{settleAll=false;activeSheet=b.dataset.settleSheet;tab='settle';render();app.querySelector('main')?.scrollTo(0,0);});if($('#unsettled-only'))$('#unsettled-only').onchange=e=>{unsettledOnly=e.target.checked;render();};app.querySelectorAll('[data-couple-overview]').forEach(b=>b.onclick=()=>{settleCouple=b.dataset.coupleOverview;tab='settle';render();});if($('#settle-couple'))$('#settle-couple').onchange=e=>{settleCouple=e.target.value;render();$('#settle-couple').focus();};app.querySelectorAll('[data-spend-chart]').forEach(b=>b.onclick=()=>{settleSpendMode=b.dataset.spendChart;render();requestAnimationFrame(()=>document.querySelector('.ref-spend-chart')?.scrollIntoView({block:'nearest'}));});bindJournal();bindSheetControls();bindExpenseSwipes();app.querySelectorAll('[data-expense-options]').forEach(b=>b.onclick=()=>expenseOptions(b.dataset.expenseOptions));app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>springToTab(b.dataset.tab,b));app.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action,b));app.querySelectorAll('[data-expense]').forEach(b=>b.onclick=()=>expenseForm(data.expenses.find(e=>e.id===b.dataset.expense)));app.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;render();});if($('#sheet-select'))$('#sheet-select').onchange=e=>{settleAll=e.target.value==='overall';if(!settleAll)activeSheet=e.target.value;render();};if($('#search'))$('#search').oninput=e=>{const pos=e.target.selectionStart;search=e.target.value;render();$('#search').focus();$('#search').setSelectionRange(pos,pos);};app.querySelectorAll('[data-view-sheet]').forEach(b=>b.onclick=()=>{openSheet(b.dataset.viewSheet);});app.querySelectorAll('[data-pin]').forEach(b=>b.onclick=async()=>{try{await save({action:'pin',id:b.dataset.pin});activeSheet=b.dataset.pin;toast('Sheet pinned');}catch(e){toast(e.message);}});app.querySelectorAll('[data-archive]').forEach(b=>b.onclick=async()=>{try{await save({action:'archive',id:b.dataset.archive});toast('Sheet updated');}catch(e){toast(e.message);}});if($('#settings-form'))$('#settings-form').onsubmit=async e=>{e.preventDefault();const f=e.target,v=new FormData(f);try{await save({action:'settings',name:v.get('name'),names:[0,1,2,3].map(i=>v.get('n'+i))});toast('Household updated');}catch(err){errorIn(f,err);}};}
+function action(a,source=null){if(a==='back')return goBack();if(a==='home-search'){activeSheet='';filter='open';tab='expenses';render();requestAnimationFrame(()=>document.querySelector('#search')?.focus());return;}if(a==='sheet-search-toggle'){sheetSearchOpen=!sheetSearchOpen;if(!sheetSearchOpen)sheetSearch='';render();if(sheetSearchOpen)requestAnimationFrame(()=>document.querySelector('#sheet-search')?.focus());return;}if(journalAction(a))return;if(['settings','expenses','sheets'].includes(a)){if(a==='expenses')filter='open';tab=a;render();return;}if(a==='open-settle'){settleAll=true;settleCouple=null;tab='settle';render();app.querySelector('main')?.scrollTo(0,0);return;}if(a==='settings-household')settingsHouseholdDialog();if(a==='settings-more')settingsMoreDialog();if(a==='merchants'||a==='categories')openCatalog(a);if(a==='add'){
+ return openExpense();
+}if(a==='new-sheet')newSheet();if(a==='settle')settleDialog();if(a==='invite')inviteDialog();if(a==='access')accessDialog();if(a==='export')exportCSV();if(a==='theme'){document.body.classList.toggle('theme-dark');syncThemeColor();try{localStorage.setItem('together-theme',document.body.classList.contains('theme-dark')?'dark':'light');}catch{}render();}if(a==='exit-demo'){flushExpenseDraft=null;demo=false;data=null;auth();}if(a==='signout'){flushExpenseDraft=null;if(demo){demo=false;data=null;auth();}else confirmDialog('Sign out?', 'Keep your private access link so you can sign in again.',async()=>{credentials=null;data=null;try{localStorage.removeItem('together-access');}catch{}sheet.close();auth();},'Sign out');}}
 function auth(){navigationTrail.reset();navigationOwner='';modalTrail=[];
  viewScroll.clear();app.classList.remove('has-navigation');
  app.innerHTML=`<main class="re-welcome"><div class="re-auth"><div class="re-auth-brand"><img src="/icon.svg" alt=""><strong>together<span>.</span></strong></div><p class="re-eyebrow">MONEY IS BETTER TOGETHER</p><h1>Share the home.<br><span>Skip the maths.</span></h1><p class="re-auth-copy">A calm shared journal for two couples. Add expenses, see everyone’s share and settle without spreadsheets.</p><section class="re-auth-preview"><div class="re-preview-top"><span>${icon('receipt')} Shared today</span><em>LIVE</em></div><div class="re-preview-row"><span class="re-cat groceries">${icon('groceries')}</span><span><strong>The weekly shop</strong><small>Avery paid</small></span><b>$86.40</b></div><div class="re-preview-row"><span class="re-cat food">${icon('food')}</span><span><strong>Dinner together</strong><small>Jordan paid</small></span><b>$72.00</b></div><div class="re-preview-summary"><span><small>Total</small><strong>$158.40</strong></span><span><small>Your share</small><strong>$79.20</strong></span></div></section><div class="re-auth-points"><span>${icon('plus')} Add it</span><span>${icon('people')} Share it</span><span>${icon('settle')} Settle it</span></div><button id="create-start" class="primary full">Create your household ${icon('arrow')}</button><button id="join-start" class="secondary full">I already have a link</button><button id="demo-start" class="text-button full">Explore a sample household</button><p class="re-auth-foot">Four people · Two couples · One shared journal</p></div></main>`;
@@ -400,7 +401,7 @@ function link(type){return `${location.origin}/#house=${data.id}&${type}=${type=
 function shareOrCopy(title,url){if(navigator.share)return navigator.share({title,url}).catch(e=>{if(e.name!=='AbortError')toast('Select and copy the link below.');});return navigator.clipboard?.writeText(url).then(()=>toast('Link copied')).catch(()=>toast('Select and copy the link below.'));}
 function inviteDialog(){if(demo)return toast('Create a household to invite your members.');const url=link('invite');modal('Invite your household',`<p class="muted small">Send this to your household members. Each person chooses an unclaimed name and gets their own private access link.</p><div class="link-box">${esc(url)}</div><button class="primary full" id="share-link" style="margin-top:18px">Share invitation</button><button class="text-button full" id="rotate">Replace this invitation</button><p class="small muted">Only share with people in your household.</p>`);$('#share-link').onclick=()=>shareOrCopy('Join our Together household',url);$('#rotate').onclick=()=>confirmDialog('Replace invitation?','The old invitation will stop working. Existing members keep their access.',async()=>{await save({action:'rotate-invite'});inviteDialog();},'Replace invitation');}
 function accessDialog(fresh=false){if(demo)return toast('Private access links are available after creating a household.');const url=link('key');modal(fresh?'You’re in. Save your access.':'Your private access link',`<p class="small muted">This link signs in as ${esc(data.names[data.seat])}. Save it somewhere private. Anyone with it can access your household as you.</p><div class="link-box">${esc(url)}</div><button class="primary full" id="share-access" style="margin-top:18px">Save or copy my link</button><p class="small muted">To invite someone else, use “Invite members” in Settings.</p>`);$('#share-access').onclick=()=>shareOrCopy('My private Together access',url);}
-function startDemo(){settleCouple=null;demo=true;const month=today().slice(0,7);activeSheet='demo-sheet';data={id:'demo',name:'Our home',names:['Sagar','Sushma','Nabin','Sujata'],claimed:[true,true,true,true],seat:0,rev:0,sheets:[{id:activeSheet,name:new Date().toLocaleDateString('en-AU',{month:'long',year:'numeric'}),start:month+'-01',end:'',pinned:true,archived:false}],settlements:[],expenses:[['Woolworths',8640,'Groceries',0,'half'],['Electricity',14820,'Bills',2,'half'],['Weekend brunch',7200,'Dining',1,'half'],['ALDI',4235,'Groceries',3,'half']].map(([merchant,cents,category,payer,split],i)=>({id:uid(),merchant,cents,category,payer,split,visibility:'shared',creator:payer,date:month+'-'+String(Math.max(1,Number(today().slice(-2))-i)).padStart(2,'0'),sheet:activeSheet,notes:'',receipt:'',settlement:null}))};tab='home';render();}
+function startDemo(){settleCouple=null;settleAll=true;unsettledOnly=false;flushExpenseDraft=null;demo=true;const month=today().slice(0,7);activeSheet='demo-sheet';data={id:'demo',name:'Our home',names:['Sagar','Sushma','Nabin','Sujata'],claimed:[true,true,true,true],seat:0,rev:0,sheets:[{id:activeSheet,name:new Date().toLocaleDateString('en-AU',{month:'long',year:'numeric'}),start:month+'-01',end:'',pinned:true,archived:false}],settlements:[],expenses:[['Woolworths',8640,'Groceries',0,'half'],['Electricity',14820,'Bills',2,'half'],['Weekend brunch',7200,'Dining',1,'half'],['ALDI',4235,'Groceries',3,'half']].map(([merchant,cents,category,payer,split],i)=>({id:uid(),merchant,cents,category,payer,split,visibility:'shared',creator:payer,date:month+'-'+String(Math.max(1,Number(today().slice(-2))-i)).padStart(2,'0'),sheet:activeSheet,notes:'',receipt:'',settlement:null}))};tab='home';render();}
 function bindExpenseSwipes(){
  let closeOpen=null;
  app.querySelectorAll('[data-expense-edit]').forEach(b=>b.onclick=()=>expenseForm(data.expenses.find(e=>e.id===b.dataset.expenseEdit)));
@@ -432,11 +433,51 @@ function expenseOptions(id){
 }
 function deleteExpense(id){
  const e=data.expenses.find(x=>x.id===id);if(!canManageExpense(e))return toast('This expense cannot be deleted.');
- confirmDialog('Delete this expense?',`${e.merchant} — ${money(e.cents)} will be permanently removed.`,async()=>{const saved=await save({action:'delete',id});if(saved){sheet.close();toast('Expense deleted');}},'Delete expense');
+ confirmDialog('Delete this expense?',`${e.merchant} — ${money(e.cents)} will be permanently removed.`,async()=>{const saved=await save({action:'delete',id});if(saved){if(flushExpenseDraft?.expenseId===id)flushExpenseDraft.finish();if(savedDraft()?.expenseId===id)clearExpenseDraft();sheet.close();toast('Expense deleted');}},'Delete expense');
  $('#confirm-action').classList.add('delete-confirm');
  const cancel=document.createElement('button');cancel.type='button';cancel.className='secondary full expense-delete-cancel';cancel.textContent='Cancel';cancel.onclick=backOneModal;sheet.append(cancel);
 }
-function expenseForm(e=null,preset={}){
+function openSheet(id){
+ activeSheet=id;filter=data.sheets.find(s=>s.id===id)?.archived?'settled':'open';search='';expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'};tab='expenses';render();
+}
+function draftStorage(){return demo?sessionStorage:localStorage;}
+function savedDraft(){try{return readDraft(draftStorage(),draftKey(data.id,data.seat));}catch{return null;}}
+function clearExpenseDraft(){try{draftStorage().removeItem(draftKey(data.id,data.seat));}catch{}}
+function draftBanner(){
+ const draft=savedDraft();if(!draft)return '';
+ return `<section class="draft-banner"><span>${icon('edit')}</span><div><strong>Unfinished expense</strong><small>${esc(draft.values.merchant||'Draft saved on this device')}</small></div><button class="secondary" data-action="add">Resume</button></section>`;
+}
+function openExpense(){
+ expenseForm();
+}
+function chooseExpenseDraft(startFresh){
+ const draft=savedDraft();
+ const e=draft.expenseId?data.expenses.find(e=>e.id===draft.expenseId):null;
+ const canResume=(!draft.expenseId||(e&&canManageExpense(e)))&&!data.sheets.find(s=>s.id===draft.values.sheet)?.archived;
+ modal('Unfinished expense',`<p class="muted">${canResume?'Your draft is saved on this device. Resume it or start a new expense.':'This draft refers to a removed, archived or settled expense. Discard it to start again.'}</p><p><strong>${esc(draft.values.merchant||'New expense')}</strong></p><div class="form-actions">${canResume?'<button class="primary" id="resume-draft">Resume expense</button>':''}<button class="secondary" id="fresh-expense">${canResume?'Start fresh':'Discard draft'}</button></div>`);
+ if(canResume)$('#resume-draft').onclick=()=>expenseForm(e,{},draft);
+ $('#fresh-expense').onclick=()=>{clearExpenseDraft();startFresh();};
+}
+function receiptPreviewMarkup(receipt){
+ if(!receipt)return '';
+ if(receipt.startsWith('data:image/'))return `<img class="receipt" alt="Expense receipt" src="${esc(receipt)}">`;
+ return `<button type="button" class="secondary" data-load-receipt>View receipt</button><p class="receipt-status small muted" role="status"></p>`;
+}
+function bindReceiptPreview(container,expense,getReceipt=()=>expense.receipt){
+ const button=container?.querySelector('[data-load-receipt]');if(!button)return;
+ const reference=getReceipt();
+ button.onclick=async()=>{
+  button.disabled=true;const status=container.querySelector('.receipt-status');status.textContent='Opening receipt…';
+  try{
+   const cacheKey=data.id+':'+reference;
+   let receipt=receiptCache.get(cacheKey);
+   if(!receipt){receipt=(await api({action:'receipt-read',id:expense.id})).receipt;receiptCache.set(cacheKey,receipt);if(receiptCache.size>8)receiptCache.delete(receiptCache.keys().next().value);}
+   if(!container.isConnected||getReceipt()!==reference)return;
+   container.innerHTML=`<img class="receipt" alt="Expense receipt" src="${esc(receipt)}">`;
+  }catch(e){if(container.isConnected){status.textContent=e.message;button.disabled=false;}}
+ };
+}
+function expenseForm(e=null,preset={},resume=null){
  const openSheets=data.sheets.filter(s=>!s.archived);
  if(!e&&!openSheets.length)return newSheet();
  const defaults=entryPreferences();
@@ -444,10 +485,11 @@ function expenseForm(e=null,preset={}){
  const archived=e&&data.sheets.find(s=>s.id===e.sheet)?.archived;
  const editable=!e||(canManageExpense(e)&&!archived);
  if(!editable){
-  modal(x.merchant,`<div class="amount" style="font-size:38px;font-weight:700">${money(x.cents)}</div><p class="muted">Paid by ${esc(data.names[x.payer])} · ${esc(x.date)}</p><p class="small muted">Added by ${esc(expenseAuthor(x))}</p><div class="glass panel"><p class="small">${esc(x.category)} · ${x.split==='half'?'Split equally':`Assigned to ${esc(couple(x.split))}`}</p><p class="small">${esc(x.notes||'No notes')}</p></div>${x.receipt?`<img class="receipt" alt="Expense receipt" src="${esc(x.receipt)}">`:''}<p class="small muted">${x.settlement?'This expense is settled and locked.':archived?'Reopen this sheet before editing the expense.':'Only the person who added this expense can edit or delete it.'}</p>`);
-  return;
+  modal(x.merchant,`<div class="amount" style="font-size:38px;font-weight:700">${money(x.cents)}</div><p class="muted">Paid by ${esc(data.names[x.payer])} · ${esc(x.date)}</p><p class="small muted">Added by ${esc(expenseAuthor(x))}</p><div class="glass panel"><p class="small">${esc(x.category)} · ${x.split==='half'?'Split equally':`Assigned to ${esc(couple(x.split))}`}</p><p class="small">${esc(x.notes||'No notes')}</p></div><div id="view-receipt">${receiptPreviewMarkup(x.receipt)}</div><p class="small muted">${x.settlement?'This expense is settled and locked.':archived?'Reopen this sheet before editing the expense.':'Only the person who added this expense can edit or delete it.'}</p>`);
+  bindReceiptPreview($('#view-receipt'),x);return;
  }
- let receipt=x.receipt||'',receiptBusy=false;
+ if(!resume&&savedDraft())return chooseExpenseDraft(()=>expenseForm(e,preset));
+ let receipt=resume?.receipt??x.receipt??'',receiptBusy=false,draftEnded=false;
  const title=e?'Edit expense':preset.repeat?'Repeat expense':'Add an expense';
  modal(title,`<form id="expense-form" class="ref-expense-form">
   ${preset.repeat?'<p class="entry-note">A new expense for today. Check the amount and save when ready.</p>':''}
@@ -476,10 +518,11 @@ function expenseForm(e=null,preset={}){
    <label class="ref-expense-field"><span class="ref-expense-label">Description · optional</span><span class="ref-expense-control"><i>${icon('receipt')}</i><input name="notes" maxlength="500" placeholder="Add a note" value="${esc(x.notes)}"></span></label>
    <div class="ref-expense-receipt-card">
    <div class="ref-receipt-row">${icon('receipt')}<span class="ref-receipt-copy"><strong>Attach receipt</strong><small>Photo or screenshot · optional</small></span><button type="button" class="ref-receipt-action" id="choose-receipt">Choose</button><input type="file" id="receipt-file" class="ref-receipt-file" accept="image/*" hidden></div>
-   <div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div>
+   <div id="receipt-preview">${receiptPreviewMarkup(receipt)}</div>
    <button type="button" class="text-button ref-remove-receipt" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button>
    </div>
   </section>
+  <p class="draft-status" role="status">${resume?'Recovered draft · review before saving':''}</p>
   <p class="error form-error" role="alert"></p>
   <p class="duplicate-warning" hidden role="alert"></p>
   <section class="ref-expense-submit-card">
@@ -488,11 +531,42 @@ function expenseForm(e=null,preset={}){
  </form>`);
 
  const f=$('#expense-form');
+ if(resume){
+  for(const [name,value] of Object.entries(resume.values))if(f.elements[name])f.elements[name].value=value;
+  if(!openSheets.some(s=>s.id===f.elements.sheet.value))f.elements.sheet.value=x.sheet;
+ }
+ bindReceiptPreview($('#receipt-preview'),x,()=>receipt);
+ const draftOwnerKey=draftKey(data.id,data.seat),draftStore=draftStorage();
+ let draftTimer,wroteDraft=false;
+ const persistDraft=()=>{
+  clearTimeout(draftTimer);if(draftEnded)return;
+  const values=Object.fromEntries(new FormData(f));
+  if(snapshot()===originalSnapshot&&!resume){if(wroteDraft){try{draftStore.removeItem(draftOwnerKey);}catch{}wroteDraft=false;}return true;}
+  const status=f.querySelector('.draft-status');
+  try{writeDraft(draftStore,draftOwnerKey,{expenseId:e?.id,values,receipt});wroteDraft=true;if(status)status.textContent='Draft saved on this device';return true;}
+  catch{try{writeDraft(draftStore,draftOwnerKey,{expenseId:e?.id,values,receipt:receipt.startsWith('data:')?'':receipt});wroteDraft=true;if(status)status.textContent='Fields saved; attach the receipt again when resuming';return true;}catch{if(status)status.textContent='This browser could not save your draft';return false;}}
+ };
+ persistDraft.expenseId=e?.id;persistDraft.finish=()=>{draftEnded=true;clearTimeout(draftTimer);try{draftStore.removeItem(draftOwnerKey);}catch{}};
+ flushExpenseDraft=persistDraft;
+ const queueDraft=()=>{clearTimeout(draftTimer);draftTimer=setTimeout(persistDraft,180);};
+ f.addEventListener('input',queueDraft);f.addEventListener('change',queueDraft);
  syncOverlayLayers();
  f.addEventListener('invalid',ev=>{const details=ev.target.closest('details');if(details)details.open=true;},true);
  const snapshot=()=>JSON.stringify([...new FormData(f)].filter(([name])=>name!=='saveMode'))+receipt;
  const originalSnapshot=snapshot();
- const requestClose=(leave=()=>sheet.close())=>{if(busy||receiptBusy)return;if(snapshot()===originalSnapshot)return leave();let prompt=f.querySelector('.discard-prompt');if(!prompt){prompt=document.createElement('section');prompt.className='discard-prompt';prompt.setAttribute('role','alert');prompt.innerHTML='<strong>Keep this expense?</strong><p>Your changes haven’t been saved.</p><div><button type="button" class="secondary" data-keep>Keep editing</button><button type="button" class="secondary danger" data-discard>Discard</button></div>';f.prepend(prompt);prompt.querySelector('[data-discard]').onclick=leave;prompt.querySelector('[data-keep]').onclick=()=>{prompt.remove();f.elements.amount.focus();};}prompt.querySelector('[data-discard]').onclick=leave;prompt.scrollIntoView({block:'start'});prompt.querySelector('[data-keep]').focus();};
+ const requestClose=(leave=()=>sheet.close())=>{
+  if(busy||receiptBusy)return;
+  if(snapshot()===originalSnapshot&&!resume){persistDraft();draftEnded=true;return leave();}
+  persistDraft();let prompt=f.querySelector('.discard-prompt');
+  if(!prompt){
+   prompt=document.createElement('section');prompt.className='discard-prompt';prompt.setAttribute('role','alert');
+   prompt.innerHTML='<strong>Keep this expense?</strong><p>Your changes haven’t been saved.</p><div><button type="button" class="secondary" data-keep>Keep editing</button><button type="button" class="secondary" data-save-draft>Save draft & close</button><button type="button" class="secondary danger" data-discard>Discard</button></div>';
+   f.prepend(prompt);prompt.querySelector('[data-keep]').onclick=()=>{prompt.remove();f.elements.amount.focus();};
+  }
+  prompt.querySelector('[data-save-draft]').onclick=()=>{if(!persistDraft())return;draftEnded=true;clearTimeout(draftTimer);leave();render();};
+  prompt.querySelector('[data-discard]').onclick=()=>{persistDraft.finish();leave();render();};
+  prompt.scrollIntoView({block:'start'});prompt.querySelector('[data-keep]').focus();
+ };
 
  sheet.querySelector('[data-modal-back]').onclick=()=>requestClose(backOneModal);
  sheet.oncancel=ev=>{if(ev.target!==sheet)return;ev.preventDefault();requestClose(backOneModal);};
@@ -534,15 +608,17 @@ function expenseForm(e=null,preset={}){
    receipt=await compressImage(ev.target.files[0]);
    $('#receipt-preview').innerHTML=`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`;
    $('#remove-receipt').hidden=false;
-   f.querySelector('.form-error').textContent='';
+   f.querySelector('.form-error').textContent='';persistDraft();
   }catch(err){errorIn(f,err);}
   finally{receiptBusy=false;$('#save-expense').disabled=false;}
  };
- $('#remove-receipt').onclick=()=>{receipt='';$('#receipt-preview').innerHTML='';$('#receipt-file').value='';$('#remove-receipt').hidden=true;};
+ $('#remove-receipt').onclick=()=>{receipt='';$('#receipt-preview').innerHTML='';$('#receipt-file').value='';$('#remove-receipt').hidden=true;persistDraft();};
  if(e)$('#delete-expense').onclick=()=>deleteExpense(e.id);
  f.onsubmit=async ev=>{
   ev.preventDefault();
   if(receiptBusy)return;
+  persistDraft();
+  if(!demo&&!navigator.onLine)return errorIn(f,'You’re offline. Your draft is saved; reconnect to save it to the household.');
   const v=new FormData(f),raw=String(v.get('amount'));
   if(!/^\d+(\.\d{1,2})?$/.test(raw))return errorIn(f,'Enter an amount with no more than two decimal places.');
   if(!v.get('merchant')||!v.get('category'))return errorIn(f,'Choose a merchant and category.');
@@ -561,6 +637,7 @@ function expenseForm(e=null,preset={}){
   try{
    const saved=await save({action:'expense',expense:{id:e?.id,creator:e?.creator,merchant:v.get('merchant'),cents,category:v.get('category'),date:v.get('date'),payer:Number(v.get('payer')),visibility:'shared',split:v.get('split')||'half',sheet:v.get('sheet'),notes:v.get('notes'),receipt}});
    if(saved){
+    draftEnded=true;clearTimeout(draftTimer);clearExpenseDraft();
     activeSheet=v.get('sheet');
     render();
     sheet.close();
@@ -572,12 +649,15 @@ function expenseForm(e=null,preset={}){
 async function compressImage(file){if(file.size>20000000)throw new Error('Please choose a receipt under 20 MB.');const url=URL.createObjectURL(file);try{const img=new Image();img.src=url;await img.decode();const scale=Math.min(1,1300/Math.max(img.width,img.height));const canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);let output;for(const q of [.8,.65,.5,.35]){output=canvas.toDataURL('image/jpeg',q);if(output.length<390000)return output;}throw new Error('Receipt is too detailed. Try cropping the image.');}catch(e){throw new Error(e.message.includes('Receipt')?e.message:'This image could not be opened. Try a screenshot or JPEG receipt.');}finally{URL.revokeObjectURL(url);}}
 function newSheet(edit=null){modal(edit?'Edit sheet':'New sheet',`<form id="new-sheet-form"><label class="field"><span>Sheet name</span><input name="name" placeholder="October expenses" value="${esc(edit?.name||'')}" required maxlength="60"></label><div class="two"><label class="field"><span>Starts on</span><input name="start" type="date" value="${edit?.start||today()}" required></label><label class="field"><span>Ends on · optional</span><input name="end" type="date" value="${edit?.end||''}"></label></div><p class="error" role="alert"></p><button class="primary full">${edit?'Save changes':'Create sheet'}</button></form>`);$('#new-sheet-form').onsubmit=async e=>{e.preventDefault();const f=e.target,v=new FormData(f);if(v.get('end')&&v.get('end')<v.get('start'))return errorIn(f,'End date must follow start date.');try{await save({action:edit?'sheet-edit':'sheet',id:edit?.id,name:v.get('name'),start:v.get('start'),end:v.get('end')});activeSheet=edit?.id||data.sheets[0].id;tab='sheets';sheetFilter='open';render();sheet.close();toast(edit?'Sheet updated':'Sheet created');}catch(err){errorIn(f,err);}};}
 function confirmDialog(title,description,run,label='Confirm'){modal(title,`<p class="muted">${esc(description)}</p><p class="error" role="alert"></p><button class="primary full" id="confirm-action">${esc(label)}</button>`);$('#confirm-action').onclick=async()=>{const b=$('#confirm-action');b.disabled=true;try{await run();}catch(e){sheet.querySelector('.error').textContent=e.message;b.disabled=false;}};}
-function settleDialog(){const b=balance(scope());confirmDialog('Record settlement?',b.net?`Confirm ${couple(b.net>0?'b':'a')} has paid ${money(b.amount)} to ${couple(b.net>0?'a':'b')}. This records a payment; it does not transfer money. Shared expenses on ${currentName()} will be locked.`:`Close the balanced shared expenses on ${currentName()}? They will be locked.`,async()=>{await save({action:'settle',sheet:activeSheet});sheet.close();toast('Settlement recorded');},'Confirm settlement');}
+function settleDialog(){if(settleAll)return toast('Choose a sheet to record its payment.');const b=balance(scope());confirmDialog('Record settlement?',b.net?`Confirm ${couple(b.net>0?'b':'a')} has paid ${money(b.amount)} to ${couple(b.net>0?'a':'b')}. This records a payment; it does not transfer money. Shared expenses on ${currentName()} will be locked.`:`Close the balanced shared expenses on ${currentName()}? They will be locked.`,async()=>{await save({action:'settle',sheet:activeSheet});sheet.close();toast('Settlement recorded');},'Confirm settlement');}
 function exportCSV(items=data.expenses){const cell=v=>'"'+String(v??'').replace(/^\s*[=+@-]/,"'$&").replaceAll('"','""')+'"';const rows=[['Date','Merchant','AUD','Category','Paid by','Added by','Split','Sheet','Settled','Notes'],...items.map(e=>[e.date,e.merchant,(e.cents/100).toFixed(2),e.category,data.names[e.payer],expenseAuthor(e),expenseShareLabel(e),data.sheets.find(s=>s.id===e.sheet)?.name,e.settlement?'Yes':'No',e.notes])];const file=new File(['\uFEFF'+rows.map(row=>row.map(cell).join(',')).join('\r\n')],`together-expenses-${today()}.csv`,{type:'text/csv'});if(navigator.canShare?.({files:[file]})){navigator.share({files:[file]}).catch(e=>{if(e.name!=='AbortError')download(file);});}else download(file);}
 function download(file){const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=file.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
 if(navigator.modelContext?.registerTool){navigator.modelContext.registerTool({name:'open_expense_form',description:'Open the household expense form for user review. Does not save an expense.',inputSchema:{type:'object',properties:{merchant:{type:'string'}},additionalProperties:false},execute:async({merchant=''})=>{if(!data)return{content:[{type:'text',text:'Sign in to your household first.'}]};expenseForm(null,{merchant});return{content:[{type:'text',text:'Expense form opened. The user can review and save.'}]};}});}
 async function init(){const fragment=location.hash;if(fragment){history.replaceState(null,'',location.pathname);auth();try{await openLink(location.origin+'/'+fragment);}catch(e){toast(e.message);}return;}if(credentials){app.innerHTML='<div class="loading"><img src="/icon.svg" alt=""><p class="muted">Opening your household…</p></div>';await refresh(false);}else auth();}
 init();
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushExpenseDraft?.();});
+window.addEventListener('pagehide',()=>flushExpenseDraft?.());
+window.addEventListener('online',()=>{if(data&&!demo&&!sheet.open)refresh(false);});
 setInterval(()=>{if(data&&!demo&&!sheet.open&&!busy&&document.visibilityState==='visible')refresh(false);},30000);
 document.addEventListener('visibilitychange',()=>{if(data&&!demo&&!sheet.open&&!busy&&document.visibilityState==='visible')refresh(false);});
 
@@ -677,7 +757,7 @@ function bindJournal(){
 function journalAction(a){
  if(a==='entry-preferences')preferencesDialog();
  else if(a==='filters')filtersDialog();
- else if(a==='reset-filters'){search='';filter='open';expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'};render();}
+ else if(a==='reset-filters'){search='';filter=data.sheets.find(s=>s.id===activeSheet)?.archived?'settled':'open';expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'};render();}
  else if(a==='settlement-summary')settlementSummary();
  else if(a==='settlement-history')settlementHistory();
  else return false;
@@ -698,11 +778,20 @@ function filtersDialog(){
  $('#clear-filters').onclick=()=>{journalAction('reset-filters');sheet.close();};$('#filter-form').onsubmit=e=>{e.preventDefault();const next=Object.fromEntries(new FormData(e.target));if(next.from&&next.to&&next.from>next.to)return errorIn(e.target,'Choose an end date on or after the start.');expenseFilters={...expenseFilters,...next};sheet.close();render();};
 }
 function settlementHistory(){
- const history=data.settlements.filter(s=>s.sheet===activeSheet);
- modal('Payment history',history.length?`<div class="history-modal-list">${history.map(r=>`<div class="history-modal-row"><span class="liquid-history-icon">${icon('check')}</span><span><strong>${r.net?`${esc(couple(r.net>0?'b':'a'))} → ${esc(couple(r.net>0?'a':'b'))}`:'Balanced expenses closed'}</strong><small>${new Date(r.date).toLocaleDateString('en-AU')} · ${r.count} expenses</small></span><b>${money(Math.abs(r.net))}</b></div>`).join('')}</div>`:`<div class="liquid-empty"><span class="liquid-empty-icon">${icon('receipt')}</span><h3>No payments recorded yet</h3><p>Your settlement history will appear here.</p></div>`);
+ const history=data.settlements.filter(s=>settleAll||s.sheet===activeSheet);
+ modal('Payment history',history.length?`<div class="history-modal-list">${history.map(r=>{
+  const names=r.names||data.names,recordCouple=g=>names.slice(g==='a'?0:2,g==='a'?2:4).join(' & ');
+  return `<section class="settlement-history-entry ${r.reversed?'is-reversed':''}"><div class="history-modal-row"><span class="liquid-history-icon">${icon(r.reversed?'refresh':'check')}</span><span><strong>${r.net?`${esc(recordCouple(r.net>0?'b':'a'))} → ${esc(recordCouple(r.net>0?'a':'b'))}`:'Balanced expenses closed'}</strong><small>${esc(data.sheets.find(s=>s.id===r.sheet)?.name||'Sheet')} · ${new Date(r.date).toLocaleDateString('en-AU')} · ${r.count} expenses</small><small>Recorded by ${esc(names[r.by]||'Household member')}</small></span><b>${money(Math.abs(r.net))}</b></div>${r.reversed?`<p class="settlement-reversal-note">Reversed by ${esc(data.names[r.reversed.by])} on ${new Date(r.reversed.date).toLocaleDateString('en-AU')}: ${esc(r.reversed.reason)}</p>`:r.by===data.seat?`<button class="text-button" data-reverse-settlement="${esc(r.id)}">Reverse this settlement</button>`:''}</section>`;
+ }).join('')}</div>`:`<div class="liquid-empty"><span class="liquid-empty-icon">${icon('receipt')}</span><h3>No payments recorded yet</h3><p>Your settlement history will appear here.</p></div>`);
+ sheet.querySelectorAll('[data-reverse-settlement]').forEach(button=>button.onclick=()=>reverseSettlementDialog(button.dataset.reverseSettlement));
+}
+function reverseSettlementDialog(id){
+ const r=data.settlements.find(r=>r.id===id);if(!r||r.reversed||r.by!==data.seat)return;
+ modal('Reverse settlement',`<p class="muted">This reopens the ${r.count} linked expenses and restores their balance. An archived sheet will reopen too. The original payment and your reason stay in history. This does not move money.</p><form id="reverse-settlement-form"><label class="field"><span>Reason for correction</span><textarea name="reason" rows="3" required maxlength="300" placeholder="e.g. Payment was recorded before it was received"></textarea></label><p class="error" role="alert"></p><button class="primary full">Reverse settlement</button></form>`);
+ const form=$('#reverse-settlement-form');form.onsubmit=async ev=>{ev.preventDefault();try{await save({action:'settlement-reverse',id,reason:new FormData(form).get('reason').trim()});sheet.close();modalTrail=[];settlementHistory();toast('Settlement reversed; linked expenses reopened');}catch(e){errorIn(form,e);}};
 }
 function settlementSummary(){
- const items=scope().filter(e=>!e.settlement),b=balance(items),a=settlementOverview(items,'a'),c=settlementOverview(items,'b'),text=`Together · ${currentName()}\n${b.net?`${couple(b.net>0?'b':'a')} owes ${money(b.amount)} to ${couple(b.net>0?'a':'b')}.`:'Both couples are balanced.'}\n${items.length} unsettled expenses · Total ${money(a.total)}\n${couple('a')}: share ${money(a.share)} · paid ${money(a.paid)}\n${couple('b')}: share ${money(c.share)} · paid ${money(c.paid)}\nAs of ${new Date().toLocaleDateString('en-AU')}. Please check Together for the latest balance.\nThis is a summary, not a payment confirmation.`;
+ const items=settleScope().filter(e=>!e.settlement),b=balance(items),a=settlementOverview(items,'a'),c=settlementOverview(items,'b'),text=`Together · ${settleName()}\n${b.net?`${couple(b.net>0?'b':'a')} owes ${money(b.amount)} to ${couple(b.net>0?'a':'b')}.`:'Both couples are balanced.'}\n${items.length} unsettled expenses · Total ${money(a.total)}\n${couple('a')}: share ${money(a.share)} · paid ${money(a.paid)}\n${couple('b')}: share ${money(c.share)} · paid ${money(c.paid)}\nAs of ${new Date().toLocaleDateString('en-AU')}. Please check Together for the latest balance.\nThis is a summary, not a payment confirmation.`;
  modal('Settlement summary',`<p class="small muted">A ready-to-copy note for your household. Includes all unsettled expenses and both couples’ shares. Private access links are excluded.</p><textarea id="settlement-text" readonly rows="9" aria-label="Settlement summary">${esc(text)}</textarea><button id="copy-summary" class="primary full" style="margin-top:14px">${icon('copy')} Copy summary</button><p class="small muted" id="copy-status" role="status"></p>`);
  $('#copy-summary').onclick=async()=>{try{await navigator.clipboard.writeText(text);$('#copy-status').textContent='Copied. Paste it into your household chat.';}catch{$('#settlement-text').select();$('#copy-status').textContent='Select and copy the summary above.';}};
 }

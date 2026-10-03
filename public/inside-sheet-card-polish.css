@@ -195,3 +195,5 @@
     font-size:14.5px!important;
   }
 }
+
+.ios-app .sheet-outstanding {font-size:14px!important;line-height:1.4!important;color:var(--text)!important;}

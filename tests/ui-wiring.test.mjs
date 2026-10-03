@@ -45,13 +45,13 @@ test('Settings keeps household and journal tools but removes duplicate Insights'
 });
 
 test('Settle keeps spending analysis and bottom history card without duplicate header history',()=>{
- assert.match(app,/function settlementSpendChart\(\)\{\s*const expenses=scope\(\),total=/);
+ assert.match(app,/function settlementSpendChart\(\)\{\s*const expenses=settleScope\(\),total=/);
  assert.match(app,/class="ref-settle-tool-card" data-action="settlement-history"/);
  assert.doesNotMatch(app,/class="ref-settle-history"/);
 });
 
-test('Settle always resolves global all-sheets state to a concrete sheet',()=>{
- assert.match(app,/if\(tab==='settle'&&!activeSheet\)activeSheet=data\.sheets\.find\(s=>s\.pinned&&!s\.archived\)\?\.id\|\|data\.sheets\.find\(s=>!s\.archived\)\?\.id\|\|data\.sheets\[0\]\?\.id\|\|''/);
+test('Settle resolves a concrete sheet only in individual-sheet mode',()=>{
+ assert.match(app,/if\(tab==='settle'&&!settleAll&&!activeSheet\)activeSheet=data\.sheets\.find\(s=>s\.pinned&&!s\.archived\)\?\.id\|\|data\.sheets\.find\(s=>!s\.archived\)\?\.id\|\|data\.sheets\[0\]\?\.id\|\|''/);
 });
 
 test('Add Expense is a focused modal with one primary Save and no duplicate app dock',()=>{

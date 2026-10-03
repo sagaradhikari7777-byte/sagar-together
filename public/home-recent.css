@@ -47,3 +47,13 @@
   .ios-app .home-recent-amount .icon {display:none;}
   .ios-app .home-recent-amount strong {font-size:14px;}
 }
+
+/* Home owns its single balance and local draft recovery card. */
+.ios-app .ref-home-body {display:block!important;}
+.ios-app .home-balance-direction {font-size:17px!important;line-height:1.4!important;font-weight:650!important;color:var(--text)!important;}
+.ios-app .home-balance-action {width:100%;margin-top:14px;min-height:44px;}
+.ios-app .draft-banner {display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:10px;align-items:center;margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:19px;background:var(--surface);}
+.ios-app .draft-banner > span .icon {width:24px;height:24px;color:var(--accent);}
+.ios-app .draft-banner strong,.ios-app .draft-banner small {display:block;overflow-wrap:anywhere;}
+.ios-app .draft-banner strong {font-size:15px;}.ios-app .draft-banner small {margin-top:4px;font-size:13px;color:var(--muted);}
+.ios-app .draft-banner button {min-height:44px;}

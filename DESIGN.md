@@ -45,10 +45,10 @@ Nested sheet views have an explicit back control and support the existing edge-s
 
 - Home owns overall balance and recent activity.
 - Sheets owns period management and open/settled expense browsing.
-- Settle owns spending analytics and settlement history.
+- Settle owns settlement history and spending analytics; show payment actions before charts.
 - Settings owns configuration, catalog maintenance and export.
 
-Do not duplicate analytics in Settings or payment history in multiple places on Settle.
+Do not duplicate analytics in Settings or payment history in multiple places on Settle. Home and Settle must use the same overall balance scope. Remove decorative progress indicators unless they represent measurable progress.
 
 ## Expense form
 

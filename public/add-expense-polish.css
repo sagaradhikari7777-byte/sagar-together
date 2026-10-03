@@ -312,3 +312,7 @@
 .ios-app .catalog-dialog.selection-mode .catalog-edit{
   display:none!important;
 }
+
+.ios-app #expense-form > .draft-status {position:static;flex:0 0 auto;min-height:0;margin:0;padding:0 4px;color:var(--muted);font-size:12px;line-height:1.5;}
+.ios-app #expense-form > .draft-status:empty {display:none;}
+.ios-app #expense-form .discard-prompt > div {display:flex;flex-wrap:wrap;gap:8px;}

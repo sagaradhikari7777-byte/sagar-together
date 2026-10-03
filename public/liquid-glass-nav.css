@@ -1,3 +1,16 @@
+/* Decorative layers must never participate in navigation grid layout. */
+.ios-app .re-dock {position:relative!important;grid-template-rows:1fr!important;gap:2px!important;}
+.ios-app .re-dock > .liquid-refract-layer,
+.ios-app .re-dock > .liquid-selection {position:absolute!important;pointer-events:none!important;}
+.ios-app .re-dock > button {grid-row:1;min-width:0!important;margin:0!important;left:auto!important;right:auto!important;}
+.ios-app .re-dock > button:focus-visible {outline:2px solid var(--accent)!important;outline-offset:-3px!important;}
+@media(min-width:700px){
+ .ios-app .re-dock > .liquid-refract-layer,.ios-app .re-dock > .liquid-selection {display:none!important;}
+ .ios-app .re-dock > button {justify-content:center!important;padding:6px!important;}
+ .ios-app .re-dock > button small {font-size:12px!important;line-height:1.2!important;}
+ .ios-app .re-dock > .re-add-nav > span {width:30px!important;height:30px!important;margin:0!important;border:0!important;}
+}
+
 
 /* TOGETHER LIQUID GLASS NAV — web/PWA fallback for iOS 26-style glass */
 @media(max-width:699px){
@@ -274,8 +287,7 @@
     transform:scale(.94)!important;
   }
 
-  .ios-app .re-dock>button:focus,
-  .ios-app .re-dock>button:focus-visible,
+  .ios-app .re-dock>button:focus:not(:focus-visible),
   .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button:focus,
   .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button:focus-visible{
     outline:none!important;
@@ -349,6 +361,6 @@
   }
   .ios-app .re-dock>button small,
   .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav>button small{
-    font-size:10px!important;
+    font-size:11px!important;
   }
 }
