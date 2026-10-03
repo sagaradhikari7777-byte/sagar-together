@@ -93,3 +93,12 @@ test('Add Expense More options uses the custom iPhone-safe accordion',()=>{
  assert.match(addExpenseCss,/ref-expense-more-card\.open > \.ref-expense-more-body\{\s*display:grid!important/);
  assert.match(addExpenseCss,/ref-expense-more-body\{[\s\S]*height:auto!important;[\s\S]*overflow:visible!important/);
 });
+
+test('Add Expense Attach receipt is surfaced before advanced tools',()=>{
+ const description=app.indexOf('Description · optional');
+ const receipt=app.indexOf('class="receipt-label ref-option-receipt"',description);
+ const calculator=app.indexOf('class="amount-calculator ref-option-tool"',description);
+ assert.ok(description>=0&&receipt>description&&calculator>receipt,'receipt must appear immediately before advanced calculator tools');
+ assert.match(addExpenseCss,/ref-expense-more-card\.open\{[\s\S]*height:auto!important;[\s\S]*max-height:none!important;[\s\S]*overflow:visible!important/);
+ assert.match(addExpenseCss,/ref-expense-submit-card\{[\s\S]*position:static!important/);
+});

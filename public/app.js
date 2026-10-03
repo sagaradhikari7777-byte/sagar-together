@@ -478,12 +478,12 @@ function expenseForm(e=null,preset={}){
    <div class="ref-expense-more-body" ${e&&(x.notes||receipt)?'':'hidden'}>
     <label class="ref-expense-field"><span class="ref-expense-label">Expense sheet</span><span class="ref-expense-control"><i>${icon('folder')}</i><select name="sheet">${data.sheets.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></span></label>
     <label class="ref-expense-field"><span class="ref-expense-label">Description · optional</span><span class="ref-expense-control"><i>${icon('receipt')}</i><input name="notes" maxlength="500" placeholder="Add a note" value="${esc(x.notes)}"></span></label>
-    <details class="amount-calculator ref-option-tool"><summary>${icon('calculator')} Calculate an amount</summary><div class="ref-option-tool-body"><label class="field"><span>Calculation</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="e.g. 24.50 + 18 + 6 / 2" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></div></details>
-    <div class="split-preview" id="split-preview"></div>
-    <p class="small muted expense-visibility-note">${icon('people')} Shared with your household · ${e?`Added by ${esc(expenseAuthor(e))}`:`Adding as ${esc(data.names[data.seat])}`}</p>
     <label class="receipt-label ref-option-receipt">${icon('receipt')}<span class="ref-receipt-copy"><strong>Attach receipt</strong><small>Photo or screenshot · optional</small></span><span class="ref-receipt-action">Choose</span><input type="file" id="receipt-file" accept="image/*"></label>
     <div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div>
     <button type="button" class="text-button" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button>
+    <details class="amount-calculator ref-option-tool"><summary>${icon('calculator')} Calculate an amount</summary><div class="ref-option-tool-body"><label class="field"><span>Calculation</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="e.g. 24.50 + 18 + 6 / 2" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></div></details>
+    <div class="split-preview" id="split-preview"></div>
+    <p class="small muted expense-visibility-note">${icon('people')} Shared with your household · ${e?`Added by ${esc(expenseAuthor(e))}`:`Adding as ${esc(data.names[data.seat])}`}</p>
    </div>
   </section>
   <p class="error form-error" role="alert"></p>

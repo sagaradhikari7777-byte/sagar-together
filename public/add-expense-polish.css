@@ -177,8 +177,20 @@
   }
 
   .ios-app .ref-expense-more-card{
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
     padding:0!important;
     overflow:hidden!important;
+    position:relative!important;
+  }
+  .ios-app .ref-expense-more-card.open{
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+    display:block!important;
+    contain:none!important;
   }
   .ios-app .ref-expense-more-card>.ref-expense-more-summary{
     width:100%!important;
@@ -243,8 +255,10 @@
     display:none!important;
   }
   .ios-app .ref-expense-more-body{
+    position:static!important;
     min-height:0!important;
     height:auto!important;
+    max-height:none!important;
     overflow:visible!important;
     padding:0 13px 13px!important;
     border-top:1px solid #ece9e5!important;
@@ -336,6 +350,9 @@
   }
 
   .ios-app .ref-expense-submit-card{
+    position:static!important;
+    inset:auto!important;
+    z-index:auto!important;
     margin-top:0!important;
     padding:10px!important;
     border:1px solid #e7e3df!important;
