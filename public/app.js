@@ -2,7 +2,7 @@ import {createNavigationTrail,installEdgeBack} from './back-navigation.js';
 import {settlementOverview} from './settlement-overview.js';
 import {householdExpense,canManageExpenseAs} from './expense-policy.js';
 import {catalogValues,changeCatalog} from './catalog.js';
-import {filterExpenses,summarizeSpending,repeatPreset,frequentMerchants} from './journal.js';
+import {filterExpenses,repeatPreset} from './journal.js';
 const $=s=>document.querySelector(s), app=$('#app'), sheet=$('#sheet');
 const paths={wifi:'M3 8a14 14 0 0 1 18 0M6 12a9 9 0 0 1 12 0M9 16a4 4 0 0 1 6 0M12 20h.01',gift:'M3 8h18v5H3ZM5 13v8h14v-8M12 8v13M12 8C3 8 5 0 9 3l3 5ZM12 8c9 0 7-8 3-5l-3 5Z',movie:'M3 9h18v12H3ZM3 9 2 4l18-3 1 5ZM7 3l3 4m4-5 3 4',tag:'M3 3h8l10 10-8 8L3 11ZM7 7h.01',edit:'m15 4 5 5M4 20l4-1L21 6l-4-4L4 15Z',pin:'m8 3 8 0-1 7 3 4H6l3-4ZM12 14v8',archive:'M3 3h18v5H3ZM5 8v13h14V8M9 12h6',trash:'M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7',store:'M3 10h18L19 3H5ZM5 10v11h14V10M9 21v-7h6v7',home:'M3 10 12 3l9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z',list:'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',settle:'M19 6v5h-5M5 18v-5h5M6.2 8A7 7 0 0 1 18.8 6M5.2 18A7 7 0 0 0 17.8 16M12 5v14M15.5 8c-.8-1-2-1.5-3.5-1.5-2.1 0-3.5 1-3.5 2.5 0 1.7 1.5 2.3 3.6 2.7 2.1.4 3.4 1 3.4 2.8 0 1.6-1.4 2.8-3.5 2.8-1.6 0-2.9-.5-3.8-1.5',settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2',plus:'M12 5v14M5 12h14',close:'m6 6 12 12M6 18 18 6',food:'M4 3v6q0 3 3 3V3m0 9v9M18 3q-5 5 0 10v8M18 3v10',groceries:'m3 4 2 0 3 12h11l2-8H6M9 21h.01M18 21h.01',bills:'m13 2-9 12h7l-1 8 10-12h-7Z',travel:'M3 16h18M5 16l1-8h12l2 8M7 20v-4m10 4v-4M8 12h.01M16 12h.01',other:'M4 5h16v15H4zM8 2v6m8-6v6M4 10h16',check:'m5 12 4 4L19 6',lock:'M5 10h14v11H5zM8 10V6a4 4 0 0 1 8 0v4',folder:'M3 6V4h7l3 3h8v13H3Z',arrow:'M5 12h14m-5-5 5 5-5 5',refresh:'M20 7v5h-5M4 17v-5h5M5 7a8 8 0 0 1 13-2l2 3M4 16l2 3a8 8 0 0 0 13-2',receipt:'M5 3h14v18l-3-2-4 2-4-2-3 2ZM8 7h8M8 11h8M8 15h4',moon:'M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10'};
 Object.assign(paths,{calendar:'M6 2v3m12-3v3M3 8h18M5 4h14a2 2 0 0 1 2 2v15H3V6a2 2 0 0 1 2-2ZM7 12h.01M12 12h.01M17 12h.01M7 16h.01M12 16h.01M17 16h.01',user:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 21a8 8 0 0 1 16 0',search:'m21 21-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',people:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M13 3a4 4 0 0 1 0 8M22 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0',chevron:'m9 5 7 7-7 7',settings:'M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1ZM16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0',chart:'M4 20V10m6 10V4m6 16v-7m5 7H2',copy:'M8 8h13v13H8ZM16 8V3H3v13h5',calculator:'M5 2h14v20H5ZM8 6h8M8 11h1m6 0h1m-8 4h1m6 0h1m-8 4h1m6 0h1',filter:'M3 5h18M6 12h12M10 19h4',sun:'M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42M18.36 5.64l-1.42 1.42M7.06 16.94l-1.42 1.42M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0',dots:'M5 12h.01M12 12h.01M19 12h.01'});
@@ -52,8 +52,8 @@ sheet.addEventListener('click',ev=>{
 });
 installEdgeBack({canGoBack:()=>!busy&&(sheet.open||!!document.querySelector('#catalog-dialog[open]')||isInnerPage()),goBack});
 let sheetSearch='',sheetFilter='open',sheetSearchOpen=false,settleCouple=null,settleSpendMode='category';
-let expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'},insightPeriod='sheet';
-let data=null,credentials=null,demo=false,tab='home',filter='all',search='',activeSheet='',joinInfo=null,busy=false,homeBalanceFilter='all';
+let expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'};
+let data=null,credentials=null,demo=false,tab='home',filter='open',search='',activeSheet='',joinInfo=null,busy=false;
 try{credentials=JSON.parse(localStorage.getItem('together-access'));document.body.classList.toggle('theme-dark',localStorage.getItem('together-theme')==='dark');}catch{}
 function syncThemeColor(){document.querySelector('meta[name=theme-color]').content=document.body.classList.contains('theme-dark')?'#1a201b':'#ffffff';}
 syncThemeColor();
@@ -125,22 +125,14 @@ function homeRecentTransactions(){
 function home(){
  const activeSheetIds=new Set(data.sheets.filter(s=>!s.archived).map(s=>s.id)),entries=data.expenses.filter(e=>activeSheetIds.has(e.sheet)),mine=group(data.seat),o=settlementOverview(entries,mine),other=mine==='a'?'b':'a',openSheets=activeSheetIds.size;
  const status=o.net===0?'settled':o.net>0?'owe':'owed',owe=o.net>0?Math.abs(o.net):0,owed=o.net<0?Math.abs(o.net):0;
- const counts={all:1,owe:status==='owe'?1:0,owed:status==='owed'?1:0,settled:status==='settled'?1:0};
- const visible=homeBalanceFilter==='all'||homeBalanceFilter===status;
  const otherNames=couple(other),otherSeats=data.names.slice(other==='a'?0:2,other==='a'?2:4),otherInitials=otherSeats.map(n=>(n.trim()[0]||'').toUpperCase()).join('').slice(0,2);
  const statusLabel=status==='owe'?'You owe':status==='owed'?'You are owed':'All settled';
  return `<section class="re-page sp-page sp-home ref-home">
- <header class="ref-home-header"><div class="ref-home-title"><span class="ref-home-avatar">${esc(initials(data.names[data.seat]))}</span><strong>${esc(data.name||'Together')}</strong></div><div class="ref-home-tools"><button class="ref-search" data-action="home-search" aria-label="Search expenses">${icon('search')}</button><button class="ref-add-top" data-action="add">${icon('plus')}<span>Add</span></button></div></header>
+ <header class="ref-home-header"><div class="ref-home-title"><span class="ref-home-avatar">${esc(initials(data.names[data.seat]))}</span><strong>${esc(data.name||'Together')}</strong></div><div class="ref-home-tools"><button class="ref-search" data-action="home-search" aria-label="Search expenses">${icon('search')}</button></div></header>
  <div class="ref-home-progress"><i></i></div>
  <div class="ref-home-body">
   <section class="ref-balance-card ${status}"><div class="ref-balance-head"><span><i></i> OVERALL BALANCE</span><em>${statusLabel}</em></div><strong class="ref-balance-amount">${money(Math.abs(o.net))}</strong><p>Across ${openSheets} active sheet${openSheets===1?'':'s'} and shared expenses</p><div class="ref-balance-mini"><span><small>You owe</small><b class="owe">${money(owe)}</b></span><span><small>You are owed</small><b class="owed">${money(owed)}</b></span></div></section>
-  <div class="ref-filter-row">
-   <button data-home-filter="all" class="${homeBalanceFilter==='all'?'active':''}">All (${counts.all})</button>
-   <button data-home-filter="owe" class="${homeBalanceFilter==='owe'?'active':''}"><i class="red"></i>You Owe (${counts.owe})</button>
-   <button data-home-filter="owed" class="${homeBalanceFilter==='owed'?'active':''}"><i class="green"></i>Owes You (${counts.owed})</button>
-   <button data-home-filter="settled" class="${homeBalanceFilter==='settled'?'active':''}"><i class="grey"></i>Settled (${counts.settled})</button>
-  </div>
-  <div class="ref-balance-list">${visible?`<section class="ref-couple-card"><span class="ref-couple-avatar"><i>${esc(otherInitials)}</i></span><div class="ref-couple-copy"><strong>${esc(otherNames)}</strong><p>Net balance: <b class="${status}">${money(Math.abs(o.net))}</b></p><span class="ref-shared-badge">${icon('people')} Shared household balance</span></div><strong class="ref-couple-amount ${status}">${money(Math.abs(o.net))}</strong><button class="ref-settle-go" data-action="open-settle" aria-label="Open settle details">${icon('settle')}</button></section>`:`<div class="ref-home-empty"><span>${icon('check')}</span><strong>No balances here</strong><p>Nothing matches this filter right now.</p></div>`}</div>
+  <div class="ref-balance-list"><section class="ref-couple-card"><span class="ref-couple-avatar"><i>${esc(otherInitials)}</i></span><div class="ref-couple-copy"><strong>${esc(otherNames)}</strong><p>Net balance: <b class="${status}">${money(Math.abs(o.net))}</b></p><span class="ref-shared-badge">${icon('people')} Shared household balance</span></div><strong class="ref-couple-amount ${status}">${money(Math.abs(o.net))}</strong><button class="ref-settle-go" data-action="open-settle" aria-label="Open settle details">${icon('settle')}</button></section></div>
   ${homeRecentTransactions()}
  </div></section>`;
 }
@@ -153,9 +145,10 @@ function expenseGroups(es){
  return [...groups].map(([day,items])=>`<section class="day-group"><div class="day-heading"><h2>${day===today()?'Today':day===yd?'Yesterday':esc(new Date(day+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}))}</h2><span>${money(items.reduce((n,e)=>n+e.cents,0))}</span></div>${expenseRows(items)}</section>`).join('');
 }
 function expenses(){
+ if(!['open','settled'].includes(filter))filter='open';
  const es=filteredExpenses(),count=[expenseFilters.payer,expenseFilters.category,expenseFilters.from,expenseFilters.to].filter(Boolean).length,items=scope(),overview=settlementOverview(items,group(data.seat)),current=data.sheets.find(s=>s.id===activeSheet),total=items.reduce((n,e)=>n+e.cents,0),unsettled=items.filter(e=>!e.settlement).length,settled=items.length-unsettled,archived=!!current?.archived;
  const resultTotal=es.reduce((sum,e)=>sum+e.cents,0),range=current?sheetDateRange(current):'All household expenses';
- const chip=(id,label,dot='')=>`<button data-filter="${id}" class="${filter===id?'active':''}">${dot?`<i class="${dot}"></i>`:''}${label} (${id==='all'?items.length:id==='open'?unsettled:settled})</button>`;
+ const chip=(id,label,dot='')=>`<button data-filter="${id}" class="${filter===id?'active':''}">${dot?`<i class="${dot}"></i>`:''}${label} (${id==='open'?unsettled:settled})</button>`;
  return `<section class="re-page sp-page ref-inside-sheet">
   <header class="ref-inside-header">
    <div class="ref-inside-left"><button class="ref-inside-back" data-action="back" aria-label="Back to Sheets">${backIcon()}</button><div><strong>${esc(currentName())}</strong><small>${esc(range)}</small></div></div>
@@ -168,9 +161,9 @@ function expenses(){
     <strong class="ref-inside-total">${money(total)}</strong><p>${esc(range)}</p>
     <div class="ref-inside-stats"><span><small>Your share</small><b>${money(overview.share)}</b></span><span><small>You paid</small><b>${money(overview.paid)}</b></span></div>
    </section>
-   <div class="ref-inside-filters">${chip('all','All')}${chip('open','Open','amber')}${chip('settled','Settled','green')}<button data-action="filters" class="${count?'has-count':''}">${icon('settings')} Filters${count?` (${count})`:''}</button></div>
+   <div class="ref-inside-filters">${chip('open','Open','amber')}${chip('settled','Settled','green')}<button data-action="filters" class="${count?'has-count':''}">${icon('settings')} Filters${count?` (${count})`:''}</button></div>
    <div class="ref-inside-search">${icon('search')}<input id="search" type="search" placeholder="Search expenses" aria-label="Search expenses" value="${esc(search)}"><select id="expense-sort" aria-label="Sort expenses">${[['newest','Newest'],['oldest','Oldest'],['largest','Highest'],['smallest','Lowest']].map(([v,t])=>`<option value="${v}" ${expenseFilters.sort===v?'selected':''}>${t}</option>`).join('')}</select></div>
-   <div class="ref-inside-result"><span>${es.length} expense${es.length===1?'':'s'}</span><strong>${money(resultTotal)}</strong>${count||search||filter!=='all'?'<button class="text-button" data-action="reset-filters">Clear</button>':''}</div>
+   <div class="ref-inside-result"><span>${es.length} expense${es.length===1?'':'s'}</span><strong>${money(resultTotal)}</strong>${count||search||filter!=='open'?'<button class="text-button" data-action="reset-filters">Clear</button>':''}</div>
    <div id="expense-results" class="ref-inside-list">${expenseGroups(es)}</div>
   </div>
  </section>`;
@@ -290,7 +283,7 @@ function settleView(){
  const status=o.net===0?'balanced':o.net>0?'pay':'receive';
  const statusLabel=status==='balanced'?'All balanced':status==='pay'?'You pay':'You receive';
  return `<section class="re-page sp-page ref-settle">
-  <header class="ref-settle-header"><div class="ref-settle-title"><span class="ref-settle-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Settle</strong></div><div class="ref-settle-tools"><button class="ref-settle-history" data-action="settlement-history" aria-label="Payment history">${icon('receipt')}</button><button class="ref-settle-record" data-action="settle" ${items.length?'':'disabled'}>${icon('check')}<span>${b.net?'Record':'Close'}</span></button></div></header>
+  <header class="ref-settle-header"><div class="ref-settle-title"><span class="ref-settle-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Settle</strong></div><div class="ref-settle-tools"><button class="ref-settle-record" data-action="settle" ${items.length?'':'disabled'}>${icon('check')}<span>${b.net?'Record':'Close'}</span></button></div></header>
   <div class="ref-settle-progress"><i></i></div>
   <div class="ref-settle-body">
    <section class="ref-settle-summary ${status}"><div class="ref-settle-summary-head"><span><i></i>TO SETTLE</span><em>${statusLabel}</em></div><strong class="ref-settle-amount">${money(remaining)}</strong><p>${o.net===0?'No payment is needed.':`${esc(couple(from))} → ${esc(couple(to))}`}</p><div class="ref-settle-stats"><span><small>Your share</small><b>${money(o.share)}</b></span><span><small>Paid</small><b>${money(o.paid)}</b></span></div></section>
@@ -350,7 +343,7 @@ function settings(){
   <div class="ref-settings-body">
    <section class="ref-settings-summary"><div class="ref-settings-summary-head"><span><i></i>YOUR SPACE</span><em>${dark?'Dark mode':'Light mode'}</em></div><div class="ref-settings-person"><span>${esc(initials(data.names[data.seat]))}</span><div><small>SIGNED IN AS</small><strong>${esc(data.names[data.seat])}</strong><p>${esc(data.name)}</p></div></div><div class="ref-settings-stats"><span><small>Household</small><b>${esc(data.name)}</b></span><span><small>Your couple</small><b>${esc(couple(group(data.seat)))}</b></span></div></section>
    <div class="ref-settings-section-head"><small>HOUSEHOLD</small><h2>Shared space</h2></div><section class="ref-settings-group">${row('settings-household','people','Household & names','Members, couples and household name')}${row('invite','plus','Invite members','Share access safely')}${row('access','lock','Private access link','Your personal sign-in link')}</section>
-   <div class="ref-settings-section-head"><small>APP</small><h2>Preferences</h2></div><section class="ref-settings-group">${row('entry-preferences','settings','Expense preferences','Defaults for faster entry')}${row('settings-more','tag','Journal tools','Merchants, categories and export')}${row('insights','chart','Insights','Review your shared spending')}</section>
+   <div class="ref-settings-section-head"><small>APP</small><h2>Preferences</h2></div><section class="ref-settings-group">${row('entry-preferences','settings','Expense preferences','Defaults for faster entry')}${row('settings-more','tag','Journal tools','Merchants, categories and export')}</section>
    <button class="ref-settings-signout" data-action="signout">${icon('arrow')}<span>${demo?'Leave demo':'Sign out'}</span></button>
   </div>
  </section>`;
@@ -386,8 +379,8 @@ function render(){
  bind();app.querySelector('main').scrollTop=scrollTop;
  if(!wasOpen)window.scrollTo(0,0);
 }
-function bind(){app.querySelectorAll('[data-home-filter]').forEach(b=>b.onclick=()=>{homeBalanceFilter=b.dataset.homeFilter;render();});app.querySelectorAll('[data-couple-overview]').forEach(b=>b.onclick=()=>{settleCouple=b.dataset.coupleOverview;tab='settle';render();});if($('#settle-couple'))$('#settle-couple').onchange=e=>{settleCouple=e.target.value;render();$('#settle-couple').focus();};app.querySelectorAll('[data-spend-chart]').forEach(b=>b.onclick=()=>{settleSpendMode=b.dataset.spendChart;render();requestAnimationFrame(()=>document.querySelector('.ref-spend-chart')?.scrollIntoView({block:'nearest'}));});bindJournal();bindSheetControls();bindExpenseSwipes();app.querySelectorAll('[data-expense-options]').forEach(b=>b.onclick=()=>expenseOptions(b.dataset.expenseOptions));app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>springToTab(b.dataset.tab,b));app.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action,b));app.querySelectorAll('[data-expense]').forEach(b=>b.onclick=()=>expenseForm(data.expenses.find(e=>e.id===b.dataset.expense)));app.querySelectorAll('[data-quick]').forEach(b=>b.onclick=()=>expenseForm(null,{merchant:b.dataset.quick,category:b.dataset.category}));app.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;render();});if($('#sheet-select'))$('#sheet-select').onchange=e=>{activeSheet=e.target.value;render();};if($('#search'))$('#search').oninput=e=>{const pos=e.target.selectionStart;search=e.target.value;render();$('#search').focus();$('#search').setSelectionRange(pos,pos);};app.querySelectorAll('[data-view-sheet]').forEach(b=>b.onclick=()=>{activeSheet=b.dataset.viewSheet;tab='expenses';render();});app.querySelectorAll('[data-pin]').forEach(b=>b.onclick=async()=>{try{await save({action:'pin',id:b.dataset.pin});activeSheet=b.dataset.pin;toast('Sheet pinned');}catch(e){toast(e.message);}});app.querySelectorAll('[data-archive]').forEach(b=>b.onclick=async()=>{try{await save({action:'archive',id:b.dataset.archive});toast('Sheet updated');}catch(e){toast(e.message);}});if($('#settings-form'))$('#settings-form').onsubmit=async e=>{e.preventDefault();const f=e.target,v=new FormData(f);try{await save({action:'settings',name:v.get('name'),names:[0,1,2,3].map(i=>v.get('n'+i))});toast('Household updated');}catch(err){errorIn(f,err);}};}
-function action(a,source=null){if(a==='back')return goBack();if(a==='home-search'){activeSheet='';tab='expenses';render();requestAnimationFrame(()=>document.querySelector('#search')?.focus());return;}if(a==='sheet-search-toggle'){sheetSearchOpen=!sheetSearchOpen;if(!sheetSearchOpen)sheetSearch='';render();if(sheetSearchOpen)requestAnimationFrame(()=>document.querySelector('#sheet-search')?.focus());return;}if(journalAction(a))return;if(['settings','expenses','sheets'].includes(a)){tab=a;render();return;}if(a==='open-settle'){tab='settle';render();app.querySelector('main')?.scrollTo(0,0);return;}if(a==='settings-household')settingsHouseholdDialog();if(a==='settings-more')settingsMoreDialog();if(a==='merchants'||a==='categories')openCatalog(a);if(a==='add'){
+function bind(){app.querySelectorAll('[data-couple-overview]').forEach(b=>b.onclick=()=>{settleCouple=b.dataset.coupleOverview;tab='settle';render();});if($('#settle-couple'))$('#settle-couple').onchange=e=>{settleCouple=e.target.value;render();$('#settle-couple').focus();};app.querySelectorAll('[data-spend-chart]').forEach(b=>b.onclick=()=>{settleSpendMode=b.dataset.spendChart;render();requestAnimationFrame(()=>document.querySelector('.ref-spend-chart')?.scrollIntoView({block:'nearest'}));});bindJournal();bindSheetControls();bindExpenseSwipes();app.querySelectorAll('[data-expense-options]').forEach(b=>b.onclick=()=>expenseOptions(b.dataset.expenseOptions));app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>springToTab(b.dataset.tab,b));app.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action,b));app.querySelectorAll('[data-expense]').forEach(b=>b.onclick=()=>expenseForm(data.expenses.find(e=>e.id===b.dataset.expense)));app.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;render();});if($('#sheet-select'))$('#sheet-select').onchange=e=>{activeSheet=e.target.value;render();};if($('#search'))$('#search').oninput=e=>{const pos=e.target.selectionStart;search=e.target.value;render();$('#search').focus();$('#search').setSelectionRange(pos,pos);};app.querySelectorAll('[data-view-sheet]').forEach(b=>b.onclick=()=>{activeSheet=b.dataset.viewSheet;tab='expenses';render();});app.querySelectorAll('[data-pin]').forEach(b=>b.onclick=async()=>{try{await save({action:'pin',id:b.dataset.pin});activeSheet=b.dataset.pin;toast('Sheet pinned');}catch(e){toast(e.message);}});app.querySelectorAll('[data-archive]').forEach(b=>b.onclick=async()=>{try{await save({action:'archive',id:b.dataset.archive});toast('Sheet updated');}catch(e){toast(e.message);}});if($('#settings-form'))$('#settings-form').onsubmit=async e=>{e.preventDefault();const f=e.target,v=new FormData(f);try{await save({action:'settings',name:v.get('name'),names:[0,1,2,3].map(i=>v.get('n'+i))});toast('Household updated');}catch(err){errorIn(f,err);}};}
+function action(a,source=null){if(a==='back')return goBack();if(a==='home-search'){activeSheet='';filter='open';tab='expenses';render();requestAnimationFrame(()=>document.querySelector('#search')?.focus());return;}if(a==='sheet-search-toggle'){sheetSearchOpen=!sheetSearchOpen;if(!sheetSearchOpen)sheetSearch='';render();if(sheetSearchOpen)requestAnimationFrame(()=>document.querySelector('#sheet-search')?.focus());return;}if(journalAction(a))return;if(['settings','expenses','sheets'].includes(a)){tab=a;render();return;}if(a==='open-settle'){tab='settle';render();app.querySelector('main')?.scrollTo(0,0);return;}if(a==='settings-household')settingsHouseholdDialog();if(a==='settings-more')settingsMoreDialog();if(a==='merchants'||a==='categories')openCatalog(a);if(a==='add'){
  if(source?.classList.contains('re-add-nav')){
   selectionHaptic();
   const dock=source.closest('.re-dock');
@@ -451,9 +444,10 @@ function deleteExpense(id){
  const cancel=document.createElement('button');cancel.type='button';cancel.className='secondary full expense-delete-cancel';cancel.textContent='Cancel';cancel.onclick=backOneModal;sheet.append(cancel);
 }
 function expenseForm(e=null,preset={}){
- if(!e&&!data.sheets.some(s=>!s.archived))return newSheet();
+ const openSheets=data.sheets.filter(s=>!s.archived);
+ if(!e&&!openSheets.length)return newSheet();
  const defaults=entryPreferences();
- const x=e||{merchant:preset.merchant||'',cents:preset.cents||0,category:preset.category||defaults.category||'Groceries',payer:preset.payer??data.seat,visibility:'shared',split:preset.split||defaults.split||'half',date:today(),sheet:data.sheets.find(s=>s.id===activeSheet&&!s.archived)?.id||data.sheets.find(s=>!s.archived).id,notes:preset.notes||'',receipt:''};
+ const x=e||{merchant:preset.merchant||'',cents:preset.cents||0,category:preset.category||defaults.category||'Groceries',payer:preset.payer??data.seat,visibility:'shared',split:preset.split||defaults.split||'half',date:today(),sheet:openSheets.find(s=>s.id===activeSheet)?.id||openSheets[0].id,notes:preset.notes||'',receipt:''};
  const archived=e&&data.sheets.find(s=>s.id===e.sheet)?.archived;
  const editable=!e||(canManageExpense(e)&&!archived);
  if(!editable){
@@ -485,7 +479,7 @@ function expenseForm(e=null,preset={}){
 
   <section class="ref-expense-options-card">
    <div class="ref-expense-options-head"><span><small>OPTIONAL</small><h3>Extra details</h3></span></div>
-   <label class="ref-expense-field"><span class="ref-expense-label">Expense sheet</span><span class="ref-expense-control"><i>${icon('folder')}</i><select name="sheet">${data.sheets.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></span></label>
+   ${openSheets.length>1?`<label class="ref-expense-field"><span class="ref-expense-label">Expense sheet</span><span class="ref-expense-control"><i>${icon('folder')}</i><select name="sheet">${openSheets.map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></span></label>`:`<input type="hidden" name="sheet" value="${esc(x.sheet)}">`}
    <label class="ref-expense-field"><span class="ref-expense-label">Description · optional</span><span class="ref-expense-control"><i>${icon('receipt')}</i><input name="notes" maxlength="500" placeholder="Add a note" value="${esc(x.notes)}"></span></label>
    <div class="ref-expense-receipt-card">
    <div class="ref-receipt-row">${icon('receipt')}<span class="ref-receipt-copy"><strong>Attach receipt</strong><small>Photo or screenshot · optional</small></span><button type="button" class="ref-receipt-action" id="choose-receipt">Choose</button><input type="file" id="receipt-file" class="ref-receipt-file" accept="image/*" hidden></div>
@@ -496,25 +490,12 @@ function expenseForm(e=null,preset={}){
   <p class="error form-error" role="alert"></p>
   <p class="duplicate-warning" hidden role="alert"></p>
   <section class="ref-expense-submit-card">
-   <div class="ref-expense-final-actions"><button class="primary" type="submit" id="save-expense">${icon('check')} ${e?'Save changes':'Save expense'}</button>${!e?'<button class="secondary save-another" type="submit" name="saveMode" value="another">Save & add another</button>':'<button type="button" class="secondary danger" id="delete-expense">Delete expense</button>'}</div>
+   <div class="ref-expense-final-actions ${e?'has-delete':'single'}"><button class="primary" type="submit" id="save-expense">${icon('check')} ${e?'Save changes':'Save expense'}</button>${e?'<button type="button" class="secondary danger" id="delete-expense">Delete expense</button>':''}</div>
   </section>
- </form>
- <nav class="ref-expense-nav" aria-label="Expense navigation" data-active-index="2">
-  <span class="liquid-refract-layer" aria-hidden="true"></span><span class="liquid-selection" aria-hidden="true"></span>
-  <button type="button" data-expense-tab="home" data-nav-index="0">${icon('home')}<small>Home</small></button>
-  <button type="button" data-expense-tab="sheets" data-nav-index="1">${icon('folder')}<small>Sheets</small></button>
-  <button type="button" class="active" data-nav-index="2"><span>${icon('plus')}</span><small>Add</small></button>
-  <button type="button" data-expense-tab="settle" data-nav-index="3">${icon('settle')}<small>Settle</small></button>
-  <button type="button" data-expense-tab="settings" data-nav-index="4">${icon('settings')}<small>Settings</small></button>
- </nav>`);
+ </form>`);
 
  const f=$('#expense-form');
  syncOverlayLayers();
-const headerSave=sheet.querySelector('[data-close]');
- headerSave.classList.add('ref-expense-save');
- headerSave.setAttribute('aria-label',e?'Save changes':'Save expense');
- headerSave.innerHTML=icon('check');
-
  f.addEventListener('invalid',ev=>{const details=ev.target.closest('details');if(details)details.open=true;},true);
  const snapshot=()=>JSON.stringify([...new FormData(f)].filter(([name])=>name!=='saveMode'))+receipt;
  const originalSnapshot=snapshot();
@@ -522,9 +503,9 @@ const headerSave=sheet.querySelector('[data-close]');
 
  sheet.querySelector('[data-modal-back]').onclick=()=>requestClose(backOneModal);
  sheet.oncancel=ev=>{if(ev.target!==sheet)return;ev.preventDefault();requestClose(backOneModal);};
- headerSave.onclick=()=>f.requestSubmit(f.querySelector('#save-expense'));
-
- sheet.querySelectorAll('[data-expense-tab]').forEach(b=>b.onclick=()=>requestClose(()=>{sheet.close();tab=b.dataset.expenseTab;render();}));
+ const headerClose=sheet.querySelector('[data-close]');
+ headerClose.setAttribute('aria-label','Close expense form');
+ headerClose.onclick=()=>requestClose(()=>sheet.close());
 
  f.querySelectorAll('[data-pick]').forEach(input=>{
   const choose=()=>openCatalog(input.dataset.pick,value=>{
@@ -555,14 +536,14 @@ const headerSave=sheet.querySelector('[data-close]');
  receiptInput.addEventListener('cancel',()=>$('#choose-receipt').focus({preventScroll:true}));
  receiptInput.onchange=async ev=>{
   if(!ev.target.files[0])return;
-  receiptBusy=true;$('#save-expense').disabled=true;headerSave.disabled=true;
+  receiptBusy=true;$('#save-expense').disabled=true;
   try{
    receipt=await compressImage(ev.target.files[0]);
    $('#receipt-preview').innerHTML=`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`;
    $('#remove-receipt').hidden=false;
    f.querySelector('.form-error').textContent='';
   }catch(err){errorIn(f,err);}
-  finally{receiptBusy=false;$('#save-expense').disabled=false;headerSave.disabled=false;}
+  finally{receiptBusy=false;$('#save-expense').disabled=false;}
  };
  $('#remove-receipt').onclick=()=>{receipt='';$('#receipt-preview').innerHTML='';$('#receipt-file').value='';$('#remove-receipt').hidden=true;};
  if(e)$('#delete-expense').onclick=()=>deleteExpense(e.id);
@@ -584,15 +565,13 @@ const headerSave=sheet.querySelector('[data-close]');
    warning.scrollIntoView({block:'nearest'});
    return;
   }
-  const another=ev.submitter?.value==='another';
   try{
    const saved=await save({action:'expense',expense:{id:e?.id,creator:e?.creator,merchant:v.get('merchant'),cents,category:v.get('category'),date:v.get('date'),payer:Number(v.get('payer')),visibility:'shared',split:v.get('split')||'half',sheet:v.get('sheet'),notes:v.get('notes'),receipt}});
    if(saved){
     activeSheet=v.get('sheet');
     render();
-    if(another)expenseForm(null,{category:v.get('category'),payer:Number(v.get('payer')),visibility:'shared',split:v.get('split')||'half'});
-    else sheet.close();
-    toast(another?'Saved. Ready for the next one.':'Expense saved');
+    sheet.close();
+    toast('Expense saved');
    }
   }catch(err){errorIn(f,err);}
  };
@@ -647,7 +626,7 @@ function openCatalog(kind,onPick=null){
   document.body.append(catalogDialog);
  }
  const dlg=catalogDialog,title=kind==='merchants'?'Merchants':'Categories',field=kind==='merchants'?'merchant':'category';let query='';
- dlg.dataset.catalogKind=kind;
+ dlg.dataset.catalogKind=kind;dlg.classList.toggle('selection-mode',!!onPick);
  const head=(heading,back,plus)=>{
   dlg.innerHTML=`<div class="catalog-handle" aria-hidden="true"></div><header class="catalog-head"><button type="button" class="catalog-back" id="catalog-back" aria-label="Back">${backIcon()}</button><h2 id="catalog-title" tabindex="-1">${heading}</h2>${plus?`<button type="button" class="catalog-add" id="catalog-add" aria-label="Add ${field}">${icon('plus')}</button>`:'<span class="head-spacer"></span>'}</header>`;
   dlg.setAttribute('aria-labelledby','catalog-title');
@@ -703,11 +682,9 @@ function bindJournal(){
  if($('#expense-sort'))$('#expense-sort').onchange=e=>{expenseFilters.sort=e.target.value;render();};
 }
 function journalAction(a){
- if(a==='insights')insightsDialog();
- else if(a==='entry-preferences')preferencesDialog();
+ if(a==='entry-preferences')preferencesDialog();
  else if(a==='filters')filtersDialog();
- else if(a==='reset-filters'){search='';filter='all';expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'};render();}
- else if(a==='export-filtered')exportCSV(filteredExpenses());
+ else if(a==='reset-filters'){search='';filter='open';expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'};render();}
  else if(a==='settlement-summary')settlementSummary();
  else if(a==='settlement-history')settlementHistory();
  else return false;
@@ -726,12 +703,6 @@ function filtersDialog(){
  const f=expenseFilters,categories=[...new Set(scope().map(e=>e.category))].sort((a,b)=>a.localeCompare(b));
  modal('Find an expense',`<form id="filter-form"><label class="field"><span>Paid by</span><select name="payer"><option value="">Everyone</option>${data.names.map((n,i)=>`<option value="${i}" ${f.payer===String(i)?'selected':''}>${esc(n)}</option>`).join('')}</select></label><label class="field"><span>Category</span><select name="category"><option value="">All categories</option>${categories.map(c=>`<option value="${esc(c)}" ${f.category===c?'selected':''}>${esc(c)}</option>`).join('')}</select></label><div class="two"><label class="field"><span>From · optional</span><input type="date" name="from" value="${f.from}"></label><label class="field"><span>To · optional</span><input type="date" name="to" value="${f.to}"></label></div><p class="error" role="alert"></p><div class="form-actions"><button type="button" class="secondary" id="clear-filters">Clear</button><button class="primary">Show expenses</button></div></form>`);
  $('#clear-filters').onclick=()=>{journalAction('reset-filters');sheet.close();};$('#filter-form').onsubmit=e=>{e.preventDefault();const next=Object.fromEntries(new FormData(e.target));if(next.from&&next.to&&next.from>next.to)return errorIn(e.target,'Choose an end date on or after the start.');expenseFilters={...expenseFilters,...next};sheet.close();render();};
-}
-function insightsDialog(){
- const items=insightPeriod==='sheet'?scope():insightPeriod==='month'?data.expenses.filter(e=>e.date.slice(0,7)===today().slice(0,7)):data.expenses;
- const stats=summarizeSpending(items),label=insightPeriod==='sheet'?currentName():insightPeriod==='month'?new Date().toLocaleDateString('en-AU',{month:'long',year:'numeric'}):'All your sheets';
- modal('Spending insights',`<div class="switches insight-periods">${[['sheet','This sheet'],['month','This month'],['all','All time']].map(([id,t])=>`<button data-insight-period="${id}" class="${insightPeriod===id?'selected':''}" aria-pressed="${insightPeriod===id}">${t}</button>`).join('')}</div><p class="small muted insight-context">${esc(label)} · all household expenses</p><div class="insight-hero"><span>Total spending</span><strong>${money(stats.total)}</strong><div><span>${stats.count} expenses</span><span>${money(stats.average)} average</span></div></div><div class="insight-split"><div><small>50 / 50</small><strong>${money(stats.equalSplit)}</strong></div><div><small>Assigned to one couple</small><strong>${money(stats.coupleAssigned)}</strong></div></div>${stats.count?`<div class="section-head"><h3>By category</h3><span class="small muted">Share of total</span></div><div class="glass spending-panel">${stats.categories.map(([c,n])=>`<div class="budget-row"><div class="between small"><span>${esc(c)}</span><strong>${money(n)}</strong></div><div class="bar" role="img" aria-label="${esc(c)}: ${Math.round(n/stats.total*100)} percent of spending"><i style="width:${n/stats.total*100}%"></i></div></div>`).join('')}</div><div class="section-head"><h3>Who paid</h3></div><div class="glass payer-list">${stats.people.map((n,i)=>`<div class="payer-line"><span class="avatar ${group(i)==='b'?'b':''}">${esc(initials(data.names[i]))}</span><span>${esc(data.names[i])}</span><strong>${money(n)}</strong></div>`).join('')}</div>`:'<div class="empty"><p>Add expenses to see where your money goes.</p></div>'}<p class="small muted">Includes settled expenses. These are spending totals, not amounts owed.</p><button class="secondary full" id="export-insights">${icon('receipt')} Export these expenses</button>`);
- sheet.querySelectorAll('[data-insight-period]').forEach(b=>b.onclick=()=>{insightPeriod=b.dataset.insightPeriod;insightsDialog();});$('#export-insights').onclick=()=>exportCSV(items);
 }
 function settlementHistory(){
  const history=data.settlements.filter(s=>s.sheet===activeSheet);

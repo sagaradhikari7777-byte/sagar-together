@@ -26,8 +26,7 @@ async function layout(page,label){
   const r=e=>{const b=e.getBoundingClientRect();return {top:b.top,bottom:b.bottom,left:b.left,right:b.right,height:b.height};};
   const cards=[...f.querySelectorAll(':scope > section')].map(e=>({name:e.className,...r(e),scrollHeight:e.scrollHeight,children:[...e.children].filter(c=>getComputedStyle(c).display!=='none').map(c=>({...r(c),tag:c.tagName}))}));
   const inputs=[...f.querySelectorAll('input:not([type=file]),select')].map(e=>({name:e.name||e.id,size:parseFloat(getComputedStyle(e).fontSize),...r(e)}));
-  const nav=document.querySelector('.ref-expense-nav');
-  return {cards,inputs,nav:r(nav),navButtons:[...nav.querySelectorAll('button')].map(r),form:{width:f.clientWidth,scrollWidth:f.scrollWidth},note:r(f.elements.notes),receipt:r(f.querySelector('.ref-receipt-row')),save:r(f.querySelector('.ref-expense-submit-card'))};
+  return {cards,inputs,form:{width:f.clientWidth,scrollWidth:f.scrollWidth},note:r(f.elements.notes),receipt:r(f.querySelector('.ref-receipt-row')),save:r(f.querySelector('.ref-expense-submit-card'))};
  });
  for(const card of report.cards){
   assert.ok(card.height>=card.scrollHeight-2,`${label}: ${card.name} collapsed (${card.height} < ${card.scrollHeight})`);
@@ -38,8 +37,6 @@ async function layout(page,label){
  assert.ok(report.form.scrollWidth<=report.form.width,`${label}: form has horizontal overflow`);
  assert.ok(report.receipt.top>=report.note.bottom,`${label}: receipt covers note`);
  assert.ok(report.save.top>=report.receipt.bottom,`${label}: Save covers receipt`);
- assert.equal(report.navButtons.length,5,`${label}: all navigation actions exist`);
- for(const button of report.navButtons)assert.ok(button.top>=report.nav.top-1&&button.bottom<=report.nav.bottom+1&&button.left>=report.nav.left-1&&button.right<=report.nav.right+1,`${label}: navigation action extends outside the dock`);
  return report;
 }
 (async()=>{
@@ -67,8 +64,8 @@ async function layout(page,label){
      await page.locator('[name="notes"]').fill('A note that should stay inside Extra details.');
      await layout(page,label+' note focused');
      await page.locator('#save-expense').scrollIntoViewIfNeeded();
-     const scroll=await page.evaluate(()=>({save:document.querySelector('#save-expense').getBoundingClientRect().toJSON(),nav:document.querySelector('.ref-expense-nav').getBoundingClientRect().toJSON(),form:document.querySelector('#expense-form').getBoundingClientRect().toJSON()}));
-     assert.ok(scroll.save.bottom<=scroll.nav.top+1,label+' save hidden under navigation');
+     const scroll=await page.evaluate(()=>({save:document.querySelector('#save-expense').getBoundingClientRect().toJSON(),form:document.querySelector('#expense-form').getBoundingClientRect().toJSON(),viewport:window.innerHeight}));
+     assert.ok(scroll.save.bottom<=scroll.viewport+1,label+' save cannot be scrolled above the viewport bottom');
      assert.ok(scroll.save.top>=scroll.form.top-1,label+' save cannot be scrolled into view');
      if(width===440){
       if(out)await page.screenshot({path:`${out}/after-${name}-${dark?'dark':'light'}.png`});
@@ -92,6 +89,8 @@ async function layout(page,label){
     await page.locator('[name="split"]').selectOption('b');
     assert.match(await page.locator('#split-preview').innerText(),/Nabin & Sujata: \$123\.45/);
     await page.locator('[name="notes"]').fill('Layout QA receipt expense');
+    await page.locator('#receipt-file').dispatchEvent('cancel');
+    assert.equal(await page.locator('#expense-form').isVisible(),true,'cancelling receipt picker must keep Add Expense open');
     const chooserPromise=page.waitForEvent('filechooser');
     await page.locator('#choose-receipt').click();
     const chooser=await chooserPromise;
@@ -109,14 +108,9 @@ async function layout(page,label){
     await layout(page,name+' receipt error');
     await page.locator('#receipt-file').setInputFiles({name:'test-receipt.png',mimeType:'image/png',buffer:fs.readFileSync(source+'/public/icon-192.png')});
     await page.locator('#receipt-preview img').waitFor();
-    await page.locator('.save-another').click();
-    await page.getByText('Saved. Ready for the next one.',{exact:true}).waitFor();
-    assert.equal(await page.locator('[name="amount"]').inputValue(),'');
-    assert.equal(await page.locator('[name="notes"]').inputValue(),'');
-    assert.equal(await page.locator('#receipt-preview img').count(),0);
-    assert.equal(await page.locator('[name="payer"]').inputValue(),'2');
-    await layout(page,name+' save and another reset');
-    await page.locator('[data-expense-tab="sheets"]').click();
+    await page.locator('#save-expense').click();
+    await page.locator('#sheet').waitFor({state:'hidden'});
+    await page.locator('[data-tab="sheets"]').click();
     await page.locator('[data-view-sheet]').first().click();
     const added=page.locator('[data-expense]').filter({hasText:'123.45'});
     assert.equal(await added.count(),1);await added.click();
@@ -136,7 +130,7 @@ async function layout(page,label){
     await layout(page,name+' unsaved discard prompt');
     await page.locator('[data-keep]').click();
     assert.equal(await page.locator('[name="notes"]').inputValue(),'Unsaved');
-    results.push({label:name+' pickers / receipt attach-remove-error / save-and-another / edit / draft guard',status:'PASS'});
+    results.push({label:name+' pickers / receipt cancel-attach-remove-error / edit / draft guard',status:'PASS'});
     await page.close();
    }finally{await browser.close();}
   }

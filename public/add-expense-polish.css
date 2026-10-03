@@ -22,7 +22,7 @@
   background:var(--entry-canvas)!important;
   color:var(--entry-ink)!important;
   display:grid!important;
-  grid-template-rows:auto minmax(0,1fr) auto!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
   overflow:hidden!important;
 }
 .ios-app.theme-dark #sheet[open]:has(#expense-form) {
@@ -299,4 +299,16 @@
 @media(max-width:360px) {
   .ios-app #sheet[open] #expense-form .ref-expense-pair {grid-template-columns:minmax(0,1fr)!important}
   .ios-app #sheet[open]:has(#expense-form) .dialog-head h2 {font-size:20px!important}
+}
+
+
+/* CLEANUP RELEASE — simplified expense workflow */
+.ios-app #sheet[open]:has(#expense-form) .ref-expense-final-actions.single{
+  grid-template-columns:1fr!important;
+}
+.ios-app #sheet[open]:has(#expense-form) .ref-expense-final-actions.single #save-expense{
+  width:100%!important;
+}
+.ios-app .catalog-dialog.selection-mode .catalog-edit{
+  display:none!important;
 }
