@@ -41,9 +41,9 @@
 .ios-app :is(.ref-expense-card-title,.ref-expense-options-head){margin-bottom:12px!important}
 .ios-app .ref-expense-field{margin-bottom:12px!important}
 .ios-app .period-comparison{font-size:13px;line-height:1.5;color:var(--muted);margin:12px 0 0}
-.ios-app .merchant-shortcuts{display:flex;gap:7px;overflow-x:auto;margin:-4px 0 12px;padding:0 0 2px}
-.ios-app .merchant-shortcuts:empty{display:none}
-.ios-app .merchant-shortcuts button{flex-shrink:0;min-height:44px;border:1px solid var(--ui-card-border);border-radius:12px;padding:8px 12px;background:var(--surface-2);color:var(--text);font-size:14px}
+.ios-app #sheet[open] #expense-form .merchant-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0 0;padding:0;min-width:0}
+.ios-app #sheet[open] #expense-form .merchant-shortcuts:empty{display:none}
+.ios-app .merchant-shortcuts button{display:block;width:100%;min-width:0;max-width:100%;min-height:44px;box-sizing:border-box;border:1px solid var(--ui-card-border);border-radius:12px;padding:8px 12px;background:var(--surface-2);color:var(--text);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ios-app :is(.upcoming-card,.bill-item){padding:14px;border:1px solid var(--ui-card-border);border-radius:var(--ui-card-radius);background:var(--ui-card-bg);box-shadow:var(--ui-card-shadow)}
 .ios-app .upcoming-card{margin-top:14px}
 .ios-app :is(.upcoming-head,.bill-item>div:first-child){display:flex;align-items:center;justify-content:space-between;gap:12px}

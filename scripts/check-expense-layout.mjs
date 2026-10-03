@@ -26,7 +26,9 @@ async function layout(page,label){
   const r=e=>{const b=e.getBoundingClientRect();return {top:b.top,bottom:b.bottom,left:b.left,right:b.right,height:b.height};};
   const cards=[...f.querySelectorAll(':scope > section')].map(e=>({name:e.className,...r(e),scrollHeight:e.scrollHeight,children:[...e.children].filter(c=>getComputedStyle(c).display!=='none').map(c=>({...r(c),tag:c.tagName}))}));
   const inputs=[...f.querySelectorAll('input:not([type=file]),select')].map(e=>({name:e.name||e.id,size:parseFloat(getComputedStyle(e).fontSize),...r(e)}));
-  return {cards,inputs,form:{width:f.clientWidth,scrollWidth:f.scrollWidth},note:r(f.elements.notes),receipt:r(f.querySelector('.ref-receipt-row')),save:r(f.querySelector('.ref-expense-submit-card'))};
+  const shortcuts=f.querySelector('.merchant-shortcuts');
+  const merchantShortcuts=shortcuts&&getComputedStyle(shortcuts).display!=='none'?{...r(shortcuts),merchant:r(f.querySelector('.ref-expense-merchant')),buttons:[...shortcuts.querySelectorAll('button')].map(e=>({name:e.textContent,...r(e)}))}:null;
+  return {cards,inputs,merchantShortcuts,form:{width:f.clientWidth,scrollWidth:f.scrollWidth},note:r(f.elements.notes),receipt:r(f.querySelector('.ref-receipt-row')),save:r(f.querySelector('.ref-expense-submit-card'))};
  });
  for(const card of report.cards){
   assert.ok(card.height>=card.scrollHeight-2,`${label}: ${card.name} collapsed (${card.height} < ${card.scrollHeight})`);
@@ -35,6 +37,7 @@ async function layout(page,label){
  for(let i=1;i<report.cards.length;i++)assert.ok(report.cards[i].top>=report.cards[i-1].bottom,`${label}: adjacent cards overlap`);
  for(const input of report.inputs)assert.ok(input.size>=16,`${label}: ${input.name} font ${input.size} risks focus zoom`);
  assert.ok(report.form.scrollWidth<=report.form.width,`${label}: form has horizontal overflow`);
+ if(report.merchantShortcuts){const s=report.merchantShortcuts;assert.ok(s.top>=s.merchant.bottom+8,`${label}: merchant shortcuts overlap the picker`);for(const b of s.buttons){assert.ok(b.left>=s.left-1&&b.right<=s.right+1,`${label}: ${b.name} shortcut extends outside the card`);assert.ok(b.height>=44,`${label}: shortcut tap target is too small`);}}
  assert.ok(report.receipt.top>=report.note.bottom,`${label}: receipt covers note`);
  assert.ok(report.save.top>=report.receipt.bottom,`${label}: Save covers receipt`);
  return report;
