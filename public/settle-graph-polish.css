@@ -842,3 +842,152 @@
     font-size:11px!important;
   }
 }
+
+/* SETTLEMENT TOOLS — grouped rows matching the rest of Together */
+@media(max-width:699px){
+  .ios-app .ref-settle-tools-head{
+    margin:17px 3px 7px!important;
+  }
+
+  .ios-app .ref-settle-actions{
+    display:block!important;
+    margin-top:0!important;
+    padding:0 11px!important;
+    overflow:hidden!important;
+    border:1px solid #e7e3df!important;
+    border-radius:18px!important;
+    background:#fff!important;
+    box-shadow:
+      0 7px 18px rgba(45,42,38,.055),
+      0 1px 2px rgba(45,42,38,.03)!important;
+  }
+  .ios-app.theme-dark .ref-settle-actions{
+    background:#1a211b!important;
+    border-color:#344137!important;
+    box-shadow:
+      0 9px 20px rgba(0,0,0,.16),
+      inset 0 1px 0 rgba(255,255,255,.018)!important;
+  }
+
+  .ios-app .ref-settle-actions button{
+    width:100%!important;
+    min-height:66px!important;
+    padding:9px 1px!important;
+    border:0!important;
+    border-bottom:1px solid #ece9e5!important;
+    border-radius:0!important;
+    background:transparent!important;
+    color:#2f7d37!important;
+    box-shadow:none!important;
+    display:grid!important;
+    grid-template-columns:43px minmax(0,1fr) 12px!important;
+    gap:11px!important;
+    align-items:center!important;
+    text-align:left!important;
+    -webkit-tap-highlight-color:transparent!important;
+  }
+  .ios-app .ref-settle-actions button:last-child{
+    border-bottom:0!important;
+  }
+  .ios-app.theme-dark .ref-settle-actions button{
+    background:transparent!important;
+    border-bottom-color:#303a32!important;
+    color:#72cb82!important;
+  }
+
+  .ios-app .ref-settle-action-icon{
+    width:43px!important;
+    height:43px!important;
+    min-width:43px!important;
+    border-radius:13px!important;
+    background:#e0f1df!important;
+    color:#2e7d39!important;
+    display:grid!important;
+    place-items:center!important;
+  }
+  .ios-app.theme-dark .ref-settle-action-icon{
+    background:#25422c!important;
+    color:#72cb82!important;
+  }
+  .ios-app .ref-settle-action-icon .icon{
+    width:19px!important;
+    height:19px!important;
+  }
+
+  .ios-app .ref-settle-action-copy{
+    min-width:0!important;
+  }
+  .ios-app .ref-settle-action-copy strong{
+    display:block!important;
+    color:#1c1f1c!important;
+    font-size:13.5px!important;
+    line-height:1.15!important;
+    font-weight:710!important;
+    letter-spacing:-.08px!important;
+  }
+  .ios-app.theme-dark .ref-settle-action-copy strong{
+    color:#f1f4f1!important;
+  }
+  .ios-app .ref-settle-action-copy small{
+    display:block!important;
+    margin-top:4px!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    color:#8b918c!important;
+    font-size:9.8px!important;
+    line-height:1.2!important;
+    font-weight:540!important;
+  }
+  .ios-app.theme-dark .ref-settle-action-copy small{
+    color:#99a29b!important;
+  }
+
+  .ios-app .ref-settle-actions button>.icon{
+    width:12px!important;
+    height:12px!important;
+    color:#a1a6a1!important;
+    transition:transform .18s ease,color .18s ease!important;
+  }
+  .ios-app.theme-dark .ref-settle-actions button>.icon{
+    color:#687269!important;
+  }
+
+  .ios-app .ref-settle-actions button:active{
+    background:#f6f8f5!important;
+  }
+  .ios-app.theme-dark .ref-settle-actions button:active{
+    background:#202921!important;
+  }
+  .ios-app .ref-settle-actions button:active>.icon{
+    transform:translateX(2px)!important;
+    color:#2f7d37!important;
+  }
+  .ios-app.theme-dark .ref-settle-actions button:active>.icon{
+    color:#72cb82!important;
+  }
+}
+
+@media(max-width:375px){
+  .ios-app .ref-settle-actions{
+    padding-inline:10px!important;
+    border-radius:17px!important;
+  }
+  .ios-app .ref-settle-actions button{
+    min-height:62px!important;
+    grid-template-columns:40px minmax(0,1fr) 11px!important;
+    gap:10px!important;
+  }
+  .ios-app .ref-settle-action-icon{
+    width:40px!important;
+    height:40px!important;
+    min-width:40px!important;
+    border-radius:12px!important;
+  }
+  .ios-app .ref-settle-action-copy strong{
+    font-size:13px!important;
+  }
+  .ios-app .ref-settle-action-copy small{
+    font-size:9.3px!important;
+  }
+}
