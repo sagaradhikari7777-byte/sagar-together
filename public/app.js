@@ -141,11 +141,12 @@ function homeSpendingPulse(){
  const current=ordered.find(s=>!s.archived);
  if(!current)return '';
  const insight=periodInsight(data.sheets,data.expenses,current,today());
- const entries=data.expenses.filter(e=>e.sheet===current.id),total=insight?.total??entries.reduce((sum,e)=>sum+e.cents,0);
- const top=insight?.top;
- const comparison=insight?.delta!=null?`${insight.delta>0?'+':''}${insight.delta}% vs ${insight.previous.name}`:`${insight?.count??entries.length} expenses in this period`;
+ const entries=data.expenses.filter(e=>e.sheet===current.id),total=entries.reduce((sum,e)=>sum+e.cents,0);
+ const totals=new Map();entries.forEach(e=>totals.set(e.category,(totals.get(e.category)||0)+e.cents));
+ const top=[...totals.entries()].sort((a,b)=>b[1]-a[1])[0];
+ const comparison=insight?.delta!=null?`${insight.delta>0?'+':''}${insight.delta}% on matched dates`:`${insight?.count??entries.length} expenses in this period`;
  const range=(from,to)=>new Date(from+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'})+'–'+new Date(to+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'});
- const explanation=insight?.previous?`<p class="period-comparison">Same ${insight.days} days: ${esc(range(current.start,insight.currentEnd))} vs ${esc(range(insight.previous.start,insight.previousEnd))}.${insight.previousTotal===0?' No earlier spending to compare.':insight.changed?.delta?` ${esc(insight.changed.category)} ${insight.changed.delta>0?'increased':'decreased'} by ${money(Math.abs(insight.changed.delta))}.`:''}</p>`:'';
+ const explanation=insight?.previous?`<p class="period-comparison">Same ${insight.days} days: ${esc(range(current.start,insight.currentEnd))} (${money(insight.total)}) vs ${esc(insight.previous.name)}, ${esc(range(insight.previous.start,insight.previousEnd))} (${money(insight.previousTotal)}).${insight.previousTotal===0?' No earlier spending to compare.':insight.changed?.delta?` ${esc(insight.changed.category)} ${insight.changed.delta>0?'increased':'decreased'} by ${money(Math.abs(insight.changed.delta))}.`:''}</p>`:'';
  return `<section class="home-period-card" aria-label="Current period spending">
   <div class="home-period-head"><div><small>This period</small><h2>${esc(current.name)}</h2></div><button type="button" data-view-sheet="${esc(current.id)}" aria-label="Open ${esc(current.name)}">${icon('chevron')}</button></div>
   <div class="home-period-main"><strong>${money(total)}</strong><span>${esc(comparison)}</span></div>
