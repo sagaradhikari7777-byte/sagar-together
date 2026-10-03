@@ -28,7 +28,7 @@ test('Home is focused on balance, search and recent activity without duplicate f
  assert.match(app,/data-action="home-search"/);
  assert.match(app,/Recent transactions/);
  assert.match(app,/function homeSpendingPulse\(\)/);
- assert.match(app,/THIS PERIOD/);
+ assert.match(app,/This period/);
  assert.doesNotMatch(app,/data-home-filter=/);
  assert.doesNotMatch(app,/ref-home-tools[^\n]*data-action="add"/);
 });

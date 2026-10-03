@@ -14,5 +14,9 @@
   },
   "dependencies": {
     "@netlify/database": "^2.0.1"
+  },
+  "devDependencies": {
+    "@tesseract.js-data/eng": "1.0.0",
+    "tesseract.js": "6.0.1"
   }
 }

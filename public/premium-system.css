@@ -22,6 +22,57 @@
   --ui-card-shadow-strong:0 12px 28px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.025);
 }
 
+/* Readable supporting copy; solid surfaces keep information calm. */
+.ios-app{--muted:#626b63}
+.ios-app.theme-dark{--muted:#b2beb4}
+.ios-app :is(.home-period-head small,.home-period-detail small,.ref-spend-head small,.ref-settings-section-head small,.ref-expense-card-title small,.ref-expense-options-head small){font-size:12px!important;line-height:1.35!important;letter-spacing:.025em!important;text-transform:none!important}
+.ios-app :is(.home-recent-copy small,.home-recent-author,.expense-info>span,.ref-sheet-copy small,.ref-sheet-amount small,.ref-settings-copy small,.home-period-detail p){font-size:13px!important;line-height:1.4!important;color:var(--muted)!important}
+.ios-app .home-period-detail strong{font-size:15px}
+.ios-app .home-period-main>span{font-size:12px;line-height:1.4}
+.ios-app .home-period-head button{width:44px;height:44px;min-width:44px}
+.ios-app .ref-sheets-summary{padding:17px 18px!important;min-height:0!important}
+.ios-app .ref-sheets-summary-head span{font-size:14px!important;letter-spacing:0!important}
+.ios-app .ref-sheets-summary p{margin:8px 0 0!important;font-size:13px!important;color:var(--muted)!important}
+.ios-app .ref-sheets-total{margin-top:9px!important;font-size:36px!important}
+.ios-app :is(.ref-balance-card,.ref-inside-summary){padding:18px!important}
+.ios-app .ref-sheet-amount small{max-width:90px;text-align:right}
+.ios-app #sheet[open]:has(#expense-form) #expense-form>section{padding:14px!important;background:var(--ui-card-bg)!important;backdrop-filter:none!important}
+.ios-app .ref-expense-label{font-size:14px!important;line-height:1.4!important}
+.ios-app :is(.ref-expense-card-title,.ref-expense-options-head){margin-bottom:12px!important}
+.ios-app .ref-expense-field{margin-bottom:12px!important}
+.ios-app .period-comparison{font-size:13px;line-height:1.5;color:var(--muted);margin:12px 0 0}
+.ios-app .merchant-shortcuts{display:flex;gap:7px;overflow-x:auto;margin:-4px 0 12px;padding:0 0 2px}
+.ios-app .merchant-shortcuts:empty{display:none}
+.ios-app .merchant-shortcuts button{flex-shrink:0;min-height:44px;border:1px solid var(--ui-card-border);border-radius:12px;padding:8px 12px;background:var(--surface-2);color:var(--text);font-size:14px}
+.ios-app :is(.upcoming-card,.bill-item){padding:14px;border:1px solid var(--ui-card-border);border-radius:var(--ui-card-radius);background:var(--ui-card-bg);box-shadow:var(--ui-card-shadow)}
+.ios-app .upcoming-card{margin-top:14px}
+.ios-app :is(.upcoming-head,.bill-item>div:first-child){display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ios-app .upcoming-head h2{font-size:17px;margin:0}
+.ios-app .upcoming-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;min-height:62px;padding:10px 0;border:0;border-bottom:1px solid var(--ui-card-border);border-radius:0;background:transparent;color:var(--text);font-size:15px}
+.ios-app .upcoming-row small{display:block;color:var(--muted);font-size:13px;margin-top:4px}
+.ios-app .upcoming-card>p{margin:10px 0 0;line-height:1.5}
+.ios-app .bill-list{display:grid;gap:12px;margin-top:16px}
+.ios-app .bill-item p{margin:8px 0;color:var(--muted);font-size:14px}
+.ios-app .bill-item small{color:var(--muted);font-size:13px}
+.ios-app .bill-actions{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.ios-app .feature-form{display:grid;gap:14px}
+.ios-app .feature-form>label,.ios-app .feature-pair>label{display:grid;gap:7px;font-size:14px;color:var(--text);min-width:0}
+.ios-app .feature-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:0}
+.ios-app .feature-form :is(input:not([type=checkbox]),select){width:100%;min-width:0;min-height:46px;font-size:16px;color:var(--text);background:var(--ui-card-bg);border:1px solid var(--ui-card-border);border-radius:12px;padding:10px;box-sizing:border-box}
+.ios-app .feature-form .feature-check{display:flex;align-items:center;gap:10px;line-height:1.5;min-height:44px}
+.ios-app :is(.feature-check,.scan-choice)>input[type=checkbox]{width:20px;height:20px;min-width:20px;accent-color:var(--ui-green)}
+.ios-app .scan-receipt{margin-top:10px;min-height:44px}
+.ios-app #scan-status{margin:8px 0;line-height:1.5}
+.ios-app #scan-review{margin-top:12px;padding:12px;border:1px solid var(--ui-card-border);border-radius:13px;background:var(--surface-2)}
+.ios-app .scan-choice{display:grid;grid-template-columns:22px minmax(0,1fr);align-items:center;gap:8px;margin:12px 0;font-size:14px}
+.ios-app .scan-choice input[data-suggest]{grid-column:1/-1;min-height:44px;width:100%;min-width:0;box-sizing:border-box;border:1px solid var(--ui-card-border);border-radius:10px;background:var(--ui-card-bg);color:var(--text);padding:10px;font-size:16px}
+.ios-app .expense-history{list-style:none;padding:0;margin:16px 0}
+.ios-app .expense-history>li{margin-bottom:12px;padding:14px;border:1px solid var(--ui-card-border);border-radius:14px;background:var(--ui-card-bg)}
+.ios-app .expense-history time{display:block;margin-top:6px;color:var(--muted);font-size:13px}
+.ios-app .expense-history ul{padding-left:18px;margin:12px 0 0;font-size:14px;line-height:1.6;overflow-wrap:anywhere}
+.ios-app .history-action{min-height:44px}
+@media(max-width:360px){.ios-app .feature-pair{grid-template-columns:1fr}}
+
 /* Common card hierarchy */
 .ios-app :is(
  .home-recent-card,.home-period-card,.draft-banner,

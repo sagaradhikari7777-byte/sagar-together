@@ -40,3 +40,18 @@ test('creator-only permissions hold for every author and payer combination',()=>
 test('missing legacy author remains read-only, never inferred from payer',()=>{const{h}=setup();mutate(h,0,{action:'expense',expense:exp(h)});delete h.expenses[0].creator;const e=h.expenses[0];for(let seat=0;seat<4;seat++){assert.equal(visible(h,seat).expenses.length,1);assert.throws(()=>mutate(h,seat,{action:'expense',expense:{...e,creator:seat}}),{status:403});assert.throws(()=>mutate(h,seat,{action:'delete',id:e.id}),{status:403});}});
 
 test('previously archived sheets with couple-only costs can still be reopened',()=>{const{h}=setup();mutate(h,0,{action:'expense',expense:exp(h)});h.expenses[0].visibility='private';h.sheets[0].archived=true;mutate(h,0,{action:'archive',id:h.sheets[0].id});assert.equal(h.sheets[0].archived,false);mutate(h,0,{action:'expense',expense:{...visible(h,0).expenses[0],notes:'Updated'}});assert.equal(h.expenses[0].notes,'Updated');});
+
+test('API recurring confirmation persists expense and history, enforces revisions and ownership',async()=>{
+ const fn=makeHandler(fakeDb()),created=await request(fn,{action:'create',name:'Test home',names:['A','B','C','D'],seat:0}),house=created.data.id;
+ const joined=await request(fn,{action:'join',house,invite:created.data.invite,seat:2});
+ const bill={merchant:'Rent',cents:12345,category:'Rent',payer:0,split:'half',nextDue:'2026-01-31',frequency:'monthly',sheet:created.data.sheets[0].id,active:true,reminder:true};
+ const scheduled=await request(fn,{action:'recurring',house,rev:joined.data.rev,bill},created.key);assert.equal(scheduled.code,200);assert.equal(scheduled.data.expenses.length,0);
+ const savedBill=scheduled.data.recurring[0];const forbidden=await request(fn,{action:'recurring',house,rev:scheduled.data.rev,bill:{...savedBill,cents:1}},joined.key);assert.equal(forbidden.code,403);
+ const action={action:'recurring-record',house,rev:scheduled.data.rev,id:savedBill.id,due:savedBill.nextDue,sheet:bill.sheet};
+ const recorded=await request(fn,action,joined.key);assert.equal(recorded.code,200);assert.equal(recorded.data.recurring[0].nextDue,'2026-02-28');assert.equal(recorded.data.expenses[0].creator,2);assert.equal(recorded.data.expenses[0].history[0].name,'C');
+ const stale=await request(fn,action,joined.key);assert.equal(stale.code,409);
+ const replay=await request(fn,{...action,rev:recorded.data.rev},created.key);assert.equal(replay.code,409);
+ const read=await request(fn,{action:'read',house},created.key);assert.equal(read.data.expenses.length,1);assert.equal(read.data.recurring[0].nextDue,'2026-02-28');
+ const original=read.data.expenses[0];const edited=await request(fn,{action:'expense',house,rev:read.data.rev,expense:{...original,cents:9999,history:[]}},joined.key);assert.equal(edited.code,200);assert.equal(edited.data.expenses[0].history.length,2);assert.equal(edited.data.expenses[0].recurring.bill,savedBill.id);
+ const roundtrip=await request(fn,{action:'read',house},created.key);assert.equal(roundtrip.data.expenses[0].history[1].changes[0].after,9999);
+});
