@@ -287,8 +287,10 @@ function settleView(){
    <section class="ref-settle-summary ${status}"><div class="ref-settle-summary-head"><span><i></i>TO SETTLE</span><em>${statusLabel}</em></div><strong class="ref-settle-amount">${money(remaining)}</strong><p>${o.net===0?'No payment is needed.':`${esc(couple(from))} → ${esc(couple(to))}`}</p><div class="ref-settle-stats"><span><small>Your share</small><b>${money(o.share)}</b></span><span><small>Paid</small><b>${money(o.paid)}</b></span></div></section>
    <div class="ref-settle-controls"><label class="ref-settle-sheet"><span>Sheet</span><div>${icon('folder')}${selectSheet()}</div></label><label class="ref-settle-couple"><span>Share for</span><select id="settle-couple">${['a','b'].map(g=>`<option value="${g}" ${g===selected?'selected':''}>${esc(couple(g))}${g===group(data.seat)?' · yours':''}</option>`).join('')}</select></label></div>
    ${settlementSpendChart()}
-   <div class="ref-settle-section-head"><div><small>UNSETTLED</small><h2>What makes this up</h2></div><span>${items.length} open</span></div>
-   <div class="ref-settle-breakdown">${settlementBreakdown()}</div>
+   <section class="ref-unsettled-card" aria-label="Unsettled expenses">
+    <div class="ref-unsettled-head"><div><small>UNSETTLED</small><h2>What makes this up</h2></div><strong>${items.length} open</strong></div>
+    <div class="ref-settle-breakdown">${settlementBreakdown()}</div>
+   </section>
    <section class="ref-settle-actions" aria-label="Settlement tools">
     <button class="ref-settle-tool-card" data-action="settlement-summary"><span class="ref-settle-tool-head"><span><small>SUMMARY</small><strong>Settlement summary</strong></span><span class="ref-settle-tool-icon">${icon('copy')}</span></span><p>Copy the current balance and shares in one clean summary.</p><span class="ref-settle-tool-foot"><span>Ready to share</span>${icon('chevron')}</span></button>
     <button class="ref-settle-tool-card" data-action="settlement-history"><span class="ref-settle-tool-head"><span><small>HISTORY</small><strong>Payment history</strong></span><span class="ref-settle-tool-icon">${icon('receipt')}</span></span><p>${history.length?history.length+' recorded payment'+(history.length===1?'':'s')+' for this sheet.':'No payments have been recorded for this sheet yet.'}</p><span class="ref-settle-tool-foot"><span>View settlement records</span>${icon('chevron')}</span></button>
