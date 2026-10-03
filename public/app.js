@@ -289,10 +289,9 @@ function settleView(){
    ${settlementSpendChart()}
    <div class="ref-settle-section-head"><div><small>UNSETTLED</small><h2>What makes this up</h2></div><span>${items.length} open</span></div>
    <div class="ref-settle-breakdown">${settlementBreakdown()}</div>
-   <div class="ref-settle-section-head ref-settle-tools-head"><div><small>SETTLEMENT</small><h2>Tools</h2></div></div>
    <section class="ref-settle-actions" aria-label="Settlement tools">
-    <button data-action="settlement-summary"><span class="ref-settle-action-icon">${icon('copy')}</span><span class="ref-settle-action-copy"><strong>Settlement summary</strong><small>Copy the current balance and shares</small></span>${icon('chevron')}</button>
-    <button data-action="settlement-history"><span class="ref-settle-action-icon">${icon('receipt')}</span><span class="ref-settle-action-copy"><strong>Payment history</strong><small>${history.length?history.length+' recorded payment'+(history.length===1?'':'s'):'No payments recorded yet'}</small></span>${icon('chevron')}</button>
+    <button class="ref-settle-tool-card" data-action="settlement-summary"><span class="ref-settle-tool-head"><span><small>SUMMARY</small><strong>Settlement summary</strong></span><span class="ref-settle-tool-icon">${icon('copy')}</span></span><p>Copy the current balance and shares in one clean summary.</p><span class="ref-settle-tool-foot"><span>Ready to share</span>${icon('chevron')}</span></button>
+    <button class="ref-settle-tool-card" data-action="settlement-history"><span class="ref-settle-tool-head"><span><small>HISTORY</small><strong>Payment history</strong></span><span class="ref-settle-tool-icon">${icon('receipt')}</span></span><p>${history.length?history.length+' recorded payment'+(history.length===1?'':'s')+' for this sheet.':'No payments have been recorded for this sheet yet.'}</p><span class="ref-settle-tool-foot"><span>View settlement records</span>${icon('chevron')}</span></button>
    </section>
   </div>
  </section>`;
