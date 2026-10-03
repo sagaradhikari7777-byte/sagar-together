@@ -53,18 +53,11 @@
   letter-spacing:-.4px!important;
   color:var(--entry-ink)!important;
 }
-.ios-app #sheet[open]:has(#expense-form) .dialog-head .back-button,
-.ios-app #sheet[open]:has(#expense-form) .ref-expense-save {
+.ios-app #sheet[open]:has(#expense-form) .dialog-head .back-button {
   width:44px!important;
   height:44px!important;
   min-width:44px!important;
   min-height:44px!important;
-}
-.ios-app #sheet[open]:has(#expense-form) .ref-expense-save {
-  background:var(--entry-accent)!important;
-}
-.ios-app.theme-dark #sheet[open]:has(#expense-form) .ref-expense-save {
-  color:#102014!important;
 }
 .ios-app #sheet[open] #expense-form.ref-expense-form {
   grid-row:2!important;
@@ -271,26 +264,10 @@
 .ios-app #sheet[open] #expense-form #save-expense {display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;min-height:48px!important;background:#2f7d37!important;color:#fff!important;border:0!important;box-shadow:none!important;font-weight:650!important}
 .ios-app.theme-dark #sheet[open] #expense-form #save-expense {background:#4fa960!important}
 .ios-app #sheet[open] #expense-form #save-expense .icon {width:18px!important;height:18px!important}
-.ios-app #sheet[open] #expense-form .save-another,
 .ios-app #sheet[open] #expense-form #delete-expense {border:0!important;background:transparent!important;box-shadow:none!important;font-size:14px!important;color:var(--entry-accent)!important}
 .ios-app #sheet[open] #expense-form #delete-expense {color:#bc4747!important}
-.ios-app #sheet[open]:has(#expense-form) > .ref-expense-nav {
-  grid-row:3!important;
-  position:relative!important;
-  inset:auto!important;
-  width:calc(100% - 24px)!important;
-  height:72px!important;
-  min-height:72px!important;
-  margin:4px 12px calc(8px + var(--safe-bottom))!important;
-}
 @media(max-width:699px) {
   .ios-app #sheet[open]:has(#expense-form) {width:100%!important;height:100dvh!important;margin:0!important;border:0!important;border-radius:0!important}
-}
-@media(min-width:700px) {
-  /* Glass decoration is positioned only by the mobile dock stylesheet. It must
-     not occupy two extra desktop grid cells and push tabs into a hidden row. */
-  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav > .liquid-refract-layer,
-  .ios-app #sheet[open]:has(#expense-form) .ref-expense-nav > .liquid-selection {display:none!important}
 }
 @media(max-width:440px) {
   .ios-app #sheet[open] #expense-form .ref-expense-pair .ref-expense-control {grid-template-columns:minmax(0,1fr)!important}

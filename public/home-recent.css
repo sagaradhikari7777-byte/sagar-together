@@ -2,15 +2,15 @@
 .ios-app .home-recent-card {
   margin:16px 0 14px;
   padding:16px 14px;
-  border:1px solid #e7e3df;
-  border-radius:19px;
+  border:1px solid var(--ui-card-border);
+  border-radius:var(--ui-card-radius);
   background:#fff;
-  box-shadow:0 7px 18px rgba(45,42,38,.055),0 1px 2px rgba(45,42,38,.03);
+  box-shadow:var(--ui-card-shadow);
 }
 .ios-app.theme-dark .home-recent-card {
   background:#1a211b;
-  border-color:#344137;
-  box-shadow:0 9px 20px rgba(0,0,0,.16);
+  border-color:var(--ui-card-border);
+  box-shadow:var(--ui-card-shadow);
 }
 .ios-app .home-recent-card .ref-spend-head small {
   display:block;color:var(--accent);font-size:10px;font-weight:760;letter-spacing:.09em;
