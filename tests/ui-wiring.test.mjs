@@ -6,8 +6,6 @@ const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
 const addExpenseCss=readFileSync(new URL('../public/add-expense-polish.css',import.meta.url),'utf8');
 const themeCss=readFileSync(new URL('../public/theme.css',import.meta.url),'utf8');
 const homeCss=readFileSync(new URL('../public/home-recent.css',import.meta.url),'utf8');
-const premiumCss=readFileSync(new URL('../public/premium-system.css',import.meta.url),'utf8');
-const homeCss=readFileSync(new URL('../public/home-recent.css',import.meta.url),'utf8');
 const vercel=JSON.parse(readFileSync(new URL('../vercel.json',import.meta.url),'utf8'));
 
 test('critical UI action targets are defined',()=>{
@@ -93,14 +91,6 @@ test('Vercel blocks production deployment when unit tests fail',()=>{
  assert.equal(vercel.buildCommand,'npm test && npm run build');
 });
 
-
-test('premium UI system stays accessible and consistent',()=>{
- assert.match(premiumCss,/--ui-card-radius:19px/);
- assert.match(premiumCss,/#sheet\.saving \.dialog-head::after/);
- assert.match(premiumCss,/@media\(prefers-reduced-motion:reduce\)/);
- assert.match(premiumCss,/\.liquid-category\)\.food/);
- assert.match(homeCss,/HOME PERIOD PULSE/);
-});
 
 
 test('premium design foundation stays consistent and respects reduced motion',()=>{
