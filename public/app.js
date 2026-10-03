@@ -473,9 +473,9 @@ function expenseForm(e=null,preset={}){
    </div>
   </section>
 
-  <details class="ref-expense-card ref-expense-more-card" ${e&&(x.notes||receipt)?'open':''}>
-   <summary class="ref-expense-more-summary"><span><small>MORE OPTIONS</small><strong>Sheet, notes & receipt</strong><em>${esc(data.sheets.find(s=>s.id===x.sheet)?.name||'Current sheet')}</em></span>${icon('chevron')}</summary>
-   <div class="ref-expense-more-body">
+  <section class="ref-expense-card ref-expense-more-card ${e&&(x.notes||receipt)?'open':''}">
+   <button type="button" class="ref-expense-more-summary" aria-expanded="${e&&(x.notes||receipt)?'true':'false'}"><span><small>MORE OPTIONS</small><strong>Sheet, notes & receipt</strong><em>${esc(data.sheets.find(s=>s.id===x.sheet)?.name||'Current sheet')}</em></span>${icon('chevron')}</button>
+   <div class="ref-expense-more-body" ${e&&(x.notes||receipt)?'':'hidden'}>
     <label class="ref-expense-field"><span class="ref-expense-label">Expense sheet</span><span class="ref-expense-control"><i>${icon('folder')}</i><select name="sheet">${data.sheets.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></span></label>
     <label class="ref-expense-field"><span class="ref-expense-label">Description · optional</span><span class="ref-expense-control"><i>${icon('receipt')}</i><input name="notes" maxlength="500" placeholder="Add a note" value="${esc(x.notes)}"></span></label>
     <details class="amount-calculator ref-option-tool"><summary>${icon('calculator')} Calculate an amount</summary><div class="ref-option-tool-body"><label class="field"><span>Calculation</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="e.g. 24.50 + 18 + 6 / 2" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></div></details>
@@ -485,7 +485,7 @@ function expenseForm(e=null,preset={}){
     <div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div>
     <button type="button" class="text-button" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button>
    </div>
-  </details>
+  </section>
   <p class="error form-error" role="alert"></p>
   <p class="duplicate-warning" hidden role="alert"></p>
   <section class="ref-expense-submit-card">
@@ -503,12 +503,15 @@ function expenseForm(e=null,preset={}){
 
  const f=$('#expense-form');
  syncOverlayLayers();
+ const moreCard=f.querySelector('.ref-expense-more-card'),moreToggle=f.querySelector('.ref-expense-more-summary'),moreBody=f.querySelector('.ref-expense-more-body');
+ const setMoreOpen=open=>{moreCard.classList.toggle('open',open);moreBody.hidden=!open;moreToggle.setAttribute('aria-expanded',String(open));};
+ moreToggle.onclick=()=>setMoreOpen(!moreCard.classList.contains('open'));
  const headerSave=sheet.querySelector('[data-close]');
  headerSave.classList.add('ref-expense-save');
  headerSave.setAttribute('aria-label',e?'Save changes':'Save expense');
  headerSave.innerHTML=icon('check');
 
- f.addEventListener('invalid',ev=>{const details=ev.target.closest('details');if(details)details.open=true;},true);
+ f.addEventListener('invalid',ev=>{if(ev.target.closest('.ref-expense-more-body'))setMoreOpen(true);const details=ev.target.closest('details');if(details)details.open=true;},true);
  const snapshot=()=>JSON.stringify([...new FormData(f)].filter(([name])=>name!=='saveMode'))+receipt;
  const originalSnapshot=snapshot();
  const requestClose=(leave=()=>sheet.close())=>{if(busy||receiptBusy)return;if(snapshot()===originalSnapshot)return leave();let prompt=f.querySelector('.discard-prompt');if(!prompt){prompt=document.createElement('section');prompt.className='discard-prompt';prompt.setAttribute('role','alert');prompt.innerHTML='<strong>Keep this expense?</strong><p>Your changes haven’t been saved.</p><div><button type="button" class="secondary" data-keep>Keep editing</button><button type="button" class="secondary danger" data-discard>Discard</button></div>';f.prepend(prompt);prompt.querySelector('[data-discard]').onclick=leave;prompt.querySelector('[data-keep]').onclick=()=>{prompt.remove();f.elements.amount.focus();};}prompt.querySelector('[data-discard]').onclick=leave;prompt.scrollIntoView({block:'start'});prompt.querySelector('[data-keep]').focus();};
