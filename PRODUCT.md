@@ -1,29 +1,53 @@
 # Together
 
-<!-- impeccable:product-schema 1 -->
+## Product
 
-## Platform
+Together is an iPhone-first shared household expense journal for four people organised as two couples. The core jobs are intentionally narrow:
 
-web
+1. See the current household balance.
+2. See open sheets and outstanding expenses.
+3. Add an expense quickly.
+4. Understand spending and settle a sheet safely.
 
-## Users and purpose
+Do not add features unless they materially improve one of those jobs.
 
-Two couples sharing a household use Together on an iPhone, with desktop access, to record expenses, understand each couple's share and record settlements. The user has requested a compact, modern iOS-inspired interface with Liquid Glass navigation and clear identity.
+## Primary navigation
 
-## Capabilities and constraints
+- **Home** — overall balance, the other couple's net position, search, recent activity.
+- **Sheets** — Open by default, with Open / Unsettled / Archived views.
+- **Add** — focused modal expense entry. It is not a fifth navigable page while open.
+- **Settle** — sheet balance, category/merchant spending, unsettled breakdown, summary, payment history, settlement.
+- **Settings** — household identity, invitations/access, entry defaults, merchant/category management, export, appearance.
 
-Preserve the existing vanilla JavaScript frontend, Vercel API, Upstash data and GitHub continuous deployment. Everyone in the household sees every expense. Only the creator can edit or delete their expense; settled expenses stay locked. Show actual couple names in split controls and entries, start and end dates for sheets, and the signed-in name. Preserve merchants, categories, quick repeat, receipts, CSV, archive/pin, swipes and button alternatives, dark mode, invitations and personal access links.
+Avoid duplicate controls across these destinations.
 
-## Brand commitments
+## Expense entry
 
-Together name and linked-rings mark. Calm iPhone interface, compact lists, floating translucent navigation, consistent styling across tabs and dialogs. The user has delegated design decisions and authorized implementation and publication.
+Keep Add Expense naturally scrolling and compact:
 
-## Evidence
+- Merchant, amount, category, date.
+- Payer and split.
+- Optional note and visible receipt control.
+- Show the sheet selector only when more than one open sheet exists.
+- One primary Save action at the end. Do not add a second header Save or an internal app dock.
+- Editable inputs remain at least 16px on iPhone.
+- Cancelling the iOS receipt picker must keep the draft open.
+- Draft guards, receipt previews and validation errors stay in normal document flow.
 
-Existing frontend in public/ and model policy tests in tests/. Demo records are explicitly labeled sample data. The app is a web application, not a native iOS binary.
+## Data rules
 
-## Expense entry (October 2026)
+- Everyone in the household sees shared expenses.
+- Only the creator can edit or delete an eligible expense.
+- Settled expenses are locked.
+- Splits are 50/50 or 100% assigned to either couple.
+- Recording a settlement marks the sheet's unsettled expenses as settled; it does not transfer money.
+- Preserve receipts, merchant/category catalogs, CSV export, archive/pin, dark mode, invitations and private access links.
 
-Keep Add Expense as a compact, naturally scrolling form with readable controls. Extra details is permanently expanded: expense sheet, optional description, visible Attach receipt/Choose control, then the optional calculator. Put the main Save button at the end, with Save & add another as a quieter secondary action. Inputs stay at least 16px to prevent iPhone focus zoom. Receipt previews, errors, and draft guards must expand the form without covering other fields. Keep the existing household records, author-only permissions, settled locks, and all other tabs intact.
+## Engineering rules
 
-Canonical source is `sagaradhikari7777-byte/sagar-together`, branch `main`; pushes auto-publish to https://sagar-together.vercel.app. Automatic QA email workflows were removed at the user's request; browser checks are manual.
+Canonical repository: `sagaradhikari7777-byte/sagar-together`, branch `main`.
+Production: https://sagar-together.vercel.app.
+
+Vercel must run `npm test && npm run build` before publishing. GitHub Actions email QA is intentionally disabled.
+
+Prefer changing the owning component stylesheet over appending another override layer. Browser verification should cover iPhone-sized viewports, keyboard-sized layouts, receipt attach/cancel/remove, draft protection, save/edit, navigation and dark mode.
