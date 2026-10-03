@@ -66,9 +66,3 @@ test('Settle summary and history use spending-style standalone cards',()=>{
  assert.match(app,/class="ref-settle-tool-card" data-action="settlement-history".*HISTORY.*Payment history/s);
 });
 
-test('Settle summary and history use the grouped app card pattern',()=>{
- assert.match(app,/ref-settle-section-head ref-settle-tools-head/);
- assert.match(app,/section class="ref-settle-actions" aria-label="Settlement tools"/);
- assert.match(app,/data-action="settlement-summary".*ref-settle-action-icon.*ref-settle-action-copy/s);
- assert.match(app,/data-action="settlement-history".*ref-settle-action-icon.*ref-settle-action-copy/s);
-});
