@@ -76,7 +76,7 @@ function modal(title,body){
  if(!sheet.open)modalTrail=[];
  sheet.innerHTML=`<div class="dialog-head"><button type="button" class="back-button" data-modal-back aria-label="Go back">${backIcon()}</button><h2 id="dialog-title" tabindex="-1">${esc(title)}</h2><button type="button" class="icon-button" data-close aria-label="Close">${icon('close')}</button></div>${body}`;
  sheet.querySelector('[data-modal-back]').onclick=backOneModal;
- sheet.oncancel=ev=>{ev.preventDefault();sheet.querySelector('[data-modal-back]').click();};
+ sheet.oncancel=ev=>{if(ev.target!==sheet)return;ev.preventDefault();sheet.querySelector('[data-modal-back]').click();};
  sheet.querySelector('[data-close]').onclick=()=>sheet.close();sheet.setAttribute('aria-labelledby','dialog-title');
  if(!sheet.open)sheet.showModal();
  syncOverlayLayers();
@@ -521,7 +521,7 @@ const headerSave=sheet.querySelector('[data-close]');
  const requestClose=(leave=()=>sheet.close())=>{if(busy||receiptBusy)return;if(snapshot()===originalSnapshot)return leave();let prompt=f.querySelector('.discard-prompt');if(!prompt){prompt=document.createElement('section');prompt.className='discard-prompt';prompt.setAttribute('role','alert');prompt.innerHTML='<strong>Keep this expense?</strong><p>Your changes haven’t been saved.</p><div><button type="button" class="secondary" data-keep>Keep editing</button><button type="button" class="secondary danger" data-discard>Discard</button></div>';f.prepend(prompt);prompt.querySelector('[data-discard]').onclick=leave;prompt.querySelector('[data-keep]').onclick=()=>{prompt.remove();f.elements.amount.focus();};}prompt.querySelector('[data-discard]').onclick=leave;prompt.scrollIntoView({block:'start'});prompt.querySelector('[data-keep]').focus();};
 
  sheet.querySelector('[data-modal-back]').onclick=()=>requestClose(backOneModal);
- sheet.oncancel=ev=>{ev.preventDefault();requestClose(backOneModal);};
+ sheet.oncancel=ev=>{if(ev.target!==sheet)return;ev.preventDefault();requestClose(backOneModal);};
  headerSave.onclick=()=>f.requestSubmit(f.querySelector('#save-expense'));
 
  sheet.querySelectorAll('[data-expense-tab]').forEach(b=>b.onclick=()=>requestClose(()=>{sheet.close();tab=b.dataset.expenseTab;render();}));
@@ -550,8 +550,10 @@ const headerSave=sheet.querySelector('[data-close]');
   update();
  };
  update();
- $('#choose-receipt').onclick=()=>$('#receipt-file').click();
- $('#receipt-file').onchange=async ev=>{
+ const receiptInput=$('#receipt-file');
+ $('#choose-receipt').onclick=()=>receiptInput.click();
+ receiptInput.addEventListener('cancel',()=>$('#choose-receipt').focus({preventScroll:true}));
+ receiptInput.onchange=async ev=>{
   if(!ev.target.files[0])return;
   receiptBusy=true;$('#save-expense').disabled=true;headerSave.disabled=true;
   try{
