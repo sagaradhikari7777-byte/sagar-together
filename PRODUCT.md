@@ -12,7 +12,7 @@ Two couples sharing a household use Together on an iPhone, with desktop access, 
 
 ## Capabilities and constraints
 
-Preserve the existing vanilla JavaScript frontend, Vercel API, Upstash data and GitHub continuous deployment. Everyone in the household sees every expense. Only the creator can edit or delete their expense; settled expenses stay locked. Show actual couple names in split controls and entries, start and end dates for sheets, and the signed-in name. Preserve merchants, categories, quick repeat, calculator, receipts, CSV, archive/pin, swipes and button alternatives, dark mode, invitations and personal access links.
+Preserve the existing vanilla JavaScript frontend, Vercel API, Upstash data and GitHub continuous deployment. Everyone in the household sees every expense. Only the creator can edit or delete their expense; settled expenses stay locked. Show actual couple names in split controls and entries, start and end dates for sheets, and the signed-in name. Preserve merchants, categories, quick repeat, receipts, CSV, archive/pin, swipes and button alternatives, dark mode, invitations and personal access links.
 
 ## Brand commitments
 

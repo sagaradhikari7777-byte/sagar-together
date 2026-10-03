@@ -6,9 +6,9 @@ An original, iPhone-first household expense app inspired by the supplied feature
 
 Current production: https://sagar-together.vercel.app; the canonical GitHub `main` branch publishes to Vercel. The Netlify deployment descriptions below document earlier versions.
 
-The expense form uses one expanded Extra details card for sheet, note, receipt and calculator, followed by a full-width Save action. Its cards keep their intrinsic height inside the scrollable form, including with an open calculator, receipt preview, validation errors or a smaller keyboard viewport. Every editable input remains at least 16px.
+The expense form uses one expanded Extra details card for sheet, note and receipt, followed by a full-width Save action. Its cards keep their intrinsic height inside the scrollable form, including with a receipt preview, validation errors or a smaller keyboard viewport. Every editable input remains at least 16px.
 
-Run `npm test` and `npm run build`. The manual `npm run test:browser` check uses Playwright (install it separately with `npm install --no-save playwright` and `npx playwright install chromium webkit`). Run `npm run test:browser -- --webkit` for Safari's engine. It checks light/dark layouts at 320, 375, 390, 440 and 900px, keyboard-sized viewports, pickers, receipt attach/remove/error states, calculator, saving, edits and draft guards. All writes use temporary sample mode; it does not change household records. There is no automatic QA workflow or email notification.
+Run `npm test` and `npm run build`. The manual `npm run test:browser` check uses Playwright (install it separately with `npm install --no-save playwright` and `npx playwright install chromium webkit`). Run `npm run test:browser -- --webkit` for Safari's engine. It checks light/dark layouts at 320, 375, 390, 440 and 900px, keyboard-sized viewports, pickers, receipt attach/remove/error states, saving, edits and draft guards. All writes use temporary sample mode; it does not change household records. There is no automatic QA workflow or email notification.
 
 ## Original launch status
 

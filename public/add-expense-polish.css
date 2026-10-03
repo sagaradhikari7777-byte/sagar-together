@@ -266,33 +266,6 @@
 .ios-app #sheet[open] #expense-form > .duplicate-warning[hidden] {display:none!important}
 .ios-app #sheet[open] #expense-form #receipt-preview .receipt {display:block;max-width:100%;max-height:220px;object-fit:contain;margin:10px auto 0}
 .ios-app #sheet[open] #expense-form .ref-remove-receipt {min-height:44px!important;margin:0!important;font-size:14px!important;color:var(--entry-accent)!important}
-.ios-app #sheet[open] #expense-form .ref-calc-row {
-  display:block;
-  margin-top:10px!important;
-  border-top:1px solid var(--entry-border)!important;
-  background:transparent!important;
-}
-.ios-app #sheet[open] #expense-form .ref-calc-row > summary {
-  display:grid;
-  grid-template-columns:20px minmax(0,1fr) 12px;
-  align-items:center;
-  gap:8px;
-  min-height:44px;
-  padding:4px 0;
-  list-style:none;
-  color:var(--entry-accent);
-  font-size:14px;
-  font-weight:600;
-  cursor:pointer;
-}
-.ios-app #sheet[open] #expense-form .ref-calc-row > summary::-webkit-details-marker {display:none}
-.ios-app #sheet[open] #expense-form .ref-calc-row > summary .icon {width:18px;height:18px}
-.ios-app #sheet[open] #expense-form .ref-calc-row > summary .icon:last-child {width:12px;height:12px}
-.ios-app #sheet[open] #expense-form .ref-calc-row[open] > summary .icon:last-child {transform:rotate(90deg)}
-.ios-app #sheet[open] #expense-form .ref-calc-body {display:grid;gap:8px;padding:4px 0 0}
-.ios-app #sheet[open] #expense-form .ref-calc-body .field {margin:0!important}
-.ios-app #sheet[open] #expense-form #use-calculation {min-height:44px!important;border-radius:12px!important;font-size:14px!important}
-.ios-app #sheet[open] #expense-form .ref-calc-body .error:empty {display:none!important}
 .ios-app #sheet[open] #expense-form .ref-expense-final-actions {display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:4px!important;margin:0!important}
 .ios-app #sheet[open] #expense-form .ref-expense-final-actions > button {width:100%!important;min-height:44px!important;margin:0!important;font-size:15px!important;border-radius:12px!important}
 .ios-app #sheet[open] #expense-form #save-expense {display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;min-height:48px!important;background:#2f7d37!important;color:#fff!important;border:0!important;box-shadow:none!important;font-weight:650!important}

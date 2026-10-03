@@ -27,7 +27,7 @@ async function layout(page,label){
   const cards=[...f.querySelectorAll(':scope > section')].map(e=>({name:e.className,...r(e),scrollHeight:e.scrollHeight,children:[...e.children].filter(c=>getComputedStyle(c).display!=='none').map(c=>({...r(c),tag:c.tagName}))}));
   const inputs=[...f.querySelectorAll('input:not([type=file]),select')].map(e=>({name:e.name||e.id,size:parseFloat(getComputedStyle(e).fontSize),...r(e)}));
   const nav=document.querySelector('.ref-expense-nav');
-  return {cards,inputs,nav:r(nav),navButtons:[...nav.querySelectorAll('button')].map(r),form:{width:f.clientWidth,scrollWidth:f.scrollWidth},note:r(f.elements.notes),receipt:r(f.querySelector('.ref-receipt-row')),calc:r(f.querySelector('.ref-calc-row')),save:r(f.querySelector('.ref-expense-submit-card'))};
+  return {cards,inputs,nav:r(nav),navButtons:[...nav.querySelectorAll('button')].map(r),form:{width:f.clientWidth,scrollWidth:f.scrollWidth},note:r(f.elements.notes),receipt:r(f.querySelector('.ref-receipt-row')),save:r(f.querySelector('.ref-expense-submit-card'))};
  });
  for(const card of report.cards){
   assert.ok(card.height>=card.scrollHeight-2,`${label}: ${card.name} collapsed (${card.height} < ${card.scrollHeight})`);
@@ -37,8 +37,7 @@ async function layout(page,label){
  for(const input of report.inputs)assert.ok(input.size>=16,`${label}: ${input.name} font ${input.size} risks focus zoom`);
  assert.ok(report.form.scrollWidth<=report.form.width,`${label}: form has horizontal overflow`);
  assert.ok(report.receipt.top>=report.note.bottom,`${label}: receipt covers note`);
- assert.ok(report.calc.top>=report.receipt.bottom,`${label}: calculator covers receipt`);
- assert.ok(report.save.top>=report.calc.bottom,`${label}: Save covers calculator`);
+ assert.ok(report.save.top>=report.receipt.bottom,`${label}: Save covers receipt`);
  assert.equal(report.navButtons.length,5,`${label}: all navigation actions exist`);
  for(const button of report.navButtons)assert.ok(button.top>=report.nav.top-1&&button.bottom<=report.nav.bottom+1&&button.left>=report.nav.left-1&&button.right<=report.nav.right+1,`${label}: navigation action extends outside the dock`);
  return report;
@@ -64,11 +63,7 @@ async function layout(page,label){
      await layout(page,label);
      assert.equal(await page.locator('#remove-receipt').isVisible(),false);
      assert.equal(await page.locator('#receipt-file').isVisible(),false);
-     await page.locator('.ref-calc-row > summary').click();
-     await layout(page,label+' calculator open');
-     await page.locator('#amount-expression').fill('24.50 + 18 + 6 / 2');
-     await page.locator('#use-calculation').click();
-     assert.equal(await page.locator('[name="amount"]').inputValue(),'45.50');
+     await page.locator('[name="amount"]').fill('45.50');
      await page.locator('[name="notes"]').fill('A note that should stay inside Extra details.');
      await layout(page,label+' note focused');
      await page.locator('#save-expense').scrollIntoViewIfNeeded();

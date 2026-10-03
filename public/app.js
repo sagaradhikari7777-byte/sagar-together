@@ -2,7 +2,7 @@ import {createNavigationTrail,installEdgeBack} from './back-navigation.js';
 import {settlementOverview} from './settlement-overview.js';
 import {householdExpense,canManageExpenseAs} from './expense-policy.js';
 import {catalogValues,changeCatalog} from './catalog.js';
-import {calculateAmount,filterExpenses,summarizeSpending,repeatPreset,frequentMerchants} from './journal.js';
+import {filterExpenses,summarizeSpending,repeatPreset,frequentMerchants} from './journal.js';
 const $=s=>document.querySelector(s), app=$('#app'), sheet=$('#sheet');
 const paths={wifi:'M3 8a14 14 0 0 1 18 0M6 12a9 9 0 0 1 12 0M9 16a4 4 0 0 1 6 0M12 20h.01',gift:'M3 8h18v5H3ZM5 13v8h14v-8M12 8v13M12 8C3 8 5 0 9 3l3 5ZM12 8c9 0 7-8 3-5l-3 5Z',movie:'M3 9h18v12H3ZM3 9 2 4l18-3 1 5ZM7 3l3 4m4-5 3 4',tag:'M3 3h8l10 10-8 8L3 11ZM7 7h.01',edit:'m15 4 5 5M4 20l4-1L21 6l-4-4L4 15Z',pin:'m8 3 8 0-1 7 3 4H6l3-4ZM12 14v8',archive:'M3 3h18v5H3ZM5 8v13h14V8M9 12h6',trash:'M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7',store:'M3 10h18L19 3H5ZM5 10v11h14V10M9 21v-7h6v7',home:'M3 10 12 3l9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z',list:'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',settle:'M19 6v5h-5M5 18v-5h5M6.2 8A7 7 0 0 1 18.8 6M5.2 18A7 7 0 0 0 17.8 16M12 5v14M15.5 8c-.8-1-2-1.5-3.5-1.5-2.1 0-3.5 1-3.5 2.5 0 1.7 1.5 2.3 3.6 2.7 2.1.4 3.4 1 3.4 2.8 0 1.6-1.4 2.8-3.5 2.8-1.6 0-2.9-.5-3.8-1.5',settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2',plus:'M12 5v14M5 12h14',close:'m6 6 12 12M6 18 18 6',food:'M4 3v6q0 3 3 3V3m0 9v9M18 3q-5 5 0 10v8M18 3v10',groceries:'m3 4 2 0 3 12h11l2-8H6M9 21h.01M18 21h.01',bills:'m13 2-9 12h7l-1 8 10-12h-7Z',travel:'M3 16h18M5 16l1-8h12l2 8M7 20v-4m10 4v-4M8 12h.01M16 12h.01',other:'M4 5h16v15H4zM8 2v6m8-6v6M4 10h16',check:'m5 12 4 4L19 6',lock:'M5 10h14v11H5zM8 10V6a4 4 0 0 1 8 0v4',folder:'M3 6V4h7l3 3h8v13H3Z',arrow:'M5 12h14m-5-5 5 5-5 5',refresh:'M20 7v5h-5M4 17v-5h5M5 7a8 8 0 0 1 13-2l2 3M4 16l2 3a8 8 0 0 0 13-2',receipt:'M5 3h14v18l-3-2-4 2-4-2-3 2ZM8 7h8M8 11h8M8 15h4',moon:'M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10'};
 Object.assign(paths,{calendar:'M6 2v3m12-3v3M3 8h18M5 4h14a2 2 0 0 1 2 2v15H3V6a2 2 0 0 1 2-2ZM7 12h.01M12 12h.01M17 12h.01M7 16h.01M12 16h.01M17 16h.01',user:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 21a8 8 0 0 1 16 0',search:'m21 21-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',people:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M13 3a4 4 0 0 1 0 8M22 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0',chevron:'m9 5 7 7-7 7',settings:'M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1ZM16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0',chart:'M4 20V10m6 10V4m6 16v-7m5 7H2',copy:'M8 8h13v13H8ZM16 8V3H3v13h5',calculator:'M5 2h14v20H5ZM8 6h8M8 11h1m6 0h1m-8 4h1m6 0h1m-8 4h1m6 0h1',filter:'M3 5h18M6 12h12M10 19h4',sun:'M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42M18.36 5.64l-1.42 1.42M7.06 16.94l-1.42 1.42M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0',dots:'M5 12h.01M12 12h.01M19 12h.01'});
@@ -492,7 +492,6 @@ function expenseForm(e=null,preset={}){
    <div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div>
    <button type="button" class="text-button ref-remove-receipt" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button>
    </div>
-   <details class="ref-calc-row"><summary>${icon('calculator')}<span>Calculate an amount</span>${icon('chevron')}</summary><div class="ref-calc-body"><label class="field"><span>Calculation</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="e.g. 24.50 + 18 + 6 / 2" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></div></details>
   </section>
   <p class="error form-error" role="alert"></p>
   <p class="duplicate-warning" hidden role="alert"></p>
@@ -551,15 +550,6 @@ const headerSave=sheet.querySelector('[data-close]');
   update();
  };
  update();
- $('#use-calculation').onclick=()=>{
-  try{
-   f.elements.amount.value=(calculateAmount($('#amount-expression').value)/100).toFixed(2);
-   $('#calculation-error').textContent='';
-   f.querySelector('.ref-calc-row').open=false;
-   f.elements.amount.dispatchEvent(new Event('input',{bubbles:true}));
-  }catch(err){$('#calculation-error').textContent=err.message;}
- };
- $('#amount-expression').onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();$('#use-calculation').click();}};
  $('#choose-receipt').onclick=()=>$('#receipt-file').click();
  $('#receipt-file').onchange=async ev=>{
   if(!ev.target.files[0])return;

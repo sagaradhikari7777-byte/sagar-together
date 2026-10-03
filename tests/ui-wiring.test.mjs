@@ -86,12 +86,11 @@ test('Add Expense exposes both final save actions at the end of the form',()=>{
  assert.match(app,/class="secondary save-another" type="submit" name="saveMode" value="another">Save & add another/);
 });
 
-test('Add Expense optional tools stay in normal flow with receipt before calculator',()=>{
+test('Add Expense optional tools stay in normal flow with receipt before save',()=>{
  const options=app.indexOf('class="ref-expense-options-card"');
  const receipt=app.indexOf('class="ref-receipt-row"',options);
- const calculator=app.indexOf('class="ref-calc-row"',options);
  const save=app.indexOf('class="ref-expense-submit-card"',options);
- assert.ok(options>=0&&receipt>options&&calculator>receipt&&save>calculator);
+ assert.ok(options>=0&&receipt>options&&save>receipt);
  assert.doesNotMatch(app,/ref-expense-more-summary/);
  assert.doesNotMatch(app,/setMoreOpen/);
  assert.match(addExpenseCss,/#expense-form > section\s*\{[\s\S]*position:static!important;[\s\S]*height:auto!important;[\s\S]*overflow:visible!important/);
