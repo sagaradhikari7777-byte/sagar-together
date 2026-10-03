@@ -289,7 +289,11 @@ function settleView(){
    ${settlementSpendChart()}
    <div class="ref-settle-section-head"><div><small>UNSETTLED</small><h2>What makes this up</h2></div><span>${items.length} open</span></div>
    <div class="ref-settle-breakdown">${settlementBreakdown()}</div>
-   <div class="ref-settle-actions"><button data-action="settlement-summary">${icon('copy')}<span><strong>Summary</strong><small>Copy the balance</small></span></button><button data-action="settlement-history">${icon('receipt')}<span><strong>History</strong><small>${history.length?history.length+' payment'+(history.length===1?'':'s'):'No payments yet'}</small></span></button></div>
+   <div class="ref-settle-section-head ref-settle-tools-head"><div><small>SETTLEMENT</small><h2>Tools</h2></div></div>
+   <section class="ref-settle-actions" aria-label="Settlement tools">
+    <button data-action="settlement-summary"><span class="ref-settle-action-icon">${icon('copy')}</span><span class="ref-settle-action-copy"><strong>Settlement summary</strong><small>Copy the current balance and shares</small></span>${icon('chevron')}</button>
+    <button data-action="settlement-history"><span class="ref-settle-action-icon">${icon('receipt')}</span><span class="ref-settle-action-copy"><strong>Payment history</strong><small>${history.length?history.length+' recorded payment'+(history.length===1?'':'s'):'No payments recorded yet'}</small></span>${icon('chevron')}</button>
+   </section>
   </div>
  </section>`;
 }
