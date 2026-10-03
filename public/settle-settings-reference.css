@@ -123,6 +123,7 @@
 .ios-app .ref-settings-icon .icon{width:17px;height:17px}
 .ios-app .ref-settings-copy{min-width:0}.ios-app .ref-settings-copy strong{display:block;color:#1c1f1c;font-size:12.5px;font-weight:680}.ios-app.theme-dark .ref-settings-copy strong{color:var(--text)}
 .ios-app .ref-settings-copy small{display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:normal;color:#647169;font-size:13px}
+.ios-app.theme-dark .ref-settings-copy small{color:var(--muted)}
 .ios-app .ref-settings-row>.icon{width:11px;height:11px;color:#a1a6a1}
 .ios-app .ref-settings-signout{width:100%;min-height:48px;margin-top:14px;padding:0 14px;border:1px solid #eddcdf;border-radius:14px;background:#fff;color:#ba626e;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:680}
 .ios-app.theme-dark .ref-settings-signout{background:var(--surface);border-color:#513139;color:var(--danger)}
