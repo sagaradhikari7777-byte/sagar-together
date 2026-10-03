@@ -35,7 +35,7 @@ test('Sheets and sheet detail default to open work',()=>{
  assert.match(app,/chip\('open','Open','amber'\).*chip\('settled','Settled','green'\)/s);
  assert.doesNotMatch(app,/chip\('all','All'\)/);
  assert.match(app,/filter='open'/);
- assert.match(app,/data-view-sheet[\\s\\S]*filter='open';tab='expenses'/);
+ assert.match(app,/data-view-sheet[\s\S]*filter='open';tab='expenses'/);
 });
 
 test('Settings keeps household and journal tools but removes duplicate Insights',()=>{
