@@ -51,7 +51,7 @@ sheet.addEventListener('click',ev=>{
  if(back)back.click();else sheet.close();
 });
 installEdgeBack({canGoBack:()=>!busy&&(sheet.open||!!document.querySelector('#catalog-dialog[open]')||isInnerPage()),goBack});
-let sheetSearch='',sheetFilter='all',sheetSearchOpen=false,settleCouple=null,settleSpendMode='category';
+let sheetSearch='',sheetFilter='open',sheetSearchOpen=false,settleCouple=null,settleSpendMode='category';
 let expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'},insightPeriod='sheet';
 let data=null,credentials=null,demo=false,tab='home',filter='all',search='',activeSheet='',joinInfo=null,busy=false,homeBalanceFilter='all';
 try{credentials=JSON.parse(localStorage.getItem('together-access'));document.body.classList.toggle('theme-dark',localStorage.getItem('together-theme')==='dark');}catch{}
@@ -198,11 +198,11 @@ function sheetsView(){
   unsettled:currentSheets.filter(sh=>stateFor(sh).unsettled).length,
   archived:allSheets.filter(sh=>sh.archived).length
  };
+ if(!['open','unsettled','archived'].includes(sheetFilter))sheetFilter='open';
  const matchesFilter=sh=>{
-  if(sheetFilter==='open')return !sh.archived;
   if(sheetFilter==='unsettled')return !sh.archived&&stateFor(sh).unsettled;
   if(sheetFilter==='archived')return sh.archived;
-  return true;
+  return !sh.archived;
  };
  const items=allSheets.filter(sh=>matchesFilter(sh)&&sh.name.toLowerCase().includes(sheetSearch.toLowerCase()));
  const card=(sh,index)=>{
@@ -225,7 +225,7 @@ function sheetsView(){
   <div class="ref-sheets-progress"><i></i></div>
   <div class="ref-sheets-body">
    <section class="ref-sheets-summary"><div class="ref-sheets-summary-head"><span><i></i>UNSETTLED</span><em>${unsettledSheets.length} sheet${unsettledSheets.length===1?'':'s'}</em></div><strong class="ref-sheets-total">${money(unsettledTotal)}</strong><p>${unsettledExpenses.length} unsettled expense${unsettledExpenses.length===1?'':'s'} across current sheets</p><div class="ref-sheets-stats"><span><small>Unsettled sheets</small><b>${unsettledSheets.length}</b></span><span><small>Unsettled expenses</small><b>${unsettledExpenses.length}</b></span></div></section>
-   <div class="ref-sheets-filters">${filterChip('all','All')}${filterChip('open','Open','green')}${filterChip('unsettled','Unsettled','amber')}${filterChip('archived','Archived','grey')}</div>
+   <div class="ref-sheets-filters">${filterChip('open','Open','green')}${filterChip('unsettled','Unsettled','amber')}${filterChip('archived','Archived','grey')}</div>
    ${sheetSearchOpen||sheetSearch?`<div class="ref-sheets-search">${icon('search')}<input id="sheet-search" type="search" placeholder="Search sheets" aria-label="Search sheets" value="${esc(sheetSearch)}"><button type="button" data-action="sheet-search-toggle" aria-label="Close search">${icon('close')}</button></div>`:''}
    <div class="ref-sheets-list">${items.length?items.map(card).join(''):`<div class="ref-sheets-empty"><span>${icon('folder')}</span><strong>${sheetSearch?'No matching sheets':sheetFilter==='archived'?'No archived sheets':'No sheets here'}</strong><p>${sheetSearch?'Try another search.':'Create a sheet to start a new shared period.'}</p>${!sheetSearch&&sheetFilter!=='archived'?'<button class="primary" data-action="new-sheet">Create sheet</button>':''}</div>`}</div>
   </div>
