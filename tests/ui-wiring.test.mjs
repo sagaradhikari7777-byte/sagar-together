@@ -65,4 +65,8 @@ test('Settle summary and history use spending-style standalone cards',()=>{
  assert.match(app,/class="ref-settle-tool-card" data-action="settlement-summary".*SUMMARY.*Settlement summary/s);
  assert.match(app,/class="ref-settle-tool-card" data-action="settlement-history".*HISTORY.*Payment history/s);
 });
-
+test('Settle unsettled section uses the spending-style card shell',()=>{
+ assert.match(app,/section class="ref-unsettled-card" aria-label="Unsettled expenses"/);
+ assert.match(app,/class="ref-unsettled-head".*UNSETTLED.*What makes this up/s);
+ assert.match(app,/class="ref-settle-breakdown">\$\{settlementBreakdown\(\)\}/);
+});
