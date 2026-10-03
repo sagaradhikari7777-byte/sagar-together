@@ -59,3 +59,9 @@ test('Settle spending chart includes settled spending history',()=>{
 test('Settle always resolves global all-sheets state to a concrete sheet',()=>{
  assert.match(app,/if\(tab==='settle'&&!activeSheet\)activeSheet=data\.sheets\.find\(s=>s\.pinned&&!s\.archived\)\?\.id\|\|data\.sheets\.find\(s=>!s\.archived\)\?\.id\|\|data\.sheets\[0\]\?\.id\|\|''/);
 });
+
+test('Settle summary and history use the shared grouped tool-card pattern',()=>{
+ assert.match(app,/class="ref-settle-actions" aria-label="Settlement tools"/);
+ assert.match(app,/data-action="settlement-summary".*ref-settle-action-icon.*Settlement summary/s);
+ assert.match(app,/data-action="settlement-history".*ref-settle-action-icon.*Payment history/s);
+});
