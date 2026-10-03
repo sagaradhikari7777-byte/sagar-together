@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 
 const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
+const addExpenseCss=readFileSync(new URL('../public/add-expense-polish.css',import.meta.url),'utf8');
 
 test('critical UI action targets are defined',()=>{
  const functions=[
@@ -83,4 +84,9 @@ test('Add Expense exposes both final save actions at the end of the form',()=>{
  assert.match(app,/section class="ref-expense-submit-card"/);
  assert.match(app,/id="save-expense".*Save expense/s);
  assert.match(app,/class="secondary save-another" type="submit" name="saveMode" value="another">Save & add another/);
+});
+
+test('Add Expense More options stays truly collapsed until opened',()=>{
+ assert.match(addExpenseCss,/ref-expense-more-card:not\(\[open\]\) > \.ref-expense-more-body\{\s*display:none!important/);
+ assert.match(addExpenseCss,/ref-expense-more-card\[open\] > \.ref-expense-more-body\{\s*display:grid!important/);
 });
