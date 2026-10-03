@@ -6,7 +6,8 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "node --test tests/*.test.mjs",
-    "dev": "node --env-file-if-exists=.env scripts/dev.mjs"
+    "dev": "node --env-file-if-exists=.env scripts/dev.mjs",
+    "test:browser": "node scripts/check-expense-layout.mjs"
   },
   "engines": {
     "node": "22.x"

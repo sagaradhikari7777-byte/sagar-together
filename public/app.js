@@ -475,24 +475,20 @@ function expenseForm(e=null,preset={}){
   </section>
 
   <section class="ref-expense-options-card">
-   <div class="ref-expense-options-head"><span><small>OPTIONAL</small><h3>Extra details</h3></span><em>${esc(data.sheets.find(s=>s.id===x.sheet)?.name||'Current sheet')}</em></div>
+   <div class="ref-expense-options-head"><span><small>OPTIONAL</small><h3>Extra details</h3></span></div>
    <label class="ref-expense-field"><span class="ref-expense-label">Expense sheet</span><span class="ref-expense-control"><i>${icon('folder')}</i><select name="sheet">${data.sheets.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></span></label>
    <label class="ref-expense-field"><span class="ref-expense-label">Description · optional</span><span class="ref-expense-control"><i>${icon('receipt')}</i><input name="notes" maxlength="500" placeholder="Add a note" value="${esc(x.notes)}"></span></label>
-  </section>
-
-  <section class="ref-expense-receipt-card">
+   <div class="ref-expense-receipt-card">
    <div class="ref-receipt-row">${icon('receipt')}<span class="ref-receipt-copy"><strong>Attach receipt</strong><small>Photo or screenshot · optional</small></span><button type="button" class="ref-receipt-action" id="choose-receipt">Choose</button><input type="file" id="receipt-file" class="ref-receipt-file" accept="image/*" hidden></div>
    <div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div>
    <button type="button" class="text-button ref-remove-receipt" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button>
-  </section>
-
-  <section class="ref-expense-calc-card">
+   </div>
    <details class="ref-calc-row"><summary>${icon('calculator')}<span>Calculate an amount</span>${icon('chevron')}</summary><div class="ref-calc-body"><label class="field"><span>Calculation</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="e.g. 24.50 + 18 + 6 / 2" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></div></details>
   </section>
   <p class="error form-error" role="alert"></p>
   <p class="duplicate-warning" hidden role="alert"></p>
   <section class="ref-expense-submit-card">
-   <div class="ref-expense-final-actions">${e?'<button type="button" class="secondary danger" id="delete-expense">Delete</button>':''}<button class="primary" id="save-expense">${icon('check')} ${e?'Save changes':'Save expense'}</button>${!e?'<button class="secondary save-another" type="submit" name="saveMode" value="another">Save & add another</button>':''}</div>
+   <div class="ref-expense-final-actions"><button class="primary" type="submit" id="save-expense">${icon('check')} ${e?'Save changes':'Save expense'}</button>${!e?'<button class="secondary save-another" type="submit" name="saveMode" value="another">Save & add another</button>':'<button type="button" class="secondary danger" id="delete-expense">Delete expense</button>'}</div>
   </section>
  </form>
  <nav class="ref-expense-nav" aria-label="Expense navigation" data-active-index="2">
@@ -542,7 +538,7 @@ const headerSave=sheet.querySelector('[data-close]');
  f.oninput=()=>{
   duplicateAccepted='';
   f.querySelector('.duplicate-warning').hidden=true;
-  $('#save-expense').innerHTML=icon('check')+' Save expense';
+  $('#save-expense').innerHTML=icon('check')+(e?' Save changes':' Save expense');
   update();
  };
  update();

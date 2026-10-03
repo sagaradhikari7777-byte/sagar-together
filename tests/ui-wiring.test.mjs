@@ -94,6 +94,6 @@ test('Add Expense optional tools stay in normal flow with receipt before calcula
  assert.ok(options>=0&&receipt>options&&calculator>receipt&&save>calculator);
  assert.doesNotMatch(app,/ref-expense-more-summary/);
  assert.doesNotMatch(app,/setMoreOpen/);
- assert.match(addExpenseCss,/ref-expense-options-card\{[\s\S]*position:static!important;[\s\S]*height:auto!important;[\s\S]*overflow:visible!important/);
- assert.match(addExpenseCss,/ref-remove-receipt\[hidden\]\{\s*display:none!important/);
+ assert.match(addExpenseCss,/#expense-form > section\s*\{[\s\S]*position:static!important;[\s\S]*height:auto!important;[\s\S]*overflow:visible!important/);
+ assert.match(addExpenseCss,/ref-remove-receipt\[hidden\][\s\S]*display:none!important/);
 });

@@ -83,7 +83,7 @@ Grouped lists use the surface radius; balance summaries are slightly softer. Cat
 
 Every signed-in page shares the same identity header and four-tab dock with separate Add control. Preserve 44px minimum action targets and button alternatives to swipes. Remember scroll position between tabs; retapping the current tab returns to its top.
 
-Expense entry leads with amount, merchant, payer and actual couple split names. More details contains category, date, sheet, notes and receipt; its summary reflects category and date. Invalid collapsed fields expand before validation focus. Closing changed entries asks to keep editing or discard. Edits open their details section.
+Expense entry groups merchant, amount, category and date, then payer and actual couple split names. Extra details remains expanded and contains sheet, note, receipt and an optional calculator. Save fills the final card width; Save & add another is a secondary text action below it. Closing changed entries asks to keep editing or discard. Editable controls stay at least 16px in every viewport.
 
 Sheets show full start and end dates. Expense lists retain creator permissions and named full-share allocations. View options groups filters, sort, sheet switching and CSV access. Settings groups profile, household and preferences. Onboarding uses the same palette, fields and buttons.
 
@@ -95,3 +95,9 @@ Sheets show full start and end dates. Expense lists retain creator permissions a
 - Do not reduce touch targets to make content look smaller.
 - Do not hide household expenses or weaken creator-only permissions.
 - Do not introduce a competing colour system or duplicate navigation for nested views.
+
+## Expense form containment
+
+`public/add-expense-polish.css` owns expense form layout. The dialog has a header, one scrolling form row, and a separate navigation row. Every direct form child uses `flex: 0 0 auto`; never allow cards to shrink below their content height. Optional receipt previews, opened calculators, validation errors, and discard prompts participate in normal flow. Avoid appending another patch layer to this stylesheet.
+
+The previous overrides set `min-height: 0` on Extra details inside a fixed-height flex column while leaving `flex-shrink: 1`. The card collapsed and its children painted over the receipt and calculator. Browser verification must measure that every visible child lies within its card and that adjacent cards do not intersect, including when the viewport is reduced for a keyboard.
