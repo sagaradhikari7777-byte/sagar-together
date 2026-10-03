@@ -449,3 +449,194 @@
     grid-column:1!important;
   }
 }
+
+
+/* ADD EXPENSE FINAL OPTIONALS — no accordion, no overlap, normal flow */
+@media(max-width:699px){
+  .ios-app .ref-expense-options-card{
+    position:static!important;
+    display:block!important;
+    width:100%!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:13px!important;
+    overflow:visible!important;
+    border:1px solid #e7e3df!important;
+    border-radius:18px!important;
+    background:#fff!important;
+    box-shadow:0 6px 16px rgba(45,42,38,.05),0 1px 2px rgba(45,42,38,.025)!important;
+    contain:none!important;
+  }
+  .ios-app.theme-dark .ref-expense-options-card{
+    background:#1a211b!important;
+    border-color:#344137!important;
+  }
+  .ios-app .ref-expense-options-head{
+    display:flex!important;
+    align-items:flex-end!important;
+    justify-content:space-between!important;
+    gap:10px!important;
+    margin-bottom:10px!important;
+  }
+  .ios-app .ref-expense-options-head small{
+    display:block!important;
+    color:#2f7d37!important;
+    font-size:8px!important;
+    line-height:1!important;
+    letter-spacing:.09em!important;
+    font-weight:760!important;
+  }
+  .ios-app.theme-dark .ref-expense-options-head small{color:#72cb82!important}
+  .ios-app .ref-expense-options-head h3{
+    margin:3px 0 0!important;
+    color:#171917!important;
+    font-size:16px!important;
+    line-height:1.05!important;
+    font-weight:740!important;
+    letter-spacing:-.2px!important;
+  }
+  .ios-app.theme-dark .ref-expense-options-head h3{color:#f2f5f2!important}
+  .ios-app .ref-expense-options-head em{
+    max-width:42%!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+    color:#929792!important;
+    font-size:9px!important;
+    font-style:normal!important;
+  }
+
+  .ios-app .ref-expense-options-card>.ref-expense-field{
+    margin-top:9px!important;
+  }
+  .ios-app .ref-expense-options-card>.ref-expense-field:first-of-type{
+    margin-top:0!important;
+  }
+
+  .ios-app .ref-receipt-row{
+    position:relative!important;
+    min-height:52px!important;
+    margin-top:10px!important;
+    padding:9px 10px!important;
+    border:1px dashed #cddbc9!important;
+    border-radius:12px!important;
+    background:#f7faf6!important;
+    color:#2f7d37!important;
+    display:grid!important;
+    grid-template-columns:30px minmax(0,1fr) auto!important;
+    gap:8px!important;
+    align-items:center!important;
+    cursor:pointer!important;
+  }
+  .ios-app.theme-dark .ref-receipt-row{
+    background:#202821!important;
+    border-color:#344137!important;
+    color:#72cb82!important;
+  }
+  .ios-app .ref-receipt-row>.icon{
+    width:19px!important;
+    height:19px!important;
+    justify-self:center!important;
+  }
+  .ios-app .ref-receipt-row input{
+    position:absolute!important;
+    inset:0!important;
+    width:100%!important;
+    height:100%!important;
+    opacity:0!important;
+    cursor:pointer!important;
+  }
+  .ios-app .ref-receipt-row .ref-receipt-action{
+    position:relative!important;
+    z-index:1!important;
+    pointer-events:none!important;
+  }
+  .ios-app .ref-remove-receipt{
+    margin:6px 0 0!important;
+    padding:4px 0!important;
+    font-size:10px!important;
+  }
+  .ios-app .ref-remove-receipt[hidden]{
+    display:none!important;
+  }
+
+  .ios-app .ref-calc-row{
+    margin-top:10px!important;
+    border:1px solid #e3dfda!important;
+    border-radius:12px!important;
+    background:#faf9f7!important;
+    overflow:hidden!important;
+  }
+  .ios-app.theme-dark .ref-calc-row{
+    background:#202821!important;
+    border-color:#344137!important;
+  }
+  .ios-app .ref-calc-row>summary{
+    min-height:44px!important;
+    padding:0 11px!important;
+    list-style:none!important;
+    display:grid!important;
+    grid-template-columns:18px minmax(0,1fr) 12px!important;
+    gap:8px!important;
+    align-items:center!important;
+    color:#2f7d37!important;
+    font-size:11px!important;
+    font-weight:700!important;
+    cursor:pointer!important;
+  }
+  .ios-app .ref-calc-row>summary::-webkit-details-marker{display:none!important}
+  .ios-app.theme-dark .ref-calc-row>summary{color:#72cb82!important}
+  .ios-app .ref-calc-row>summary>.icon{width:16px!important;height:16px!important}
+  .ios-app .ref-calc-row>summary>.icon:last-child{
+    width:11px!important;
+    height:11px!important;
+    justify-self:end!important;
+    transition:transform .18s ease!important;
+  }
+  .ios-app .ref-calc-row[open]>summary>.icon:last-child{transform:rotate(90deg)!important}
+  .ios-app .ref-calc-body{
+    padding:0 10px 10px!important;
+    display:grid!important;
+    gap:8px!important;
+  }
+  .ios-app .ref-calc-body .field{margin:0!important}
+  .ios-app .ref-calc-body input{
+    min-height:40px!important;
+    border-radius:11px!important;
+    font-size:12px!important;
+  }
+  .ios-app .ref-calc-body #use-calculation{
+    min-height:38px!important;
+    border-radius:11px!important;
+    font-size:11px!important;
+  }
+
+  .ios-app .ref-split-preview-inline{
+    margin-top:9px!important;
+    padding:8px 10px!important;
+    border:1px solid #e0eadc!important;
+    border-radius:11px!important;
+    background:#f2f7f0!important;
+    color:#656b65!important;
+    font-size:9.5px!important;
+    line-height:1.45!important;
+  }
+  .ios-app.theme-dark .ref-split-preview-inline{
+    background:#202821!important;
+    border-color:#344137!important;
+    color:#a0a8a1!important;
+  }
+  .ios-app .ref-split-preview-inline strong{color:var(--text)!important}
+
+  .ios-app .ref-expense-submit-card{
+    position:static!important;
+    inset:auto!important;
+    float:none!important;
+    clear:both!important;
+    width:100%!important;
+    margin:0!important;
+    transform:none!important;
+  }
+}

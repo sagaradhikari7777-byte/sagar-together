@@ -72,11 +72,11 @@ test('Settle unsettled section uses the spending-style card shell',()=>{
  assert.match(app,/class="ref-settle-breakdown">\$\{settlementBreakdown\(\)\}/);
 });
 
-test('Add Expense keeps a compact primary flow with optional details collapsed',()=>{
+test('Add Expense keeps a compact primary flow with stable optional details',()=>{
  assert.match(app,/ref-expense-main-card/);
  assert.match(app,/ref-expense-pair ref-expense-pair-split/);
- assert.match(app,/section class="ref-expense-card ref-expense-more-card/);
- assert.match(app,/Sheet, notes & receipt/);
+ assert.match(app,/section class="ref-expense-options-card"/);
+ assert.match(app,/Extra details/);
  assert.doesNotMatch(app,/Who is this with\?/);
 });
 
@@ -86,19 +86,14 @@ test('Add Expense exposes both final save actions at the end of the form',()=>{
  assert.match(app,/class="secondary save-another" type="submit" name="saveMode" value="another">Save & add another/);
 });
 
-test('Add Expense More options uses the custom iPhone-safe accordion',()=>{
- assert.match(app,/class="ref-expense-more-summary" aria-expanded=/);
- assert.match(app,/const setMoreOpen=open=>\{moreCard\.classList\.toggle\('open',open\);moreBody\.hidden=!open/);
- assert.match(addExpenseCss,/ref-expense-more-card:not\(\.open\) > \.ref-expense-more-body\{\s*display:none!important/);
- assert.match(addExpenseCss,/ref-expense-more-card\.open > \.ref-expense-more-body\{\s*display:grid!important/);
- assert.match(addExpenseCss,/ref-expense-more-body\{[\s\S]*height:auto!important;[\s\S]*overflow:visible!important/);
-});
-
-test('Add Expense Attach receipt is surfaced before advanced tools',()=>{
- const description=app.indexOf('Description · optional');
- const receipt=app.indexOf('class="receipt-label ref-option-receipt"',description);
- const calculator=app.indexOf('class="amount-calculator ref-option-tool"',description);
- assert.ok(description>=0&&receipt>description&&calculator>receipt,'receipt must appear immediately before advanced calculator tools');
- assert.match(addExpenseCss,/ref-expense-more-card\.open\{[\s\S]*height:auto!important;[\s\S]*max-height:none!important;[\s\S]*overflow:visible!important/);
- assert.match(addExpenseCss,/ref-expense-submit-card\{[\s\S]*position:static!important/);
+test('Add Expense optional tools stay in normal flow with receipt before calculator',()=>{
+ const options=app.indexOf('class="ref-expense-options-card"');
+ const receipt=app.indexOf('class="ref-receipt-row"',options);
+ const calculator=app.indexOf('class="ref-calc-row"',options);
+ const save=app.indexOf('class="ref-expense-submit-card"',options);
+ assert.ok(options>=0&&receipt>options&&calculator>receipt&&save>calculator);
+ assert.doesNotMatch(app,/ref-expense-more-summary/);
+ assert.doesNotMatch(app,/setMoreOpen/);
+ assert.match(addExpenseCss,/ref-expense-options-card\{[\s\S]*position:static!important;[\s\S]*height:auto!important;[\s\S]*overflow:visible!important/);
+ assert.match(addExpenseCss,/ref-remove-receipt\[hidden\]\{\s*display:none!important/);
 });

@@ -471,20 +471,17 @@ function expenseForm(e=null,preset={}){
     <label class="ref-expense-field"><span class="ref-expense-label">Paid by</span><span class="ref-expense-control"><i>${icon('user')}</i><select name="payer">${data.names.map((n,i)=>`<option value="${i}" ${x.payer===i?'selected':''}>${i===data.seat?'You · ':''}${esc(n)}</option>`).join('')}</select></span></label>
     <label class="ref-expense-field"><span class="ref-expense-label">Split</span><span class="ref-expense-control"><i>${icon('chart')}</i><select name="split">${splitOptions(x.split)}</select></span></label>
    </div>
+   <div class="ref-split-preview-inline" id="split-preview"></div>
   </section>
 
-  <section class="ref-expense-card ref-expense-more-card ${e&&(x.notes||receipt)?'open':''}">
-   <button type="button" class="ref-expense-more-summary" aria-expanded="${e&&(x.notes||receipt)?'true':'false'}"><span><small>MORE OPTIONS</small><strong>Sheet, notes & receipt</strong><em>${esc(data.sheets.find(s=>s.id===x.sheet)?.name||'Current sheet')}</em></span>${icon('chevron')}</button>
-   <div class="ref-expense-more-body" ${e&&(x.notes||receipt)?'':'hidden'}>
-    <label class="ref-expense-field"><span class="ref-expense-label">Expense sheet</span><span class="ref-expense-control"><i>${icon('folder')}</i><select name="sheet">${data.sheets.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></span></label>
-    <label class="ref-expense-field"><span class="ref-expense-label">Description · optional</span><span class="ref-expense-control"><i>${icon('receipt')}</i><input name="notes" maxlength="500" placeholder="Add a note" value="${esc(x.notes)}"></span></label>
-    <label class="receipt-label ref-option-receipt">${icon('receipt')}<span class="ref-receipt-copy"><strong>Attach receipt</strong><small>Photo or screenshot · optional</small></span><span class="ref-receipt-action">Choose</span><input type="file" id="receipt-file" accept="image/*"></label>
-    <div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div>
-    <button type="button" class="text-button" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button>
-    <details class="amount-calculator ref-option-tool"><summary>${icon('calculator')} Calculate an amount</summary><div class="ref-option-tool-body"><label class="field"><span>Calculation</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="e.g. 24.50 + 18 + 6 / 2" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></div></details>
-    <div class="split-preview" id="split-preview"></div>
-    <p class="small muted expense-visibility-note">${icon('people')} Shared with your household · ${e?`Added by ${esc(expenseAuthor(e))}`:`Adding as ${esc(data.names[data.seat])}`}</p>
-   </div>
+  <section class="ref-expense-options-card">
+   <div class="ref-expense-options-head"><span><small>OPTIONAL</small><h3>Extra details</h3></span><em>${esc(data.sheets.find(s=>s.id===x.sheet)?.name||'Current sheet')}</em></div>
+   <label class="ref-expense-field"><span class="ref-expense-label">Expense sheet</span><span class="ref-expense-control"><i>${icon('folder')}</i><select name="sheet">${data.sheets.filter(s=>!s.archived).map(s=>`<option value="${s.id}" ${s.id===x.sheet?'selected':''}>${esc(s.name)}</option>`).join('')}</select></span></label>
+   <label class="ref-expense-field"><span class="ref-expense-label">Description · optional</span><span class="ref-expense-control"><i>${icon('receipt')}</i><input name="notes" maxlength="500" placeholder="Add a note" value="${esc(x.notes)}"></span></label>
+   <label class="ref-receipt-row">${icon('receipt')}<span class="ref-receipt-copy"><strong>Attach receipt</strong><small>Photo or screenshot · optional</small></span><span class="ref-receipt-action">Choose</span><input type="file" id="receipt-file" accept="image/*"></label>
+   <div id="receipt-preview">${receipt?`<img class="receipt" alt="Attached receipt" src="${esc(receipt)}">`:''}</div>
+   <button type="button" class="text-button ref-remove-receipt" id="remove-receipt" ${receipt?'':'hidden'}>Remove receipt</button>
+   <details class="ref-calc-row"><summary>${icon('calculator')}<span>Calculate an amount</span>${icon('chevron')}</summary><div class="ref-calc-body"><label class="field"><span>Calculation</span><input id="amount-expression" type="text" inputmode="text" autocomplete="off" maxlength="120" placeholder="e.g. 24.50 + 18 + 6 / 2" aria-label="Calculation"></label><button type="button" class="secondary" id="use-calculation">Use total</button><p class="error" id="calculation-error" role="alert"></p></div></details>
   </section>
   <p class="error form-error" role="alert"></p>
   <p class="duplicate-warning" hidden role="alert"></p>
@@ -503,15 +500,12 @@ function expenseForm(e=null,preset={}){
 
  const f=$('#expense-form');
  syncOverlayLayers();
- const moreCard=f.querySelector('.ref-expense-more-card'),moreToggle=f.querySelector('.ref-expense-more-summary'),moreBody=f.querySelector('.ref-expense-more-body');
- const setMoreOpen=open=>{moreCard.classList.toggle('open',open);moreBody.hidden=!open;moreToggle.setAttribute('aria-expanded',String(open));};
- moreToggle.onclick=()=>setMoreOpen(!moreCard.classList.contains('open'));
- const headerSave=sheet.querySelector('[data-close]');
+const headerSave=sheet.querySelector('[data-close]');
  headerSave.classList.add('ref-expense-save');
  headerSave.setAttribute('aria-label',e?'Save changes':'Save expense');
  headerSave.innerHTML=icon('check');
 
- f.addEventListener('invalid',ev=>{if(ev.target.closest('.ref-expense-more-body'))setMoreOpen(true);const details=ev.target.closest('details');if(details)details.open=true;},true);
+ f.addEventListener('invalid',ev=>{const details=ev.target.closest('details');if(details)details.open=true;},true);
  const snapshot=()=>JSON.stringify([...new FormData(f)].filter(([name])=>name!=='saveMode'))+receipt;
  const originalSnapshot=snapshot();
  const requestClose=(leave=()=>sheet.close())=>{if(busy||receiptBusy)return;if(snapshot()===originalSnapshot)return leave();let prompt=f.querySelector('.discard-prompt');if(!prompt){prompt=document.createElement('section');prompt.className='discard-prompt';prompt.setAttribute('role','alert');prompt.innerHTML='<strong>Keep this expense?</strong><p>Your changes haven’t been saved.</p><div><button type="button" class="secondary" data-keep>Keep editing</button><button type="button" class="secondary danger" data-discard>Discard</button></div>';f.prepend(prompt);prompt.querySelector('[data-discard]').onclick=leave;prompt.querySelector('[data-keep]').onclick=()=>{prompt.remove();f.elements.amount.focus();};}prompt.querySelector('[data-discard]').onclick=leave;prompt.scrollIntoView({block:'start'});prompt.querySelector('[data-keep]').focus();};
@@ -550,7 +544,7 @@ function expenseForm(e=null,preset={}){
   try{
    f.elements.amount.value=(calculateAmount($('#amount-expression').value)/100).toFixed(2);
    $('#calculation-error').textContent='';
-   f.querySelector('.amount-calculator').open=false;
+   f.querySelector('.ref-calc-row').open=false;
    f.elements.amount.dispatchEvent(new Event('input',{bubbles:true}));
   }catch(err){$('#calculation-error').textContent=err.message;}
  };
