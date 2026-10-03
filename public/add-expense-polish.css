@@ -720,3 +720,81 @@
     transform:none!important;
   }
 }
+
+
+/* FINAL RECEIPT PICKER FIX — visible button only, no invisible overlay */
+@media(max-width:699px){
+  .ios-app .ref-expense-options-card > .ref-receipt-row{
+    position:relative!important;
+    display:grid!important;
+    visibility:visible!important;
+    opacity:1!important;
+    z-index:1!important;
+    width:100%!important;
+    min-height:52px!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .ios-app .ref-expense-options-card > .ref-calc-row{
+    position:relative!important;
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    z-index:0!important;
+    width:100%!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .ios-app .ref-receipt-file,
+  .ios-app .ref-receipt-row > input[type="file"]{
+    display:none!important;
+    position:static!important;
+    inset:auto!important;
+    width:0!important;
+    height:0!important;
+    min-height:0!important;
+    padding:0!important;
+    margin:0!important;
+    opacity:0!important;
+    pointer-events:none!important;
+  }
+
+  .ios-app .ref-receipt-row > .ref-receipt-action{
+    position:relative!important;
+    z-index:2!important;
+    width:auto!important;
+    min-width:72px!important;
+    min-height:34px!important;
+    height:34px!important;
+    padding:0 12px!important;
+    border:0!important;
+    border-radius:11px!important;
+    background:#e5f2e3!important;
+    color:#2f7d37!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    pointer-events:auto!important;
+    font-size:10px!important;
+    font-weight:720!important;
+    cursor:pointer!important;
+  }
+
+  .ios-app.theme-dark .ref-receipt-row > .ref-receipt-action{
+    background:#25422c!important;
+    color:#72cb82!important;
+  }
+
+  .ios-app .ref-expense-options-card{
+    grid-auto-rows:auto!important;
+    overflow:visible!important;
+  }
+
+  .ios-app #sheet[open]:has(#expense-form) .ref-expense-submit-card{
+    position:relative!important;
+    z-index:0!important;
+    margin-top:0!important;
+  }
+}
