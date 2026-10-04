@@ -5069,7 +5069,7 @@
 }
 .ios-app #catalog-dialog .catalog-head{
   position:static!important;
-  min-height:64px!important;padding:8px 16px 12px!important;
+  min-height:56px!important;padding:6px 12px!important;
   display:grid!important;grid-template-columns:44px minmax(0,1fr) 72px!important;
   align-items:center!important;gap:8px!important;
   background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
@@ -5091,7 +5091,7 @@
   border-color:transparent!important;font-size:14px!important;font-weight:600!important;
 }
 .ios-app #catalog-dialog :is(.catalog-back,.catalog-add) .icon{width:18px!important;height:18px!important}
-.ios-app #catalog-dialog .catalog-toolbar{padding:0 16px 14px;display:grid;gap:12px}
+.ios-app #catalog-dialog .catalog-toolbar{padding:0 12px 10px;display:grid;gap:12px}
 .ios-app #catalog-dialog .catalog-search-wrap{
   height:48px!important;padding:0 14px!important;border:1px solid var(--ui-card-border)!important;
   border-radius:15px!important;background:var(--surface-2)!important;
@@ -5118,7 +5118,7 @@
 .ios-app #catalog-dialog .catalog-sort button[aria-pressed=true]{background:var(--ui-card-bg);color:var(--ui-green);box-shadow:var(--ui-card-shadow)}
 .ios-app #catalog-dialog .catalog-body{
   flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
-  -webkit-overflow-scrolling:touch;padding:14px 16px calc(18px + var(--safe-bottom))!important;
+  -webkit-overflow-scrolling:touch;padding:12px 12px calc(14px + var(--safe-bottom))!important;
 }
 .ios-app #catalog-dialog .catalog-section-head{
   margin:0 2px 12px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;
@@ -5140,12 +5140,12 @@
   box-shadow:0 0 0 1px var(--ui-green),var(--ui-card-shadow)!important;
 }
 .ios-app #catalog-dialog .catalog-choice{
-  width:100%!important;min-width:0!important;min-height:76px!important;box-sizing:border-box;
-  padding:12px!important;border:0!important;border-radius:18px!important;background:transparent!important;color:var(--text)!important;
-  display:grid!important;grid-template-columns:46px minmax(0,1fr) 24px!important;gap:12px!important;align-items:center!important;text-align:left!important;
+  width:100%!important;min-width:0!important;min-height:64px!important;box-sizing:border-box;
+  padding:10px!important;border:0!important;border-radius:18px!important;background:transparent!important;color:var(--text)!important;
+  display:grid!important;grid-template-columns:38px minmax(0,1fr) 24px!important;gap:10px!important;align-items:center!important;text-align:left!important;
 }
 .ios-app #catalog-dialog .catalog-icon{
-  width:46px!important;height:46px!important;border-radius:15px!important;
+  width:38px!important;height:38px!important;border-radius:12px!important;
   background:var(--catalog-tone-bg)!important;color:var(--catalog-tone-ink)!important;
   display:grid!important;place-items:center!important;font-size:17px!important;font-weight:650!important;letter-spacing:-.5px;
 }
@@ -5162,10 +5162,12 @@
 .ios-app #catalog-dialog .catalog-indicator.is-checked{border-color:var(--ui-green)!important;background:var(--ui-green);color:var(--ui-card-bg)}
 .ios-app #catalog-dialog .catalog-indicator .icon{width:16px;height:16px}
 .ios-app #catalog-dialog .catalog-categories .catalog-choice{
-  min-height:136px!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;align-content:start!important;align-items:start!important;padding:15px!important;
+  min-height:108px!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important;align-content:start!important;align-items:start!important;padding:12px!important;
 }
+.ios-app #catalog-dialog.selection-mode .catalog-categories .catalog-choice{min-height:92px!important;gap:6px!important;padding:10px!important}
+.ios-app #catalog-dialog.selection-mode .catalog-categories{gap:8px!important}
 .ios-app #catalog-dialog .catalog-categories .catalog-indicator{position:absolute;top:14px;right:12px}
-.ios-app #catalog-dialog .catalog-categories .catalog-icon{width:42px!important;height:42px!important;border-radius:14px!important}
+.ios-app #catalog-dialog .catalog-categories .catalog-icon{width:34px!important;height:34px!important;border-radius:11px!important}
 .ios-app #catalog-dialog .catalog-tone-green{--catalog-tone-bg:#e1f0df;--catalog-tone-ink:#2f7d37}
 .ios-app #catalog-dialog .catalog-tone-blue{--catalog-tone-bg:#e3edf7;--catalog-tone-ink:#396990}
 .ios-app #catalog-dialog .catalog-tone-amber{--catalog-tone-bg:#f8ecdc;--catalog-tone-ink:#966020}
@@ -5193,7 +5195,7 @@
   background:var(--ui-card-bg)!important;box-shadow:var(--ui-card-shadow)!important;
   display:grid!important;grid-template-columns:46px minmax(0,1fr)!important;gap:12px!important;align-items:center!important;
 }
-.ios-app #catalog-dialog .catalog-edit-icon{width:46px!important;height:46px!important;border-radius:15px!important;background:var(--ui-green-soft)!important;color:var(--ui-green)!important;display:grid!important;place-items:center!important}
+.ios-app #catalog-dialog .catalog-edit-icon{width:38px!important;height:38px!important;border-radius:12px!important;background:var(--ui-green-soft)!important;color:var(--ui-green)!important;display:grid!important;place-items:center!important}
 .ios-app #catalog-dialog .catalog-edit-icon .icon{width:22px!important;height:22px!important}
 .ios-app #catalog-dialog .catalog-edit-card h3{margin:0!important;color:var(--text)!important;font-size:18px!important;font-weight:600}
 .ios-app #catalog-dialog .catalog-edit-hint{margin:5px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
