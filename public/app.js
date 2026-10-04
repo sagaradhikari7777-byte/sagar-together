@@ -60,13 +60,13 @@ sheet.addEventListener('click',ev=>{
  if(back)back.click();else sheet.close();
 });
 installEdgeBack({canGoBack:()=>!busy&&(sheet.open||!!document.querySelector('#catalog-dialog[open]')||isInnerPage()),goBack});
-let sheetSearch='',sheetFilter='open',sheetSearchOpen=false,settleCouple=null,settleSpendMode='category',settleAll=true,unsettledOnly=false;
+let sheetSearch='',sheetFilter='open',settleCouple=null,settleSpendMode='category',settleAll=true,unsettledOnly=false;
 let flushExpenseDraft=null,refreshing=false;
 const receiptCache=new Map();
 let expenseFilters={payer:'',category:'',from:'',to:'',sort:'newest'};
 let data=null,credentials=null,demo=false,tab='home',filter='open',search='',activeSheet='',joinInfo=null,busy=false;
 try{credentials=JSON.parse(localStorage.getItem('together-access'));document.body.classList.toggle('theme-dark',localStorage.getItem('together-theme')==='dark');}catch{}
-function syncThemeColor(){document.querySelector('meta[name=theme-color]').content=document.body.classList.contains('theme-dark')?'#1a201b':'#ffffff';}
+function syncThemeColor(){document.querySelector('meta[name=theme-color]').content=document.body.classList.contains('theme-dark')?'#111712':'#f4f6f4';}
 syncThemeColor();
 const initials=n=>n.split(' ').map(x=>x[0]).join('').slice(0,2);
 const couple=g=>data.names.slice(g==='a'?0:2,g==='a'?2:4).join(' & ');
@@ -116,6 +116,13 @@ function header(){
  const inner=isInnerPage();
  return `<header class="re-top"><div class="re-top-left">${inner?`<button type="button" class="re-glass-circle back-button" data-action="back" aria-label="Go back">${backIcon()}</button><div class="re-inner-label"><small>SHEET</small><strong>${esc(currentName())}</strong></div>`:`<button type="button" class="re-house" data-tab="home" aria-label="Open home"><span class="re-house-mark"><img src="/icon.svg" alt=""></span><span><small>Household</small><strong>${esc(data.name)}</strong></span>${icon('chevron')}</button>`}</div><button class="re-profile" data-action="settings" aria-label="${demo?'Demo user':'Signed in as'} ${esc(data.names[data.seat])}. Open settings"><span>${esc(initials(data.names[data.seat]))}</span></button></header>${demo?'<div class="re-demo">Sample household <button class="text-button" data-action="exit-demo">Make it yours</button></div>':''}`;
 }
+function themeButton(){
+ const dark=document.body.classList.contains('theme-dark');
+ return `<button type="button" class="ref-settings-theme ui-theme-toggle" data-action="theme" aria-label="${dark?'Switch to light mode':'Switch to dark mode'}" aria-pressed="${dark}">${icon(dark?'sun':'moon')}</button>`;
+}
+function pageHeader(view,title,subtitle,tools=''){
+ return `<header class="ref-${view}-header ui-page-header"><div class="ref-${view}-title ui-page-title"><small>${esc(subtitle)}</small><h1>${esc(title)}</h1></div><div class="ref-${view}-tools ui-page-tools">${tools}${themeButton()}</div></header>`;
+}
 
 function nav(){
  const activeIndex=tab==='home'?0:(tab==='sheets'||tab==='expenses')?1:tab==='settle'?3:tab==='settings'?4:2;
@@ -133,7 +140,7 @@ function homeRecentTransactions(){
  return `<section class="ref-spend-chart home-recent-card" aria-labelledby="home-recent-title"><div class="ref-spend-head"><div><small>Activity</small><h2 id="home-recent-title">Recent transactions</h2></div></div><p class="home-recent-caption">Latest additions across all sheets</p>${recent.length?`<div class="home-recent-list">${recent.map(({expense:e})=>{
   const sheetName=data.sheets.find(s=>s.id===e.sheet)?.name||'Expense sheet';
   const dateLabel=new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'});
-  return `<button type="button" class="home-recent-row" data-expense="${esc(e.id)}"><span class="re-cat ${catIcon(e.category)}">${icon(catIcon(e.category))}</span><span class="home-recent-copy"><strong>${esc(e.merchant)}</strong><span class="home-recent-author">${Number.isInteger(e.creator)?'Added by '+esc(expenseAuthor(e)):esc(expenseAuthor(e))}</span><small>${esc(e.category||'Other')} · ${esc(dateLabel)}</small><small class="home-recent-sheet">${esc(sheetName)}</small></span><span class="home-recent-amount"><strong>${money(e.cents)}</strong>${icon('chevron')}</span></button>`;
+  return `<button type="button" class="home-recent-row" data-expense="${esc(e.id)}"><span class="re-cat ${catIcon(e.category)}">${icon(catIcon(e.category))}</span><span class="home-recent-copy"><strong>${esc(e.merchant)}</strong><span class="home-recent-author">${Number.isInteger(e.creator)?'Added by '+esc(expenseAuthor(e)):esc(expenseAuthor(e))}</span><small>${esc(e.category||'Other')} · ${esc(dateLabel)} · ${esc(sheetName)}</small></span><span class="home-recent-amount"><strong>${money(e.cents)}</strong>${icon('chevron')}</span></button>`;
  }).join('')}</div>`:`<div class="home-recent-empty">${icon('receipt')}<strong>No transactions yet</strong><p>Your latest expenses and who added them will appear here.</p><button type="button" class="secondary" data-action="add">Add an expense</button></div>`}</section>`;
 }
 function homeSpendingPulse(){
@@ -146,7 +153,7 @@ function homeSpendingPulse(){
  const top=[...totals.entries()].sort((a,b)=>b[1]-a[1])[0];
  const comparison=insight?.delta!=null?`${insight.delta>0?'+':''}${insight.delta}% on matched dates`:`${insight?.count??entries.length} expenses in this period`;
  const range=(from,to)=>new Date(from+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'})+'–'+new Date(to+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'});
- const explanation=insight?.previous?`<p class="period-comparison">Same ${insight.days} days: ${esc(range(current.start,insight.currentEnd))} (${money(insight.total)}) vs ${esc(insight.previous.name)}, ${esc(range(insight.previous.start,insight.previousEnd))} (${money(insight.previousTotal)}).${insight.previousTotal===0?' No earlier spending to compare.':insight.changed?.delta?` ${esc(insight.changed.category)} ${insight.changed.delta>0?'increased':'decreased'} by ${money(Math.abs(insight.changed.delta))}.`:''}</p>`:'';
+ const explanation=insight?.previous?`<details class="period-comparison-details"><summary>How this compares ${icon('chevron')}</summary><p class="period-comparison">Same ${insight.days} days: ${esc(range(current.start,insight.currentEnd))} (${money(insight.total)}) vs ${esc(insight.previous.name)}, ${esc(range(insight.previous.start,insight.previousEnd))} (${money(insight.previousTotal)}).${insight.previousTotal===0?' No earlier spending to compare.':insight.changed?.delta?` ${esc(insight.changed.category)} ${insight.changed.delta>0?'increased':'decreased'} by ${money(Math.abs(insight.changed.delta))}.`:''}</p></details>`:'';
  return `<section class="home-period-card" aria-label="Current period spending">
   <div class="home-period-head"><div><small>This period</small><h2>${esc(current.name)}</h2></div><button type="button" data-view-sheet="${esc(current.id)}" aria-label="Open ${esc(current.name)}">${icon('chevron')}</button></div>
   <div class="home-period-main"><strong>${money(total)}</strong><span>${esc(comparison)}</span></div>
@@ -158,9 +165,9 @@ function home(){
  const status=o.net===0?'settled':o.net>0?'owe':'owed';
  const direction=o.net===0?(o.rows.length?'Your couples are balanced':'No outstanding expenses'):o.net>0?`You owe ${couple(other)}`:`${couple(other)} owes you`;
  return `<section class="re-page sp-page sp-home ref-home">
- <header class="ref-home-header"><div class="ref-home-title"><span class="ref-home-avatar">${esc(initials(data.names[data.seat]))}</span><strong>${esc(data.name||'Together')}</strong></div><div class="ref-home-tools"><button class="ref-search" data-action="home-search" aria-label="Search expenses">${icon('search')}</button></div></header>
+ ${pageHeader('home',data.name||'Together','Hello, '+data.names[data.seat],`<button type="button" class="ref-search" data-action="home-search" aria-label="Search expenses">${icon('search')}</button>`)}
  <div class="ref-home-body">
-  <section class="ref-balance-card ${status}"><div class="ref-balance-head"><span>${o.net>0?'Your couple owes':o.net<0?'Your couple is owed':'Couple balance'}</span></div><strong class="ref-balance-amount">${money(Math.abs(o.net))}</strong><p class="home-balance-direction">${esc(direction)}</p><p>${o.rows.length} outstanding expense${o.rows.length===1?'':'s'} across ${o.sheets.length} open sheet${o.sheets.length===1?'':'s'}</p><button class="secondary home-balance-action" data-action="open-settle">View settlement overview</button></section>
+  <section class="ref-balance-card ${status}"><div class="ref-balance-head"><span>Your couple’s balance</span><em class="ui-status-pill">${icon(o.net?'settle':'check')}${o.net>0?'To pay':o.net<0?'To receive':'Balanced'}</em></div><strong class="ref-balance-amount">${money(Math.abs(o.net))}</strong><p class="home-balance-direction">${esc(direction)}</p><p>${o.rows.length} outstanding expense${o.rows.length===1?'':'s'} across ${o.sheets.length} open sheet${o.sheets.length===1?'':'s'}</p><button class="secondary home-balance-action" data-action="open-settle"><span>View settlement</span>${icon('arrow')}</button></section>
   ${draftBanner()}
   ${homeSpendingPulse()}
   ${recurringHomeCard()}
@@ -215,6 +222,7 @@ function sheetsView(){
  const unsettledExpenses=currentExpenses.filter(e=>!e.settlement);
  const unsettledTotal=unsettledExpenses.reduce((sum,e)=>sum+e.cents,0);
  const unsettledSheets=currentSheets.filter(sh=>stateFor(sh).unsettled);
+ const overview=settlementOverview(unsettledExpenses,group(data.seat));
  const counts={
   all:allSheets.length,
   open:currentSheets.length,
@@ -227,28 +235,28 @@ function sheetsView(){
   return !sh.archived&&(!unsettledOnly||stateFor(sh).unsettled);
  };
  const items=allSheets.filter(sh=>matchesFilter(sh)&&sh.name.toLowerCase().includes(sheetSearch.toLowerCase()));
- const card=(sh,index)=>{
+ const card=sh=>{
   const {es,unsettledEs,unsettledTotal,unsettled}=stateFor(sh);
-  const cardIcon=sh.pinned?'pin':index%3===0?'calendar':index%3===1?'home':'people';
+  const cardIcon=sh.pinned?'pin':'folder';
   const status=sh.archived?'Archived':unsettled?`${unsettledEs.length} unsettled`:es.length?'Settled':'No expenses';
   return `<div class="swipe-sheet ref-sheet-card" data-swipe-sheet="${sh.id}">
    <div class="swipe-actions left" aria-hidden="true"><button tabindex="-1" data-sheet-edit="${sh.id}">${icon('edit')}</button><button tabindex="-1" class="pin-action" data-sheet-pin="${sh.id}">${icon('pin')}</button></div>
    <div class="swipe-actions right" aria-hidden="true"><button tabindex="-1" data-sheet-archive="${sh.id}">${icon('archive')}</button><button tabindex="-1" class="delete-action" data-sheet-delete="${sh.id}" ${canDeleteSheet(sh.id)?'':'disabled'}>${icon('trash')}</button></div>
    <div class="sheet-front ref-sheet-front"><button class="ref-sheet-open" data-view-sheet="${sh.id}">
     <span class="ref-sheet-icon">${icon(cardIcon)}</span>
-    <span class="ref-sheet-copy"><strong>${esc(sh.name)}</strong><small>${esc(sheetDateRange(sh))}</small><em>${status}</em></span>
-    <span class="ref-sheet-amount"><strong>${money(sh.archived?es.reduce((n,e)=>n+e.cents,0):unsettledTotal)}</strong><small>${sh.archived?'Total spent':'Unsettled spending'}</small></span>
+    <span class="ref-sheet-copy"><strong>${esc(sh.name)}</strong><small>${esc(sheetDateRange(sh))}</small></span>
+    <span class="ui-sheet-footer"><em class="ui-status-pill ${sh.archived?'is-archived':unsettled?'is-open':'is-balanced'}">${status}</em><span class="ref-sheet-amount"><small>${sh.archived?'Total spent':'Unsettled'}</small><strong>${money(sh.archived?es.reduce((n,e)=>n+e.cents,0):unsettledTotal)}</strong></span></span>
    </button><button class="sheet-more ref-sheet-more" data-sheet-options="${sh.id}" aria-label="Actions for ${esc(sh.name)}">•••</button></div>
   </div>`;
  };
  const filterChip=(id,label,dot='')=>`<button data-sheet-filter="${id}" class="${sheetFilter===id?'active':''}">${dot?`<i class="${dot}"></i>`:''}${label} (${counts[id]})</button>`;
  return `<section class="re-page sp-page ref-sheets">
-  <header class="ref-sheets-header"><div class="ref-sheets-title"><span class="ref-sheets-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Sheets</strong></div><div class="ref-sheets-tools"><button class="ref-sheets-search-btn" data-action="sheet-search-toggle" aria-label="Search sheets">${icon('search')}</button><button class="ref-sheets-add" data-action="new-sheet">${icon('plus')}<span>Add</span></button></div></header>
+  ${pageHeader('sheets','Sheets','Shared expense periods',`<button type="button" class="ref-sheets-add" data-action="new-sheet" aria-label="Create a new sheet">${icon('plus')}<span>New</span></button>`)}
   <div class="ref-sheets-body">
-   <section class="ref-sheets-summary"><div class="ref-sheets-summary-head"><span><i></i>Unsettled spending</span></div><strong class="ref-sheets-total">${money(unsettledTotal)}</strong><p>${unsettledExpenses.length} expense${unsettledExpenses.length===1?'':'s'} across ${unsettledSheets.length} open sheet${unsettledSheets.length===1?'':'s'} · before splitting</p></section>
+   <section class="ref-sheets-summary"><div class="ref-sheets-summary-head"><span><i></i>Unsettled spending</span></div><strong class="ref-sheets-total">${money(unsettledTotal)}</strong><p>${unsettledExpenses.length} expense${unsettledExpenses.length===1?'':'s'} across ${unsettledSheets.length} open sheet${unsettledSheets.length===1?'':'s'} · before splitting</p><div class="ui-summary-stats"><span><small>Your couple’s share</small><b>${money(overview.share)}</b></span><span><small>Your couple paid</small><b>${money(overview.paid)}</b></span></div></section>
    <div class="ref-sheets-filters">${filterChip('open','Open','green')}${filterChip('archived','Archived','grey')}</div>
    ${sheetFilter==='open'?`<label class="sheet-unsettled-toggle"><input type="checkbox" id="unsettled-only" ${unsettledOnly?'checked':''}>Unsettled only (${counts.unsettled})</label>`:''}
-   ${sheetSearchOpen||sheetSearch?`<div class="ref-sheets-search">${icon('search')}<input id="sheet-search" type="search" placeholder="Search sheets" aria-label="Search sheets" value="${esc(sheetSearch)}"><button type="button" data-action="sheet-search-toggle" aria-label="Close search">${icon('close')}</button></div>`:''}
+   <div class="ref-sheets-search">${icon('search')}<input id="sheet-search" type="search" placeholder="Search sheets" aria-label="Search sheets" value="${esc(sheetSearch)}"><button type="button" data-action="clear-sheet-search" aria-label="Clear sheet search" ${sheetSearch?'':'disabled aria-hidden="true"'}>${icon('close')}</button></div>
    <div class="ref-sheets-list">${items.length?items.map(card).join(''):`<div class="ref-sheets-empty"><span>${icon('folder')}</span><strong>${sheetSearch?'No matching sheets':sheetFilter==='archived'?'No archived sheets':'No sheets here'}</strong><p>${sheetSearch?'Try another search.':'Create a sheet to start a new shared period.'}</p>${!sheetSearch&&sheetFilter!=='archived'?'<button class="primary" data-action="new-sheet">Create sheet</button>':''}</div>`}</div>
   </div>
  </section>`;
@@ -318,7 +326,7 @@ function settleView(){
  const history=data.settlements.filter(s=>settleAll||s.sheet===activeSheet);
  const outstanding=householdOverview(data,selected).sheets.filter(row=>row.rows.length);
  return `<section class="re-page sp-page ref-settle">
-  <header class="ref-settle-header"><div class="ref-settle-title"><span class="ref-settle-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Settle</strong></div></header>
+  ${pageHeader('settle','Settle','Your household balances')}
   <div class="ref-settle-body">
    <div class="ref-settle-controls"><label class="ref-settle-sheet"><span>View</span><div>${icon('folder')}<select aria-label="Expense sheet" id="sheet-select"><option value="overall" ${settleAll?'selected':''}>All open sheets</option>${data.sheets.map(s=>`<option value="${esc(s.id)}" ${!settleAll&&s.id===activeSheet?'selected':''}>${esc(s.name)}${s.archived?' · Archived':''}</option>`).join('')}</select></div></label><label class="ref-settle-couple"><span>Share for</span><select id="settle-couple">${['a','b'].map(g=>`<option value="${g}" ${g===selected?'selected':''}>${esc(couple(g))}${g===group(data.seat)?' · yours':''}</option>`).join('')}</select></label></div>
    <section class="ref-settle-summary ${status}"><div class="ref-settle-summary-head"><span>${settleAll?'OVERALL BALANCE':'REMAINING BALANCE'}</span><em>${statusLabel}</em></div><strong class="ref-settle-amount">${money(Math.abs(o.net))}</strong><p>${o.net===0?(items.length?'These expenses balance; no payment is needed.':'Nothing outstanding.'):`${esc(couple(from))} → ${esc(couple(to))}`}</p><p>${esc(settleName())}${settleAll?' · net across sheets':''}</p><div class="ref-settle-stats"><span><small>Outstanding share</small><b>${money(o.share)}</b></span><span><small>Already paid for these</small><b>${money(o.paid)}</b></span></div>${!settleAll&&items.length?`<button class="primary settlement-record" data-action="settle">${icon('check')} ${o.net?'Record payment':'Close balanced expenses'}</button><p class="settlement-help">Records a completed payment and locks these ${items.length} expenses.</p>`:''}${settleAll&&outstanding.length>1?'<p class="settlement-help">Open a sheet below to record its payment. Opposite balances can offset in this overall total.</p>':''}</section>
@@ -363,14 +371,13 @@ function settingsMoreDialog(){
 }
 
 function settings(){
- const dark=document.body.classList.contains('theme-dark');
  const row=(action,ic,title,sub)=>`<button class="ref-settings-row" data-action="${action}"><span class="ref-settings-icon">${icon(ic)}</span><span class="ref-settings-copy"><strong>${title}</strong><small>${sub}</small></span>${icon('chevron')}</button>`;
  return `<section class="re-page sp-page ref-settings">
-  <header class="ref-settings-header"><div class="ref-settings-title"><span class="ref-settings-avatar">${esc(initials(data.names[data.seat]))}</span><strong>Settings</strong></div><div class="ref-settings-tools"><button class="ref-settings-theme" data-action="theme" aria-label="${dark?'Switch to light mode':'Switch to dark mode'}">${icon(dark?'sun':'moon')}</button></div></header>
+  ${pageHeader('settings','Settings',data.name||'Your household')}
   <div class="ref-settings-body">
    <section class="settings-identity"><span>${esc(initials(data.names[data.seat]))}</span><div><small>Signed in as</small><strong>${esc(data.names[data.seat])}</strong><p>${esc(couple(group(data.seat)))} · ${esc(data.name)}</p></div></section>
-   <div class="ref-settings-section-head"><small>Household</small><h2>Shared space</h2></div><section class="ref-settings-group">${row('settings-household','people','Household & names','Members, couples and household name')}${row('invite','plus','Invite members','Share access safely')}${row('access','lock','Private access link','Your personal sign-in link')}</section>
-   <div class="ref-settings-section-head"><small>App</small><h2>Preferences</h2></div><section class="ref-settings-group">${row('recurring-bills','calendar','Recurring bills','Due dates and reminders on Home')}${row('entry-preferences','settings','Expense preferences','Defaults for faster entry')}${row('settings-more','tag','Journal tools','Merchants, categories and export')}</section>
+   <div class="ref-settings-section-head"><h2>Household</h2></div><section class="ref-settings-group">${row('settings-household','people','Household & names','Members, couples and household name')}${row('invite','plus','Invite members','Share access safely')}${row('access','lock','Private access link','Your personal sign-in link')}</section>
+   <div class="ref-settings-section-head"><h2>Preferences</h2></div><section class="ref-settings-group">${row('recurring-bills','calendar','Recurring bills','Due dates and reminders on Home')}${row('entry-preferences','settings','Expense preferences','Defaults for faster entry')}${row('settings-more','tag','Journal tools','Merchants, categories and export')}</section>
    <button class="ref-settings-signout" data-action="signout">${icon('arrow')}<span>${demo?'Leave demo':'Sign out'}</span></button>
   </div>
  </section>`;
@@ -398,16 +405,18 @@ function render(){
  const owner=data.id+':'+data.seat;if(owner!==navigationOwner){navigationOwner=owner;navigationTrail.reset();}
  navigationTrail.visit({tab,activeSheet,search,filter,expenseFilters,settleCouple,sheetSearch,sheetFilter});
  const viewKey=tab+':'+activeSheet,previous=app.querySelector('main');
+ const comparisonOpen=!!app.querySelector('.period-comparison-details')?.open;
  if(previous?.dataset.view)viewScroll.set(previous.dataset.view,previous.scrollTop);
  const scrollTop=viewScroll.get(viewKey)||0;
  const wasOpen=app.classList.contains('has-navigation');
  app.classList.add('has-navigation');
  app.innerHTML=`<main class="shell re-shell re-shell-${tab}" data-view="${esc(viewKey)}">${header()}${tab==='home'?home():tab==='expenses'?expenses():tab==='sheets'?sheetsView():tab==='settle'?settleView():settings()}</main>${nav()}`;
  bind();app.querySelector('main').scrollTop=scrollTop;
+ const comparison=app.querySelector('.period-comparison-details');if(comparison&&comparisonOpen)comparison.open=true;
  if(!wasOpen)window.scrollTo(0,0);
 }
 function bind(){app.querySelectorAll('[data-bill-record]').forEach(button=>button.onclick=()=>bills.record(button.dataset.billRecord));app.querySelectorAll('[data-settle-sheet]').forEach(b=>b.onclick=()=>{settleAll=false;activeSheet=b.dataset.settleSheet;tab='settle';render();app.querySelector('main')?.scrollTo(0,0);});if($('#unsettled-only'))$('#unsettled-only').onchange=e=>{unsettledOnly=e.target.checked;render();};app.querySelectorAll('[data-couple-overview]').forEach(b=>b.onclick=()=>{settleCouple=b.dataset.coupleOverview;tab='settle';render();});if($('#settle-couple'))$('#settle-couple').onchange=e=>{settleCouple=e.target.value;render();$('#settle-couple').focus();};app.querySelectorAll('[data-spend-chart]').forEach(b=>b.onclick=()=>{settleSpendMode=b.dataset.spendChart;render();requestAnimationFrame(()=>document.querySelector('.ref-spend-chart')?.scrollIntoView({block:'nearest'}));});bindJournal();bindSheetControls();bindExpenseSwipes();app.querySelectorAll('[data-expense-options]').forEach(b=>b.onclick=()=>expenseOptions(b.dataset.expenseOptions));app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>springToTab(b.dataset.tab,b));app.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>action(b.dataset.action,b));app.querySelectorAll('[data-expense]').forEach(b=>b.onclick=()=>expenseForm(data.expenses.find(e=>e.id===b.dataset.expense)));app.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;render();});if($('#sheet-select'))$('#sheet-select').onchange=e=>{settleAll=e.target.value==='overall';if(!settleAll)activeSheet=e.target.value;render();};if($('#search'))$('#search').oninput=e=>{const pos=e.target.selectionStart;search=e.target.value;render();$('#search').focus();$('#search').setSelectionRange(pos,pos);};app.querySelectorAll('[data-view-sheet]').forEach(b=>b.onclick=()=>{openSheet(b.dataset.viewSheet);});app.querySelectorAll('[data-pin]').forEach(b=>b.onclick=async()=>{try{await save({action:'pin',id:b.dataset.pin});activeSheet=b.dataset.pin;toast('Sheet pinned');}catch(e){toast(e.message);}});app.querySelectorAll('[data-archive]').forEach(b=>b.onclick=async()=>{try{await save({action:'archive',id:b.dataset.archive});toast('Sheet updated');}catch(e){toast(e.message);}});if($('#settings-form'))$('#settings-form').onsubmit=async e=>{e.preventDefault();const f=e.target,v=new FormData(f);try{await save({action:'settings',name:v.get('name'),names:[0,1,2,3].map(i=>v.get('n'+i))});toast('Household updated');}catch(err){errorIn(f,err);}};}
-function action(a,source=null){if(a==='recurring-bills')return recurringDialog();if(a==='back')return goBack();if(a==='home-search'){activeSheet='';filter='open';tab='expenses';render();requestAnimationFrame(()=>document.querySelector('#search')?.focus());return;}if(a==='sheet-search-toggle'){sheetSearchOpen=!sheetSearchOpen;if(!sheetSearchOpen)sheetSearch='';render();if(sheetSearchOpen)requestAnimationFrame(()=>document.querySelector('#sheet-search')?.focus());return;}if(journalAction(a))return;if(['settings','expenses','sheets'].includes(a)){if(a==='expenses')filter='open';tab=a;render();return;}if(a==='open-settle'){settleAll=true;settleCouple=null;tab='settle';render();app.querySelector('main')?.scrollTo(0,0);return;}if(a==='settings-household')settingsHouseholdDialog();if(a==='settings-more')settingsMoreDialog();if(a==='merchants'||a==='categories')openCatalog(a);if(a==='add'){
+function action(a,source=null){if(a==='recurring-bills')return recurringDialog();if(a==='back')return goBack();if(a==='home-search'){activeSheet='';filter='open';tab='expenses';render();requestAnimationFrame(()=>document.querySelector('#search')?.focus());return;}if(a==='clear-sheet-search'){sheetSearch='';render();requestAnimationFrame(()=>document.querySelector('#sheet-search')?.focus());return;}if(journalAction(a))return;if(['settings','expenses','sheets'].includes(a)){if(a==='expenses')filter='open';tab=a;render();return;}if(a==='open-settle'){settleAll=true;settleCouple=null;tab='settle';render();app.querySelector('main')?.scrollTo(0,0);return;}if(a==='settings-household')settingsHouseholdDialog();if(a==='settings-more')settingsMoreDialog();if(a==='merchants'||a==='categories')openCatalog(a);if(a==='add'){
  return openExpense();
 }if(a==='new-sheet')newSheet();if(a==='settle')settleDialog();if(a==='invite')inviteDialog();if(a==='access')accessDialog();if(a==='export')exportCSV();if(a==='theme'){document.body.classList.toggle('theme-dark');syncThemeColor();try{localStorage.setItem('together-theme',document.body.classList.contains('theme-dark')?'dark':'light');}catch{}render();}if(a==='exit-demo'){flushExpenseDraft=null;demo=false;data=null;auth();}if(a==='signout'){flushExpenseDraft=null;if(demo){demo=false;data=null;auth();}else confirmDialog('Sign out?', 'Keep your private access link so you can sign in again.',async()=>{credentials=null;data=null;try{localStorage.removeItem('together-access');}catch{}sheet.close();auth();},'Sign out');}}
 function auth(){navigationTrail.reset();navigationOwner='';modalTrail=[];
