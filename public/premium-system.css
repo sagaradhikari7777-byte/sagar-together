@@ -194,8 +194,25 @@
 .ios-app #app .period-comparison-details summary .icon{width:15px;height:15px;transition:transform var(--ui-motion) ease}
 .ios-app #app .period-comparison-details[open] summary .icon{transform:rotate(90deg)}
 .ios-app #app .period-comparison-details .period-comparison{margin:4px 0 0;font-size:13px;line-height:1.6}
-.ios-app #app .home-recent-caption{margin:7px 0 5px;font-size:13px}
-.ios-app #app .home-recent-row{min-height:68px;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;padding:10px 0;border-color:var(--ui-card-border)}
+.ios-app #app .home-recent-caption{margin:7px 0 9px;font-size:13px}
+/* Recent activity: subtle category colour with a compact card shape. */
+.ios-app #app .home-recent-list{display:grid;gap:8px}
+.ios-app #app .home-recent-row{
+  --activity-tint:var(--ui-green-soft);--activity-ink:var(--ui-green);
+  min-height:68px;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;padding:10px 10px 10px 12px;
+  border:1px solid color-mix(in srgb,var(--activity-ink) 16%,var(--ui-card-border));
+  border-inline-start:3px solid color-mix(in srgb,var(--activity-ink) 75%,var(--ui-card-bg));
+  border-radius:14px;
+  background:linear-gradient(115deg,color-mix(in srgb,var(--activity-tint) 65%,var(--ui-card-bg)),color-mix(in srgb,var(--activity-tint) 24%,var(--ui-card-bg)));
+  box-shadow:0 2px 6px rgba(26,43,30,.025);
+}
+.ios-app #app .home-recent-row:has(>.re-cat.groceries){--activity-tint:var(--category-groceries-bg);--activity-ink:var(--category-groceries-ink);}
+.ios-app #app .home-recent-row:has(>.re-cat.food){--activity-tint:var(--category-food-bg);--activity-ink:var(--category-food-ink);}
+.ios-app #app .home-recent-row:has(>.re-cat.bills){--activity-tint:var(--category-bills-bg);--activity-ink:var(--category-bills-ink);}
+.ios-app #app .home-recent-row:has(>.re-cat.travel){--activity-tint:var(--category-travel-bg);--activity-ink:var(--category-travel-ink);}
+.ios-app #app .home-recent-row:has(>.re-cat.other){--activity-tint:var(--category-other-bg);--activity-ink:var(--category-other-ink);}
+@media(hover:hover){.ios-app #app .home-recent-row:hover{box-shadow:var(--ui-card-shadow)}}
+.ios-app #app .home-recent-row:active{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--activity-ink) 25%,transparent)}
 .ios-app #app .home-recent-row .re-cat{width:34px;height:34px;border-radius:11px}
 .ios-app #app .home-recent-copy>strong{font-size:15px;font-weight:600;line-height:1.35}
 .ios-app #app .home-recent-author{font-size:13px!important;font-weight:500;color:var(--muted)!important}
@@ -340,17 +357,19 @@
 .ios-app #app .settlement-record{min-height:44px;margin-top:10px;font-size:15px}
 .ios-app #app .ref-settle-summary .settlement-help{font-size:12px!important;line-height:1.4!important;margin-top:7px!important}
 
-/* Category colour is functional and kept to the icon tile. */
-.ios-app :is(.re-cat,.liquid-category).groceries{background:#e1f0df!important;color:#2f7d37!important}
-.ios-app :is(.re-cat,.liquid-category).food{background:#f6eadc!important;color:#a66a24!important}
-.ios-app :is(.re-cat,.liquid-category).bills{background:#e3ebf3!important;color:#4d718f!important}
-.ios-app :is(.re-cat,.liquid-category).travel{background:#ece5f3!important;color:#745f91!important}
-.ios-app :is(.re-cat,.liquid-category).other{background:#eceeeb!important;color:#686e69!important}
-.ios-app.theme-dark :is(.re-cat,.liquid-category).groceries{background:#25422c!important;color:#72cb82!important}
-.ios-app.theme-dark :is(.re-cat,.liquid-category).food{background:#443624!important;color:#e5ad67!important}
-.ios-app.theme-dark :is(.re-cat,.liquid-category).bills{background:#263847!important;color:#8eb8d6!important}
-.ios-app.theme-dark :is(.re-cat,.liquid-category).travel{background:#352e43!important;color:#b4a0d0!important}
-.ios-app.theme-dark :is(.re-cat,.liquid-category).other{background:#2a302b!important;color:#aeb5af!important}
+/* Shared category palette for icon tiles and recent activity cards. */
+.ios-app{--category-groceries-bg:#e1f0df;--category-groceries-ink:#2f7d37;--category-food-bg:#f6eadc;--category-food-ink:#a66a24;--category-bills-bg:#e3ebf3;--category-bills-ink:#4d718f;--category-travel-bg:#ece5f3;--category-travel-ink:#745f91;--category-other-bg:#eceeeb;--category-other-ink:#686e69;}
+.ios-app.theme-dark{--category-groceries-bg:#25422c;--category-groceries-ink:#72cb82;--category-food-bg:#443624;--category-food-ink:#e5ad67;--category-bills-bg:#263847;--category-bills-ink:#8eb8d6;--category-travel-bg:#352e43;--category-travel-ink:#b4a0d0;--category-other-bg:#2a302b;--category-other-ink:#aeb5af;}
+.ios-app :is(.re-cat,.liquid-category).groceries{background:var(--category-groceries-bg)!important;color:var(--category-groceries-ink)!important}
+.ios-app :is(.re-cat,.liquid-category).food{background:var(--category-food-bg)!important;color:var(--category-food-ink)!important}
+.ios-app :is(.re-cat,.liquid-category).bills{background:var(--category-bills-bg)!important;color:var(--category-bills-ink)!important}
+.ios-app :is(.re-cat,.liquid-category).travel{background:var(--category-travel-bg)!important;color:var(--category-travel-ink)!important}
+.ios-app :is(.re-cat,.liquid-category).other{background:var(--category-other-bg)!important;color:var(--category-other-ink)!important}
+.ios-app.theme-dark :is(.re-cat,.liquid-category).groceries{background:var(--category-groceries-bg)!important;color:var(--category-groceries-ink)!important}
+.ios-app.theme-dark :is(.re-cat,.liquid-category).food{background:var(--category-food-bg)!important;color:var(--category-food-ink)!important}
+.ios-app.theme-dark :is(.re-cat,.liquid-category).bills{background:var(--category-bills-bg)!important;color:var(--category-bills-ink)!important}
+.ios-app.theme-dark :is(.re-cat,.liquid-category).travel{background:var(--category-travel-bg)!important;color:var(--category-travel-ink)!important}
+.ios-app.theme-dark :is(.re-cat,.liquid-category).other{background:var(--category-other-bg)!important;color:var(--category-other-ink)!important}
 
 /* Numeric columns feel steadier while values change. */
 .ios-app :is(
