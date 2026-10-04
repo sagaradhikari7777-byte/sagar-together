@@ -5041,361 +5041,186 @@
 }
 
 
-/* MERCHANTS / CATEGORIES — aligned with Together reference UI */
+/* Merchant and category sheets: fixed search chrome, scrollable cards. */
 .ios-app #catalog-dialog{
-  background:#f5f3f3!important;
-  color:var(--text)!important;
-  border:1px solid #e5e2de!important;
-  box-shadow:0 24px 70px rgba(31,29,26,.20)!important;
-}
-.ios-app.theme-dark #catalog-dialog{
+  width:min(600px,calc(100% - 24px))!important;
+  max-width:600px!important;
+  max-height:min(800px,88dvh)!important;
+  margin:auto auto 12px!important;
+  padding:0!important;
+  border:1px solid var(--ui-card-border)!important;
+  border-radius:28px!important;
   background:var(--bg)!important;
-  border-color:var(--line)!important;
+  color:var(--text)!important;
+  box-shadow:0 24px 70px rgba(20,28,22,.18)!important;
+  overflow:hidden!important;
 }
-.ios-app #catalog-dialog::backdrop{
-  background:rgba(22,24,22,.30)!important;
-  backdrop-filter:blur(5px)!important;
-  -webkit-backdrop-filter:blur(5px)!important;
+.ios-app #catalog-dialog[open]{display:flex!important;flex-direction:column!important}
+.ios-app #catalog-dialog .catalog-chrome{
+  flex:0 0 auto;
+  border-bottom:1px solid var(--ui-card-border);
+  background:color-mix(in srgb,var(--ui-card-bg) 90%,var(--bg));
+  backdrop-filter:blur(22px) saturate(145%);
+  -webkit-backdrop-filter:blur(22px) saturate(145%);
 }
 .ios-app #catalog-dialog .catalog-handle{
-  width:46px!important;
-  height:5px!important;
-  margin:9px auto 10px!important;
-  border-radius:999px!important;
-  background:#dedbd7!important;
+  width:36px!important;height:4px!important;margin:10px auto 2px!important;
+  border-radius:999px!important;background:color-mix(in srgb,var(--muted) 30%,transparent)!important;
 }
-.ios-app.theme-dark #catalog-dialog .catalog-handle{background:#3a423c!important}
-
 .ios-app #catalog-dialog .catalog-head{
-  min-height:62px!important;
-  padding:8px 12px 10px!important;
-  display:grid!important;
-  grid-template-columns:46px minmax(0,1fr) 46px!important;
-  align-items:center!important;
-  gap:8px!important;
-  background:#fff!important;
-  border:1px solid #ece9e5!important;
-  border-radius:15px!important;
-  box-shadow:0 2px 7px rgba(40,37,34,.035)!important;
-}
-.ios-app.theme-dark #catalog-dialog .catalog-head{
-  background:var(--surface)!important;
-  border-color:var(--line)!important;
+  position:static!important;
+  min-height:64px!important;padding:8px 16px 12px!important;
+  display:grid!important;grid-template-columns:44px minmax(0,1fr) 72px!important;
+  align-items:center!important;gap:8px!important;
+  background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
 }
 .ios-app #catalog-dialog .catalog-head h2{
-  margin:0!important;
-  text-align:center!important;
-  color:#151515!important;
-  font-size:23px!important;
-  line-height:1!important;
-  letter-spacing:-.5px!important;
-  font-weight:760!important;
+  margin:0!important;text-align:center!important;color:var(--text)!important;
+  font-size:19px!important;line-height:1.25!important;letter-spacing:-.35px!important;font-weight:650!important;
 }
-.ios-app.theme-dark #catalog-dialog .catalog-head h2{color:var(--text)!important}
-
 .ios-app #catalog-dialog .catalog-back,
 .ios-app #catalog-dialog .catalog-add{
-  width:42px!important;
-  height:42px!important;
-  padding:0!important;
-  border:0!important;
-  border-radius:50%!important;
-  display:grid!important;
-  place-items:center!important;
-  box-shadow:none!important;
+  min-height:44px!important;padding:0!important;border:1px solid var(--ui-card-border)!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;gap:4px!important;
+  color:var(--text)!important;background:var(--ui-card-bg)!important;box-shadow:var(--ui-card-shadow)!important;
 }
-.ios-app #catalog-dialog .catalog-back{
-  background:#f4f4f3!important;
-  color:#1d1d1d!important;
-}
+.ios-app #catalog-dialog .catalog-back{width:44px!important;border-radius:50%!important}
 .ios-app #catalog-dialog .catalog-add{
-  background:#2f7d37!important;
-  color:#fff!important;
+  width:72px!important;border-radius:999px!important;
+  color:var(--ui-green)!important;background:var(--ui-green-soft)!important;
+  border-color:transparent!important;font-size:14px!important;font-weight:600!important;
 }
-.ios-app.theme-dark #catalog-dialog .catalog-back{
-  background:var(--surface-2)!important;
-  color:var(--text)!important;
-}
-.ios-app.theme-dark #catalog-dialog .catalog-add{
-  background:var(--accent)!important;
-  color:#102014!important;
-}
-.ios-app #catalog-dialog .catalog-back .icon,
-.ios-app #catalog-dialog .catalog-add .icon{
-  width:19px!important;
-  height:19px!important;
-}
-
-.ios-app #catalog-dialog .catalog-body{
-  padding:16px 2px 8px!important;
-}
+.ios-app #catalog-dialog :is(.catalog-back,.catalog-add) .icon{width:18px!important;height:18px!important}
+.ios-app #catalog-dialog .catalog-toolbar{padding:0 16px 14px;display:grid;gap:12px}
 .ios-app #catalog-dialog .catalog-search-wrap{
-  height:50px!important;
-  padding:0 15px!important;
-  border:1px solid #ddd9d4!important;
-  border-radius:16px!important;
-  background:#fff!important;
-  display:grid!important;
-  grid-template-columns:20px minmax(0,1fr)!important;
-  gap:10px!important;
-  align-items:center!important;
+  height:48px!important;padding:0 14px!important;border:1px solid var(--ui-card-border)!important;
+  border-radius:15px!important;background:var(--surface-2)!important;
+  display:grid!important;grid-template-columns:20px minmax(0,1fr)!important;gap:10px!important;align-items:center!important;
 }
-.ios-app.theme-dark #catalog-dialog .catalog-search-wrap{
-  background:var(--surface)!important;
-  border-color:var(--line)!important;
+.ios-app #catalog-dialog .catalog-search-wrap:focus-within{
+  border-color:var(--ui-green)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--ui-green) 12%,transparent);
 }
-.ios-app #catalog-dialog .catalog-search-wrap>.icon{
-  width:18px!important;
-  height:18px!important;
-  color:#7f857f!important;
-}
+.ios-app #catalog-dialog .catalog-search-wrap>.icon{width:19px!important;height:19px!important;color:var(--muted)!important}
 .ios-app #catalog-dialog #catalog-search{
-  width:100%!important;
-  height:46px!important;
-  padding:0!important;
-  border:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  color:#1a1a1a!important;
-  font-size:16px!important;
+  width:100%!important;min-width:0!important;height:46px!important;margin:0!important;padding:0!important;
+  border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;outline:none!important;
+  color:var(--text)!important;font-size:16px!important;line-height:normal!important;
 }
-.ios-app.theme-dark #catalog-dialog #catalog-search{color:var(--text)!important}
-.ios-app #catalog-dialog #catalog-search::placeholder{color:#9a9d99!important}
-
+.ios-app #catalog-dialog #catalog-search::placeholder{color:var(--muted)!important;opacity:1}
+.ios-app #catalog-dialog .catalog-sort{
+  display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;
+  border:1px solid var(--ui-card-border);border-radius:14px;background:var(--surface-2);
+}
+.ios-app #catalog-dialog .catalog-sort button{
+  min-height:40px;padding:8px 12px;border:0;border-radius:10px;
+  font-size:14px;font-weight:550;background:transparent;color:var(--muted);
+}
+.ios-app #catalog-dialog .catalog-sort button[aria-pressed=true]{background:var(--ui-card-bg);color:var(--ui-green);box-shadow:var(--ui-card-shadow)}
+.ios-app #catalog-dialog .catalog-body{
+  flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;padding:14px 16px calc(18px + var(--safe-bottom))!important;
+}
 .ios-app #catalog-dialog .catalog-section-head{
-  margin:18px 4px 9px!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:space-between!important;
-  gap:10px!important;
+  margin:0 2px 12px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;
 }
-.ios-app #catalog-dialog .catalog-section-head>span{
-  color:#6f746f!important;
-  font-size:12px!important;
-  font-weight:650!important;
-}
-.ios-app #catalog-dialog .catalog-section-head>small{
-  color:#9a9f9a!important;
-  font-size:10px!important;
-}
-
-.ios-app #catalog-dialog .catalog-list{
-  display:flex!important;
-  flex-direction:column!important;
-  gap:8px!important;
-  background:transparent!important;
-  border:0!important;
-}
+.ios-app #catalog-dialog .catalog-section-head>span{color:var(--text)!important;font-size:14px!important;font-weight:600!important}
+.ios-app #catalog-dialog .catalog-section-head>small{color:var(--muted)!important;font-size:13px!important}
+.ios-app #catalog-dialog .catalog-list{display:grid!important;gap:10px!important;background:transparent!important;border:0!important}
+.ios-app #catalog-dialog .catalog-merchants{grid-template-columns:minmax(0,1fr)}
+.ios-app #catalog-dialog .catalog-categories{grid-template-columns:repeat(2,minmax(0,1fr))}
 .ios-app #catalog-dialog .catalog-row{
-  min-height:64px!important;
-  border:1px solid #e8e4df!important;
-  border-radius:15px!important;
-  background:#fff!important;
-  box-shadow:0 3px 9px rgba(43,39,35,.045)!important;
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) 42px!important;
-  overflow:hidden!important;
+  --catalog-tone-bg:#eceeeb;--catalog-tone-ink:#616b63;
+  position:relative;display:block!important;min-width:0!important;min-height:0!important;
+  border:1px solid var(--ui-card-border)!important;border-radius:19px!important;
+  background:var(--ui-card-bg)!important;box-shadow:var(--ui-card-shadow)!important;overflow:hidden!important;
 }
-.ios-app.theme-dark #catalog-dialog .catalog-row{
-  background:var(--surface)!important;
-  border-color:var(--line)!important;
-  box-shadow:none!important;
+.ios-app #catalog-dialog .catalog-row.is-selected{
+  border-color:var(--ui-green)!important;
+  background:color-mix(in srgb,var(--ui-card-bg) 94%,var(--ui-green))!important;
+  box-shadow:0 0 0 1px var(--ui-green),var(--ui-card-shadow)!important;
 }
 .ios-app #catalog-dialog .catalog-choice{
-  min-width:0!important;
-  min-height:64px!important;
-  padding:8px 6px 8px 11px!important;
-  border:0!important;
-  background:transparent!important;
-  display:grid!important;
-  grid-template-columns:40px minmax(0,1fr) auto!important;
-  gap:10px!important;
-  align-items:center!important;
-  text-align:left!important;
+  width:100%!important;min-width:0!important;min-height:76px!important;box-sizing:border-box;
+  padding:12px!important;border:0!important;border-radius:18px!important;background:transparent!important;color:var(--text)!important;
+  display:grid!important;grid-template-columns:46px minmax(0,1fr) 24px!important;gap:12px!important;align-items:center!important;text-align:left!important;
 }
 .ios-app #catalog-dialog .catalog-icon{
-  width:40px!important;
-  height:40px!important;
-  border-radius:12px!important;
-  background:#e4f2e1!important;
-  color:#2f7d37!important;
-  display:grid!important;
-  place-items:center!important;
+  width:46px!important;height:46px!important;border-radius:15px!important;
+  background:var(--catalog-tone-bg)!important;color:var(--catalog-tone-ink)!important;
+  display:grid!important;place-items:center!important;font-size:17px!important;font-weight:650!important;letter-spacing:-.5px;
 }
-.ios-app.theme-dark #catalog-dialog .catalog-icon{
-  background:var(--accent-soft)!important;
-  color:var(--accent)!important;
-}
-.ios-app #catalog-dialog .catalog-icon .icon{
-  width:19px!important;
-  height:19px!important;
-}
+.ios-app #catalog-dialog .catalog-icon .icon{width:23px!important;height:23px!important}
+.ios-app #catalog-dialog .catalog-copy{min-width:0;display:grid;gap:4px}
 .ios-app #catalog-dialog .catalog-name{
-  min-width:0!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-  white-space:nowrap!important;
-  color:#1b1b1b!important;
-  font-size:15px!important;
-  font-weight:560!important;
+  min-width:0!important;overflow:visible!important;text-overflow:clip!important;white-space:normal!important;overflow-wrap:anywhere;
+  color:var(--text)!important;font-size:15px!important;line-height:1.35!important;font-weight:600!important;
 }
-.ios-app.theme-dark #catalog-dialog .catalog-name{color:var(--text)!important}
-.ios-app #catalog-dialog .catalog-count{
-  min-width:28px!important;
-  height:28px!important;
-  padding:0 8px!important;
-  border-radius:999px!important;
-  background:#f4f4f2!important;
-  color:#777d77!important;
-  display:grid!important;
-  place-items:center!important;
-  font-size:11px!important;
-  font-weight:650!important;
+.ios-app #catalog-dialog .catalog-detail{font-size:13px;line-height:1.4;color:var(--muted)}
+.ios-app #catalog-dialog .is-selected .catalog-detail{color:var(--ui-green);font-weight:550}
+.ios-app #catalog-dialog .catalog-indicator{width:24px;height:24px;box-sizing:border-box;display:grid;place-items:center;border-radius:50%;color:var(--muted)}
+.ios-app #catalog-dialog.selection-mode .catalog-indicator{border:1px solid var(--ui-card-border)}
+.ios-app #catalog-dialog .catalog-indicator.is-checked{border-color:var(--ui-green)!important;background:var(--ui-green);color:var(--ui-card-bg)}
+.ios-app #catalog-dialog .catalog-indicator .icon{width:16px;height:16px}
+.ios-app #catalog-dialog .catalog-categories .catalog-choice{
+  min-height:136px!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important;align-content:start!important;align-items:start!important;padding:15px!important;
 }
-.ios-app.theme-dark #catalog-dialog .catalog-count{
-  background:var(--surface-2)!important;
-  color:var(--muted)!important;
-}
-.ios-app #catalog-dialog .catalog-edit{
-  width:42px!important;
-  min-height:64px!important;
-  padding:0!important;
-  border:0!important;
-  background:transparent!important;
-  color:#808680!important;
-  display:grid!important;
-  place-items:center!important;
-}
-.ios-app #catalog-dialog .catalog-edit .icon{
-  width:18px!important;
-  height:18px!important;
-}
-
-.ios-app #catalog-dialog .catalog-note{
-  margin:14px 6px 2px!important;
-  color:#999d98!important;
-  font-size:10px!important;
-  line-height:1.4!important;
-}
+.ios-app #catalog-dialog .catalog-categories .catalog-indicator{position:absolute;top:14px;right:12px}
+.ios-app #catalog-dialog .catalog-categories .catalog-icon{width:42px!important;height:42px!important;border-radius:14px!important}
+.ios-app #catalog-dialog .catalog-tone-green{--catalog-tone-bg:#e1f0df;--catalog-tone-ink:#2f7d37}
+.ios-app #catalog-dialog .catalog-tone-blue{--catalog-tone-bg:#e3edf7;--catalog-tone-ink:#396990}
+.ios-app #catalog-dialog .catalog-tone-amber{--catalog-tone-bg:#f8ecdc;--catalog-tone-ink:#966020}
+.ios-app #catalog-dialog .catalog-tone-violet{--catalog-tone-bg:#eee6f7;--catalog-tone-ink:#765695}
+.ios-app #catalog-dialog .catalog-tone-rose{--catalog-tone-bg:#f6e5ec;--catalog-tone-ink:#a14d71}
+.ios-app.theme-dark #catalog-dialog .catalog-row{--catalog-tone-bg:#2a302b;--catalog-tone-ink:#b2bcb4}
+.ios-app.theme-dark #catalog-dialog .catalog-tone-green{--catalog-tone-bg:#25422c;--catalog-tone-ink:#8dd899}
+.ios-app.theme-dark #catalog-dialog .catalog-tone-blue{--catalog-tone-bg:#263b4d;--catalog-tone-ink:#9fc7e8}
+.ios-app.theme-dark #catalog-dialog .catalog-tone-amber{--catalog-tone-bg:#443624;--catalog-tone-ink:#ebbc7e}
+.ios-app.theme-dark #catalog-dialog .catalog-tone-violet{--catalog-tone-bg:#3b2e4c;--catalog-tone-ink:#c9adeb}
+.ios-app.theme-dark #catalog-dialog .catalog-tone-rose{--catalog-tone-bg:#492f3b;--catalog-tone-ink:#eda8c5}
+.ios-app #catalog-dialog .catalog-note{margin:16px 2px 0!important;color:var(--muted)!important;font-size:13px!important;line-height:1.5!important}
 .ios-app #catalog-dialog .catalog-empty{
-  min-height:150px!important;
-  padding:22px!important;
-  border:1px dashed #ddd9d4!important;
-  border-radius:15px!important;
-  background:#fff!important;
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  justify-content:center!important;
-  text-align:center!important;
+  grid-column:1 / -1;min-height:210px!important;padding:26px 18px!important;
+  border:1px solid var(--ui-card-border)!important;border-radius:19px!important;background:var(--ui-card-bg)!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;
 }
-.ios-app.theme-dark #catalog-dialog .catalog-empty{
-  background:var(--surface)!important;
-  border-color:var(--line)!important;
-}
-.ios-app #catalog-dialog .catalog-empty>span{
-  width:38px!important;
-  height:38px!important;
-  border-radius:50%!important;
-  background:var(--accent-soft)!important;
-  color:var(--accent)!important;
-  display:grid!important;
-  place-items:center!important;
-}
-.ios-app #catalog-dialog .catalog-empty>span .icon{width:17px!important}
-.ios-app #catalog-dialog .catalog-empty strong{
-  margin-top:8px!important;
-  font-size:13px!important;
-}
-.ios-app #catalog-dialog .catalog-empty p{
-  margin:4px 0 0!important;
-  color:var(--muted)!important;
-  font-size:11px!important;
-}
-
-/* Add / edit merchant/category screen */
+.ios-app #catalog-dialog .catalog-empty>span{width:48px!important;height:48px!important;border-radius:16px!important;background:var(--ui-green-soft)!important;color:var(--ui-green)!important;display:grid!important;place-items:center!important}
+.ios-app #catalog-dialog .catalog-empty>span .icon{width:23px!important;height:23px!important}
+.ios-app #catalog-dialog .catalog-empty strong{margin-top:12px!important;font-size:17px!important;font-weight:600}
+.ios-app #catalog-dialog .catalog-empty p{margin:6px 0 16px!important;color:var(--muted)!important;font-size:14px!important;line-height:1.5}
+.ios-app #catalog-dialog #catalog-empty-add{min-height:44px;display:flex;align-items:center;gap:6px;border-radius:13px;font-size:14px}
 .ios-app #catalog-dialog .catalog-edit-card{
-  padding:18px!important;
-  border:1px solid #e8e4df!important;
-  border-radius:18px!important;
-  background:#fff!important;
-  box-shadow:0 4px 12px rgba(43,39,35,.05)!important;
-  display:grid!important;
-  grid-template-columns:46px minmax(0,1fr)!important;
-  gap:12px!important;
-  align-items:center!important;
+  padding:18px!important;border:1px solid var(--ui-card-border)!important;border-radius:19px!important;
+  background:var(--ui-card-bg)!important;box-shadow:var(--ui-card-shadow)!important;
+  display:grid!important;grid-template-columns:46px minmax(0,1fr)!important;gap:12px!important;align-items:center!important;
 }
-.ios-app.theme-dark #catalog-dialog .catalog-edit-card{
-  background:var(--surface)!important;
-  border-color:var(--line)!important;
-}
-.ios-app #catalog-dialog .catalog-edit-icon{
-  width:46px!important;
-  height:46px!important;
-  border-radius:13px!important;
-  background:var(--accent-soft)!important;
-  color:var(--accent)!important;
-  display:grid!important;
-  place-items:center!important;
-}
-.ios-app #catalog-dialog .catalog-edit-icon .icon{
-  width:20px!important;
-  height:20px!important;
-}
-.ios-app #catalog-dialog .catalog-edit-kicker{
-  margin:0 0 3px!important;
-  color:var(--accent)!important;
-  font-size:9px!important;
-  letter-spacing:.09em!important;
-  font-weight:720!important;
-}
-.ios-app #catalog-dialog .catalog-edit-card h3{
-  margin:0!important;
-  color:var(--text)!important;
-  font-size:18px!important;
-}
-.ios-app #catalog-dialog #catalog-form{
-  grid-column:1 / -1!important;
-  margin-top:8px!important;
-}
-.ios-app #catalog-dialog #catalog-form .field{
-  margin:0 0 12px!important;
-}
+.ios-app #catalog-dialog .catalog-edit-icon{width:46px!important;height:46px!important;border-radius:15px!important;background:var(--ui-green-soft)!important;color:var(--ui-green)!important;display:grid!important;place-items:center!important}
+.ios-app #catalog-dialog .catalog-edit-icon .icon{width:22px!important;height:22px!important}
+.ios-app #catalog-dialog .catalog-edit-card h3{margin:0!important;color:var(--text)!important;font-size:18px!important;font-weight:600}
+.ios-app #catalog-dialog .catalog-edit-hint{margin:5px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
+.ios-app #catalog-dialog #catalog-form{grid-column:1 / -1!important;margin-top:6px!important}
+.ios-app #catalog-dialog #catalog-form .field{margin:0 0 12px!important}
+.ios-app #catalog-dialog #catalog-form .field>span{font-size:14px!important;color:var(--muted)!important}
 .ios-app #catalog-dialog #catalog-form input{
-  min-height:48px!important;
-  border-radius:14px!important;
-  background:#f7f7f6!important;
-  border:1px solid #e1ddd8!important;
+  min-height:48px!important;box-sizing:border-box;font-size:16px!important;border-radius:14px!important;
+  background:var(--surface-2)!important;color:var(--text)!important;border:1px solid var(--ui-card-border)!important;
 }
-.ios-app.theme-dark #catalog-dialog #catalog-form input{
-  background:var(--surface-2)!important;
-  border-color:var(--line)!important;
-}
-.ios-app #catalog-dialog #catalog-form .primary{
-  min-height:46px!important;
-  border-radius:13px!important;
-}
-.ios-app #catalog-dialog #catalog-remove{
-  min-height:44px!important;
-  margin-top:9px!important;
-  border-radius:13px!important;
-}
-
-/* Phone sheet proportions */
+.ios-app #catalog-dialog #catalog-form .primary{min-height:48px!important;border-radius:14px!important;font-size:15px!important}
+.ios-app #catalog-dialog #catalog-remove{min-height:44px!important;margin-top:10px!important;border-radius:14px!important;font-size:14px!important}
+.ios-app #catalog-dialog :is(.catalog-choice,.catalog-sort button,.catalog-back,.catalog-add):focus-visible{outline:3px solid var(--ui-green);outline-offset:-4px}
+@media(hover:hover){.ios-app #catalog-dialog .catalog-row:hover{border-color:color-mix(in srgb,var(--ui-green) 45%,var(--ui-card-border))!important}}
+@media(hover:none){.ios-app #catalog-dialog .catalog-choice:active{background:var(--surface-2)!important}}
+@media(min-width:700px){.ios-app #catalog-dialog .catalog-categories{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:699px){
   .ios-app #catalog-dialog{
-    width:calc(100% - 24px)!important;
-    max-width:none!important;
-    max-height:calc(100dvh - var(--safe-top) - 110px)!important;
-    margin:auto 12px 0!important;
-    padding:8px 12px calc(16px + var(--safe-bottom))!important;
-    border-radius:28px 28px 0 0!important;
+    width:calc(100% - 16px)!important;max-width:none!important;
+    max-height:calc(100dvh - var(--safe-top) - 16px)!important;
+    margin:auto 8px 0!important;border-radius:28px 28px 0 0!important;
   }
-  .ios-app #catalog-dialog .catalog-head{
-    position:sticky!important;
-    top:0!important;
-    z-index:5!important;
-  }
+}
+@media(max-width:340px){
+  .ios-app #catalog-dialog .catalog-head h2{font-size:17px!important}
+  .ios-app #catalog-dialog .catalog-categories .catalog-choice{padding:12px!important}
+  .ios-app #catalog-dialog .catalog-categories .catalog-indicator{right:8px}
 }
 
 

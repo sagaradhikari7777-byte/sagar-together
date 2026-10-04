@@ -18,7 +18,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const money=c=>new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD'}).format(c/100);
 const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
 const uid=()=>crypto.randomUUID();const group=n=>n<2?'a':'b';
-const bills=billUI({getData:()=>data,modal,save,close:()=>sheet.close(),esc,money,today,toast,splitOptions,errorIn,pick:(kind,onPick)=>openCatalog(kind,onPick)});
+const bills=billUI({getData:()=>data,modal,save,close:()=>sheet.close(),esc,money,today,toast,splitOptions,errorIn,pick:(kind,onPick,selected)=>openCatalog(kind,onPick,selected)});
 const recurringDialog=()=>bills.list(),recurringHomeCard=()=>bills.homeCard();
 const catIcon=c=>/grocer/i.test(c)?'groceries':/dining|food|coffee/i.test(c)?'food':/bill|rent/i.test(c)?'bills':/transport|travel/i.test(c)?'travel':'other';
 const viewScroll=new Map(), navigationTrail=createNavigationTrail();
@@ -617,7 +617,7 @@ function expenseForm(e=null,preset={},resume=null){
   const choose=()=>openCatalog(input.dataset.pick,value=>{
    if(input.dataset.pick==='merchants')applyMerchant(value);
    else{input.value=value;input.dispatchEvent(new Event('input',{bubbles:true}));}
-  });
+  },input.value);
   input.onclick=choose;
   input.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();choose();}};
  });
@@ -756,7 +756,7 @@ function sheetOptions(id){const s=data.sheets.find(s=>s.id===id);modal(s.name,`<
 function deleteSheet(id){if(!canDeleteSheet(id))return toast('This sheet contains expenses you cannot delete.');const s=data.sheets.find(s=>s.id===id);const count=data.expenses.filter(e=>e.sheet===id).length;confirmDialog('Delete sheet?',`Delete “${s.name}” and its ${count} expense${count===1?'':'s'}? This cannot be undone. Sheets containing settled records or expenses you cannot delete must be archived instead.`,async()=>{await save({action:'sheet-delete',id});if(activeSheet===id)activeSheet=data.sheets.find(s=>!s.archived)?.id||'';tab='sheets';render();sheet.close();toast('Sheet deleted');},'Delete sheet');}
 let catalogDialog=null;
 function catalogIcon(name){return /internet/i.test(name)?'wifi':/rent/i.test(name)?'home':/entertain|movie/i.test(name)?'movie':/shopping/i.test(name)?'gift':/other/i.test(name)?'tag':/bills/i.test(name)?'receipt':catIcon(name);}
-function openCatalog(kind,onPick=null){
+function openCatalog(kind,onPick=null,selected=''){
  if(!catalogDialog){
   catalogDialog=document.createElement('dialog');
   catalogDialog.id='catalog-dialog';
@@ -769,36 +769,56 @@ function openCatalog(kind,onPick=null){
   catalogDialog.addEventListener('close',syncOverlayLayers);
   document.body.append(catalogDialog);
  }
- const dlg=catalogDialog,title=kind==='merchants'?'Merchants':'Categories',field=kind==='merchants'?'merchant':'category';let query='';
+ const dlg=catalogDialog,isMerchant=kind==='merchants',title=isMerchant?'Merchants':'Categories',field=isMerchant?'merchant':'category';
+ let query='',sort=onPick?'frequent':'az';
  dlg.dataset.catalogKind=kind;dlg.classList.toggle('selection-mode',!!onPick);
  const head=(heading,back,plus)=>{
-  dlg.innerHTML=`<div class="catalog-handle" aria-hidden="true"></div><header class="catalog-head"><button type="button" class="catalog-back" id="catalog-back" aria-label="Back">${backIcon()}</button><h2 id="catalog-title" tabindex="-1">${heading}</h2>${plus?`<button type="button" class="catalog-add" id="catalog-add" aria-label="Add ${field}">${icon('plus')}</button>`:'<span class="head-spacer"></span>'}</header>`;
+  dlg.innerHTML=`<div class="catalog-chrome"><div class="catalog-handle" aria-hidden="true"></div><header class="catalog-head"><button type="button" class="catalog-back" id="catalog-back" aria-label="Back">${backIcon()}</button><h2 id="catalog-title" tabindex="-1">${heading}</h2>${plus?`<button type="button" class="catalog-add" id="catalog-add" aria-label="Add ${field}">${icon('plus')}<span>Add</span></button>`:'<span class="head-spacer" aria-hidden="true"></span>'}</header></div>`;
   dlg.setAttribute('aria-labelledby','catalog-title');
   dlg.querySelector('#catalog-back').onclick=back;
   dlg.oncancel=ev=>{ev.preventDefault();back();};
  };
+ const tone=(name,categoryIcon)=>{
+  if(!isMerchant)return {groceries:'green',food:'amber',travel:'violet',wifi:'blue',home:'green',movie:'rose',gift:'violet',receipt:'blue',bills:'blue',tag:'neutral',other:'neutral'}[categoryIcon]||'neutral';
+  const hash=Array.from(name).reduce((value,char)=>(value*31+char.codePointAt(0))>>>0,0);
+  return ['green','blue','amber','violet','rose'][hash%5];
+ };
  const browse=()=>{
-  head(title,()=>dlg.close(),true);
-  dlg.insertAdjacentHTML('beforeend',`<div class="catalog-body"><label class="catalog-search-wrap">${icon('search')}<input id="catalog-search" type="search" placeholder="Search ${title.toLowerCase()}" aria-label="Search ${title.toLowerCase()}" value="${esc(query)}"></label><div class="catalog-section-head"><span>All ${title.toLowerCase()}</span><small>${catalogValues(data,kind).length} saved</small></div><div class="catalog-list"></div><p class="catalog-note">${onPick?'Choose an option, or use + to add a missing one.':'Usage counts include all household expenses. Renaming or removing an option does not change past expenses.'}</p></div>`);
-  dlg.querySelector('#catalog-add').onclick=()=>edit();
+  head(onPick?'Choose '+field:title,()=>dlg.close(),true);
+  dlg.querySelector('.catalog-chrome').insertAdjacentHTML('beforeend',`<div class="catalog-toolbar"><label class="catalog-search-wrap">${icon('search')}<input id="catalog-search" type="search" placeholder="Search ${title.toLowerCase()}" aria-label="Search ${title.toLowerCase()}" value="${esc(query)}" autocomplete="off"></label>${isMerchant?`<div class="catalog-sort" role="group" aria-label="Merchant order"><button type="button" data-catalog-sort="frequent" aria-pressed="${sort==='frequent'}">Frequent</button><button type="button" data-catalog-sort="az" aria-pressed="${sort==='az'}">A–Z</button></div>`:''}</div>`);
+  dlg.insertAdjacentHTML('beforeend',`<div class="catalog-body"><div class="catalog-section-head"><span>${isMerchant&&sort==='frequent'?'Most used first':'All '+title.toLowerCase()}</span><small id="catalog-results" role="status" aria-live="polite"></small></div><div class="catalog-list ${isMerchant?'catalog-merchants':'catalog-categories'}"></div>${onPick?'':`<p class="catalog-note">Tap a ${field} to rename or remove it. Past expenses stay unchanged.</p>`}</div>`);
+  dlg.querySelector('#catalog-add').onclick=()=>edit(null,query.trim());
   const rows=()=>{
-   const names=catalogValues(data,kind).filter(n=>n.toLowerCase().includes(query.toLowerCase()));
-   if(kind==='merchants')names.sort((a,b)=>a.localeCompare(b));
+   const allNames=catalogValues(data,kind),needle=query.trim().toLocaleLowerCase();
+   const names=allNames.filter(n=>n.toLocaleLowerCase().includes(needle));
+   const counts=new Map();
+   for(const expense of data.expenses)counts.set(expense[field],(counts.get(expense[field])||0)+1);
+   if(isMerchant)names.sort((a,b)=>(sort==='frequent'?(counts.get(b)||0)-(counts.get(a)||0):0)||a.localeCompare(b));
+   dlg.querySelector('#catalog-results').textContent=needle?`${names.length} result${names.length===1?'':'s'}`:`${allNames.length} saved`;
+   dlg.querySelector('.catalog-section-head>span').textContent=needle?'Search results':isMerchant&&sort==='frequent'?'Most used first':'All '+title.toLowerCase();
    dlg.querySelector('.catalog-list').innerHTML=names.length?names.map(n=>{
-    const count=data.expenses.filter(e=>e[field]===n).length;
-    return `<div class="catalog-row"><button type="button" class="catalog-choice" data-choice="${esc(n)}"><span class="catalog-icon ${kind==='merchants'?'merchant-icon':catalogIcon(n)}">${icon(kind==='merchants'?'store':catalogIcon(n))}</span><span class="catalog-name">${esc(n)}</span><span class="catalog-count" aria-label="${count} uses">${count}</span></button>${onPick?'':`<button type="button" class="catalog-edit" data-edit-choice="${esc(n)}" aria-label="Edit ${esc(n)}">${icon('edit')}</button>`}</div>`;
-   }).join(''):'<div class="catalog-empty"><span>'+icon('search')+'</span><strong>No matches</strong><p>Try another search or add a new '+field+'.</p></div>';
+    const count=counts.get(n)||0,chosen=!!onPick&&n===selected,categoryIcon=catalogIcon(n);
+    const initials=n.trim().split(/\s+/).slice(0,2).map(part=>Array.from(part)[0]).join('').toLocaleUpperCase();
+    const detail=chosen?'Selected':count?`${count} expense${count===1?'':'s'}`:'No expenses yet';
+    return `<div class="catalog-row catalog-tone-${tone(n,categoryIcon)} ${chosen?'is-selected':''}"><button type="button" class="catalog-choice" data-choice="${esc(n)}" ${onPick?`aria-pressed="${chosen}"`:`aria-label="Edit ${esc(n)}"`}><span class="catalog-icon ${isMerchant?'merchant-icon':categoryIcon}" aria-hidden="true">${isMerchant?esc(initials):icon(categoryIcon)}</span><span class="catalog-copy"><span class="catalog-name">${esc(n)}</span><small class="catalog-detail">${detail}</small></span><span class="catalog-indicator ${chosen?'is-checked':''}" aria-hidden="true">${chosen?icon('check'):onPick?'':icon('chevron')}</span></button></div>`;
+   }).join(''):`<div class="catalog-empty"><span>${icon(needle?'search':isMerchant?'store':'tag')}</span><strong>${needle?'No matches':'No '+title.toLowerCase()+' yet'}</strong><p>${needle?'Try another name or add it to your list.':'Add your first '+field+' to get started.'}</p><button type="button" class="secondary" id="catalog-empty-add">${icon('plus')} Add ${field}</button></div>`;
    dlg.querySelectorAll('[data-choice]').forEach(b=>b.onclick=()=>{if(onPick){onPick(b.dataset.choice);dlg.close();}else edit(b.dataset.choice);});
-   dlg.querySelectorAll('[data-edit-choice]').forEach(b=>b.onclick=()=>edit(b.dataset.editChoice));
+   const emptyAdd=dlg.querySelector('#catalog-empty-add');if(emptyAdd)emptyAdd.onclick=()=>edit(null,query.trim());
   };
   rows();
   dlg.querySelector('#catalog-search').oninput=e=>{query=e.target.value;rows();};
-  dlg.scrollTop=0;
+  dlg.querySelectorAll('[data-catalog-sort]').forEach(button=>button.onclick=()=>{
+   sort=button.dataset.catalogSort;
+   dlg.querySelectorAll('[data-catalog-sort]').forEach(option=>option.setAttribute('aria-pressed',String(option.dataset.catalogSort===sort)));
+   rows();dlg.querySelector('.catalog-body').scrollTop=0;
+  });
+  if(dlg.open)dlg.querySelector('#catalog-title').focus({preventScroll:true});
  };
- const edit=(previous=null)=>{
+ const edit=(previous=null,initial='')=>{
   head(`${previous?'Edit':'Add'} ${field}`,browse,false);
-  dlg.insertAdjacentHTML('beforeend',`<div class="catalog-body"><section class="catalog-edit-card"><span class="catalog-edit-icon">${icon(kind==='merchants'?'store':'tag')}</span><div><p class="catalog-edit-kicker">${previous?'UPDATE':'NEW'} ${field.toUpperCase()}</p><h3>${previous?'Rename '+field:'Add '+field}</h3></div><form id="catalog-form"><label class="field"><span>Name</span><input name="name" value="${esc(previous||'')}" required maxlength="${kind==='merchants'?80:40}" autocomplete="off" placeholder="${kind==='merchants'?'e.g. Woolworths':'e.g. Groceries'}"></label><p class="error" role="alert"></p><button class="primary full">${previous?'Save changes':'Add '+field}</button>${previous?'<button type="button" id="catalog-remove" class="secondary full danger">Remove from list</button>':''}</form></section></div>`);
+  dlg.insertAdjacentHTML('beforeend',`<div class="catalog-body"><section class="catalog-edit-card"><span class="catalog-edit-icon">${icon(isMerchant?'store':'tag')}</span><div><h3>${previous?'Update name':'Make it yours'}</h3><p class="catalog-edit-hint">${previous?'Changes apply to this saved option.':'Save a '+field+' for everyone in your household.'}</p></div><form id="catalog-form"><label class="field"><span>Name</span><input name="name" value="${esc(previous??initial)}" required maxlength="${isMerchant?80:40}" autocomplete="off" placeholder="${isMerchant?'e.g. Woolworths':'e.g. Groceries'}"></label><p class="error" role="alert"></p><button class="primary full">${previous?'Save changes':'Add '+field}</button>${previous?'<button type="button" id="catalog-remove" class="secondary full danger">Remove from list</button>':''}</form></section></div>`);
   const form=dlg.querySelector('form');
+  form.elements.name.focus({preventScroll:true});
   form.onsubmit=async ev=>{
    ev.preventDefault();
    const button=form.querySelector('.primary');button.disabled=true;
