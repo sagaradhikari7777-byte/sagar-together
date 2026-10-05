@@ -9,9 +9,10 @@ Canonical repository: `sagaradhikari7777-byte/sagar-together` → `main`
 
 - **Home:** overall couple balance, matched-period spending, upcoming bills and recent transactions.
 - **Sheets:** open periods by default; Open / Archived, with an outstanding-only filter.
-- **Add:** merchant, amount, category, date, payer, split, frequent merchant shortcuts, optional note/receipt, reviewed scan suggestions and one Save.
+- **Add:** merchant, amount with an optional inline calculator, category, date, payer, split, frequent merchant shortcuts, optional note/receipt, reviewed scan suggestions and one Save.
 - **Settle:** an overall balance with sheet balances, then per-sheet payment recording, summary/history and spending.
-- **Settings:** household names, invitations/access, recurring bills, entry defaults, merchants/categories, CSV export and appearance.
+- **Settings:** household names, invitations/access, recurring bills, entry defaults, merchants/categories and full CSV export. Theme switching stays in each main screen’s header.
+- **Journal search:** search merchant, category, payer/creator name, sheet, notes, date or amount; filter by payer, author, receipt presence, category and date. Shown results have an exact couple-share subtotal and their own CSV export.
 
 ## Development
 
@@ -41,6 +42,7 @@ It uses Playwright when installed and is intended for iPhone-sized layout and ex
 - `public/*.css` — active screen/component styling.
 - `public/back-navigation.js` — view history and iPhone-style edge back gesture.
 - `public/journal.js` — pure filtering/repeat helpers.
+- `public/amount-calculator.js` — exact decimal arithmetic and an opt-in calculator inside expense entry.
 - `public/settlement-overview.js` — overall, per-sheet and historical couple share calculations.
 - `public/drafts.js` — local draft recovery, isolated by household and person.
 - `public/expense-policy.js` — expense ownership/normalisation.
@@ -65,6 +67,9 @@ Only the settlement recorder can reverse a record, with a required reason. Rever
 Receipt images are resized/compressed and stored separately in the existing private database. Household state contains only an immutable receipt reference. Opening a receipt performs an authenticated, household-scoped read. Legacy inline receipts relocate safely on a successful write; cached older clients continue to receive image data. The household JSON document is capped at roughly 3.5 MB, excluding separated receipt images. Unreferenced receipt copies are retained to avoid deleting data during concurrent writes; automatic garbage collection is not implemented.
 
 CSV export is a record export, not a complete restore backup.
+The journal Export button includes only the current search/filter/status results; the Settings export still includes the entire household journal. The result share is the signed-in member’s couple allocation, not an individual debt or a payment balance.
+
+The amount calculator supports addition, subtraction, multiplication, division and brackets. Decimal operands are represented exactly, with rounding to cents applied once to the final total. Previewing a calculation does not change or save an expense: use **Use amount** to fill the amount, then review the split and save normally. Incomplete calculations, division by zero and nonpositive/out-of-range expense totals are rejected.
 
 ## Product rule
 

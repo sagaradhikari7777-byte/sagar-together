@@ -223,6 +223,36 @@
 .ios-app #app .home-recent-amount strong{font-size:15px;font-weight:600;line-height:1.3}
 .ios-app #app .home-recent-amount time{font-size:13px;line-height:1.4;color:var(--muted);white-space:nowrap}
 
+/* Journal refinements use the existing result bar and filter sheet. */
+.ios-app #app .ref-inside-result{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;padding:8px 0!important;min-height:52px!important}
+.ios-app #app .journal-result-copy{display:grid;gap:2px;min-width:0;font-size:13px;line-height:1.4;color:var(--muted)}
+.ios-app #app .journal-result-copy :is(strong,b){display:inline!important;margin:0!important;font-size:13px!important;font-weight:600!important;color:var(--text)!important;letter-spacing:0!important;white-space:nowrap}
+.ios-app #app .journal-result-copy small{font-size:13px;line-height:1.4}
+.ios-app #app .journal-result-tools{display:flex;align-items:center;gap:4px;flex:none}
+.ios-app #app .journal-result-tools button{min-height:44px;padding:0 8px;border:0;border-radius:10px;background:transparent;color:var(--ui-green);box-shadow:none;font-size:13px;font-weight:550}
+.ios-app #app .journal-result-tools .journal-result-clear{width:44px;display:grid;place-items:center;color:var(--muted)}
+.ios-app #app .journal-result-clear .icon{width:17px;height:17px}
+.ios-app #sheet[open] #filter-form{display:grid;gap:12px;min-width:0}
+.ios-app #sheet[open] #filter-form .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ios-app #sheet[open] #filter-form .field{margin:0;min-width:0}
+.ios-app #sheet[open] #filter-form :is(input,select){font-size:16px;min-height:44px;min-width:0;max-width:100%}
+.ios-app #sheet[open] #filter-form .error{margin:0}
+
+/* Calculator stays inside the amount control, without increasing closed height. */
+.ios-app #sheet[open] #expense-form .amount-control{position:relative}
+.ios-app #sheet[open] #expense-form .amount-control input{padding-inline-end:48px!important}
+.ios-app #sheet[open] #expense-form .entry-calculate-toggle{position:absolute;right:0;top:0;display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:0;border:0;border-radius:0 12px 12px 0;background:transparent;color:var(--entry-accent);box-shadow:none}
+.ios-app #sheet[open] #expense-form .entry-calculate-toggle .icon{width:20px;height:20px}
+.ios-app #sheet[open] #expense-form .entry-calculator{margin-top:10px;padding:10px;border:1px solid var(--entry-border);border-radius:12px;background:var(--entry-soft);min-width:0}
+.ios-app #sheet[open] #expense-form .entry-calculator[hidden]{display:none!important}
+.ios-app #sheet[open] #expense-form .entry-calculator-operators{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:6px}
+.ios-app #sheet[open] #expense-form .entry-calculator-operators button{min-height:44px;padding:4px;border:1px solid var(--entry-border);border-radius:10px;background:var(--entry-surface);color:var(--entry-accent);box-shadow:none;font-size:20px}
+.ios-app #sheet[open] #expense-form .entry-calculator p{margin:6px 0;font-size:13px;line-height:1.4;color:var(--entry-muted)}
+.ios-app #sheet[open] #expense-form .entry-calculator-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.ios-app #sheet[open] #expense-form .entry-calculator output{font-size:17px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.4;color:var(--entry-ink);overflow-wrap:anywhere}
+.ios-app #sheet[open] #expense-form .entry-calculator output.is-invalid{font-size:13px;font-weight:400;color:var(--entry-muted)}
+.ios-app #sheet[open] #expense-form #use-calculated-amount{flex:none;min-height:44px;padding:8px 10px;border:1px solid var(--entry-border);border-radius:10px;background:var(--entry-surface);color:var(--entry-accent);box-shadow:none;font-size:14px;font-weight:600}
+
 /* Sheets show names and dates first, then status and spending. */
 .ios-app #app .ref-sheets-filters{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:10px 0 4px!important;padding:4px;border:1px solid var(--ui-card-border);border-radius:15px;background:var(--surface-2)}
 .ios-app #app .ref-sheets-filters button{height:auto!important;min-height:42px!important;border:0!important;border-radius:11px!important;background:transparent!important;color:var(--muted)!important;font-size:14px!important;font-weight:550!important}
