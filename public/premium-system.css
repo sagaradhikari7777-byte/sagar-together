@@ -195,14 +195,14 @@
 .ios-app #app .period-comparison-details[open] summary .icon{transform:rotate(90deg)}
 .ios-app #app .period-comparison-details .period-comparison{margin:4px 0 0;font-size:13px;line-height:1.6}
 .ios-app #app .home-recent-caption{margin:7px 0 9px;font-size:13px}
-/* Recent activity: subtle category colour with a compact card shape. */
-.ios-app #app .home-recent-list{display:grid;gap:8px}
+/* Recent activity: two readable lines, with category colour in a slim card. */
+.ios-app #app .home-recent-list{display:grid;gap:6px}
 .ios-app #app .home-recent-row{
   --activity-tint:var(--ui-green-soft);--activity-ink:var(--ui-green);
-  min-height:68px;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;padding:10px 10px 10px 12px;
+  min-height:58px;grid-template-columns:30px minmax(0,1fr) auto;gap:8px;padding:8px 10px;box-sizing:border-box;
   border:1px solid color-mix(in srgb,var(--activity-ink) 16%,var(--ui-card-border));
-  border-inline-start:3px solid color-mix(in srgb,var(--activity-ink) 75%,var(--ui-card-bg));
-  border-radius:14px;
+  border-inline-start:2px solid color-mix(in srgb,var(--activity-ink) 75%,var(--ui-card-bg));
+  border-radius:12px;
   background:linear-gradient(115deg,color-mix(in srgb,var(--activity-tint) 65%,var(--ui-card-bg)),color-mix(in srgb,var(--activity-tint) 24%,var(--ui-card-bg)));
   box-shadow:0 2px 6px rgba(26,43,30,.025);
 }
@@ -213,13 +213,15 @@
 .ios-app #app .home-recent-row:has(>.re-cat.other){--activity-tint:var(--category-other-bg);--activity-ink:var(--category-other-ink);}
 @media(hover:hover){.ios-app #app .home-recent-row:hover{box-shadow:var(--ui-card-shadow)}}
 .ios-app #app .home-recent-row:active{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--activity-ink) 25%,transparent)}
-.ios-app #app .home-recent-row .re-cat{width:34px;height:34px;border-radius:11px}
-.ios-app #app .home-recent-copy>strong{font-size:15px;font-weight:600;line-height:1.35}
-.ios-app #app .home-recent-author{font-size:13px!important;font-weight:500;color:var(--muted)!important}
-.ios-app #app .home-recent-copy small{font-size:13px!important;line-height:1.5!important}
-.ios-app #app .home-recent-amount{align-self:center;padding:0;gap:6px}
-.ios-app #app .home-recent-amount strong{font-size:15px;font-weight:600}
-.ios-app #app .home-recent-amount .icon{width:13px;height:13px}
+.ios-app #app .home-recent-row .re-cat{width:30px;height:30px;border-radius:10px}
+.ios-app #app .home-recent-row .re-cat .icon{width:17px;height:17px}
+.ios-app #app .home-recent-copy{gap:2px}
+.ios-app #app .home-recent-copy>strong{font-size:15px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ios-app #app .home-recent-author{font-size:13px!important;font-weight:500;line-height:1.4!important;color:var(--muted)!important}
+.ios-app #app .home-recent-copy small{font-size:13px!important;line-height:1.4!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ios-app #app .home-recent-amount{display:grid;justify-items:end;align-self:center;padding:0;gap:2px}
+.ios-app #app .home-recent-amount strong{font-size:15px;font-weight:600;line-height:1.3}
+.ios-app #app .home-recent-amount time{font-size:13px;line-height:1.4;color:var(--muted);white-space:nowrap}
 
 /* Sheets show names and dates first, then status and spending. */
 .ios-app #app .ref-sheets-filters{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:10px 0 4px!important;padding:4px;border:1px solid var(--ui-card-border);border-radius:15px;background:var(--surface-2)}
@@ -320,8 +322,7 @@
  .ios-app #app .ui-sheet-footer .ref-sheet-amount{gap:5px}
  .ios-app #app .ui-sheet-footer .ref-sheet-amount small{font-size:11px!important}
  .ios-app #app .ref-settle-controls{grid-template-columns:repeat(2,minmax(0,1fr))!important}
- .ios-app #app .home-recent-row{gap:8px;grid-template-columns:32px minmax(0,1fr) auto}
- .ios-app #app .home-recent-row .re-cat{width:32px;height:32px}
+ .ios-app #app .home-recent-row{gap:7px;padding-inline:8px}
 }
 
 /* Compact settlement overview; details expand on this page. */

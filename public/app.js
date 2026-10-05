@@ -140,7 +140,10 @@ function homeRecentTransactions(){
  return `<section class="ref-spend-chart home-recent-card" aria-labelledby="home-recent-title"><div class="ref-spend-head"><div><small>Activity</small><h2 id="home-recent-title">Recent transactions</h2></div></div><p class="home-recent-caption">Latest additions across all sheets</p>${recent.length?`<div class="home-recent-list">${recent.map(({expense:e})=>{
   const sheetName=data.sheets.find(s=>s.id===e.sheet)?.name||'Expense sheet';
   const dateLabel=new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'});
-  return `<button type="button" class="home-recent-row" data-expense="${esc(e.id)}"><span class="re-cat ${catIcon(e.category)}">${icon(catIcon(e.category))}</span><span class="home-recent-copy"><strong>${esc(e.merchant)}</strong><span class="home-recent-author">${Number.isInteger(e.creator)?'Added by '+esc(expenseAuthor(e)):esc(expenseAuthor(e))}</span><small>${esc(e.category||'Other')} · ${esc(dateLabel)} · ${esc(sheetName)}</small></span><span class="home-recent-amount"><strong>${money(e.cents)}</strong>${icon('chevron')}</span></button>`;
+  const authorLabel=Number.isInteger(e.creator)?'Added by '+expenseAuthor(e):expenseAuthor(e);
+  const categoryLabel=e.category||'Other';
+  const rowLabel=`${e.merchant}, ${money(e.cents)}, ${authorLabel}, ${categoryLabel}, ${dateLabel}, ${sheetName}`;
+  return `<button type="button" class="home-recent-row" data-expense="${esc(e.id)}" aria-label="${esc(rowLabel)}"><span class="re-cat ${catIcon(e.category)}" title="${esc(categoryLabel)}" aria-hidden="true">${icon(catIcon(e.category))}</span><span class="home-recent-copy"><strong>${esc(e.merchant)}</strong><small class="home-recent-meta"><span class="home-recent-author">${esc(authorLabel)}</span> · ${esc(sheetName)}</small></span><span class="home-recent-amount"><strong>${money(e.cents)}</strong><time datetime="${esc(e.date)}">${esc(dateLabel)}</time></span></button>`;
  }).join('')}</div>`:`<div class="home-recent-empty">${icon('receipt')}<strong>No transactions yet</strong><p>Your latest expenses and who added them will appear here.</p><button type="button" class="secondary" data-action="add">Add an expense</button></div>`}</section>`;
 }
 function homeSpendingPulse(){
