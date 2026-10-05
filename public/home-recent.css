@@ -1,84 +1,67 @@
-/* Home activity uses the same card as the spending breakdown. */
-.ios-app .home-recent-card {
-  margin:16px 0 14px;
-  padding:16px 14px;
-  border:1px solid var(--ui-card-border);
-  border-radius:var(--ui-card-radius);
-  background:#fff;
-  box-shadow:var(--ui-card-shadow);
-}
-.ios-app.theme-dark .home-recent-card {
-  background:#1a211b;
-  border-color:var(--ui-card-border);
-  box-shadow:var(--ui-card-shadow);
-}
-.ios-app .home-recent-card .ref-spend-head small {
-  display:block;color:var(--accent);font-size:10px;font-weight:760;letter-spacing:.09em;
-}
-.ios-app .home-recent-card .ref-spend-head h2 {
-  margin:3px 0 0;color:var(--text);font-size:18px;line-height:1.2;font-weight:740;letter-spacing:-.25px;
-}
-.ios-app .home-recent-caption {
-  margin:7px 0 12px;color:var(--muted);font-size:13px;line-height:1.4;
-}
-.ios-app .home-recent-list {display:grid;gap:0;}
-.ios-app .home-recent-row {
-  width:100%;min-width:0;min-height:88px;padding:13px 0;
-  display:grid;grid-template-columns:37px minmax(0,1fr) auto;gap:11px;align-items:center;
-  border:0;border-bottom:1px solid var(--line);border-radius:0;
-  background:transparent;color:var(--text);box-shadow:none;text-align:left;
-}
-.ios-app .home-recent-row:last-child {border-bottom:0;padding-bottom:0;}
-.ios-app .home-recent-row:focus-visible {outline:2px solid var(--accent);outline-offset:3px;border-radius:8px;}
-.ios-app .home-recent-copy {min-width:0;display:grid;gap:3px;overflow-wrap:anywhere;}
-.ios-app .home-recent-copy>strong {font-size:15px;line-height:1.3;font-weight:740;}
-.ios-app .home-recent-author {font-size:13px;line-height:1.35;font-weight:650;color:var(--accent);}
-.ios-app .home-recent-copy small {font-size:12px;line-height:1.35;color:var(--muted);}
-.ios-app .home-recent-amount {display:flex;align-items:center;gap:4px;align-self:start;padding-top:3px;}
-.ios-app .home-recent-amount strong {font-size:15px;line-height:1.3;font-weight:750;white-space:nowrap;}
-.ios-app .home-recent-amount .icon {width:14px;height:14px;color:var(--muted);}
-.ios-app .home-recent-empty {display:grid;justify-items:center;gap:9px;padding:18px 0 6px;text-align:center;}
-.ios-app .home-recent-empty>.icon {width:29px;height:29px;color:var(--accent);}
-.ios-app .home-recent-empty strong {font-size:15px;}
-.ios-app .home-recent-empty p {margin:0;max-width:280px;font-size:13px;line-height:1.4;color:var(--muted);}
-@media(max-width:360px) {
-  .ios-app .home-recent-row {grid-template-columns:30px minmax(0,1fr) auto;gap:8px;}
-  .ios-app .home-recent-row .re-cat {width:30px;height:30px;border-radius:10px;}
-  .ios-app .home-recent-amount .icon {display:none;}
-  .ios-app .home-recent-amount strong {font-size:14px;}
-}
-
-/* Home owns its single balance and local draft recovery card. */
-.ios-app .ref-home-body {display:block!important;}
-.ios-app .home-balance-direction {font-size:17px!important;line-height:1.4!important;font-weight:650!important;color:var(--text)!important;}
-.ios-app .home-balance-action {width:100%;margin-top:14px;min-height:44px;}
-.ios-app .draft-banner {display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:10px;align-items:center;margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:19px;background:var(--surface);}
-.ios-app .draft-banner > span .icon {width:24px;height:24px;color:var(--accent);}
-.ios-app .draft-banner strong,.ios-app .draft-banner small {display:block;overflow-wrap:anywhere;}
-.ios-app .draft-banner strong {font-size:15px;}.ios-app .draft-banner small {margin-top:4px;font-size:13px;color:var(--muted);}
-.ios-app .draft-banner button {min-height:44px;}
-
-
+/* Home · a balance, a compact period snapshot, then recent activity. */
+.ref-home-body{display:grid;gap:13px}
+.home-recent-card{min-width:0;padding:14px 12px 11px;background:var(--surface);border:1px solid var(--line);border-radius:var(--ui-card-radius);box-shadow:var(--ui-card-shadow)}
+.home-recent-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 11px}
+.home-recent-heading h2{font-size:1rem;font-weight:650;letter-spacing:-.025em}
+.home-recent-heading>span{font-size:.75rem;white-space:nowrap;color:var(--muted)}
+.home-recent-list{display:grid;gap:6px}
+.home-recent-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:9px;align-items:center;width:100%;min-width:0;min-height:61px;padding:10px 9px;border:1px solid transparent;border-radius:13px;background:#f4f7fd;color:var(--text);text-align:left}
+.home-recent-row.tone-food{background:#f7f6fc}
+.home-recent-row.tone-bills{background:#f2f8fc}
+.home-recent-row.tone-other{background:#f5f6fa}
+.home-recent-row>.re-cat{width:34px;height:34px;border-radius:10px}
+.home-recent-row>.re-cat .icon{width:18px;height:18px}
+.home-recent-copy{min-width:0;display:grid;gap:3px}
+.home-recent-copy>strong{font-size:.9375rem;font-weight:600;line-height:1.3;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.home-recent-meta{display:block;min-width:0;font-size:.75rem;line-height:1.4;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-recent-author{color:var(--muted)}
+.home-recent-amount{min-width:0;text-align:right;display:grid;gap:3px}
+.home-recent-amount>strong{font-size:.9375rem;line-height:1.3;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.home-recent-amount>time{font-size:.75rem;line-height:1.4;color:var(--muted)}
+.home-recent-row:focus-visible{outline-offset:1px}
+.theme-dark .home-recent-row{background:#1e2a3e}
+.theme-dark .home-recent-row.tone-food{background:#28283d}
+.theme-dark .home-recent-row.tone-bills{background:#1d2e40}
+.theme-dark .home-recent-row.tone-other{background:#222c3c}
 /* HOME PERIOD PULSE */
-.ios-app .home-period-card{
-  margin:14px 0 0;padding:15px 14px;
-  border:1px solid var(--ui-card-border);border-radius:var(--ui-card-radius);
-  background:var(--ui-card-bg);box-shadow:var(--ui-card-shadow);
-}
-.ios-app .home-period-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.ios-app .home-period-head small{display:block;color:var(--ui-green);font-size:9px;line-height:1;letter-spacing:.09em;font-weight:760}
-.ios-app .home-period-head h2{margin:3px 0 0;font-size:17px;line-height:1.15;font-weight:750;letter-spacing:-.25px}
-.ios-app .home-period-head button{width:36px;height:36px;min-width:36px;padding:0;border:0;border-radius:11px;background:var(--ui-green-soft);color:var(--ui-green);display:grid;place-items:center}
-.ios-app .home-period-head button .icon{width:14px;height:14px}
-.ios-app .home-period-main{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:13px}
-.ios-app .home-period-main>strong{font-size:30px;line-height:1;font-weight:780;letter-spacing:-1px;font-variant-numeric:tabular-nums}
-.ios-app .home-period-main>span{max-width:52%;padding:6px 9px;border-radius:999px;background:var(--surface-2);color:var(--muted);font-size:10.5px;line-height:1.25;text-align:right}
-.ios-app .home-period-detail{display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:center;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
-.ios-app .home-period-detail>.re-cat{width:40px;height:40px;border-radius:12px}
-.ios-app .home-period-detail small{display:block;color:var(--muted);font-size:8px;letter-spacing:.08em;font-weight:740}
-.ios-app .home-period-detail strong{display:block;margin-top:2px;font-size:13px;font-weight:720}
-.ios-app .home-period-detail p{margin:2px 0 0;color:var(--muted);font-size:10px}
-@media(max-width:360px){
- .ios-app .home-period-main{align-items:flex-start;flex-direction:column;gap:8px}
- .ios-app .home-period-main>span{max-width:100%;text-align:left}
-}
+.home-period-card{min-width:0;padding:15px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--ui-card-radius);box-shadow:var(--ui-card-shadow)}
+.home-period-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.home-period-head>div{display:flex;align-items:baseline;gap:8px;min-width:0;flex-wrap:wrap}
+.home-period-head small{font-size:.8125rem;color:var(--muted)}
+.home-period-head h2{font-size:.875rem;font-weight:550;line-height:1.4;overflow-wrap:anywhere}
+.home-period-head>button{display:grid;place-items:center;width:32px;height:44px;flex:none;border:0;background:none;padding:0;color:var(--muted)}
+.home-period-head>button .icon{width:16px;height:16px}
+.home-period-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start;margin-top:6px}
+.home-period-main{display:grid;gap:5px;min-width:0}
+.home-period-main>strong{font-size:1.5rem;font-weight:650;letter-spacing:-.035em;line-height:1.25;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.home-period-main>span{font-size:.75rem;color:var(--muted);line-height:1.4;overflow-wrap:anywhere}
+.home-period-detail{display:flex;gap:8px;align-items:center;min-width:0;border-left:1px solid var(--line);padding-left:12px}
+.home-period-detail>.re-cat{width:31px;height:31px;border-radius:10px}
+.home-period-detail>.re-cat .icon{width:16px;height:16px}
+.home-period-detail>div{min-width:0}
+.home-period-detail small{display:block;font-size:.75rem;line-height:1.35;color:var(--muted)}
+.home-period-detail strong{display:block;font-size:.8125rem;line-height:1.35;font-weight:550;overflow-wrap:anywhere;margin:2px 0}
+.home-period-detail p{font-size:.75rem;color:var(--muted)}
+.period-comparison-details{border-top:1px solid var(--line);margin-top:11px;padding-top:2px}
+.period-comparison-details>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:42px;font-size:.8125rem;color:var(--accent);list-style:none;cursor:pointer}
+.period-comparison-details>summary::-webkit-details-marker{display:none}
+.period-comparison-details>summary .icon{width:14px;height:14px}
+.period-comparison-details[open]>summary .icon{transform:rotate(90deg)}
+.period-comparison{font-size:.8125rem;color:var(--muted);line-height:1.55;margin:0 0 4px}
+.draft-banner{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:9px;align-items:center;padding:12px 13px;border:1px solid var(--line);border-radius:15px;background:var(--surface)}
+.draft-banner>span{color:var(--accent)}
+.draft-banner strong,.draft-banner small{display:block;overflow-wrap:anywhere}
+.draft-banner strong{font-size:.875rem}
+.draft-banner small{font-size:.75rem;color:var(--muted);margin-top:3px}
+.draft-banner .secondary{min-height:44px;padding:8px 10px;font-size:.8125rem}
+.upcoming-card{padding:14px 15px;border:1px solid var(--line);border-radius:var(--ui-card-radius);background:var(--surface)}
+.upcoming-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.upcoming-head h2{font-size:1rem}
+.upcoming-head .text-button{font-size:.8125rem;min-height:32px}
+.upcoming-row{width:100%;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;min-height:56px;background:none;border:0;border-bottom:1px solid var(--line);text-align:left}
+.upcoming-row>span{min-width:0}
+.upcoming-row strong{display:block;font-size:.9375rem;overflow-wrap:anywhere}
+.upcoming-row small{display:block;font-size:.75rem;color:var(--muted);margin-top:3px}
+.upcoming-card>p{font-size:.75rem;color:var(--muted);margin-top:9px;line-height:1.45}
+@media(max-width:359px){.home-recent-card{padding-inline:10px}.home-recent-row{gap:7px;padding-inline:7px;grid-template-columns:30px minmax(0,1fr) auto}.home-recent-row>.re-cat{width:30px;height:30px}.home-period-card{padding-inline:13px}.home-period-detail>.re-cat{display:none}}
+@media(min-width:700px){.ref-home-body{grid-template-columns:1fr 1fr}.ref-home-body>.ref-balance-card{grid-column:1/-1}.ref-home-body>.home-period-card{grid-column:1}.ref-home-body>.home-recent-card{grid-column:2;grid-row:2/span 3}.ref-home-body>.draft-banner{grid-column:1/-1}.ref-home-body:has(.draft-banner)>.home-recent-card{grid-row:3/span 3}}

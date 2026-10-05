@@ -1,91 +1,67 @@
 ---
-name: Together Studio
-description: Compact shared household expenses with calm green surfaces and liquid-glass navigation.
+name: Together
+description: Compact shared expenses with white surfaces, blue balances and frosted navigation.
 colors:
-  primary: "#17634e"
-  ink: "#172c28"
-  muted: "#61716c"
-  canvas: "#f4f6f3"
+  primary: "#2468e8"
+  ink: "#18243a"
+  muted: "#65748a"
+  canvas: "#f4f7fc"
   surface: "#ffffff"
-  input: "#f2f5f2"
-  border: "#dce4df"
-  dark-canvas: "#111917"
-  dark-surface: "#1c2823"
+  input: "#f4f7fc"
+  border: "#e2e9f3"
+  dark-canvas: "#101725"
+  dark-surface: "#192336"
 typography:
   body:
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-    fontSize: "15px"
+    fontSize: "16px"
   input:
     fontSize: "16px"
 rounded:
-  surface: "22px"
-  control: "14px"
-  dialog: "28px"
+  surface: "19px"
+  control: "13px"
+  dialog: "26px"
 ---
 
-# Together Studio
+# Together
 
-Together should feel calm, compact and native on iPhone without imitating system UI so aggressively that usability suffers.
+An iPhone-first household wallet. Use white and blue, compact rows, readable amounts and a single clear action hierarchy. Reduce containers and repeated labels before reducing font sizes.
 
-## Hierarchy
+## Composition
 
-Use green for primary actions and status accents. White/light surfaces sit on a neutral canvas. Amounts and balance direction receive visual priority; metadata stays quiet.
+- Home: a rich blue balance card with couple identity and settlement access, a compact period snapshot, then the latest five transactions. Home scrolls as needed.
+- Sheets: one outstanding-spending summary, inline Open/Archived controls and Unsettled only, search, then compact sheet cards with full start/end dates and visible actions.
+- Sheet detail: a back header, sheet totals and couple shares, search/filter controls, and grouped expense rows. Back appears only on nested screens; retain edge swipe.
+- Settle: scope and couple selection, the balance and payment action, then inline expandable sheet balances and spending analysis. Keep history and copy actions available.
+- Settings: unboxed signed-in identity, household and preference rows, direct merchant/category controls, export and sign-out. Theme remains in the top-right header.
 
-Keep one clear action hierarchy per screen. Do not place two controls that perform the same primary action.
+## Type and surfaces
 
-## Navigation
+Use system fonts. Body and editable input text stay at 16px; regular controls and labels are 14px or larger. Use 12–13px for supporting dates, counts and captions. Amounts use tabular numerals. Do not clip essential information.
 
-The signed-in app has Home, Sheets, Add, Settle and Settings in the main dock.
+White content surfaces sit on a cool neutral canvas. Blue is the primary action colour; the Home balance is the strongest surface. Use blue-family category tints with restrained violet for dining. Keep whole-row tints faint. Light and dark modes use the same composition and spacing.
 
-When Add Expense is open, the main dock is not repeated inside the modal. The user saves or closes the draft, then returns to the app.
+Use blur only on the floating dock and header chrome. Skip refraction filters, decorative art and nested decorative cards. Respect reduced motion and reduced transparency.
 
-Nested sheet views have an explicit back control and support the existing edge-swipe behavior.
+## Entry and pickers
 
-## Screen ownership
+Add Expense is one natural scrolling column: expense details, payment/split, optional note/receipt, then one Save action. Hide the sheet selector when only one open sheet exists. The native receipt input stays hidden. Cancelling the iPhone picker must preserve the open draft.
 
-- Home owns overall balance and recent activity.
-- Sheets owns period management and open/settled expense browsing.
-- Settle owns settlement history and spending analytics; show payment actions before charts.
-- Settings owns configuration, catalog maintenance and export.
+Merchant selection uses compact searchable tiles with initials, frequency and a clear selected state. Categories use compact icon rows. Keep Add and maintenance controls available. Edits do not change historical expenses.
 
-Do not duplicate analytics in Settings or payment history in multiple places on Settle. Home and Settle must use the same overall balance scope. Remove decorative progress indicators unless they represent measurable progress.
+## Interaction and data
 
-## Expense form
+Retain creator-only edit/delete, settlement locking and audited reversal, receipt references, draft recovery, private access, member invitations, charts, export, recurring bills and the calculator. Record payment is a confirmation action, not a transfer.
 
-The form is a normal scrolling column. Cards never shrink below their contents.
+Minimum primary interactive targets remain 44px. Swipe actions retain visible menu alternatives. Keep all input, saving, empty and error states in the normal flow.
 
-Use this order:
-1. Expense details.
-2. Payment & split.
-3. Optional details and receipt.
-4. Save.
+## Style ownership
 
-Hide the sheet selector when only one open sheet is available. Inputs stay 16px or larger to prevent Safari focus zoom. The receipt file input itself remains hidden; only the visible Choose control opens it. Cancelling the native picker must not dismiss the dialog.
+Load exactly four CSS files, in this order:
 
-## Components
+1. `style.css`: shared tokens, controls, dialogs, onboarding and system feedback.
+2. `theme.css`: dark tokens, main screens, sheet/expense rows, charts and navigation.
+3. `home-recent.css`: Home period snapshot, recent transactions, drafts and reminders.
+4. `add-expense-polish.css`: expense entry, calculator, receipt controls and pickers.
 
-Content surfaces use thin borders and restrained shadows. Reserve blur and translucent treatment for navigation and modal chrome. Avoid wrapping cards inside decorative cards without a functional reason.
-
-Minimum interactive target remains 44px. Swipe actions must retain visible button/menu alternatives.
-
-## CSS maintenance
-
-`public/add-expense-polish.css` owns Add Expense layout. Other screen-specific stylesheets own their respective screens.
-
-Do not solve regressions by continually appending higher-specificity `!important` patches. Consolidate obsolete selectors when touching a component. Delete unreferenced legacy stylesheets rather than keeping multiple dormant design systems.
-
-
-## Premium system layer
-
-`public/premium-system.css` is the final cross-screen layer. It owns shared card radii/elevation, category icon tinting, press motion, saving feedback, toast material and reduced-motion behavior. Screen styles continue to own layout.
-
-Use the shared premium variables before creating a new card shell. Category colour stays on compact icon tiles rather than full cards.
-
-
-## Shared visual tokens
-
-The core screens share `--ui-card-radius`, `--ui-card-border`, `--ui-card-shadow`, `--ui-green`, `--ui-green-soft`, `--ui-motion` and `--ui-ease` from `theme.css`. Use these before introducing another hard-coded card shell.
-
-Category colour is restrained and functional: green groceries, warm dining, blue bills, violet travel, neutral other. The category tint belongs to the icon tile, not the entire transaction card.
-
-System feedback must be visible but quiet: short press compression, glass toast feedback, a thin saving progress indicator, and reduced-motion support.
+Update the owning rule. Do not add another override stylesheet. Keep `!important` limited to hidden elements and explicit form-flow guarantees. Cache versions in `index.html` must change with releases.

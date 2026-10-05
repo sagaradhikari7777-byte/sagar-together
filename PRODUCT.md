@@ -17,7 +17,7 @@ Do not add features unless they materially improve one of those jobs.
 - **Sheets** — Open by default, with Open / Archived views and an outstanding-only checkbox.
 - **Add** — focused modal expense entry. It is not a fifth navigable page while open.
 - **Settle** — overall and per-sheet balances, sheet payment recording, summary, payment history with corrections, then spending.
-- **Settings** — household identity, invitations/access, entry defaults, merchant/category management, export, appearance.
+- **Settings** — household identity, invitations/access, entry defaults, direct merchant/category management and export. Theme is controlled by the header icon.
 
 Avoid duplicate controls across these destinations.
 
@@ -52,4 +52,4 @@ Production: https://sagar-together.vercel.app.
 
 Vercel must run `npm test && npm run build` before publishing. GitHub Actions email QA is intentionally disabled.
 
-Prefer changing the owning component stylesheet over appending another override layer. Browser verification should cover iPhone-sized viewports, keyboard-sized layouts, receipt attach/cancel/remove, draft protection, save/edit, navigation and dark mode.
+Prefer changing the owning component stylesheet over appending another override layer. When browser verification is requested, cover iPhone-sized viewports, keyboard-sized layouts, receipt attach/cancel/remove, draft protection, save/edit, navigation and dark mode. Respect the user’s instruction when they choose to do visual checking themselves.

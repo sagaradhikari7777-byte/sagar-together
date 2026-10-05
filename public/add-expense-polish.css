@@ -1,314 +1,143 @@
-/* Expense entry owns its layout here. Keep cards at their content height inside
-   the scrolling form; flex-shrink previously collapsed Extra details on iPhone. */
-.ios-app #sheet[open]:has(#expense-form) {
-  --entry-canvas:#f5f3f3;
-  --entry-surface:#fff;
-  --entry-input:#fbfbfa;
-  --entry-ink:#171917;
-  --entry-muted:#697169;
-  --entry-border:#e2dfdc;
-  --entry-accent:#2f7d37;
-  --entry-soft:#edf5eb;
-  position:fixed!important;
-  inset:0!important;
-  width:min(600px,calc(100% - 32px))!important;
-  height:min(900px,calc(100dvh - 32px))!important;
-  max-width:none!important;
-  max-height:none!important;
-  margin:auto!important;
-  padding:0!important;
-  border:1px solid var(--entry-border)!important;
-  border-radius:24px!important;
-  background:var(--entry-canvas)!important;
-  color:var(--entry-ink)!important;
-  display:grid!important;
-  grid-template-rows:auto minmax(0,1fr)!important;
-  overflow:hidden!important;
+/* Together · focused entry and searchable merchant/category pickers. */
+#expense-form{display:grid;gap:12px;min-width:0}
+#expense-form > section {
+ position:static!important;
+ height:auto!important;
+ overflow:visible!important;
+ min-width:0;flex:none;
 }
-.ios-app.theme-dark #sheet[open]:has(#expense-form) {
-  --entry-canvas:#121713;
-  --entry-surface:#1a211b;
-  --entry-input:#202821;
-  --entry-ink:#f2f5f2;
-  --entry-muted:#adb8ae;
-  --entry-border:#344137;
-  --entry-accent:#72cb82;
-  --entry-soft:#253a29;
-}
-.ios-app #sheet[open]:has(#expense-form) .dialog-head {
-  grid-row:1!important;
-  position:relative!important;
-  inset:auto!important;
-  min-height:calc(60px + var(--safe-top))!important;
-  margin:0!important;
-  padding:calc(6px + var(--safe-top)) 12px 6px!important;
-  grid-template-columns:44px minmax(0,1fr) 44px!important;
-  align-items:center!important;
-  background:var(--entry-surface)!important;
-  border-bottom:1px solid var(--entry-border)!important;
-}
-.ios-app #sheet[open]:has(#expense-form) .dialog-head h2 {
-  font-size:22px!important;
-  line-height:1.2!important;
-  letter-spacing:-.4px!important;
-  color:var(--entry-ink)!important;
-}
-.ios-app #sheet[open]:has(#expense-form) .dialog-head .back-button {
-  width:44px!important;
-  height:44px!important;
-  min-width:44px!important;
-  min-height:44px!important;
-}
-.ios-app #sheet[open] #expense-form.ref-expense-form {
-  grid-row:2!important;
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:stretch!important;
-  gap:12px!important;
-  min-width:0!important;
-  min-height:0!important;
-  height:auto!important;
-  padding:12px 12px 20px!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  overscroll-behavior:contain!important;
-  -webkit-overflow-scrolling:touch!important;
-  scroll-padding-block:12px 20px!important;
-  background:var(--entry-canvas)!important;
-}
-/* Every form child must retain its intrinsic height, including errors, receipt
-   previews and the discard prompt, when the viewport or keyboard gets smaller. */
-.ios-app #sheet[open] #expense-form > * {
-  flex:0 0 auto!important;
-  min-width:0!important;
-}
-.ios-app #sheet[open] #expense-form > section {
-  position:static!important;
-  width:100%!important;
-  min-height:auto!important;
-  height:auto!important;
-  max-height:none!important;
-  margin:0!important;
-  padding:14px!important;
-  border:1px solid var(--entry-border)!important;
-  border-radius:18px!important;
-  background:var(--entry-surface)!important;
-  color:var(--entry-ink)!important;
-  box-shadow:0 4px 14px rgba(30,35,30,.04)!important;
-  overflow:visible!important;
-  contain:none!important;
-  transform:none!important;
-}
-.ios-app #sheet[open] #expense-form .ref-expense-card-title,
-.ios-app #sheet[open] #expense-form .ref-expense-options-head {
-  display:block!important;
-  margin:0 0 12px!important;
-}
-.ios-app #sheet[open] #expense-form :is(.ref-expense-card-title,.ref-expense-options-head) small {
-  display:block;
-  color:var(--entry-accent)!important;
-  font-size:10px!important;
-  line-height:1.2!important;
-  letter-spacing:.09em;
-  font-weight:700;
-}
-.ios-app #sheet[open] #expense-form h3 {
-  margin:3px 0 0!important;
-  color:var(--entry-ink)!important;
-  font-size:17px!important;
-  line-height:1.2!important;
-  letter-spacing:-.2px!important;
-}
-.ios-app #sheet[open] #expense-form .ref-expense-field {
-  display:block!important;
-  margin:10px 0 0!important;
-  min-width:0!important;
-}
-.ios-app #sheet[open] #expense-form .ref-expense-field:first-of-type,
-.ios-app #sheet[open] #expense-form .ref-expense-pair .ref-expense-field {
-  margin:0!important;
-}
-.ios-app #sheet[open] #expense-form .ref-expense-label,
-.ios-app #sheet[open] #expense-form .field > span {
-  display:block!important;
-  margin:0 0 5px!important;
-  color:var(--entry-muted)!important;
-  font-size:14px!important;
-  font-weight:550!important;
-  line-height:1.3!important;
-}
-.ios-app #sheet[open] #expense-form .ref-expense-control {
-  display:grid!important;
-  grid-template-columns:32px minmax(0,1fr)!important;
-  gap:8px!important;
-  align-items:center!important;
-  min-width:0!important;
-}
-.ios-app #sheet[open] #expense-form .ref-expense-control > i {
-  display:grid!important;
-  place-items:center!important;
-  width:32px!important;
-  height:36px!important;
-  border-radius:10px!important;
-  background:var(--entry-soft)!important;
-  color:var(--entry-accent)!important;
-}
-.ios-app #sheet[open] #expense-form .ref-expense-control > i .icon {
-  width:18px!important;
-  height:18px!important;
-}
-/* Editable controls stay at 16px or larger to prevent Safari's focus zoom. */
-.ios-app #sheet[open] #expense-form :is(input,select) {
-  width:100%!important;
-  min-width:0!important;
-  height:44px!important;
-  min-height:44px!important;
-  margin:0!important;
-  padding:0 10px!important;
-  border:1px solid var(--entry-border)!important;
-  border-radius:12px!important;
-  background:var(--entry-input)!important;
-  color:var(--entry-ink)!important;
-  font-size:16px!important;
-  line-height:normal!important;
-  box-shadow:none!important;
-}
-.ios-app #sheet[open] #expense-form input::placeholder {color:#929992!important}
-/* iOS gives the native date value its own line box. Centre that value inside
-   the same 44px control as the category and payer fields. */
-.ios-app #sheet[open] #expense-form input[type="date"] {
-  -webkit-appearance:none!important;
-  appearance:none!important;
-  line-height:42px!important;
-  text-align:left!important;
-}
-.ios-app #sheet[open] #expense-form input[type="date"]::-webkit-date-and-time-value {
-  display:block;
-  min-height:42px;
-  margin:0;
-  line-height:42px;
-  text-align:left;
-}
-.ios-app #sheet[open] #expense-form input[type="date"]::-webkit-datetime-edit {
-  padding:0;
-  line-height:42px;
-}
-.ios-app #sheet[open] #expense-form :is(input,select):focus {
-  border-color:var(--entry-accent)!important;
-  outline:2px solid var(--entry-accent)!important;
-  outline-offset:1px!important;
-}
-.ios-app #sheet[open] #expense-form .ref-expense-pair {
-  display:grid!important;
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:10px!important;
-  margin-top:10px!important;
-}
-.ios-app #sheet[open] #expense-form .ref-expense-pair-split {margin-top:0!important}
-.ios-app #sheet[open] #expense-form .ref-expense-amount-row {
-  display:grid!important;
-  grid-template-columns:74px minmax(0,1fr)!important;
-  gap:8px!important;
-  align-items:center!important;
-}
-.ios-app #sheet[open] #expense-form .ref-currency-pill {
-  min-width:0!important;
-  height:44px!important;
-  padding:0 8px!important;
-  border-radius:12px!important;
-  background:var(--entry-soft)!important;
-  color:var(--entry-accent)!important;
-  font-size:15px!important;
-}
-.ios-app #sheet[open] #expense-form .amount-control {display:block!important}
-.ios-app #sheet[open] #expense-form .amount-control input {
-  font-size:22px!important;
-  font-weight:650!important;
-  letter-spacing:-.04em!important;
-  color:var(--entry-ink)!important;
-}
-.ios-app #sheet[open] #expense-form .ref-split-preview-inline {
-  margin-top:10px!important;
-  padding:9px 10px!important;
-  border-radius:11px!important;
-  background:var(--entry-soft)!important;
-  color:var(--entry-muted)!important;
-  font-size:14px!important;
-  line-height:1.5!important;
-  overflow-wrap:anywhere!important;
-}
-.ios-app #sheet[open] #expense-form .ref-split-preview-inline strong {color:var(--entry-ink)!important}
-.ios-app #sheet[open] #expense-form .ref-expense-receipt-card {margin-top:12px!important}
-.ios-app #sheet[open] #expense-form .ref-receipt-row {
-  display:grid!important;
-  grid-template-columns:22px minmax(0,1fr) auto!important;
-  align-items:center!important;
-  gap:8px!important;
-  min-height:64px!important;
-  padding:10px!important;
-  border:1px dashed var(--entry-border)!important;
-  border-radius:12px!important;
-  background:var(--entry-soft)!important;
-  color:var(--entry-accent)!important;
-}
-.ios-app #sheet[open] #expense-form .ref-receipt-row > .icon {width:20px!important;height:20px!important}
-.ios-app #sheet[open] #expense-form .ref-receipt-copy {min-width:0!important}
-.ios-app #sheet[open] #expense-form .ref-receipt-copy strong {display:block;font-size:14px;line-height:1.3}
-.ios-app #sheet[open] #expense-form .ref-receipt-copy small {display:block;font-size:12px;color:var(--entry-muted);line-height:1.4;margin-top:3px}
-.ios-app #sheet[open] #expense-form .ref-receipt-action {
-  position:static!important;
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  min-width:74px!important;
-  min-height:44px!important;
-  padding:0 12px!important;
-  border:1px solid var(--entry-border)!important;
-  border-radius:10px!important;
-  background:var(--entry-surface)!important;
-  color:var(--entry-accent)!important;
-  font-size:14px!important;
-  font-weight:650!important;
-  pointer-events:auto!important;
-}
-.ios-app #sheet[open] #expense-form .ref-receipt-file[hidden],
-.ios-app #sheet[open] #expense-form .ref-remove-receipt[hidden],
-.ios-app #sheet[open] #expense-form #receipt-preview:empty,
-.ios-app #sheet[open] #expense-form > .form-error:empty,
-.ios-app #sheet[open] #expense-form > .duplicate-warning[hidden] {display:none!important}
-.ios-app #sheet[open] #expense-form #receipt-preview .receipt {display:block;max-width:100%;max-height:220px;object-fit:contain;margin:10px auto 0}
-.ios-app #sheet[open] #expense-form .ref-remove-receipt {min-height:44px!important;margin:0!important;font-size:14px!important;color:var(--entry-accent)!important}
-.ios-app #sheet[open] #expense-form .ref-expense-final-actions {display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:4px!important;margin:0!important}
-.ios-app #sheet[open] #expense-form .ref-expense-final-actions > button {width:100%!important;min-height:44px!important;margin:0!important;font-size:15px!important;border-radius:12px!important}
-.ios-app #sheet[open] #expense-form #save-expense {display:flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;min-height:48px!important;background:#2f7d37!important;color:#fff!important;border:0!important;box-shadow:none!important;font-weight:650!important}
-.ios-app.theme-dark #sheet[open] #expense-form #save-expense {background:#4fa960!important}
-.ios-app #sheet[open] #expense-form #save-expense .icon {width:18px!important;height:18px!important}
-.ios-app #sheet[open] #expense-form #delete-expense {border:0!important;background:transparent!important;box-shadow:none!important;font-size:14px!important;color:var(--entry-accent)!important}
-.ios-app #sheet[open] #expense-form #delete-expense {color:#bc4747!important}
-@media(max-width:699px) {
-  .ios-app #sheet[open]:has(#expense-form) {width:100%!important;height:100dvh!important;margin:0!important;border:0!important;border-radius:0!important}
-}
-@media(max-width:440px) {
-  .ios-app #sheet[open] #expense-form .ref-expense-pair .ref-expense-control {grid-template-columns:minmax(0,1fr)!important}
-  .ios-app #sheet[open] #expense-form .ref-expense-pair .ref-expense-control > i {display:none!important}
-}
-@media(max-width:360px) {
-  .ios-app #sheet[open] #expense-form .ref-expense-pair {grid-template-columns:minmax(0,1fr)!important}
-  .ios-app #sheet[open]:has(#expense-form) .dialog-head h2 {font-size:20px!important}
-}
-
-
-/* CLEANUP RELEASE — simplified expense workflow */
-.ios-app #sheet[open]:has(#expense-form) .ref-expense-final-actions.single{
-  grid-template-columns:1fr!important;
-}
-.ios-app #sheet[open]:has(#expense-form) .ref-expense-final-actions.single #save-expense{
-  width:100%!important;
-}
-.ios-app #catalog-dialog.selection-mode .catalog-edit{
-  display:none!important;
-}
-
-.ios-app #expense-form > .draft-status {position:static;flex:0 0 auto;min-height:0;margin:0;padding:0 4px;color:var(--muted);font-size:12px;line-height:1.5;}
-.ios-app #expense-form > .draft-status:empty {display:none;}
-.ios-app #expense-form .discard-prompt > div {display:flex;flex-wrap:wrap;gap:8px;}
+.ref-expense-card,.ref-expense-options-card{padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--ui-card-radius)}
+.ref-expense-card-title,.ref-expense-options-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}
+.ref-expense-card-title small,.ref-expense-options-head small{display:none}
+.ref-expense-card-title h3,.ref-expense-options-head h3{font-size:.9375rem;font-weight:600}
+.ref-expense-field{display:grid;gap:6px;min-width:0;margin-bottom:12px}
+.ref-expense-field:last-child{margin-bottom:0}
+.ref-expense-label{font-size:.875rem;font-weight:500;color:var(--muted);line-height:1.4}
+.ref-expense-control{display:flex;align-items:center;gap:8px;min-height:48px;min-width:0;width:100%;padding:0 11px;background:var(--input);border:1px solid var(--line);border-radius:12px}
+.ref-expense-control>i{display:grid;place-items:center;color:var(--muted);font-style:normal;flex:none}
+.ref-expense-control>i>.icon{width:18px;height:18px}
+.ref-expense-control>input,.ref-expense-control>select{border:0;min-height:46px;background:transparent;min-width:0;padding:10px 0;border-radius:7px;font-size:1rem;line-height:1.4}
+.ref-expense-control>select{padding-right:12px}
+.ref-expense-control:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.ref-expense-control>input:focus-visible,.ref-expense-control>select:focus-visible{outline:0}
+.picker-control{cursor:pointer;text-overflow:ellipsis;padding-right:17px!important;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%)!important;background-position:calc(100% - 7px) 50%,calc(100% - 3px) 50%!important;background-size:4px 4px!important;background-repeat:no-repeat!important}
+.merchant-shortcuts{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:-4px 0 10px}
+.merchant-shortcuts:empty{display:none}
+.merchant-shortcuts>button{flex:none;min-height:38px;padding:6px 10px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.8125rem;color:var(--accent);background:var(--accent-soft);border:0;border-radius:10px}
+.ref-expense-amount-row{display:flex;gap:9px;align-items:center;background:var(--accent-soft);padding:5px 9px 5px 13px;border:1px solid color-mix(in srgb,var(--accent) 15%,var(--line));border-radius:14px;min-width:0}
+.ref-currency-pill{color:var(--accent);font-size:.8125rem;font-weight:600;white-space:nowrap}
+.ref-expense-amount-row>.amount-control{flex:1;background:none;border:0;padding:0;gap:3px;min-width:0}
+.amount-control>.big-input{font-size:1.75rem;font-weight:600;letter-spacing:-.035em;min-height:52px;padding:6px 4px;color:var(--text);font-variant-numeric:tabular-nums}
+.amount-control>.big-input::placeholder{color:var(--muted);opacity:.65}
+.entry-calculate-toggle{display:grid;place-items:center;flex:none;width:40px;height:44px;border:0;border-radius:11px;background:color-mix(in srgb,var(--surface) 72%,transparent);color:var(--accent);padding:0}
+.entry-calculate-toggle .icon{width:20px;height:20px}
+.ref-expense-pair{display:grid;grid-template-columns:1fr 1fr;gap:11px;min-width:0}
+.ref-expense-pair>.ref-expense-field{margin-bottom:0;min-width:0}
+.ref-expense-pair .ref-expense-control{padding-inline:9px;gap:6px}
+.ref-expense-pair .ref-expense-control>i .icon{width:16px;height:16px}
+.ref-expense-pair-split{grid-template-columns:1fr 1fr}
+.ref-split-preview-inline{display:grid;gap:6px;margin-top:12px;padding:11px 12px;background:var(--input);border-radius:12px;font-size:.8125rem;color:var(--muted)}
+.ref-split-preview-inline>span{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.ref-split-preview-inline strong{color:var(--text);font-size:.875rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ref-split-preview-inline small{font-size:.8125rem;overflow-wrap:anywhere}
+.ref-expense-options-card>.ref-expense-field{margin-bottom:12px}
+.ref-expense-receipt-card{border-top:1px solid var(--line);padding-top:12px}
+.ref-receipt-row{display:flex;gap:9px;align-items:center;min-height:48px}
+.ref-receipt-row>.icon{width:22px;height:22px;color:var(--accent)}
+.ref-receipt-copy{flex:1;min-width:0}
+.ref-receipt-copy strong{display:block;font-size:.875rem;font-weight:550}
+.ref-receipt-copy small{display:block;font-size:.75rem;line-height:1.4;color:var(--muted);margin-top:3px}
+.ref-receipt-action{min-height:44px;border:0;border-radius:11px;background:var(--accent-soft);color:var(--accent);padding:8px 11px;font-size:.875rem;font-weight:550}
+.ref-receipt-file,.ref-remove-receipt[hidden]{display:none!important}
+.ref-remove-receipt{color:var(--danger);font-size:.8125rem}
+.scan-receipt{margin-top:8px;font-size:.875rem}
+.ref-expense-final-actions.single{display:block}
+.ref-expense-final-actions.has-delete{display:grid;gap:9px}
+.ref-expense-final-actions>.primary,.ref-expense-final-actions>.secondary{width:100%;min-height:48px}
+.ref-expense-submit-card{background:none;border:0;padding:0}
+.draft-status{font-size:.75rem;line-height:1.4;color:var(--muted);margin:0 2px}
+#expense-form>.form-error{margin:0;color:var(--danger)}
+.history-action{justify-self:center}
+.duplicate-warning,.discard-prompt{padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:15px;font-size:.875rem;line-height:1.5}
+.duplicate-warning>button{margin-top:10px}
+.discard-prompt>p{color:var(--muted);font-size:.8125rem;margin-top:4px}
+.discard-prompt>div{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.discard-prompt>div>.secondary{font-size:.8125rem;padding:8px 10px}
+.entry-note{font-size:.8125rem;line-height:1.5;color:var(--muted);margin:0 2px}
+.entry-calculator{padding:13px;background:var(--input);border:1px solid var(--line);border-radius:14px;margin:-1px 0 13px}
+.entry-calculator>input{margin-top:7px;background:var(--surface)}
+.entry-calculator-operators{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:9px}
+.entry-calculator-operators>button{display:grid;place-items:center;height:44px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--accent);font-size:1.125rem}
+.entry-calculator>p{color:var(--muted);font-size:.75rem;margin-top:8px}
+.entry-calculator-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
+.entry-calculator-footer>output{font-size:.875rem;font-weight:550;min-width:0;color:var(--text);overflow-wrap:anywhere}
+.entry-calculator-footer>output.is-invalid{color:var(--muted);font-size:.75rem;font-weight:450}
+.entry-calculator-footer>button{min-height:44px;flex:none;border:0;border-radius:10px;background:var(--accent);color:var(--surface);padding:8px 12px;font-size:.8125rem;font-weight:550}
+.theme-dark .entry-calculator-footer>button{background:#367aec;color:#fff}
+#scan-review{margin-top:12px;padding:13px;border:1px solid var(--line);border-radius:13px;background:var(--input)}
+#scan-review>strong{font-size:.875rem}
+#scan-review>p{margin:6px 0 10px}
+.scan-choice{display:grid;grid-template-columns:19px minmax(0,1fr);gap:8px;font-size:.875rem;align-items:center;margin:12px 0}
+.scan-choice>input:last-child{grid-column:1/-1;background:var(--surface)}
+#scan-status{margin-top:8px;font-size:.8125rem}
+/* Pickers: compact merchant tiles, clear category rows and a visible selection. */
+.catalog-dialog{width:560px;max-height:calc(100dvh - 32px);padding:20px;background:var(--dialog)}
+.catalog-chrome{position:sticky;top:-20px;z-index:3;background:var(--dialog);padding:8px 0 12px;margin-top:-8px;border-bottom:1px solid var(--line)}
+.catalog-handle{width:32px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 7px;display:none}
+.catalog-head{display:flex;align-items:center;gap:8px;justify-content:space-between;margin-bottom:12px}
+.catalog-head h2{font-size:1.0625rem;font-weight:650;flex:1;min-width:0;outline:none}
+.catalog-back{display:grid;place-items:center;width:36px;height:44px;padding:0;border:0;background:none;color:var(--text);flex:none}
+.catalog-add{display:flex;align-items:center;justify-content:center;gap:4px;min-height:44px;padding:8px 11px;border:0;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-size:.875rem;font-weight:550}
+.catalog-add>.icon{width:17px;height:17px}
+.head-spacer{width:36px;flex:none}
+.catalog-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.catalog-search-wrap{display:flex;gap:8px;align-items:center;flex:1;min-width:150px;border:1px solid var(--line);border-radius:12px;padding:0 11px;background:var(--surface);color:var(--muted)}
+.catalog-search-wrap>.icon{width:18px;height:18px}
+.catalog-search-wrap>input{padding:9px 0;background:none;border:0;min-height:44px;border-radius:6px;font-size:1rem}
+.catalog-sort{display:flex;gap:2px;border-radius:11px;background:var(--surface-2);padding:3px}
+.catalog-sort>button{min-height:38px;padding:7px 10px;border:0;border-radius:8px;background:none;color:var(--muted);font-size:.8125rem}
+.catalog-sort>button[aria-pressed=true]{background:var(--surface);color:var(--accent);box-shadow:0 1px 4px #14376008}
+.catalog-body{padding-top:12px;min-width:0}
+.catalog-section-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:0 1px 10px;color:var(--muted)}
+.catalog-section-head>span,.catalog-section-head>small{font-size:.75rem;line-height:1.4}
+.catalog-list{display:grid;gap:7px}
+.catalog-row{min-width:0;border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.catalog-choice{position:relative;display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;min-width:0;min-height:60px;border:0;background:none;text-align:left;color:var(--text)}
+.catalog-icon{display:grid;place-items:center;flex:none;width:35px;height:35px;border-radius:11px;color:var(--accent);background:var(--accent-soft);font-size:.8125rem;font-weight:600;letter-spacing:0}
+.catalog-icon>.icon{width:19px;height:19px}
+.catalog-copy{min-width:0;flex:1;display:grid;gap:3px}
+.catalog-name{font-size:.9375rem;font-weight:550;line-height:1.4;overflow-wrap:anywhere}
+.catalog-detail{font-size:.75rem;line-height:1.4;color:var(--muted)}
+.catalog-indicator{display:grid;place-items:center;flex:none;width:20px;height:20px;color:var(--muted)}
+.catalog-indicator>.icon{width:15px;height:15px}
+.catalog-indicator.is-checked{background:var(--accent);color:var(--surface);border-radius:50%}
+.catalog-row.is-selected{border-color:var(--accent);background:var(--accent-soft)}
+.catalog-row.is-selected .catalog-icon{background:var(--surface)}
+.catalog-tone-blue .catalog-icon{color:#296bc1;background:#e9f1fc}
+.catalog-tone-amber .catalog-icon{color:#7a61c7;background:#efedfa}
+.catalog-tone-violet .catalog-icon{color:#6862bb;background:#efedfb}
+.catalog-tone-rose .catalog-icon{color:#627ea6;background:#edf2f9}
+.catalog-tone-green .catalog-icon{color:#3274b8;background:#eaf3fc}
+.catalog-tone-neutral .catalog-icon{color:#697b94;background:#eef2f7}
+.catalog-merchants{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.catalog-merchants .catalog-choice{min-height:84px;padding:13px 11px;gap:9px}
+.catalog-merchants .catalog-icon{width:32px;height:32px;border-radius:10px}
+.catalog-merchants .catalog-name{font-size:.875rem;line-height:1.35;padding-right:4px}
+.catalog-merchants .catalog-indicator{position:absolute;right:5px;top:5px;width:15px;height:15px}
+.catalog-merchants .catalog-indicator:empty{display:none}
+.catalog-merchants .catalog-indicator>.icon{width:11px;height:11px}
+.catalog-note{font-size:.75rem;line-height:1.5;color:var(--muted);margin:14px 2px 2px}
+.catalog-dialog.selection-mode .catalog-edit{display:none}
+.catalog-list>.catalog-empty{grid-column:1/-1}
+.catalog-empty>span{display:grid;place-items:center;width:42px;height:42px;background:var(--accent-soft);color:var(--accent);border-radius:14px}
+.catalog-edit-card{padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--ui-card-radius)}
+.catalog-edit-icon{display:grid;place-items:center;width:40px;height:40px;background:var(--accent-soft);color:var(--accent);border-radius:12px;margin-bottom:12px}
+.catalog-edit-card h3{font-size:1rem}
+.catalog-edit-hint{font-size:.8125rem;color:var(--muted);margin:5px 0 16px}
+.catalog-edit-card form>.secondary{margin-top:9px}
+.theme-dark .catalog-row .catalog-icon{background:#2a3b56;color:#a7c7ff}
+.theme-dark .catalog-tone-violet .catalog-icon,.theme-dark .catalog-tone-amber .catalog-icon{background:#322f4f;color:#b9b2f2}
+.theme-dark .catalog-indicator.is-checked{color:#10203f}
+@media(max-width:650px){.catalog-dialog{padding:20px 16px calc(20px + var(--safe-bottom));width:100%;max-height:calc(100dvh - var(--safe-top) - 10px)}.catalog-handle{display:block}.catalog-head{margin-bottom:10px}}
+@media(max-width:380px){.ref-expense-pair{grid-template-columns:1fr;gap:12px}.ref-expense-control>input,.ref-expense-control>select{min-height:46px}.ref-expense-card,.ref-expense-options-card{padding:14px}.catalog-toolbar{gap:9px}.catalog-sort{width:100%}.catalog-sort>button{flex:1}.catalog-merchants .catalog-choice{flex-direction:column;align-items:flex-start;gap:9px;min-height:114px}.catalog-merchants .catalog-icon{width:30px;height:30px}.catalog-copy{width:100%}.catalog-merchants .catalog-name{padding-right:0}.ref-expense-pair-split{grid-template-columns:1fr}}
+@media(min-width:700px){#sheet:has(#expense-form){width:580px}.ref-expense-final-actions.has-delete{grid-template-columns:1fr 1fr}}

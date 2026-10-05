@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 
 const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
 const addExpenseCss=readFileSync(new URL('../public/add-expense-polish.css',import.meta.url),'utf8');
-const themeCss=readFileSync(new URL('../public/theme.css',import.meta.url),'utf8');
+const themeCss=readFileSync(new URL('../public/style.css',import.meta.url),'utf8')+readFileSync(new URL('../public/theme.css',import.meta.url),'utf8');
 const homeCss=readFileSync(new URL('../public/home-recent.css',import.meta.url),'utf8');
 const vercel=JSON.parse(readFileSync(new URL('../vercel.json',import.meta.url),'utf8'));
 
@@ -42,9 +42,10 @@ test('Sheets and sheet detail default to open work',()=>{
  assert.match(app,/data-view-sheet[\s\S]*filter='open';tab='expenses'/);
 });
 
-test('Settings keeps household and journal tools but removes duplicate Insights',()=>{
+test('Settings exposes household, expense lists and export directly',()=>{
  assert.match(app,/row\('settings-household'.*Household & names/);
- assert.match(app,/row\('settings-more'.*Journal tools/);
+ assert.match(app,/class="settings-catalogs"[\s\S]*data-action="merchants"[\s\S]*data-action="categories"/);
+ assert.match(app,/class="text-button settings-export" data-action="export"/);
  assert.doesNotMatch(app,/row\('insights'/);
 });
 
