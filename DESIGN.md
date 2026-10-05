@@ -9,8 +9,8 @@ colors:
   surface: "#ffffff"
   input: "#f4f7fc"
   border: "#e2e9f3"
-  dark-canvas: "#101725"
-  dark-surface: "#192336"
+  dark-canvas: "#0d1421"
+  dark-surface: "#172233"
 typography:
   body:
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
@@ -40,6 +40,8 @@ An iPhone-first household wallet. Use white and blue, compact rows, readable amo
 Use system fonts. Body and editable input text stay at 16px; regular controls and labels are 14px or larger. Use 12–13px for supporting dates, counts and captions. Amounts use tabular numerals. Do not clip essential information.
 
 White content surfaces sit on a cool neutral canvas. Blue is the primary action colour; the Home balance is the strongest surface. Use blue-family category tints with restrained violet for dining. Keep whole-row tints faint. Light and dark modes use the same composition and spacing.
+
+Night mode uses a deep navy canvas, layered graphite surfaces, soft off-white text and muted blue actions. The balance card, dock, dialogs, chart bars and picker selection each have deliberate night colours. Preserve readable contrast without white avatar fills, bright borders or blue glow. Apply the saved theme before the main app renders, and keep the page canvas and browser theme colour in sync.
 
 Use blur only on the floating dock and header chrome. Skip refraction filters, decorative art and nested decorative cards. Respect reduced motion and reduced transparency.
 

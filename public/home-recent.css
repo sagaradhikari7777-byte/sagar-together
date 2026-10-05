@@ -19,10 +19,10 @@
 .home-recent-amount>strong{font-size:.9375rem;line-height:1.3;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
 .home-recent-amount>time{font-size:.75rem;line-height:1.4;color:var(--muted)}
 .home-recent-row:focus-visible{outline-offset:1px}
-.theme-dark .home-recent-row{background:#1e2a3e}
-.theme-dark .home-recent-row.tone-food{background:#28283d}
-.theme-dark .home-recent-row.tone-bills{background:#1d2e40}
-.theme-dark .home-recent-row.tone-other{background:#222c3c}
+.theme-dark .home-recent-row{background:#1c2b41;border-color:#2a3a52}
+.theme-dark .home-recent-row.tone-food{background:#29283d;border-color:#38334c}
+.theme-dark .home-recent-row.tone-bills{background:#1b2d3c;border-color:#2b3e4e}
+.theme-dark .home-recent-row.tone-other{background:#222d3d;border-color:#303c4f}
 /* HOME PERIOD PULSE */
 .home-period-card{min-width:0;padding:15px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--ui-card-radius);box-shadow:var(--ui-card-shadow)}
 .home-period-head{display:flex;justify-content:space-between;align-items:center;gap:10px}

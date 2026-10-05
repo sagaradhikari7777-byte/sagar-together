@@ -72,8 +72,7 @@
 .entry-calculator-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}
 .entry-calculator-footer>output{font-size:.875rem;font-weight:550;min-width:0;color:var(--text);overflow-wrap:anywhere}
 .entry-calculator-footer>output.is-invalid{color:var(--muted);font-size:.75rem;font-weight:450}
-.entry-calculator-footer>button{min-height:44px;flex:none;border:0;border-radius:10px;background:var(--accent);color:var(--surface);padding:8px 12px;font-size:.8125rem;font-weight:550}
-.theme-dark .entry-calculator-footer>button{background:#367aec;color:#fff}
+.entry-calculator-footer>button{min-height:44px;flex:none;border:0;border-radius:10px;background:var(--primary-bg);color:var(--primary-text);padding:8px 12px;font-size:.8125rem;font-weight:550}
 #scan-review{margin-top:12px;padding:13px;border:1px solid var(--line);border-radius:13px;background:var(--input)}
 #scan-review>strong{font-size:.875rem}
 #scan-review>p{margin:6px 0 10px}
@@ -135,9 +134,10 @@
 .catalog-edit-card h3{font-size:1rem}
 .catalog-edit-hint{font-size:.8125rem;color:var(--muted);margin:5px 0 16px}
 .catalog-edit-card form>.secondary{margin-top:9px}
-.theme-dark .catalog-row .catalog-icon{background:#2a3b56;color:#a7c7ff}
-.theme-dark .catalog-tone-violet .catalog-icon,.theme-dark .catalog-tone-amber .catalog-icon{background:#322f4f;color:#b9b2f2}
-.theme-dark .catalog-indicator.is-checked{color:#10203f}
+.theme-dark .catalog-row .catalog-icon{background:#293d59;color:#b4c9e9}
+.theme-dark .catalog-tone-violet .catalog-icon,.theme-dark .catalog-tone-amber .catalog-icon{background:#37314b;color:#c2b4e3}
+.theme-dark .catalog-indicator.is-checked{background:var(--primary-bg);color:var(--primary-text)}
+.theme-dark .catalog-row.is-selected{border-color:#6e93cc;background:#223654}
 @media(max-width:650px){.catalog-dialog{padding:20px 16px calc(20px + var(--safe-bottom));width:100%;max-height:calc(100dvh - var(--safe-top) - 10px)}.catalog-handle{display:block}.catalog-head{margin-bottom:10px}}
 @media(max-width:380px){.ref-expense-pair{grid-template-columns:1fr;gap:12px}.ref-expense-control>input,.ref-expense-control>select{min-height:46px}.ref-expense-card,.ref-expense-options-card{padding:14px}.catalog-toolbar{gap:9px}.catalog-sort{width:100%}.catalog-sort>button{flex:1}.catalog-merchants .catalog-choice{flex-direction:column;align-items:flex-start;gap:9px;min-height:114px}.catalog-merchants .catalog-icon{width:30px;height:30px}.catalog-copy{width:100%}.catalog-merchants .catalog-name{padding-right:0}.ref-expense-pair-split{grid-template-columns:1fr}}
 @media(min-width:700px){#sheet:has(#expense-form){width:580px}.ref-expense-final-actions.has-delete{grid-template-columns:1fr 1fr}}

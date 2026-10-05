@@ -67,8 +67,13 @@ const receiptCache=new Map();
 const emptyExpenseFilters=()=>({payer:'',creator:'',receipt:'',category:'',from:'',to:'',sort:'newest'});
 let expenseFilters=emptyExpenseFilters();
 let data=null,credentials=null,demo=false,tab='home',filter='open',search='',activeSheet='',joinInfo=null,busy=false;
-try{credentials=JSON.parse(localStorage.getItem('together-access'));document.body.classList.toggle('theme-dark',localStorage.getItem('together-theme')==='dark');}catch{}
-function syncThemeColor(){document.querySelector('meta[name=theme-color]').content=document.body.classList.contains('theme-dark')?'#101725':'#f4f7fc';}
+try{credentials=JSON.parse(localStorage.getItem('together-access'));}catch{}
+document.body.classList.toggle('theme-dark',document.documentElement.dataset.theme==='dark');
+function syncThemeColor(){
+ const dark=document.body.classList.contains('theme-dark');
+ document.documentElement.dataset.theme=dark?'dark':'light';
+ document.querySelector('meta[name=theme-color]').content=dark?'#0d1421':'#f4f7fc';
+}
 syncThemeColor();
 const initials=n=>n.split(' ').map(x=>x[0]).join('').slice(0,2);
 const couple=g=>data.names.slice(g==='a'?0:2,g==='a'?2:4).join(' & ');
