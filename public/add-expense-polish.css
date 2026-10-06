@@ -85,10 +85,9 @@
 .catalog-handle{width:32px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 7px;display:none}
 .catalog-head{display:flex;align-items:center;gap:8px;justify-content:space-between;margin-bottom:12px}
 .catalog-head h2{font-size:1.0625rem;font-weight:650;flex:1;min-width:0;outline:none}
-.catalog-back{display:grid;place-items:center;width:36px;height:44px;padding:0;border:0;background:none;color:var(--text);flex:none}
 .catalog-add{display:flex;align-items:center;justify-content:center;gap:4px;min-height:44px;padding:8px 11px;border:0;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-size:.875rem;font-weight:550}
 .catalog-add>.icon{width:17px;height:17px}
-.head-spacer{width:36px;flex:none}
+.head-spacer{width:44px;flex:none}
 .catalog-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .catalog-search-wrap{display:flex;gap:8px;align-items:center;flex:1;min-width:150px;border:1px solid var(--line);border-radius:12px;padding:0 11px;background:var(--surface);color:var(--muted)}
 .catalog-search-wrap>.icon{width:18px;height:18px}

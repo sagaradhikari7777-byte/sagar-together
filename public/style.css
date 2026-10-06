@@ -13,6 +13,8 @@
  --summary-end:var(--accent-soft);--dock-bg:color-mix(in srgb,var(--surface) 84%,transparent);--dock-border:color-mix(in srgb,var(--surface) 74%,var(--line));
  --dock-shadow:0 6px 26px #17376313,0 1px 2px #ffffff80 inset;--dock-add-bg:#2468e8;--dock-add-shadow:0 3px 9px #2468e82b;
  --modal-shadow:0 24px 80px #07152d38;--toast-bg:#1a2b46ed;--toast-text:#fff;--toast-border:#ffffff24;
+ --back-bg:linear-gradient(155deg,#ffffffb3,#ffffff33),#ffffff38;--back-border:#78879a52;--back-highlight:#ffffffd9;--back-lowlight:#ffffff59;
+ --back-shadow:0 1px 3px #15243a12,0 3px 9px #15243a06;--back-ink:#111724;
  color-scheme:light;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:var(--bg);
 }
 *{box-sizing:border-box}
@@ -51,7 +53,13 @@ a{color:var(--accent)}
 .danger{color:var(--danger);background:var(--danger-soft);border-color:transparent}
 .primary.delete-confirm{background:var(--danger-action-bg);color:var(--danger-action-text)}
 .text-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;border:0;padding:8px 0;background:transparent;color:var(--accent);font-size:.875rem;font-weight:550}
-.icon-button,.back-button{display:grid;place-items:center;flex:none;width:44px;height:44px;min-height:44px;padding:0;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:50%}
+.icon-button{display:grid;place-items:center;flex:none;width:44px;height:44px;min-height:44px;padding:0;background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:50%}
+/* Shared glass back control: an outer hairline and an inner reflective rim. */
+.back-button{position:relative;display:grid;place-items:center;flex:none;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid var(--back-border);border-radius:50%;background:var(--back-bg);background-clip:padding-box;color:var(--back-ink);box-shadow:inset 0 1px 0 var(--back-highlight),inset 0 -1px 0 var(--back-lowlight),var(--back-shadow);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%)}
+.back-button::before{content:"";position:absolute;inset:1px;border:1px solid var(--back-highlight);border-radius:inherit;pointer-events:none}
+.back-button>.icon{width:24px;height:24px;stroke-width:2.8;transform:translateX(1px)}
+.back-button:active:not(:disabled){transform:scale(.94)}
+@media(prefers-reduced-transparency:reduce){.back-button{background:var(--surface);backdrop-filter:none;-webkit-backdrop-filter:none}}
 .glass,.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--ui-card-radius);box-shadow:var(--ui-card-shadow)}
 .panel{padding:16px;margin:12px 0}
 .panel p+p{margin-top:6px}
@@ -91,7 +99,7 @@ dialog[open]{isolation:isolate}
 body.overlay-open{overflow:hidden}
 .dialog-head{position:sticky;top:-20px;z-index:10;display:flex;align-items:center;gap:10px;background:var(--dialog);padding:12px 0;margin:-12px 0 16px;border-bottom:1px solid var(--line)}
 .dialog-head h2{flex:1;min-width:0;font-size:1.0625rem;outline:none;overflow-wrap:anywhere}
-.dialog-head .back-button,.dialog-head .icon-button{width:40px;height:44px;border:0;background:transparent}
+.dialog-head .icon-button{width:40px;height:44px;border:0;background:transparent}
 dialog>p:not(:empty){margin-bottom:14px}
 .receipt{display:block;max-width:100%;max-height:300px;margin:12px auto;object-fit:contain;border-radius:12px}
 .receipt-status{display:flex;gap:8px;align-items:center;padding:12px;background:var(--surface);border-radius:12px}

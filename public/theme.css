@@ -11,6 +11,8 @@
  --summary-end:#20314b;--dock-bg:#172335e6;--dock-border:#34445b;--dock-shadow:0 8px 28px #00000032,0 1px 0 #ffffff07 inset;
  --dock-add-bg:#416aa5;--dock-add-shadow:0 3px 9px #00000024;--modal-shadow:0 24px 80px #00000055;
  --toast-bg:#263850f5;--toast-text:#dfe8f5;--toast-border:#405370;
+ --back-bg:linear-gradient(155deg,#ffffff14,#ffffff03),#1b293c99;--back-border:#829ab052;--back-highlight:#ffffff24;--back-lowlight:#ffffff0a;
+ --back-shadow:0 1px 3px #00000030,0 3px 9px #00000014;--back-ink:#f0f5fc;
  color-scheme:dark;
 }
 .theme-dark .groceries{--tone-soft:#283b58;--tone:#9ab9e5}
@@ -106,7 +108,6 @@
 .swipe-actions>.delete-action,.expense-swipe-right>button{background:var(--danger-action-bg);color:var(--danger-action-text)}
 /* Sheet detail uses the same header and category rows as Home. */
 .ref-inside-left{display:flex;align-items:center;gap:8px;min-width:0}
-.ref-inside-back{display:grid;place-items:center;flex:none;width:38px;height:44px;padding:0;border:0;background:none;color:var(--text)}
 .ref-inside-left>div{min-width:0}
 .ref-inside-left strong{display:block;font-size:1.0625rem;line-height:1.3;overflow-wrap:anywhere}
 .ref-inside-left small{display:block;margin-top:3px;font-size:.75rem;color:var(--muted);line-height:1.4;overflow-wrap:anywhere}

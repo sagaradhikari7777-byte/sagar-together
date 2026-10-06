@@ -199,7 +199,7 @@ function expenses(){
  const chip=(id,label,dot='')=>`<button data-filter="${id}" class="${filter===id?'active':''}">${dot?`<i class="${dot}"></i>`:''}${label} (${id==='open'?unsettled:settled})</button>`;
  return `<section class="re-page sp-page ref-inside-sheet">
   <header class="ref-inside-header">
-   <div class="ref-inside-left"><button class="ref-inside-back" data-action="back" aria-label="Back to Sheets">${backIcon()}</button><div><strong>${esc(currentName())}</strong><small>${esc(range)}</small></div></div>
+   <div class="ref-inside-left"><button type="button" class="ref-inside-back back-button" data-action="back" aria-label="Back to Sheets">${backIcon()}</button><div><strong>${esc(currentName())}</strong><small>${esc(range)}</small></div></div>
    <div class="ref-inside-tools">${archived?'<span class="ref-archived-pill">Archived</span>':`<button class="ref-inside-add" data-action="add">${icon('plus')}<span>Add</span></button>`}${themeButton()}</div>
   </header>
   <div class="ref-inside-body">
@@ -796,7 +796,7 @@ function openCatalog(kind,onPick=null,selected=''){
  let query='',sort=onPick?'frequent':'az';
  dlg.dataset.catalogKind=kind;dlg.classList.toggle('selection-mode',!!onPick);
  const head=(heading,back,plus)=>{
-  dlg.innerHTML=`<div class="catalog-chrome"><div class="catalog-handle" aria-hidden="true"></div><header class="catalog-head"><button type="button" class="catalog-back" id="catalog-back" aria-label="Back">${backIcon()}</button><h2 id="catalog-title" tabindex="-1">${heading}</h2>${plus?`<button type="button" class="catalog-add" id="catalog-add" aria-label="Add ${field}">${icon('plus')}<span>Add</span></button>`:'<span class="head-spacer" aria-hidden="true"></span>'}</header></div>`;
+  dlg.innerHTML=`<div class="catalog-chrome"><div class="catalog-handle" aria-hidden="true"></div><header class="catalog-head"><button type="button" class="catalog-back back-button" id="catalog-back" aria-label="Back">${backIcon()}</button><h2 id="catalog-title" tabindex="-1">${heading}</h2>${plus?`<button type="button" class="catalog-add" id="catalog-add" aria-label="Add ${field}">${icon('plus')}<span>Add</span></button>`:'<span class="head-spacer" aria-hidden="true"></span>'}</header></div>`;
   dlg.setAttribute('aria-labelledby','catalog-title');
   dlg.querySelector('#catalog-back').onclick=back;
   dlg.oncancel=ev=>{ev.preventDefault();back();};

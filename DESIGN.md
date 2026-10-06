@@ -45,6 +45,8 @@ Night mode uses a deep navy canvas, layered graphite surfaces, soft off-white te
 
 Use blur only on the floating dock and header chrome. Skip refraction filters, decorative art and nested decorative cards. Respect reduced motion and reduced transparency.
 
+Header Back actions use one 44px circular glass control with a thin outer border, a bright inner rim and a bold rounded chevron. Share it across sheet details, dialogs and pickers. Keep Back on nested screens and dialogs, with a tinted navy material in night mode and an opaque fallback for reduced transparency.
+
 ## Entry and pickers
 
 Add Expense is one natural scrolling column: expense details, payment/split, optional note/receipt, then one Save action. Hide the sheet selector when only one open sheet exists. The native receipt input stays hidden. Cancelling the iPhone picker must preserve the open draft.
