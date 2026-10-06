@@ -57,6 +57,8 @@ Retain creator-only edit/delete, settlement locking and audited reversal, receip
 
 Minimum primary interactive targets remain 44px. Swipe actions retain visible menu alternatives. Keep all input, saving, empty and error states in the normal flow.
 
+Startup uses a centered 64px mark, Together wordmark and quiet loading dots on the theme canvas. Include the loading content in the initial HTML so it appears before the app module loads. Respect reduced motion and open the household as soon as it is ready.
+
 ## Style ownership
 
 Load exactly four CSS files, in this order:
