@@ -1,28 +1,27 @@
 /* Home · a balance, a compact period snapshot, then recent activity. */
 .ref-home-body{display:grid;gap:13px}
-.home-recent-card{min-width:0;padding:14px 12px 11px;background:var(--surface);border:1px solid var(--line);border-radius:var(--ui-card-radius);box-shadow:var(--ui-card-shadow)}
-.home-recent-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 2px 11px}
+.home-recent-card{min-width:0;padding:16px 15px 5px;background:var(--surface);border:1px solid var(--line);border-radius:var(--ui-card-radius);box-shadow:var(--ui-card-shadow)}
+.home-recent-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 1px 7px}
 .home-recent-heading h2{font-size:1rem;font-weight:650;letter-spacing:-.025em}
 .home-recent-heading>span{font-size:.75rem;white-space:nowrap;color:var(--muted)}
-.home-recent-list{display:grid;gap:6px}
-.home-recent-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:9px;align-items:center;width:100%;min-width:0;min-height:61px;padding:10px 9px;border:1px solid transparent;border-radius:13px;background:#f4f7fd;color:var(--text);text-align:left}
-.home-recent-row.tone-food{background:#f7f6fc}
-.home-recent-row.tone-bills{background:#f2f8fc}
-.home-recent-row.tone-other{background:#f5f6fa}
-.home-recent-row>.re-cat{width:34px;height:34px;border-radius:10px}
+.home-recent-list{display:grid}
+.home-recent-row{position:relative;display:grid;grid-template-columns:36px minmax(0,1fr);gap:11px;align-items:start;width:100%;min-width:0;min-height:76px;padding:10px 1px;border:0;border-radius:11px;background:transparent;color:var(--text);text-align:left}
+.home-recent-row+.home-recent-row::before{content:"";position:absolute;inset:0 1px auto 48px;height:1px;background:var(--line)}
+.home-recent-row>.re-cat{width:36px;height:36px;margin-top:2px;border-radius:12px}
 .home-recent-row>.re-cat .icon{width:18px;height:18px}
 .home-recent-copy{min-width:0;display:grid;gap:3px}
-.home-recent-copy>strong{font-size:.9375rem;font-weight:600;line-height:1.3;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.home-recent-meta{display:block;min-width:0;font-size:.75rem;line-height:1.4;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.home-recent-author{color:var(--muted)}
-.home-recent-amount{min-width:0;text-align:right;display:grid;gap:3px}
-.home-recent-amount>strong{font-size:.9375rem;line-height:1.3;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
-.home-recent-amount>time{font-size:.75rem;line-height:1.4;color:var(--muted)}
-.home-recent-row:focus-visible{outline-offset:1px}
-.theme-dark .home-recent-row{background:#1c2b41;border-color:#2a3a52}
-.theme-dark .home-recent-row.tone-food{background:#29283d;border-color:#38334c}
-.theme-dark .home-recent-row.tone-bills{background:#1b2d3c;border-color:#2b3e4e}
-.theme-dark .home-recent-row.tone-other{background:#222d3d;border-color:#303c4f}
+.home-recent-main,.home-recent-meta{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:10px;min-width:0}
+.home-recent-merchant{min-width:0;font-size:1rem;font-weight:600;line-height:1.3;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.home-recent-amount{font-size:1rem;line-height:1.3;font-weight:650;letter-spacing:-.02em;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.home-recent-meta{font-size:.8125rem;line-height:1.35;color:var(--muted)}
+.home-recent-author{min-width:0;overflow-wrap:anywhere}
+.home-recent-meta>time{font-size:.75rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.home-recent-sheet{display:flex;align-items:center;gap:5px;min-width:0;font-size:.75rem;line-height:1.35;color:var(--muted)}
+.home-recent-sheet>.icon{width:12px;height:12px;opacity:.8}
+.home-recent-sheet>span{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.home-recent-row:focus-visible{outline-offset:1px;background:var(--accent-soft)}
+.home-recent-row:active{background:var(--surface-2)}
+@media(hover:hover){.home-recent-row:hover{background:var(--input)}}
 /* HOME PERIOD PULSE */
 .home-period-card{min-width:0;padding:15px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--ui-card-radius);box-shadow:var(--ui-card-shadow)}
 .home-period-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -63,5 +62,5 @@
 .upcoming-row strong{display:block;font-size:.9375rem;overflow-wrap:anywhere}
 .upcoming-row small{display:block;font-size:.75rem;color:var(--muted);margin-top:3px}
 .upcoming-card>p{font-size:.75rem;color:var(--muted);margin-top:9px;line-height:1.45}
-@media(max-width:359px){.home-recent-card{padding-inline:10px}.home-recent-row{gap:7px;padding-inline:7px;grid-template-columns:30px minmax(0,1fr) auto}.home-recent-row>.re-cat{width:30px;height:30px}.home-period-card{padding-inline:13px}.home-period-detail>.re-cat{display:none}}
+@media(max-width:359px){.home-recent-card{padding-inline:12px}.home-recent-row{gap:8px;grid-template-columns:32px minmax(0,1fr)}.home-recent-row>.re-cat{width:32px;height:32px}.home-recent-row+.home-recent-row::before{left:41px}.home-recent-main,.home-recent-meta{gap:7px}.home-period-card{padding-inline:13px}.home-period-detail>.re-cat{display:none}}
 @media(min-width:700px){.ref-home-body{grid-template-columns:1fr 1fr}.ref-home-body>.ref-balance-card{grid-column:1/-1}.ref-home-body>.home-period-card{grid-column:1}.ref-home-body>.home-recent-card{grid-column:2;grid-row:2/span 3}.ref-home-body>.draft-banner{grid-column:1/-1}.ref-home-body:has(.draft-banner)>.home-recent-card{grid-row:3/span 3}}

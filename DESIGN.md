@@ -29,7 +29,7 @@ An iPhone-first household wallet. Use white and blue, compact rows, readable amo
 
 ## Composition
 
-- Home: a rich blue balance card with couple identity and settlement access, a compact period snapshot, then the latest five transactions. Home scrolls as needed.
+- Home: a rich blue balance card with couple identity and settlement access, a compact period snapshot, then the latest five transactions. Recent activity uses one neutral list with inset dividers and category icon tints. Align amounts to the right, give the author a clear line beside the date, and keep sheet context below. Home scrolls as needed.
 - Sheets: one outstanding-spending summary, inline Open/Archived controls and Unsettled only, search, then compact sheet cards with full start/end dates and visible actions.
 - Sheet detail: a back header, sheet totals and couple shares, search/filter controls, and grouped expense rows. Back appears only on nested screens; retain edge swipe.
 - Settle: scope and couple selection, the balance and payment action, then inline expandable sheet balances and spending analysis. Keep history and copy actions available.
