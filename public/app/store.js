@@ -56,7 +56,7 @@ export async function api(body) {
     method: 'POST',
     headers: {'Content-Type': 'application/json', ...(credentials ? {Authorization: `Bearer ${credentials.key}`} : {})},
     body: JSON.stringify({house: credentials?.house, rev: data?.rev, receiptMode: 'reference', ...body}),
-    signal: AbortSignal.timeout(20000),
+    signal: AbortSignal.timeout?.(20000),
   });
   const json = await res.json();
   if (!res.ok) throw Object.assign(new Error(json.error || 'Could not save changes.'), {status: res.status});
