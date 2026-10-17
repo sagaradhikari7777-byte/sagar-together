@@ -65,3 +65,15 @@ test('API reads leave a legacy household untouched; the next change closes settl
  assert.equal(saved.data.sheets.find(s=>s.id===open.id).archived,false);
  assert.equal(JSON.parse(db.state.get(storeKey)).closesSettledSheets,true);
 });
+
+test('clients can request the one-time cleanup explicitly and it applies once',async()=>{
+ const db=fakeDb(),fn=makeHandler(db),{h,key,settled}=legacyHouse(),storeKey='together:house:'+h.id;
+ db.state.set(storeKey,JSON.stringify(h));
+ const read=await request(fn,{action:'read',house:h.id},key);
+ assert.equal(read.data.closesSettledSheets,false);
+ const tidy=await request(fn,{action:'close-settled-sheets',house:h.id,rev:read.data.rev},key);
+ assert.equal(tidy.code,200);assert.equal(tidy.data.closesSettledSheets,true);
+ assert.equal(tidy.data.sheets.find(s=>s.id===settled.id).archived,true);
+ const replay=await request(fn,{action:'close-settled-sheets',house:h.id,rev:read.data.rev},key);
+ assert.equal(replay.code,409,'a second device with the old revision cannot repeat it');
+});

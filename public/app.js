@@ -113,14 +113,25 @@ function demoMutation(b){if(b.action==='recurring'||b.action==='recurring-record
 async function save(b){if(busy)return;busy=true;sheet.classList.add('saving');try{if(demo)demoMutation(b);else data=(await api(b)).data;render();return true;}catch(e){if(e.status===409){await refresh(false);e.message='New changes arrived. Review your entry and save again.';}throw e;}finally{busy=false;sheet.classList.remove('saving');}}
 async function refresh(notify=true){
  if(refreshing)return;refreshing=true;
+ // A refresh that was in flight when someone signed out or switched household is stale.
+ const asked=credentials;
  try{
   const result=await api({action:'read',knownRev:data?.rev});
-  if(result.data){data=result.data;if(!activeSheet)activeSheet=data.sheets.find(s=>s.pinned&&!s.archived)?.id||data.sheets.find(s=>!s.archived)?.id||'';render();}
+  if(credentials!==asked)return;
+  if(result.data){data=result.data;if(!activeSheet)activeSheet=data.sheets.find(s=>s.pinned&&!s.archived)?.id||data.sheets.find(s=>!s.archived)?.id||'';render();tidySettledSheets();}
   if(notify)toast('Up to date');
- }catch(e){if(!data)auth();if(notify||!data)toast(navigator.onLine?e.message:'You’re offline. Reconnect to load your household.');}
+ }catch(e){if(credentials!==asked)return;if(!data)auth();if(notify||!data)toast(navigator.onLine?e.message:'You’re offline. Reconnect to load your household.');}
  finally{refreshing=false;}
 }
-function keepAccess(j){modalTrail=[];if(sheet.open)sheet.close();settleCouple=null;settleAll=true;flushExpenseDraft=null;receiptCache.clear();credentials={house:j.data.id,key:j.key};try{localStorage.setItem('together-access',JSON.stringify(credentials));}catch{toast('Save your private access link; this browser cannot remember it.');}data=j.data;activeSheet=data.sheets[0]?.id;demo=false;render();accessDialog(true);}
+// Households from before settling closed sheets may still show settled sheets as open.
+// Ask the server once to close them; a failed or conflicting attempt retries on the next refresh.
+let tidyRequested=false;
+function tidySettledSheets(){
+ if(demo||tidyRequested||data?.closesSettledSheets!==false||busy)return;
+ tidyRequested=true;
+ save({action:'close-settled-sheets'}).catch(()=>{tidyRequested=false;});
+}
+function keepAccess(j){modalTrail=[];if(sheet.open)sheet.close();settleCouple=null;settleAll=true;flushExpenseDraft=null;receiptCache.clear();credentials={house:j.data.id,key:j.key};try{localStorage.setItem('together-access',JSON.stringify(credentials));}catch{toast('Save your private access link; this browser cannot remember it.');}data=j.data;activeSheet=data.sheets[0]?.id;demo=false;tab='home';search='';filter='open';expenseFilters=emptyExpenseFilters();render();accessDialog(true);tidySettledSheets();}
 function balance(es){let net=0,aPaid=0,bPaid=0;for(const e of es){if(e.settlement)continue;const aShare=e.split==='half'?Math.floor(e.cents/2):e.split==='a'?e.cents:0;if(group(e.payer)==='a'){aPaid+=e.cents;net+=e.cents-aShare;}else{bPaid+=e.cents;net-=aShare;}}return{net,aPaid,bPaid,amount:Math.abs(net)};}
 function settleScope(){return settleAll?householdOverview(data,group(data.seat)).expenses:scope();}
 function settleName(){return settleAll?'All open sheets':currentName();}
@@ -146,7 +157,7 @@ function nav(){
 function selectSheet(){return `<select aria-label="Expense sheet" id="sheet-select">${data.sheets.map(s=>`<option value="${s.id}" ${s.id===activeSheet?'selected':''}>${esc(s.name)}${s.archived?' · Archived':''}</option>`).join('')}</select>`;}
 function expenseRows(items){
  if(!items.length)return `<div class="liquid-empty"><span class="liquid-empty-icon">${icon('receipt')}</span><h3>No expenses here yet</h3><p>Add your first expense and Together will work out the share.</p><button class="primary" data-action="add">${icon('plus')} Add expense</button></div>`;
- return `<div class="liquid-expense-list">${items.map(e=>`<div class="expense-row" data-swipe-expense="${e.id}">${canManageExpense(e)?`<div class="expense-swipe-action expense-swipe-left" aria-hidden="true"><button type="button" tabindex="-1" data-expense-edit="${e.id}" aria-label="Edit ${esc(e.merchant)} expense" ${data.sheets.find(s=>s.id===e.sheet)?.archived?'disabled':''}>${icon('edit')}</button></div><div class="expense-swipe-action expense-swipe-right" aria-hidden="true"><button type="button" tabindex="-1" data-expense-delete="${e.id}" aria-label="Delete ${esc(e.merchant)} expense">${icon('trash')}</button></div>`:''}<div class="expense-front"><button class="expense liquid-expense" data-expense="${e.id}"><span class="liquid-category ${catIcon(e.category)}">${icon(catIcon(e.category))}</span><span class="expense-info"><strong>${esc(e.merchant)}</strong><span>${coupleDot(e.payer)}${esc(data.names[e.payer])} · ${esc(new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}))}${e.receipt?' · Receipt':''}</span><span class="expense-share">${esc(expenseShareLabel(e))}</span></span><span class="expense-total"><strong>${money(e.cents)}</strong><small>${e.settlement?'Settled':'Shared'}</small></span></button><button type="button" class="expense-more" data-expense-options="${e.id}" aria-label="Actions for ${esc(e.merchant)} expense" aria-haspopup="dialog">•••</button></div></div>`).join('')}</div>`;
+ return `<div class="liquid-expense-list">${items.map(e=>`<div class="expense-row" data-swipe-expense="${e.id}">${canManageExpense(e)?`<div class="expense-swipe-action expense-swipe-left" aria-hidden="true"><button type="button" tabindex="-1" data-expense-edit="${e.id}" aria-label="Edit ${esc(e.merchant)} expense" ${data.sheets.find(s=>s.id===e.sheet)?.archived?'disabled':''}>${icon('edit')}</button></div><div class="expense-swipe-action expense-swipe-right" aria-hidden="true"><button type="button" tabindex="-1" data-expense-delete="${e.id}" aria-label="Delete ${esc(e.merchant)} expense">${icon('trash')}</button></div>`:''}<div class="expense-front"><button class="expense liquid-expense" data-expense="${e.id}"><span class="liquid-category ${catalogIcon(e.category)}">${icon(catalogIcon(e.category))}</span><span class="expense-info"><strong>${esc(e.merchant)}</strong><span>${coupleDot(e.payer)}${esc(data.names[e.payer])} · ${esc(new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}))}${e.receipt?' · Receipt':''}</span><span class="expense-share">${esc(expenseShareLabel(e))}</span></span><span class="expense-total"><strong>${money(e.cents)}</strong><small>${e.settlement?'Settled':'Shared'}</small></span></button><button type="button" class="expense-more" data-expense-options="${e.id}" aria-label="Actions for ${esc(e.merchant)} expense" aria-haspopup="dialog">•••</button></div></div>`).join('')}</div>`;
 }
 function homeRecentTransactions(){
  const recent=data.expenses.map((expense,index)=>({expense,index,added:Date.parse(expense.created)||0})).sort((a,b)=>b.added-a.added||a.index-b.index).slice(0,5);
@@ -156,7 +167,7 @@ function homeRecentTransactions(){
   const authorLabel=Number.isInteger(e.creator)?'Added by '+expenseAuthor(e):expenseAuthor(e);
   const categoryLabel=e.category||'Other';
   const rowLabel=`${e.merchant}, ${money(e.cents)}, ${authorLabel}, ${categoryLabel}, ${dateLabel}, ${sheetName}`;
-  return `<button type="button" class="home-recent-row" data-expense="${esc(e.id)}" aria-label="${esc(rowLabel)}"><span class="re-cat ${catIcon(e.category)}" title="${esc(categoryLabel)}" aria-hidden="true">${icon(catIcon(e.category))}</span><span class="home-recent-copy"><span class="home-recent-main"><strong class="home-recent-merchant" title="${esc(e.merchant)}">${esc(e.merchant)}</strong><strong class="home-recent-amount">${money(e.cents)}</strong></span><span class="home-recent-meta"><span class="home-recent-author">${Number.isInteger(e.creator)?coupleDot(e.creator):''}${esc(authorLabel)}</span><time datetime="${esc(e.date)}">${esc(dateLabel)}</time></span><span class="home-recent-sheet" title="${esc(sheetName)}">${icon('folder')}<span>${esc(sheetName)}</span></span></span></button>`;
+  return `<button type="button" class="home-recent-row" data-expense="${esc(e.id)}" aria-label="${esc(rowLabel)}"><span class="re-cat ${catalogIcon(e.category)}" title="${esc(categoryLabel)}" aria-hidden="true">${icon(catalogIcon(e.category))}</span><span class="home-recent-copy"><span class="home-recent-main"><strong class="home-recent-merchant" title="${esc(e.merchant)}">${esc(e.merchant)}</strong><strong class="home-recent-amount">${money(e.cents)}</strong></span><span class="home-recent-meta"><span class="home-recent-author">${Number.isInteger(e.creator)?coupleDot(e.creator):''}${esc(authorLabel)}</span><time datetime="${esc(e.date)}">${esc(dateLabel)}</time></span><span class="home-recent-sheet" title="${esc(sheetName)}">${icon('folder')}<span>${esc(sheetName)}</span></span></span></button>`;
  }).join('')}</div>`:`<div class="home-recent-empty">${icon('receipt')}<strong>No transactions yet</strong><p>Your latest expenses and who added them will appear here.</p><button type="button" class="secondary" data-action="add">Add an expense</button></div>`}</section>`;
 }
 function homeSpendingPulse(){
@@ -220,8 +231,8 @@ function expenses(){
   </header>
   <div class="ref-inside-body">
    <section class="ref-inside-summary">
-    <div class="ref-inside-summary-head"><span>Sheet spending</span><em>${archived?'Archived':unsettled?unsettled+' unsettled':items.length?'Settled':'No expenses'}</em></div>
-    <strong class="ref-inside-total">${amountHTML(total)}</strong><p>Total spending · ${esc(range)}</p><p class="sheet-outstanding">Unsettled spending: ${money(items.filter(e=>!e.settlement).reduce((n,e)=>n+e.cents,0))}</p>
+    <div class="ref-inside-summary-head"><span>Sheet spending</span><em class="${archived||!items.length?'is-quiet':unsettled?'':'is-settled'}">${archived?'Archived':unsettled?unsettled+' unsettled':items.length?'Settled':'No expenses'}</em></div>
+    <strong class="ref-inside-total">${amountHTML(total)}</strong><p>Total spending · ${esc(range)}</p>${unsettled?`<p class="sheet-outstanding">Unsettled spending: ${money(items.filter(e=>!e.settlement).reduce((n,e)=>n+e.cents,0))}</p>`:''}
     <div class="ref-inside-stats"><span><small>Your total share</small><b>${money(overview.share)}</b></span><span><small>Total you paid</small><b>${money(overview.paid)}</b></span></div>
    </section>
    <div class="ref-inside-filters">${chip('open','Open','amber')}${chip('settled','Settled','green')}<button data-action="filters" class="${count?'has-count':''}">${icon('settings')} Filters${count?` (${count})`:''}</button></div>
@@ -288,7 +299,7 @@ function sheetsView(){
 }
 function settlementBreakdown(){
  const selected=settleCouple||group(data.seat),o=settlementOverview(settleScope(),selected),rows=o.rows.slice(0,4),more=Math.max(0,o.rows.length-rows.length);
- return `<section class="ha-breakdown">${rows.length?`<div class="ha-breakdown-list">${rows.map(e=>`<button data-expense="${e.id}"><span class="re-cat ${catIcon(e.category)}">${icon(catIcon(e.category))}</span><span><strong>${esc(e.merchant)}</strong><small>${esc(new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}))} · ${esc(data.names[e.payer])}</small><i>${esc(e.category||'Other')}</i></span><em><small>Your share</small><b>${money(e.share)}</b></em></button>`).join('')}</div>${more?`<button class="ha-more" data-action="expenses">+${more} more · View sheet</button>`:''}`:'<div class="ha-balanced">'+icon('check')+'<span>Nothing left to settle.</span></div>'}</section>`;
+ return `<section class="ha-breakdown">${rows.length?`<div class="ha-breakdown-list">${rows.map(e=>`<button data-expense="${e.id}"><span class="re-cat ${catalogIcon(e.category)}">${icon(catalogIcon(e.category))}</span><span><strong>${esc(e.merchant)}</strong><small>${esc(new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}))} · ${esc(data.names[e.payer])}</small><i>${esc(e.category||'Other')}</i></span><em><small>Your share</small><b>${money(e.share)}</b></em></button>`).join('')}</div>${more?`<button class="ha-more" data-action="expenses">+${more} more · View sheet</button>`:''}`:'<div class="ha-balanced">'+icon('check')+'<span>Nothing left to settle.</span></div>'}</section>`;
 }
 
 function settlementSpendChart(){
@@ -322,11 +333,11 @@ function settlementSpendChart(){
   const entry=[...r.related.entries()].sort((a,b)=>b[1]-a[1])[0],name=entry[0];
   return mode==='category'?('Top merchant · '+name):(name+' · '+r.count+' expense'+(r.count===1?'':'s'));
  };
- const barClass=r=>mode==='category'?catIcon(r.name):'merchant';
+ const barClass=r=>mode==='category'?catalogIcon(r.name):'merchant';
  const row=r=>{
   const pct=total?Math.round(r.total/total*100):0,bar=Math.max(6,Math.round(r.total/max*100));
   return `<div class="ref-spend-row">
-   <div class="ref-spend-row-head"><span class="ref-spend-icon ${barClass(r)}">${icon(mode==='category'?catIcon(r.name):'store')}</span><span class="ref-spend-copy"><strong>${esc(r.name)}</strong><small>${esc(relatedLabel(r))}</small></span><span class="ref-spend-value"><b>${money(r.total)}</b><small>${pct}%</small></span></div>
+   <div class="ref-spend-row-head"><span class="ref-spend-icon ${barClass(r)}">${icon(mode==='category'?catalogIcon(r.name):'store')}</span><span class="ref-spend-copy"><strong>${esc(r.name)}</strong><small>${esc(relatedLabel(r))}</small></span><span class="ref-spend-value"><b>${money(r.total)}</b><small>${pct}%</small></span></div>
    <div class="ref-spend-track"><i class="${barClass(r)}" style="--bar:${bar}%"></i></div>
   </div>`;
  };
@@ -334,7 +345,7 @@ function settlementSpendChart(){
  return `<section class="ref-settle-chart ref-spend-chart" aria-label="Spending breakdown">
   <div class="ref-spend-head"><div><small>SPENDING</small><h2>Where the money went</h2></div><strong>${money(total)}</strong></div>
   <div class="ref-spend-switch" role="group" aria-label="Spending chart view"><button data-spend-chart="category" class="${mode==='category'?'active':''}">Categories</button><button data-spend-chart="merchant" class="${mode==='merchant'?'active':''}">Merchants</button></div>
-  <div class="ref-spend-insight"><span>${icon(mode==='category'?catIcon(top.name):'store')}</span><div><small>TOP ${mode==='category'?'CATEGORY':'MERCHANT'}</small><strong>${esc(top.name)}</strong><p>${money(top.total)} · ${Math.round(top.total/total*100)}% of ${settleAll?'open sheets':'this sheet'}</p></div></div>
+  <div class="ref-spend-insight"><span>${icon(mode==='category'?catalogIcon(top.name):'store')}</span><div><small>TOP ${mode==='category'?'CATEGORY':'MERCHANT'}</small><strong>${esc(top.name)}</strong><p>${money(top.total)} · ${Math.round(top.total/total*100)}% of ${settleAll?'open sheets':'this sheet'}</p></div></div>
   <div class="ref-spend-bars">${rows.map(row).join('')}</div>
   ${rowCount>5?'<p class="ref-spend-foot">Top 5 shown · remaining spending grouped as Other</p>':''}
  </section>`;

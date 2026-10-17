@@ -139,6 +139,8 @@
     font-weight: 600;
     white-space: nowrap;
   }
+  .ref-inside-summary-head em.is-quiet { background: var(--sunken); color: var(--ink-3); }
+  .ref-inside-summary-head em.is-settled { background: var(--positive-soft); color: var(--positive); }
   .ref-sheets-total, .ref-inside-total {
     display: block;
     margin-top: 8px;
