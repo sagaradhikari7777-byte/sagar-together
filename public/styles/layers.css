@@ -6,13 +6,17 @@
 .shell { position: fixed; inset: 0; z-index: 1; overflow: hidden; }
 
 /* ───────── Pages ───────── */
-.page { position: absolute; inset: 0; background: transparent; transition: transform .5s var(--ease), filter .5s var(--ease); }
-.page-root { animation: page-fade .32s var(--ease); }
+.page { position: absolute; inset: 0; isolation: isolate; background: transparent; transition: transform .5s var(--ease); }
+/* The four tabs stay mounted. A hidden tab keeps its layout and scroll position
+   but is skipped when the page is laid out and drawn, so switching is instant. */
+.page-root.is-hidden { visibility: hidden; content-visibility: hidden; pointer-events: none; }
 .page-pushed { background: var(--bg); box-shadow: -20px 0 50px rgb(0 0 0 / .08); animation: page-in .48s var(--ease); }
-.page:not(.is-top):not(.is-leaving) { transform: translateX(-24%); filter: brightness(.96); }
-:root[data-theme=dark] .page:not(.is-top):not(.is-leaving) { filter: brightness(.7); }
+.page:not(.is-top):not(.is-leaving):not(.is-hidden) { transform: translateX(-24%); }
+/* The page underneath dims with an overlay: animating a filter on a whole page is slow on iPhone. */
+.page::after { content: ""; position: absolute; inset: 0; z-index: 40; background: #000; opacity: 0; pointer-events: none; transition: opacity .5s var(--ease); }
+.page:not(.is-top):not(.is-leaving):not(.is-hidden)::after { opacity: .05; }
+:root[data-theme=dark] .page:not(.is-top):not(.is-leaving):not(.is-hidden)::after { opacity: .3; }
 .page.is-leaving { animation: page-out .3s var(--ease) forwards; pointer-events: none; }
-@keyframes page-fade { from { opacity: 0; transform: translateY(8px); } }
 @keyframes page-in { from { transform: translateX(100%); } }
 @keyframes page-out { to { transform: translateX(100%); } }
 
@@ -158,7 +162,9 @@ dialog.sheet.is-closing::backdrop { animation: fade-out .3s var(--ease) forwards
   border-radius: 34px 34px 0 0;
   background: var(--sheet);
   box-shadow: 0 -10px 40px rgb(0 0 0 / .14), inset 0 .5px 0 var(--glass-edge);
-  animation: sheet-up .55s var(--spring);
+  /* The whole sheet starts on screen, so it is drawn in one piece before it moves. */
+  animation: sheet-up .38s var(--ease);
+  contain: layout;
 }
 /* Drag to dismiss sets an inline transform; letting go springs back. */
 .sheet-panel:not(.is-dragging) { transition: transform .45s var(--spring); }
@@ -166,8 +172,8 @@ dialog.sheet.is-closing::backdrop { animation: fade-out .3s var(--ease) forwards
 .sheet-full .sheet-panel { height: calc(100dvh - var(--safe-top) - 10px - var(--keyboard, 0px)); }
 dialog.sheet.is-closing { pointer-events: none; }
 dialog.sheet.is-closing .sheet-panel { animation: sheet-down .3s var(--ease) forwards; }
-@keyframes sheet-up { from { translate: 0 105%; } }
-@keyframes sheet-down { to { translate: 0 105%; } }
+@keyframes sheet-up { from { translate: 0 48px; opacity: 0; } }
+@keyframes sheet-down { to { translate: 0 48px; opacity: 0; } }
 @keyframes fade-in { from { opacity: 0; } }
 @keyframes fade-out { to { opacity: 0; } }
 
@@ -192,8 +198,6 @@ dialog.sheet.is-closing .sheet-panel { animation: sheet-down .3s var(--ease) for
   .sheet-panel { top: 0; bottom: 0; width: min(560px, calc(100% - 48px)); height: fit-content; max-height: min(86dvh, 860px); margin: auto; border-radius: 30px; }
   .sheet-full .sheet-panel { height: min(86dvh, 860px); }
   .sheet-large .sheet-panel { min-height: min(64dvh, 700px); }
-  @keyframes sheet-up { from { translate: 0 40px; opacity: 0; } }
-  @keyframes sheet-down { to { translate: 0 40px; opacity: 0; } }
   .sheet-grabber { visibility: hidden; height: 2px; }
 }
 
@@ -229,8 +233,8 @@ dialog.sheet.is-closing .sheet-panel { animation: sheet-down .3s var(--ease) for
 /* ───────── Slide to confirm ───────── */
 .slide { position: relative; height: 64px; border-radius: 999px; background: var(--fill); overflow: hidden; isolation: isolate; }
 .slide::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, var(--a-soft), var(--b-soft)); }
-.slide-label { position: absolute; inset: 0; display: grid; place-items: center; padding-left: 56px; font-weight: 650; color: var(--label-2); background: linear-gradient(90deg, var(--label-2) 40%, var(--label) 50%, var(--label-2) 60%) 0 0 / 300% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 2.4s linear infinite; }
-@keyframes shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+.slide-label { position: absolute; inset: 0; display: grid; place-items: center; padding-left: 56px; font-weight: 650; color: var(--label-2); animation: hint 2.4s ease-in-out infinite; }
+@keyframes hint { 50% { opacity: .55; } }
 .slide-knob {
   position: absolute;
   top: 4px;

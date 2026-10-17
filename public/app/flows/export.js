@@ -1,6 +1,6 @@
 import {settlementOverview} from '../../settlement-overview.js';
 import {getState, toast} from '../store.js';
-import {today, coupleName, money} from '../format.js';
+import {today, coupleName, money, numericToday} from '../format.js';
 
 const author = (e, names) => Number.isInteger(e.creator) ? names[e.creator] : 'Original author unavailable';
 const shareLabel = (e, names) => (e.split === 'half' ? '50 / 50' : coupleName(names, e.split) + ' · 100%') + (e.settlement ? ' · Settled' : '');
@@ -26,7 +26,7 @@ export function summaryText(expenses, scopeName) {
   const {data} = getState(), items = expenses.filter(e => !e.settlement);
   const a = settlementOverview(items, 'a'), b = settlementOverview(items, 'b');
   const owing = a.net > 0 ? `${coupleName(data.names, 'a')} owe ${money(a.net)} to ${coupleName(data.names, 'b')}.` : a.net < 0 ? `${coupleName(data.names, 'b')} owe ${money(-a.net)} to ${coupleName(data.names, 'a')}.` : 'Both couples are even.';
-  return `Together · ${scopeName}\n${owing}\n${items.length} unsettled expenses · Total ${money(a.total)}\n${coupleName(data.names, 'a')}: share ${money(a.share)} · paid ${money(a.paid)}\n${coupleName(data.names, 'b')}: share ${money(b.share)} · paid ${money(b.paid)}\nAs of ${new Date().toLocaleDateString('en-AU')}. Please check Together for the latest balance.\nThis is a summary, not a payment confirmation.`;
+  return `Together · ${scopeName}\n${owing}\n${items.length} unsettled expenses · Total ${money(a.total)}\n${coupleName(data.names, 'a')}: share ${money(a.share)} · paid ${money(a.paid)}\n${coupleName(data.names, 'b')}: share ${money(b.share)} · paid ${money(b.paid)}\nAs of ${numericToday()}. Please check Together for the latest balance.\nThis is a summary, not a payment confirmation.`;
 }
 export async function shareText(text, title = 'Together') {
   if (navigator.share) {

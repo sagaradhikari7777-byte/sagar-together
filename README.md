@@ -43,6 +43,7 @@ It uses Playwright when installed and checks the expense sheet at iPhone, keyboa
 - `public/index.html` — loads `theme-init.js`, the three stylesheets and `app/main.js` as an ES module. No build step for the UI.
 - `public/vendor/preact-htm.js` — Preact with htm templates (one vendored file, no bundler; CSP-safe).
 - `public/app/main.js` — app shell, tab bar, sheet host and boot; `store.js` — one observable store, server calls and session; `nav.js` — tabs, pushed pages and sheets behind one history entry; `ui.js` — the component kit; `common.js` — shared rows and sheets; `format.js` — formatting helpers; `amount-entry.js` — keypad amount logic; `demo.js` — the sample household.
+- `public/app/derive.js` — every total, balance, grouping and count a screen shows, computed once per household snapshot and shared.
 - `public/app/screens/` — Home, Activity, Sheets (and the sheet page), Household, Welcome.
 - `public/app/flows/` — expense entry and details, pickers, settle up, recurring bills, export.
 - `public/styles/base.css`, `layers.css`, `screens.css` — the design system and screen styles. See `DESIGN.md`.
@@ -52,6 +53,18 @@ It uses Playwright when installed and checks the expense sheet at iPhone, keyboa
 - `lib/model.js` — server-side validation and mutations.
 - `api/household.js` — Vercel API with authenticated access, rate limiting and atomic revision checks.
 - `tests/` — finance, policy, migration, storage and UI regression tests.
+
+## Performance rules
+
+The app must stay instant on an iPhone with a few hundred expenses. `tests/performance.test.mjs` enforces these:
+
+- **Subscribe narrowly.** Components call `useStore('data', …)` with the keys they read; a bare `useStore()` re-renders on every navigation and toast.
+- **Derive once.** Totals, balances, groupings and counts come from `app/derive.js`, cached per household snapshot. Don't recompute them in a render.
+- **Page long lists.** Activity, sheet pages and the pickers render a page at a time with `useIncremental`; day totals come from the whole list.
+- **Format dates with the cached helpers** in `app/format.js`. `toLocaleDateString` with options builds a new formatter per call and is very slow in Safari.
+- **Tabs stay mounted.** Hidden tabs use `content-visibility: hidden`, so switching is a visibility change and keeps scroll and search.
+- **Sheets open whole.** A sheet opens before its first paint and starts on screen (a short rise and fade), so it is never drawn in pieces.
+- **Animate transform and opacity only.** Nothing animated sits under the glass bars: no animated blur, backgrounds, masks or page filters.
 
 ## Data and access
 

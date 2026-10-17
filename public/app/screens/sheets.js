@@ -1,21 +1,17 @@
 import {html, useState} from '../../vendor/preact-htm.js';
-import {settlementOverview} from '../../settlement-overview.js';
-import {canManageExpenseAs} from '../../expense-policy.js';
 import {useStore, getState, save, toast} from '../store.js';
 import {present, push, back, closeSheet, replace} from '../nav.js';
-import {Page, Icon, Amount, Pill, Empty, Sheet, Segmented, FairShareBar, Flow, CategoryGlyph, Avatar, cx} from '../ui.js';
+import {Page, Icon, Amount, Pill, Empty, Sheet, Segmented, FairShareBar, Flow, CategoryGlyph, Avatar, cx, useIncremental} from '../ui.js';
 import {DayGroups, ActionsSheet, confirm} from '../common.js';
 import {Ring} from './home.js';
 import {PaymentsList} from './household.js';
 import {group, otherCouple, coupleName, money, plural, rangeLabel, periodProgress, today, categoryLook, addDays, pad} from '../format.js';
+import {orderedSheets, sheetSummary, sheetOverview, sheetBreakdown, sheetsById, dayTotals, canDeleteSheet as canDeleteInSnapshot} from '../derive.js';
 import {exportCSV, summaryText, shareText} from '../flows/export.js';
 import {openAddExpense} from '../flows/expense.js';
 
-const sheetState = (data, sheet) => {
-  const items = data.expenses.filter(e => e.sheet === sheet.id), open = items.filter(e => !e.settlement);
-  return {items, open, total: items.reduce((n, e) => n + e.cents, 0), unsettled: open.reduce((n, e) => n + e.cents, 0)};
-};
-export const canDeleteSheet = (data, id) => !data.settlements.some(s => s.sheet === id) && data.expenses.filter(e => e.sheet === id).every(e => canManageExpenseAs(e, data.seat));
+const sheetState = (data, sheet) => sheetSummary(data, sheet.id);
+export const canDeleteSheet = (data, id) => canDeleteInSnapshot(data, id);
 
 function statusOf(sheet, st) {
   if (sheet.archived) return {label: 'Archived', tone: 'quiet'};
@@ -24,8 +20,8 @@ function statusOf(sheet, st) {
 }
 
 export function Sheets() {
-  const {data} = useStore();
-  const ordered = [...data.sheets].sort((a, b) => Number(b.pinned) - Number(a.pinned) || String(b.start).localeCompare(String(a.start)));
+  const {data} = useStore('data');
+  const ordered = orderedSheets(data);
   const open = ordered.filter(s => !s.archived), archived = ordered.filter(s => s.archived);
   return html`<${Page} title="Sheets" scrollKey="sheets"
     actions=${html`<button type="button" class="nav-button nav-button-accent" data-action="new-sheet" onClick=${() => present('sheet-form', {})} aria-label="New sheet"><${Icon} name="plus"/></button>`}>
@@ -52,7 +48,7 @@ export function Sheets() {
 
 function SheetCard({sheet, data}) {
   const st = sheetState(data, sheet), status = statusOf(sheet, st), progress = periodProgress(sheet);
-  const mine = group(data.seat), o = settlementOverview(st.items, mine);
+  const mine = group(data.seat), o = sheetOverview(data, sheet.id, mine);
   const other = otherCouple(mine);
   return html`<button type="button" class="card sheetcard" data-view-sheet=${sheet.id} data-swipe-sheet=${sheet.id} onClick=${() => push('sheet', {id: sheet.id})}>
     <div class="sheetcard-head">
@@ -72,15 +68,16 @@ function SheetCard({sheet, data}) {
 
 // ───────── Sheet page ─────────
 export function SheetPage({id}) {
-  const {data} = useStore();
-  const sheet = data.sheets.find(s => s.id === id);
+  const {data} = useStore('data');
+  const sheet = sheetsById(data).get(id);
   const [tab, setTab] = useState('expenses'), [status, setStatus] = useState(sheet?.archived ? 'settled' : 'open');
+  const st = sheet ? sheetState(data, sheet) : null;
+  const listed = !st ? [] : status === 'all' ? st.items : status === 'open' ? st.open : st.settled;
+  const [count, more] = useIncremental(tab === 'expenses' ? listed.length : 0, {first: 25, resetKey: status});
   if (!sheet) return html`<${Page} title="Sheet" back><div class="card card-pad"><${Empty} emoji="🗑️" title="This sheet no longer exists"/></div><//>`;
-  const st = sheetState(data, sheet), stat = statusOf(sheet, st), progress = periodProgress(sheet);
-  const coupleA = settlementOverview(st.items, 'a'), mine = group(data.seat), yours = settlementOverview(st.items, mine);
+  const stat = statusOf(sheet, st), progress = periodProgress(sheet);
+  const coupleA = sheetOverview(data, id, 'a'), mine = group(data.seat), yours = sheetOverview(data, id, mine);
   const other = otherCouple(mine), [from, to] = yours.net < 0 ? [other, mine] : [mine, other];
-  const listed = status === 'all' ? st.items : st.items.filter(e => status === 'open' ? !e.settlement : !!e.settlement);
-  const sorted = [...listed].sort((a, b) => b.date.localeCompare(a.date));
   const payments = data.settlements.filter(r => r.sheet === id);
   return html`<${Page} title=${sheet.name} eyebrow=${rangeLabel(sheet)} back scrollKey=${'sheet-' + id}
     actions=${html`<button type="button" class="nav-button" onClick=${() => present('sheet-actions', {id})} aria-label=${'Actions for ' + sheet.name}><${Icon} name="dots"/></button>`}>
@@ -101,20 +98,18 @@ export function SheetPage({id}) {
     <${Segmented} label="Sheet view" value=${tab} onChange=${setTab} class="segmented-wide" options=${[{value: 'expenses', label: 'Expenses'}, {value: 'insights', label: 'Insights'}, {value: 'payments', label: `Payments${payments.length ? ' · ' + payments.length : ''}`}]}/>
     ${tab === 'expenses' && html`
       <div class="toolbar"><${Segmented} label="Expense status" value=${status} onChange=${setStatus} options=${[{value: 'open', label: `Open · ${st.open.length}`}, {value: 'settled', label: `Settled · ${st.items.length - st.open.length}`}, {value: 'all', label: 'All'}]}/></div>
-      ${sorted.length ? html`<${DayGroups} expenses=${sorted} showAuthor/>` : html`<div class="card card-pad"><${Empty} emoji=${st.items.length ? '✅' : '🧾'} title=${st.items.length ? (status === 'open' ? 'Nothing unsettled' : 'Nothing settled yet') : 'This sheet is empty'} text=${st.items.length ? '' : 'Expenses you add to this sheet will appear here.'}/></div>`}`}
-    ${tab === 'insights' && html`<${Insights} data=${data} items=${st.items}/>`}
+      ${listed.length ? html`<${DayGroups} expenses=${listed.slice(0, count)} totals=${dayTotals(listed)} showAuthor/>${more}` : html`<div class="card card-pad"><${Empty} emoji=${st.items.length ? '✅' : '🧾'} title=${st.items.length ? (status === 'open' ? 'Nothing unsettled' : 'Nothing settled yet') : 'This sheet is empty'} text=${st.items.length ? '' : 'Expenses you add to this sheet will appear here.'}/></div>`}`}
+    ${tab === 'insights' && html`<${Insights} data=${data} id=${id} items=${st.items}/>`}
     ${tab === 'payments' && html`<${PaymentsList} records=${payments}/>`}
   <//>`;
 }
 
-function Insights({data, items}) {
+function Insights({data, id, items}) {
   const [mode, setMode] = useState('category');
   if (!items.length) return html`<div class="card card-pad"><${Empty} emoji="📊" title="No spending yet" text="Insights appear once this sheet has expenses."/></div>`;
   const total = items.reduce((n, e) => n + e.cents, 0);
   const key = mode === 'category' ? 'category' : mode === 'merchant' ? 'merchant' : 'payer';
-  const map = new Map();
-  items.forEach(e => { const k = e[key]; const r = map.get(k) || {name: k, cents: 0, count: 0}; r.cents += e.cents; r.count++; map.set(k, r); });
-  let rows = [...map.values()].sort((a, b) => b.cents - a.cents);
+  let rows = sheetBreakdown(data, id, key);
   if (rows.length > 6) rows = [...rows.slice(0, 5), {name: 'Everything else', cents: rows.slice(5).reduce((n, r) => n + r.cents, 0), count: rows.slice(5).reduce((n, r) => n + r.count, 0), rest: true}];
   const max = Math.max(...rows.map(r => r.cents), 1);
   return html`<section class="card card-pad insights" aria-label="Spending breakdown">

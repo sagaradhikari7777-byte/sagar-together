@@ -1,6 +1,6 @@
 // One observable store for the household, session and navigation. Every write
 // goes through save(), which keeps the server's revision checks intact.
-import {useLayoutEffect, useState} from '../vendor/preact-htm.js';
+import {useLayoutEffect, useRef, useState} from '../vendor/preact-htm.js';
 import {draftKey, readDraft} from '../drafts.js';
 import {catalogValues} from '../catalog.js';
 import {demoHousehold, demoMutation} from './demo.js';
@@ -13,6 +13,7 @@ let state = {
   booting: true,
   loadError: '',
   toast: null,
+  drafts: 0,
   theme: readTheme(),
   nav: {tab: 'home', pages: [], sheets: []},
 };
@@ -25,14 +26,18 @@ export function setState(patch) {
 }
 export function subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); }
 /**
- * Re-renders the caller whenever the store changes, including a change that
- * lands between rendering and subscribing.
+ * Re-renders the caller when one of the named state keys changes, or on any
+ * change when no keys are named. A change that lands between rendering and
+ * subscribing still counts. Name keys: a screen that re-renders on every
+ * navigation or toast is what makes sheets and tabs slow to open.
  */
-export function useStore() {
-  const [, tick] = useState(0), rendered = state;
+export function useStore(...keys) {
+  const [, tick] = useState(0), rendered = useRef(state);
+  rendered.current = state;
   useLayoutEffect(() => {
-    const update = () => tick(n => n + 1);
-    if (state !== rendered) update();
+    const changed = () => keys.length ? keys.some(key => state[key] !== rendered.current[key]) : state !== rendered.current;
+    const update = () => { if (changed()) tick(n => n + 1); };
+    update();
     return subscribe(update);
   }, []);
   return state;
@@ -193,7 +198,9 @@ export function setEntryPreferences(prefs) { storage().setItem(prefKey(), JSON.s
 export const draftStore = () => storage();
 export const currentDraftKey = () => draftKey(state.data.id, state.data.seat);
 export function savedDraft() { try { return readDraft(storage(), currentDraftKey()); } catch { return null; } }
-export function clearDraft() { try { storage().removeItem(currentDraftKey()); } catch {} }
+export function clearDraft() { try { storage().removeItem(currentDraftKey()); } catch {} draftsChanged(); }
+/** Tells screens showing the unfinished-expense banner to look again. */
+export function draftsChanged() { setState(s => ({drafts: s.drafts + 1})); }
 
 export function setTheme(theme) {
   try { localStorage.setItem('together-theme', theme); } catch {}

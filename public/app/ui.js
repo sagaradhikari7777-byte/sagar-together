@@ -1,11 +1,50 @@
 // Interface kit. Components stay small and stateless where possible; the
 // visual language lives in /styles.
-import {html, useEffect, useRef, useState, createContext, useContext} from '../vendor/preact-htm.js';
+import {html, h, Component, useEffect, useLayoutEffect, useRef, useState, createContext, useContext} from '../vendor/preact-htm.js';
 import {shapes} from '../icons.js';
 import {moneyParts, money, initials, members, coupleName, group, categoryLook, merchantHue} from './format.js';
 import {back} from './nav.js';
 
 export const cx = (...parts) => parts.filter(Boolean).join(' ');
+
+/**
+ * Skips re-rendering a component when its parent re-renders with the same
+ * props. The component still re-renders for its own state, store keys and context.
+ */
+export function memo(Inner) {
+  class Memo extends Component {
+    shouldComponentUpdate(next) {
+      for (const key in next) if (next[key] !== this.props[key]) return true;
+      for (const key in this.props) if (!(key in next)) return true;
+      return false;
+    }
+    render(props) { return h(Inner, props); }
+  }
+  return Memo;
+}
+
+/**
+ * Renders a long list a page at a time: the first page right away, the next
+ * as the reader scrolls near the end (or taps Show more). `resetKey` starts
+ * over, e.g. when a search changes.
+ */
+export function useIncremental(total, {first = 30, step = 40, resetKey = ''} = {}) {
+  const view = useRef({key: resetKey, count: first}), [, grow] = useState(0);
+  if (view.current.key !== resetKey) view.current = {key: resetKey, count: first};
+  const count = Math.min(view.current.count, total), sentinel = useRef();
+  const more = () => { view.current.count += step; grow(n => n + 1); };
+  useEffect(() => {
+    const el = sentinel.current;
+    if (!el || !window.IntersectionObserver) return;
+    const io = new IntersectionObserver(entries => { if (entries.some(e => e.isIntersecting)) more(); }, {root: el.closest('.page-scroll, .sheet-body'), rootMargin: '0px 0px 700px 0px'});
+    io.observe(el);
+    return () => io.disconnect();
+  }, [count, total, resetKey]);
+  const footer = count < total
+    ? html`<button type="button" class="more" ref=${sentinel} onClick=${more}>Show ${Math.min(step, total - count)} more</button>`
+    : null;
+  return [count, footer];
+}
 
 export const Icon = ({name, class: className = ''}) =>
   html`<svg class=${cx('icon', className)} viewBox="0 0 24 24" aria-hidden="true" dangerouslySetInnerHTML=${{__html: shapes[name] || shapes.other}}></svg>`;
@@ -61,13 +100,22 @@ export const Switch = ({checked, onChange, label}) =>
 
 // ───────── Pages ─────────
 /** A screen with an iOS-style large title that collapses into a glass bar on scroll. */
+/** Whether the surrounding tab is the one on screen. Tabs stay mounted while hidden. */
+export const TabActive = createContext(true);
 export function Page({title, eyebrow, back: showBack, actions, children, class: className = '', scrollKey}) {
-  const scroller = useRef(), bar = useRef();
+  const scroller = useRef(), bar = useRef(), active = useContext(TabActive);
+  // A hidden tab keeps its place; restore it in case the browser dropped it while hidden.
+  useLayoutEffect(() => {
+    const el = scroller.current, top = scrollMemory.get(scrollKey);
+    if (active && scrollKey && top !== undefined && Math.abs(el.scrollTop - top) > 1) el.scrollTop = top;
+  }, [active]);
   useEffect(() => {
     const el = scroller.current;
     if (scrollKey && scrollMemory.has(scrollKey)) el.scrollTop = scrollMemory.get(scrollKey);
+    let scrolled = null;
     const onScroll = () => {
-      bar.current?.classList.toggle('is-scrolled', el.scrollTop > 44);
+      const now = el.scrollTop > 44;
+      if (now !== scrolled) bar.current?.classList.toggle('is-scrolled', scrolled = now);
       if (scrollKey) scrollMemory.set(scrollKey, el.scrollTop);
     };
     onScroll();
@@ -98,11 +146,13 @@ export function Sheet({title, size = 'auto', class: className = '', left, right,
   closing = closing || useContext(SheetContext).closing;
   const close = () => (onClose || back)();
   const leaving = useRef(closing); leaving.current = closing;
-  useEffect(() => {
+  // Open in the same frame the sheet is first drawn, so it appears whole;
+  // move focus a frame later so the focus change never delays that frame.
+  useLayoutEffect(() => {
     const d = dialog.current;
     let mounted = true;
     if (!d.open) d.showModal();
-    if (!d.querySelector('[autofocus]')) heading.current?.focus({preventScroll: true});
+    if (!d.querySelector('[autofocus]')) requestAnimationFrame(() => { if (mounted && d.open) heading.current?.focus({preventScroll: true}); });
     const onCancel = event => { event.preventDefault(); close(); };
     // Browsers may close a dialog themselves (a repeated Escape or back gesture
     // skips "cancel"). Treat that as a close request; if a guard keeps the sheet, show it again.

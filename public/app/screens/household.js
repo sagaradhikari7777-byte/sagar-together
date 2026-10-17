@@ -8,7 +8,7 @@ import {group, otherCouple, coupleName, members, money, plural, stamp, initials}
 import {exportCSV} from '../flows/export.js';
 
 export function Household() {
-  const {data, demo, theme} = useStore();
+  const {data, demo, theme} = useStore('data', 'demo', 'theme');
   const pending = data.claimed.filter(c => !c).length;
   const leave = () => demo ? exitDemo() : confirm({title: 'Sign out?', message: 'Keep your private access link so you can sign in again on this or another device.', confirm: 'Sign out', destructive: true, run: async () => signOut()});
   return html`<${Page} title="Household" eyebrow=${data.name} scrollKey="household">
@@ -90,7 +90,7 @@ function LinkSheet({title, lede, url, shareTitle, primary, footer}) {
 }
 
 export function InviteSheet() {
-  const {data, demo} = useStore();
+  const {data, demo} = useStore('data', 'demo');
   if (demo) return html`<${Sheet} title="Invite your household"><${Empty} emoji="💌" title="Invitations need a real household" text="Create your household to invite the other three."/><//>`;
   const waiting = data.names.filter((_, i) => !data.claimed[i]);
   return html`<${LinkSheet} title="Invite your household" shareTitle="Join our Together household" url=${shareLink('invite')} primary="Share invitation"
@@ -126,7 +126,7 @@ export function PreferencesSheet({sheetKey}) {
 
 // ───────── Payments ─────────
 export function PaymentsList({records}) {
-  const {data} = useStore();
+  const {data} = useStore('data');
   if (!records.length) return html`<div class="card card-pad"><${Empty} emoji="🤝" title="No payments recorded yet" text="When a sheet is settled, the payment appears here."/></div>`;
   return html`<div class="stack">${records.map(r => {
     const names = r.names || data.names, payer = r.net > 0 ? 'b' : 'a', receiver = otherCouple(payer);
@@ -146,7 +146,7 @@ export function PaymentsList({records}) {
 }
 
 export function PaymentsSheet() {
-  const {data} = useStore();
+  const {data} = useStore('data');
   return html`<${Sheet} title="Payment history" size="large"><${PaymentsList} records=${data.settlements}/><//>`;
 }
 

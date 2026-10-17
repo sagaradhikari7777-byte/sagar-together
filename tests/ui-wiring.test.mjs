@@ -82,9 +82,13 @@ test('sheets always keep a visible close, and browser-closed dialogs stay in syn
   assert.match(ui, /addEventListener\('close', onClosed\)/);
 });
 
-test('the store re-renders subscribers that mount after a change', () => {
+test('the store re-renders only for named keys, including a change before subscribing', () => {
   const store = sources['app/store.js'];
-  assert.match(store, /useLayoutEffect\(\(\) => \{\s*const update[^\n]*\n\s*if \(state !== rendered\) update\(\);/);
+  assert.match(store, /export function useStore\(\.\.\.keys\)/);
+  assert.match(store, /keys\.some\(key => state\[key\] !== rendered\.current\[key\]\)/);
+  assert.match(store, /update\(\);\s*return subscribe\(update\);/);
+  // A bare useStore() re-renders on every navigation and toast; every caller names its keys.
+  for (const [file, text] of Object.entries(sources)) assert.doesNotMatch(text, /useStore\(\)/, file);
 });
 
 test('a private access link signs in without the first-time access sheet', () => {

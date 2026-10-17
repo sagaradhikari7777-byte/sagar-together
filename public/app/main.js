@@ -3,7 +3,7 @@
 import {html, render, useEffect, useRef, useState} from '../vendor/preact-htm.js';
 import {useStore, getState, setState, refresh, applyTheme, openLink, toast} from './store.js';
 import {installNavigation, go, present, depth} from './nav.js';
-import {Icon, cx, SheetContext} from './ui.js';
+import {Icon, cx, SheetContext, TabActive, memo} from './ui.js';
 import {ConfirmSheet, ActionsSheet} from './common.js';
 import {Home} from './screens/home.js';
 import {Activity, FiltersSheet} from './screens/activity.js';
@@ -47,13 +47,19 @@ function useExiting(items, ms = 300) {
   return [...items.map(item => ({item, closing: false})), ...[...ghosts.current.values()].map(item => ({item, closing: true}))];
 }
 
+// Each registered screen renders through a memo wrapper, so a layer re-renders
+// only for its own props, state and store keys, never because another layer changed.
+const views = new Map();
+const view = C => { if (!views.has(C)) views.set(C, memo(C)); return views.get(C); };
+const OPEN = {closing: false}, CLOSING = {closing: true};
+
 function SheetHost() {
-  const {nav} = useStore();
-  return html`${useExiting(nav.sheets).map(({item, closing}) => { const C = sheets[item.type]; return C ? html`<${SheetContext.Provider} key=${item.key} value=${{closing}}><${C} sheetKey=${item.key} closing=${closing} ...${item.props}/><//>` : ''; })}`;
+  const {nav} = useStore('nav');
+  return html`${useExiting(nav.sheets).map(({item, closing}) => { const C = sheets[item.type]; return C ? html`<${SheetContext.Provider} key=${item.key} value=${closing ? CLOSING : OPEN}><${view(C)} sheetKey=${item.key} closing=${closing} ...${item.props}/><//>` : ''; })}`;
 }
 
 function TabBar() {
-  const {nav} = useStore();
+  const {nav} = useStore('nav');
   const index = {home: 0, activity: 1, sheets: 3, household: 4}[nav.tab];
   const item = (id, label, icon) => html`<button type="button" class=${cx('tab', nav.tab === id && 'is-active')} data-tab=${id} aria-current=${nav.tab === id ? 'page' : undefined} onClick=${() => go(id)}><${Icon} name=${icon}/><span>${label}</span></button>`;
   return html`<nav class="tabbar" aria-label="Main navigation" style=${`--index:${index}`}>
@@ -64,28 +70,44 @@ function TabBar() {
   </nav>`;
 }
 
+/**
+ * The four tabs stay mounted once shown, so switching is only a visibility
+ * change. Tabs not yet visited are prepared shortly after the first screen
+ * appears, one at a time, so even a first switch is instant.
+ */
 function Shell() {
-  const {nav, demo} = useStore();
+  const {nav, demo} = useStore('nav', 'demo');
   const pushed = useExiting(nav.pages);
-  const Tab = tabs[nav.tab] || Home;
-  const top = nav.pages.length;
+  const top = nav.pages.length, current = tabs[nav.tab] ? nav.tab : 'home';
+  const ready = useRef(new Set()).current, [, prepared] = useState(0);
+  ready.add(current);
+  useEffect(() => {
+    const next = Object.keys(tabs).find(id => !ready.has(id));
+    if (!next) return;
+    const timer = setTimeout(() => { ready.add(next); prepared(n => n + 1); }, ready.size === 1 ? 600 : 150);
+    return () => clearTimeout(timer);
+  }, [ready.size]);
   return html`<div class=${cx('shell', demo && 'is-demo')}>
     ${demo && html`<div class="demo-banner" role="note"><span>Sample household</span><button type="button" class="link" data-action="exit-demo" onClick=${() => setState({demo: false, data: null, nav: {tab: 'home', pages: [], sheets: []}})}>Make it yours</button></div>`}
-    <section key=${'tab-' + nav.tab} class=${cx('page', 'page-root', !top && 'is-top')} inert=${top > 0}><${Tab}/></section>
-    ${pushed.map(({item: p, closing}, i) => { const P = pages[p.type]; return html`<section key=${p.key} class=${cx('page', 'page-pushed', closing ? 'is-leaving' : i === top - 1 && 'is-top')} inert=${closing || i !== top - 1}><${P} ...${p.props}/></section>`; })}
+    ${Object.keys(tabs).filter(id => ready.has(id)).map(id => {
+      const active = id === current, Tab = view(tabs[id]);
+      return html`<section key=${'tab-' + id} class=${cx('page', 'page-root', active ? 'is-active' : 'is-hidden', active && !top && 'is-top')} data-tab-page=${id} inert=${active && top > 0}><${TabActive.Provider} value=${active}><${Tab}/><//></section>`;
+    })}
+    ${pushed.map(({item: p, closing}, i) => { const P = view(pages[p.type]); return html`<section key=${p.key} class=${cx('page', 'page-pushed', closing ? 'is-leaving' : i === top - 1 && 'is-top')} inert=${closing || i !== top - 1}><${P} ...${p.props}/></section>`; })}
     <${TabBar}/>
   </div>`;
 }
 
 function Toast() {
-  const {toast: t} = useStore();
+  const {toast: t} = useStore('toast');
   return html`<div class=${cx('toast', t && 'is-shown', t?.tone && 'toast-' + t.tone)} role="status" aria-live="polite">${t?.text || ''}</div>`;
 }
 
+const ShellView = memo(Shell), SheetHostView = memo(SheetHost), ToastView = memo(Toast);
 function App() {
-  const {data, credentials, booting, loadError, busy} = useStore();
-  const body = data ? html`<${Shell}/>` : credentials && booting ? html`<${Loading}/>` : credentials && loadError ? html`<${LoadError}/>` : html`<${Welcome}/>`;
-  return html`<div class=${cx('app', busy && 'is-busy')}><div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>${body}<${SheetHost}/><${Toast}/></div>`;
+  const {data, credentials, booting, loadError, busy} = useStore('data', 'credentials', 'booting', 'loadError', 'busy');
+  const body = data ? html`<${ShellView}/>` : credentials && booting ? html`<${Loading}/>` : credentials && loadError ? html`<${LoadError}/>` : html`<${Welcome}/>`;
+  return html`<div class=${cx('app', busy && 'is-busy')}><div class="aurora" aria-hidden="true"></div>${body}<${SheetHostView}/><${ToastView}/></div>`;
 }
 
 const Loading = () => html`<main class="loading"><div class="welcome-mark" aria-hidden="true"><i class="orb orb-a"></i><i class="orb orb-b"></i><i class="orb orb-lens"></i></div><p class="loading-text" role="status">Opening your household…</p></main>`;

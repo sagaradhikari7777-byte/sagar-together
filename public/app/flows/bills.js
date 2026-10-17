@@ -7,8 +7,8 @@ import {Sheet, Icon, CategoryGlyph, Empty, Switch, Pill, Segmented, cx} from '..
 import {money, longDate, today, coupleName, shortDate} from '../format.js';
 
 export function BillsSheet() {
-  const {data} = useStore();
-  const bills = [...(data.recurring || [])].sort((a, b) => Number(b.active) - Number(a.active) || a.nextDue.localeCompare(b.nextDue));
+  const {data} = useStore('data');
+  const bills = [...(data.recurring || [])].sort((a, b) => Number(b.active) - Number(a.active) || (a.nextDue < b.nextDue ? -1 : a.nextDue > b.nextDue ? 1 : 0));
   return html`<${Sheet} title="Recurring bills" size="large"
     right=${html`<button type="button" class="nav-button nav-button-accent" id="new-bill" onClick=${() => present('bill-editor', {})} aria-label="Add recurring bill"><${Icon} name="plus"/></button>`}>
     <p class="sheet-lede">Plan regular bills and get reminders on Home. Nothing is added automatically — you confirm each one.</p>
@@ -69,7 +69,7 @@ export function BillEditor({sheetKey, id}) {
 }
 
 export function RecordBill({sheetKey, id}) {
-  const {data} = useStore(), bill = (data.recurring || []).find(b => b.id === id);
+  const {data} = useStore('data'), bill = (data.recurring || []).find(b => b.id === id);
   const open = data.sheets.filter(s => !s.archived);
   const [sheet, setSheet] = useState(() => (open.find(s => s.id === bill?.sheet) || open.find(s => s.pinned) || open[0])?.id || '');
   const [error, setError] = useState(''), [busy, setBusy] = useState(false);

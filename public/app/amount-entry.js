@@ -23,4 +23,5 @@ export function applyKey(expr, key, fresh) {
   if (/\.\d\d$/.test(segment) || next.length >= 40) return next;
   return segment === '0' ? next.slice(0, -1) + key : next + key;
 }
-export const groupThousands = s => s.replace(/^(\d+)/, d => Number(d).toLocaleString('en-AU'));
+const thousands = new Intl.NumberFormat('en-AU');
+export const groupThousands = s => s.replace(/^(\d+)/, d => thousands.format(Number(d)));

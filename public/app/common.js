@@ -1,7 +1,8 @@
 // Shared sheets and rows used by several screens.
 import {html, useRef, useState} from '../vendor/preact-htm.js';
 import {canManageExpenseAs} from '../expense-policy.js';
-import {Sheet, Icon, Amount, CategoryGlyph, Dot, cx} from './ui.js';
+import {Sheet, Icon, Amount, CategoryGlyph, Dot, cx, memo} from './ui.js';
+import {sheetsById, expenseById} from './derive.js';
 import {back, closeSheet, present} from './nav.js';
 import {getState, toast, save, savedDraft, clearDraft} from './store.js';
 import {dayLabel, money, shortDate, group} from './format.js';
@@ -41,11 +42,14 @@ export const confirm = props => present('confirm', props);
 
 // ───────── Expense rows ─────────
 const actionWidth = 148;
-/** One expense. Your own unsettled expenses swipe left to reveal Edit and Delete. */
-export function ExpenseRow({expense: e, showSheet = false, showAuthor = false}) {
+/**
+ * One expense. Your own unsettled expenses swipe left to reveal Edit and Delete.
+ * Memoized: a row re-renders only when its expense (or how it is shown) changes.
+ */
+export const ExpenseRow = memo(function ExpenseRow({expense: e, showSheet = false, showAuthor = false}) {
   const {data} = getState();
   const manageable = canManageExpenseAs(e, data.seat);
-  const archived = data.sheets.find(s => s.id === e.sheet)?.archived;
+  const sheet = sheetsById(data).get(e.sheet), archived = sheet?.archived;
   const front = useRef(), drag = useRef(null), [open, setOpen] = useState(false);
   const setX = x => { if (front.current) front.current.style.transform = x ? `translateX(${x}px)` : ''; };
   const onDown = event => {
@@ -75,7 +79,7 @@ export function ExpenseRow({expense: e, showSheet = false, showAuthor = false}) 
     if (open) { setOpen(false); setX(0); return; }
     present('expense-detail', {id: e.id});
   };
-  const sheetName = data.sheets.find(s => s.id === e.sheet)?.name;
+  const sheetName = sheet?.name;
   const who = showAuthor && Number.isInteger(e.creator) ? data.names[e.creator] : data.names[e.payer];
   const meta = [e.category, showSheet && sheetName].filter(Boolean).join(' · ');
   return html`<div class=${cx('xrow', e.settlement && 'is-settled')}>
@@ -96,10 +100,10 @@ export function ExpenseRow({expense: e, showSheet = false, showAuthor = false}) 
       </span>
     </button>
   </div>`;
-}
+});
 
 export function deleteExpense(id) {
-  const {data} = getState(), e = data.expenses.find(x => x.id === id);
+  const {data} = getState(), e = expenseById(data).get(id);
   if (!canManageExpenseAs(e, data.seat)) return toast('This expense cannot be deleted.');
   confirm({
     title: 'Delete this expense?', message: `${e.merchant} — ${money(e.cents)} on ${shortDate(e.date)} will be permanently removed.`,
@@ -114,12 +118,15 @@ export function deleteExpense(id) {
   });
 }
 
-/** Day-grouped expenses with daily totals. */
-export function DayGroups({expenses, showSheet, showAuthor}) {
+/**
+ * Day-grouped expenses with daily totals. When only part of a list is shown,
+ * pass `totals` for the whole list so a partly shown day still totals in full.
+ */
+export function DayGroups({expenses, totals, showSheet, showAuthor}) {
   const days = new Map();
   for (const e of expenses) { if (!days.has(e.date)) days.set(e.date, []); days.get(e.date).push(e); }
-  return html`${[...days].map(([day, items]) => html`<section class="day">
-    <h3 class="day-head"><span>${dayLabel(day)}</span><span>${money(items.reduce((n, e) => n + e.cents, 0))}</span></h3>
+  return html`${[...days].map(([day, items]) => html`<section class="day" key=${day}>
+    <h3 class="day-head"><span>${dayLabel(day)}</span><span>${money(totals?.get(day) ?? items.reduce((n, e) => n + e.cents, 0))}</span></h3>
     <div class="card list">${items.map(e => html`<${ExpenseRow} key=${e.id} expense=${e} showSheet=${showSheet} showAuthor=${showAuthor}/>`)}</div>
   </section>`)}`;
 }

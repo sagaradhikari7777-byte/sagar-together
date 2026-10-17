@@ -2,21 +2,24 @@ import {html, useState, useRef, useEffect} from '../../vendor/preact-htm.js';
 import {catalogValues} from '../../catalog.js';
 import {useStore, getState, save, toast} from '../store.js';
 import {present, replace, closeSheet} from '../nav.js';
-import {Sheet, Icon, Segmented, MerchantMark, CategoryGlyph, Empty, cx} from '../ui.js';
+import {Sheet, Icon, Segmented, MerchantMark, CategoryGlyph, Empty, cx, useIncremental} from '../ui.js';
+import {usageCounts, catalogOrder} from '../derive.js';
 import {plural} from '../format.js';
 
 /** Merchants or categories. With onPick it selects; without, it manages the list. */
 export function CatalogSheet({sheetKey, kind, selected = '', onPick}) {
-  const {data} = useStore();
+  const {data} = useStore('data');
   const merchants = kind === 'merchants', field = merchants ? 'merchant' : 'category';
   const [query, setQuery] = useState(''), [sort, setSort] = useState(onPick ? 'frequent' : 'az'), [error, setError] = useState('');
   const search = useRef();
   const all = catalogValues(data, kind), needle = query.trim().toLocaleLowerCase();
-  const counts = new Map();
-  for (const e of data.expenses) counts.set(e[field], (counts.get(e[field]) || 0) + 1);
-  const names = all.filter(n => n.toLocaleLowerCase().includes(needle));
-  if (merchants) names.sort((a, b) => (sort === 'frequent' ? (counts.get(b) || 0) - (counts.get(a) || 0) : 0) || a.localeCompare(b));
+  // Counts and order are worked out once per household snapshot, not per open or keystroke.
+  const counts = usageCounts(data, field), ordered = catalogOrder(data, kind, sort);
+  const names = needle ? ordered.filter(n => n.toLocaleLowerCase().includes(needle)) : ordered;
   const exact = all.some(n => n.toLocaleLowerCase() === needle);
+  // Enough rows to fill the sheet (and reach the current choice) render at once; the rest as you scroll.
+  const [count, more] = useIncremental(names.length, {first: Math.max(merchants ? 14 : 24, names.indexOf(selected) + 1), step: 40, resetKey: needle + '|' + sort});
+  const shown = names.slice(0, count);
   const choose = name => {
     if (onPick) { onPick(name); closeSheet(sheetKey); }
     else present('catalog-edit', {kind, previous: name});
@@ -37,14 +40,15 @@ export function CatalogSheet({sheetKey, kind, selected = '', onPick}) {
     ${error && html`<p class="form-error" role="alert">${error}</p>`}
     <p class="catalog-count" role="status">${needle ? plural(names.length, 'result') : plural(all.length, merchants ? 'merchant' : 'category', merchants ? 'merchants' : 'categories')}${!onPick ? ' · tap to rename or remove' : ''}</p>
     ${names.length === 0 && !needle ? html`<${Empty} emoji=${merchants ? '🏪' : '🏷️'} title=${'No ' + kind + ' yet'} text=${'Add your first ' + field + '.'}/>`
-      : merchants ? html`<div class="card list">${names.map(n => html`<button type="button" class=${cx('pick', n === selected && 'is-selected')} data-choice=${n} aria-pressed=${onPick ? String(n === selected) : undefined} onClick=${() => choose(n)}>
+      : merchants ? html`<div class="card list">${shown.map(n => html`<button type="button" class=${cx('pick', n === selected && 'is-selected')} data-choice=${n} aria-pressed=${onPick ? String(n === selected) : undefined} onClick=${() => choose(n)}>
           <${MerchantMark} name=${n}/><span class="pick-text"><strong>${n}</strong><small>${counts.get(n) ? plural(counts.get(n), 'expense') : 'No expenses yet'}</small></span>
           ${n === selected ? html`<${Icon} name="check" class="pick-check"/>` : !onPick && html`<${Icon} name="chevron" class="row-chevron"/>`}
         </button>`)}</div>`
-      : html`<div class="tiles">${names.map(n => html`<button type="button" class=${cx('tile', n === selected && 'is-selected')} data-choice=${n} aria-pressed=${onPick ? String(n === selected) : undefined} onClick=${() => choose(n)}>
+      : html`<div class="tiles">${shown.map(n => html`<button type="button" class=${cx('tile', n === selected && 'is-selected')} data-choice=${n} aria-pressed=${onPick ? String(n === selected) : undefined} onClick=${() => choose(n)}>
           <${CategoryGlyph} name=${n} size="lg"/><strong>${n}</strong><small>${counts.get(n) ? plural(counts.get(n), 'expense') : '—'}</small>
           ${n === selected && html`<${Icon} name="check" class="tile-check"/>`}
         </button>`)}</div>`}
+    ${more}
     ${!onPick && html`<p class="sheet-note">Renaming or removing doesn’t change past expenses.</p>`}
   <//>`;
 }

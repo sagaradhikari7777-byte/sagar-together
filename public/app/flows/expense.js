@@ -1,11 +1,11 @@
 import {html, useState, useEffect, useRef} from '../../vendor/preact-htm.js';
 import {canManageExpenseAs} from '../../expense-policy.js';
 import {catalogValues} from '../../catalog.js';
-import {frequentMerchants} from '../../entry-shortcuts.js';
 import {writeDraft} from '../../drafts.js';
 import {scanReceipt, parseReceipt} from '../../receipt-scan.js';
 import {repeatPreset} from '../../journal.js';
-import {useStore, getState, save, toast, entryPreferences, savedDraft, clearDraft, draftStore, currentDraftKey, loadReceipt} from '../store.js';
+import {useStore, getState, save, toast, entryPreferences, savedDraft, clearDraft, draftsChanged, draftStore, currentDraftKey, loadReceipt} from '../store.js';
+import {expenseById, sheetsById, orderedSheets, shortcutMerchants, lastCategory} from '../derive.js';
 import {present, replace, closeSheet, guardClose, back} from '../nav.js';
 import {Sheet, Icon, Amount, Avatar, CategoryGlyph, MerchantMark, Keypad, Pill, Group, Row, Dot, cx} from '../ui.js';
 import {deleteExpense} from '../common.js';
@@ -20,21 +20,21 @@ export function openAddExpense(preset = {}) {
   present('expense-editor', {preset});
 }
 export function repeatExpense(id) {
-  const e = getState().data.expenses.find(x => x.id === id);
+  const e = expenseById(getState().data).get(id);
   if (!e) return toast('That expense no longer exists.');
   present('expense-editor', {preset: {...repeatPreset(e), repeat: true}});
 }
 
 // ───────── Editor ─────────
 export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
-  const {data, busy} = useStore();
-  const existing = id ? data.expenses.find(e => e.id === id) : null;
+  const {data, busy} = useStore('data', 'busy');
+  const existing = id ? expenseById(data).get(id) : null;
   const openSheets = data.sheets.filter(s => !s.archived);
   const [initial] = useState(() => {
     if (resume) return {values: {...resume.values}, receipt: resume.receipt || ''};
     if (existing) return {values: {merchant: existing.merchant, amount: (existing.cents / 100).toFixed(2), category: existing.category, date: existing.date, payer: String(existing.payer), split: existing.split, sheet: existing.sheet, notes: existing.notes || ''}, receipt: existing.receipt || ''};
     const prefs = entryPreferences();
-    const sheet = openSheets.find(s => s.id === preset.sheet) || [...openSheets].sort((a, b) => Number(b.pinned) - Number(a.pinned) || String(b.start).localeCompare(String(a.start)))[0];
+    const sheet = openSheets.find(s => s.id === preset.sheet) || orderedSheets(data).find(s => !s.archived);
     return {values: {merchant: preset.merchant || '', amount: preset.cents ? (preset.cents / 100).toFixed(2) : '', category: preset.category || prefs.category, date: preset.date || today(), payer: String(preset.payer ?? data.seat), split: preset.split || prefs.split, sheet: sheet?.id || '', notes: preset.notes || ''}, receipt: ''};
   });
   const [v, setV] = useState(initial.values), [receipt, setReceipt] = useState(initial.receipt);
@@ -61,6 +61,9 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
     }
   };
   useEffect(() => { const t = setTimeout(() => { if (changed()) persist(); }, 250); return () => clearTimeout(t); }, [v, receipt]);
+  // Home's unfinished-expense banner looks again once this form closes.
+  useEffect(() => { if (closing) draftsChanged(); }, [closing]);
+  useEffect(() => () => draftsChanged(), []);
   useEffect(() => {
     const flush = () => { if (changed()) persist(); };
     addEventListener('pagehide', flush); document.addEventListener('visibilitychange', flush);
@@ -74,13 +77,12 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
 
   const press = key => { setV(cur => ({...cur, amount: applyKey(cur.amount, key, fresh)})); setFresh(false); setError(''); setDuplicate(''); };
   const cents = centsOf(v.amount), isExpr = operator.test(v.amount);
-  const merchants = catalogValues(data, 'merchants');
-  const shortcuts = existing ? [] : frequentMerchants(data.expenses, merchants, data.seat).filter(m => m !== v.merchant);
+  const shortcuts = existing ? [] : shortcutMerchants(data, data.seat).filter(m => m !== v.merchant);
   const pickMerchant = name => {
     const patch = {merchant: name};
     if (!existing) {
-      const last = data.expenses.filter(e => e.creator === data.seat && e.merchant === name).sort((a, b) => b.date.localeCompare(a.date))[0];
-      if (last && catalogValues(data, 'categories').includes(last.category)) patch.category = last.category;
+      const last = lastCategory(data, data.seat, name);
+      if (last && catalogValues(data, 'categories').includes(last)) patch.category = last;
     }
     set(patch);
   };
@@ -290,7 +292,7 @@ export function SheetChooser({sheetKey, value, onPick}) {
 export function DraftChoice({sheetKey, preset}) {
   const {data} = getState(), draft = savedDraft();
   if (!draft) { setTimeout(() => replace('expense-editor', {preset})); return ''; }
-  const e = draft.expenseId ? data.expenses.find(x => x.id === draft.expenseId) : null;
+  const e = draft.expenseId ? expenseById(data).get(draft.expenseId) : null;
   const canResume = (!draft.expenseId || (e && canManageExpenseAs(e, data.seat))) && !data.sheets.find(s => s.id === draft.values.sheet)?.archived;
   return html`<${Sheet} title="Unfinished expense" class="sheet-compact">
     <div class="draft-card"><span aria-hidden="true">✍️</span><span><strong>${draft.values.merchant || 'New expense'}</strong><small>${draftAmount(draft.values) ? draftAmount(draft.values) + ' · ' : ''}saved on this device</small></span></div>
@@ -304,7 +306,7 @@ export function DraftChoice({sheetKey, preset}) {
 
 // ───────── Details ─────────
 export function ExpenseDetail({id}) {
-  const {data} = useStore(), e = data.expenses.find(x => x.id === id);
+  const {data} = useStore('data'), e = expenseById(data).get(id);
   const [image, setImage] = useState(''), [status, setStatus] = useState('');
   if (!e) return html`<${Sheet} title="Expense" class="sheet-compact"><p class="sheet-lede">This expense was removed.</p><//>`;
   const sheet = data.sheets.find(s => s.id === e.sheet), archived = sheet?.archived;
@@ -342,7 +344,7 @@ export function ExpenseDetail({id}) {
 }
 
 export function ExpenseHistory({id}) {
-  const {data} = getState(), e = data.expenses.find(x => x.id === id);
+  const {data} = getState(), e = expenseById(data).get(id);
   if (!e) return '';
   const events = e.history?.length ? e.history : [{action: 'created', date: e.created, by: e.creator, name: Number.isInteger(e.creator) ? data.names[e.creator] : '', changes: []}];
   const label = {merchant: 'Merchant', cents: 'Amount', category: 'Category', date: 'Date', payer: 'Paid by', split: 'Split', sheet: 'Sheet', notes: 'Note', receipt: 'Receipt'};

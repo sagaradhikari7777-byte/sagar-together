@@ -1,26 +1,22 @@
 import {html} from '../../vendor/preact-htm.js';
-import {householdOverview} from '../../settlement-overview.js';
-import {periodInsight} from '../../period-insights.js';
-import {upcomingBills} from '../../recurring.js';
 import {useStore, savedDraft} from '../store.js';
 import {present, push, go} from '../nav.js';
 import {Page, Amount, Icon, FairShareBar, CategoryGlyph, Empty, CouplePair, cx} from '../ui.js';
 import {ExpenseRow} from '../common.js';
 import {group, otherCouple, coupleName, greeting, money, plural, today, periodProgress, rangeLabel, categoryLook, shortDate, firstName} from '../format.js';
+import {householdOverview, currentSheet as current, recentExpenses, upcomingBills, sheetSummary, sheetCategories, insightFor} from '../derive.js';
 import {openAddExpense} from '../flows/expense.js';
 import {draftAmount} from '../amount-entry.js';
 
-export function currentSheet(data) {
-  return [...data.sheets].filter(s => !s.archived).sort((a, b) => Number(b.pinned) - Number(a.pinned) || String(b.start).localeCompare(String(a.start)))[0];
-}
+export const currentSheet = data => current(data) || undefined;
 
 export function Home() {
-  const {data, demo} = useStore();
-  const mine = group(data.seat), other = otherCouple(mine);
+  const {data, demo} = useStore('data', 'demo', 'drafts');
+  const mine = group(data.seat), other = otherCouple(mine), day = today();
   const yours = householdOverview(data, mine), coupleA = householdOverview(data, 'a');
   const sheet = currentSheet(data), draft = savedDraft();
-  const recent = [...data.expenses].sort((a, b) => (Date.parse(b.created) || 0) - (Date.parse(a.created) || 0) || b.date.localeCompare(a.date)).slice(0, 5);
-  const bills = upcomingBills(data.recurring, today());
+  const recent = recentExpenses(data, 5);
+  const bills = upcomingBills(data, day);
   return html`<${Page} title=${data.name || 'Together'} eyebrow=${`${greeting()}, ${firstName(data.names[data.seat])}`} scrollKey="home"
     actions=${html`<button type="button" class="nav-button" onClick=${() => go('activity')} aria-label="Search expenses"><${Icon} name="search"/></button>`}>
     <${BalanceCard} data=${data} yours=${yours} coupleA=${coupleA} mine=${mine} other=${other}/>
@@ -74,12 +70,10 @@ function BalanceCard({data, yours, coupleA, mine, other}) {
 }
 
 function PeriodCard({data, sheet}) {
-  const entries = data.expenses.filter(e => e.sheet === sheet.id), total = entries.reduce((n, e) => n + e.cents, 0);
-  const insight = periodInsight(data.sheets, data.expenses, sheet, today());
+  const {total, items: entries} = sheetSummary(data, sheet.id);
+  const insight = insightFor(data, sheet.id, today());
   const progress = periodProgress(sheet);
-  const totals = new Map();
-  entries.forEach(e => totals.set(e.category, (totals.get(e.category) || 0) + e.cents));
-  const ranked = [...totals].sort((a, b) => b[1] - a[1]);
+  const ranked = sheetCategories(data, sheet.id);
   const rest = ranked.slice(4).reduce((n, [, c]) => n + c, 0);
   const segments = [...ranked.slice(0, 4), ...(rest ? [['Other', rest]] : [])];
   const comparison = insight?.delta != null ? `${insight.delta > 0 ? '+' : ''}${insight.delta}% vs the same days last sheet` : plural(entries.length, 'expense');

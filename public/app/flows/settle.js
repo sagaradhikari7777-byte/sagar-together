@@ -1,5 +1,5 @@
 import {html, useState} from '../../vendor/preact-htm.js';
-import {settlementOverview, householdOverview} from '../../settlement-overview.js';
+import {householdOverview, sheetSummary, sheetOverview} from '../derive.js';
 import {useStore, getState, save, toast} from '../store.js';
 import {closeSheet} from '../nav.js';
 import {Sheet, SheetBack, Icon, Amount, Flow, SlideToConfirm, Empty, CouplePair, FairShareBar, cx} from '../ui.js';
@@ -11,7 +11,7 @@ import {summaryText, shareText} from './export.js';
  * sheet with a balance; a single candidate goes straight to review.
  */
 export function SettleSheet({sheetKey, sheetId}) {
-  const {data, busy} = useStore();
+  const {data, busy} = useStore('data', 'busy');
   const mine = group(data.seat);
   const candidates = householdOverview(data, mine).sheets.filter(row => row.rows.length);
   const [chosen, setChosen] = useState(sheetId || (candidates.length === 1 ? candidates[0].sheet.id : ''));
@@ -50,8 +50,8 @@ export function SettleSheet({sheetKey, sheetId}) {
     <//>`;
   }
 
-  const items = data.expenses.filter(e => e.sheet === sheet.id), open = items.filter(e => !e.settlement);
-  const a = settlementOverview(open, 'a'), b = settlementOverview(open, 'b');
+  const {items, open} = sheetSummary(data, sheet.id);
+  const a = sheetOverview(data, sheet.id, 'a'), b = sheetOverview(data, sheet.id, 'b');
   const from = a.net > 0 ? 'a' : 'b', to = otherCouple(from), net = a.net;
   const record = async () => {
     setError('');

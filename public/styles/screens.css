@@ -105,6 +105,8 @@ button.row:active:not(:disabled) { background: var(--fill-2); }
 
 .day { display: grid; gap: 8px; }
 .day + .day { margin-top: 8px; }
+/* The next page of a long list loads as you near it; the button covers keyboard and assistive use. */
+.more { display: block; width: 100%; min-height: 44px; border: 0; border-radius: 999px; background: none; color: var(--label-2); font-size: .875rem; font-weight: 600; }
 .day-head { display: flex; justify-content: space-between; gap: 12px; padding: 0 6px; font-size: .8125rem; font-weight: 600; color: var(--label-2); }
 .day-head span:last-child { color: var(--label-3); font-variant-numeric: tabular-nums; }
 
@@ -136,12 +138,13 @@ button.row:active:not(:disabled) { background: var(--fill-2); }
     radial-gradient(110% 85% at 0% 0%, rgb(99 102 241 / .62), transparent 58%),
     radial-gradient(100% 90% at 100% 100%, rgb(61 219 178 / .55), transparent 56%),
     #15141c; }
-.wallet-sheen { position: absolute; inset: 0; z-index: -1; background: linear-gradient(115deg, transparent 32%, rgb(255 255 255 / .1) 46%, transparent 60%) 0 0 / 260% 100%; animation: sheen 10s ease-in-out infinite; }
-@keyframes sheen { 0%, 55% { background-position: 130% 0; } 100% { background-position: -130% 0; } }
+.wallet-sheen { position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: inherit; }
+.wallet-sheen::before { content: ""; position: absolute; top: 0; bottom: 0; left: -45%; width: 45%; background: linear-gradient(105deg, transparent, rgb(255 255 255 / .09), transparent); animation: sheen 10s ease-in-out infinite; }
+@keyframes sheen { 0%, 55% { transform: translateX(0); } 100% { transform: translateX(360%); } }
 .wallet::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: radial-gradient(120% 60% at 50% -10%, rgb(255 255 255 / .1), transparent 60%); }
 .wallet-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
 .wallet-label { font-size: .875rem; font-weight: 550; color: rgb(255 255 255 / .74); }
-.wallet-status { display: inline-flex; flex: none; white-space: nowrap; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; background: rgb(255 255 255 / .14); box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .24); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); font-size: .75rem; font-weight: 650; }
+.wallet-status { display: inline-flex; flex: none; white-space: nowrap; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; background: rgb(255 255 255 / .14); box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .24); font-size: .75rem; font-weight: 650; }
 .wallet-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #3ddbb2; box-shadow: 0 0 8px #3ddbb2; }
 .wallet.is-owe .wallet-status::before { background: #ffb26b; box-shadow: 0 0 8px #ffb26b; }
 .wallet .amount-hero { font-size: clamp(3.1rem, 15vw, 4.1rem); text-shadow: 0 2px 20px rgb(0 0 0 / .18); }
@@ -180,11 +183,13 @@ button.row:active:not(:disabled) { background: var(--fill-2); }
 .flow .pair i { width: 42px; height: 42px; font-size: .8125rem; }
 .flow .pair i + i { margin-left: -12px; }
 .flow-line { position: relative; display: grid; flex: 1; place-items: center; max-width: 110px; height: 42px; }
-.flow-line i { position: absolute; top: 50%; right: 0; left: 0; height: 2px; margin-top: -1px; background: repeating-linear-gradient(90deg, var(--label-3) 0 6px, transparent 6px 11px); animation: flow 1s linear infinite; }
+.flow-line i { position: absolute; top: 50%; right: 0; left: 0; height: 2px; margin-top: -1px; overflow: hidden; }
+.flow-line i::before { content: ""; position: absolute; top: 0; bottom: 0; left: -11px; right: 0; background: repeating-linear-gradient(90deg, var(--label-3) 0 6px, transparent 6px 11px); animation: flow 1s linear infinite; }
 .flow-line .icon { position: relative; width: 30px; height: 30px; padding: 6px; border-radius: 50%; background: var(--surface); color: var(--label); stroke-width: 2.4; box-shadow: var(--card-shadow), inset 0 0 0 1px var(--separator); }
-.flow.is-settled .flow-line i { animation: none; opacity: .5; }
+.flow.is-settled .flow-line i { opacity: .5; }
+.flow.is-settled .flow-line i::before { animation: none; }
 .flow.is-settled .flow-line .icon { background: var(--positive); color: #fff; box-shadow: none; }
-@keyframes flow { to { background-position: 11px 0; } }
+@keyframes flow { to { transform: translateX(11px); } }
 
 /* Draft banner */
 .card.draft { display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 14px; }
@@ -394,7 +399,7 @@ button.row:active:not(:disabled) { background: var(--fill-2); }
 .merchant-field-text { flex: 1; min-width: 0; overflow: hidden; font-size: 1.125rem; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
 .merchant-field.is-empty .merchant-field-text { color: var(--label-3); font-weight: 500; }
 .merchant-field > .icon:last-child { color: var(--label-3); }
-.detail-chips { display: flex; gap: 8px; margin: 0 -18px; padding: 2px 18px 4px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent); mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent); }
+.detail-chips { display: flex; gap: 8px; margin: 0 -18px; padding: 2px 18px 4px; overflow-x: auto; scrollbar-width: none; }
 .detail-chips::-webkit-scrollbar { display: none; }
 .chip-detail { flex: none; min-height: 38px; padding: 0 13px; gap: 6px; }
 .chip-detail .avatar-xs { width: 20px; height: 20px; font-size: .5625rem; }

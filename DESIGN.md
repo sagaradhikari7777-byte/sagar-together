@@ -37,7 +37,7 @@ Two couples, one household wallet. The design follows the best iOS-native financ
 3. **Numbers first.** Amounts use tabular figures and are set in parts (small currency symbol, bold dollars, lighter cents). Screen readers get the plain amount.
 4. **Native feel.** Bottom sheets with a grabber and drag-to-dismiss, a custom keypad for amounts, swipe actions on rows, 44pt targets, 16px inputs so iOS never zooms, and the iPhone edge-back gesture in the installed app.
 5. **Deliberate money actions.** Recording a payment is a slide, not a tap. Destructive actions always confirm.
-6. **Springy, then still.** Sheets, the tab thumb and segmented controls use a spring curve; nothing loops except the wallet sheen and the dashed payment flow. Everything stops under `prefers-reduced-motion`.
+6. **Quick, then still.** Sheets rise a short way and fade in as one piece; the tab thumb and segmented controls use a spring curve. Only transform and opacity animate, and only the wallet sheen and the dashed payment flow loop. Everything stops under `prefers-reduced-motion`.
 
 ## Tokens (`public/styles/base.css`)
 
@@ -47,6 +47,7 @@ Two couples, one household wallet. The design follows the best iOS-native financ
 - **People:** `--a` and `--b` with `-soft` and `-ink`. `.couple-a` / `.couple-b` expose them as `--c`, `--c-soft` and `--c-ink` to children.
 - **Categories:** `.tone-*` classes set `--t`, used by emoji glyphs, ribbons and bars.
 - **Glass:** `--glass`, `--glass-strong`, `--glass-edge`, `--glass-shadow` (navigation layer only).
+- **Aurora:** `--aurora-a`, `--aurora-b`, `--aurora-c` tint the static background wash.
 - **Shape and motion:** `--r-control`, `--r-inner`, `--r-card`; `--spring` (a `linear()` spring) and `--ease`.
 
 Dark mode redefines the same tokens under `:root[data-theme=dark]`; cards swap shadows for hairlines.
@@ -67,8 +68,8 @@ Geist variable, served from `/fonts` (OFL).
 
 ## Components (`public/app/ui.js`)
 
-- **Page:** large title that collapses into a glass top bar on scroll; remembers scroll per tab.
-- **Sheet:** a native `<dialog>` presented as a bottom sheet (a centred card on wide screens). Every sheet has a visible close; Escape, backdrop and drag close it through navigation so unsaved work can intercept.
+- **Page:** large title that collapses into a glass top bar on scroll. The four tabs stay mounted, so each keeps its scroll and state.
+- **Sheet:** a native `<dialog>` presented as a bottom sheet (a centred card on wide screens), opened before its first paint so it appears whole. Every sheet has a visible close; Escape, backdrop and drag close it through navigation so unsaved work can intercept.
 - **Wallet card:** the dark mesh-gradient balance card on Home.
 - **FairShareBar:** what each couple paid, with a tick at couple A's fair share. The gap between bar and tick is the debt.
 - **Flow:** payer couple → receiver couple with stacked initials.

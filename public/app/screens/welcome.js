@@ -28,7 +28,7 @@ export function Welcome() {
 }
 
 export function LoadError() {
-  const {loadError} = useStore();
+  const {loadError} = useStore('loadError');
   const [trying, setTrying] = useState(false);
   return html`<main class="welcome welcome-compact">
     <div class="welcome-mark is-still" aria-hidden="true"><i class="orb orb-a"></i><i class="orb orb-b"></i><i class="orb orb-lens"></i></div>

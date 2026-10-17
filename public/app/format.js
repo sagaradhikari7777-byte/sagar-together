@@ -17,18 +17,50 @@ const at = iso => new Date(iso + 'T12:00:00');
 export const addDays = (iso, days) => { const d = at(iso); d.setDate(d.getDate() + days); return isoDate(d); };
 export const daysBetween = (from, to) => Math.round((at(to) - at(from)) / 86400000);
 
-export const shortDate = iso => at(iso).toLocaleDateString('en-AU', {day: 'numeric', month: 'short'});
-export const longDate = iso => at(iso).toLocaleDateString('en-AU', {day: 'numeric', month: 'short', year: 'numeric'});
+// Date formatters are built once and labels are cached per date: building a
+// formatter on every call (toLocaleDateString with options) is very slow in Safari.
+const dateFormats = new Map();
+function formatDate(name, options, date) {
+  let format = dateFormats.get(name);
+  if (!format) dateFormats.set(name, format = new Intl.DateTimeFormat('en-AU', options));
+  return format.format(date);
+}
+function cached(fn) {
+  const cache = new Map();
+  return iso => {
+    let label = cache.get(iso);
+    if (label === undefined) {
+      if (cache.size > 4000) cache.clear();
+      cache.set(iso, label = fn(iso));
+    }
+    return label;
+  };
+}
+export const shortDate = cached(iso => formatDate('short', {day: 'numeric', month: 'short'}, at(iso)));
+export const longDate = cached(iso => formatDate('long', {day: 'numeric', month: 'short', year: 'numeric'}, at(iso)));
+let labelsFor = '', labels = new Map();
 export function dayLabel(iso) {
   const now = today();
+  if (now !== labelsFor) { labelsFor = now; labels = new Map(); }
+  let label = labels.get(iso);
+  if (label === undefined) labels.set(iso, label = describeDay(iso, now));
+  return label;
+}
+function describeDay(iso, now) {
   if (iso === now) return 'Today';
   if (iso === addDays(now, -1)) return 'Yesterday';
   const diff = daysBetween(iso, now);
-  if (diff > 0 && diff < 7) return at(iso).toLocaleDateString('en-AU', {weekday: 'long'});
-  return at(iso).toLocaleDateString('en-AU', {weekday: 'short', day: 'numeric', month: 'short', ...(iso.slice(0, 4) !== now.slice(0, 4) ? {year: 'numeric'} : {})});
+  if (diff > 0 && diff < 7) return formatDate('weekday', {weekday: 'long'}, at(iso));
+  return iso.slice(0, 4) === now.slice(0, 4)
+    ? formatDate('day', {weekday: 'short', day: 'numeric', month: 'short'}, at(iso))
+    : formatDate('day-year', {weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'}, at(iso));
 }
 export const rangeLabel = sheet => sheet ? `${shortDate(sheet.start)} – ${sheet.end ? longDate(sheet.end) : 'ongoing'}` : '';
-export const stamp = iso => new Date(iso).toLocaleString('en-AU', {dateStyle: 'medium', timeStyle: 'short'});
+export const stamp = cached(iso => formatDate('stamp', {dateStyle: 'medium', timeStyle: 'short'}, new Date(iso)));
+/** Today's date as digits, e.g. 17/10/2026. */
+export const numericToday = () => formatDate('numeric', {}, new Date());
+/** Sorts names the way people expect (case- and accent-aware) without a collator per comparison. */
+export const byName = new Intl.Collator('en-AU').compare;
 
 export function greeting(date = new Date()) {
   const h = date.getHours();

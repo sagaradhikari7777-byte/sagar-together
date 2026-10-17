@@ -1,12 +1,10 @@
 import {html, useState, useEffect, useRef} from '../../vendor/preact-htm.js';
-import {filterExpenses} from '../../journal.js';
-import {settlementOverview} from '../../settlement-overview.js';
-import {catalogValues} from '../../catalog.js';
 import {useStore, getState} from '../store.js';
 import {present, back} from '../nav.js';
-import {Page, Icon, Segmented, Empty, Sheet, Amount, cx} from '../ui.js';
+import {Page, Icon, Segmented, Empty, Sheet, cx, useIncremental} from '../ui.js';
 import {DayGroups, ExpenseRow} from '../common.js';
 import {group, money, plural} from '../format.js';
+import {journal, dayTotals, categoryChoices} from '../derive.js';
 import {exportCSV} from '../flows/export.js';
 
 export const emptyFilters = () => ({payer: '', creator: '', receipt: '', category: '', sheet: '', from: '', to: '', sort: 'newest'});
@@ -15,14 +13,15 @@ const memory = {query: '', status: 'all', filters: emptyFilters(), focus: false}
 export function focusActivitySearch() { memory.focus = true; }
 
 export function Activity() {
-  const {data} = useStore();
+  const {data} = useStore('data');
   const [query, setQuery] = useState(memory.query), [status, setStatus] = useState(memory.status), [filters, setFilters] = useState(memory.filters);
   const search = useRef();
   useEffect(() => { Object.assign(memory, {query, status, filters}); }, [query, status, filters]);
   useEffect(() => { if (memory.focus) { memory.focus = false; search.current?.focus(); } }, []);
-  const scope = filters.sheet ? data.expenses.filter(e => e.sheet === filters.sheet) : data.expenses;
-  const shown = filterExpenses(scope, data.names, {...filters, query, status, sheets: data.sheets});
-  const mine = group(data.seat), summary = settlementOverview(shown, mine, {includeSettled: true});
+  const options = {...filters, query, status};
+  const {shown, summary} = journal(data, options, group(data.seat));
+  const [count, more] = useIncremental(shown.length, {resetKey: JSON.stringify(options)});
+  const visible = shown.slice(0, count);
   const active = ['payer', 'creator', 'receipt', 'category', 'sheet', 'from', 'to'].filter(k => filters[k]).length + (filters.sort !== 'newest' ? 1 : 0);
   const byAmount = ['largest', 'smallest'].includes(filters.sort);
   const clear = () => { setQuery(''); setStatus('all'); setFilters(emptyFilters()); };
@@ -39,8 +38,9 @@ export function Activity() {
     ${shown.length > 0 && html`<div class="result-line"><span>${plural(shown.length, 'expense')} · <b>${money(summary.total)}</b></span><span>Your couple’s share <b>${money(summary.share)}</b></span></div>`}
     ${shown.length === 0 ? html`<div class="card card-pad"><${Empty} emoji=${data.expenses.length ? '🔎' : '🧾'} title=${data.expenses.length ? 'No matches' : 'No expenses yet'} text=${data.expenses.length ? 'Try a different search or clear your filters.' : 'Add an expense and it will show up here.'}>
         ${data.expenses.length > 0 && html`<button type="button" class="btn btn-secondary" data-action="reset-filters" onClick=${clear}>Clear search and filters</button>`}<//></div>`
-      : byAmount ? html`<div class="card list">${shown.map(e => html`<${ExpenseRow} key=${e.id} expense=${e} showSheet/>`)}</div>`
-      : html`<${DayGroups} expenses=${shown} showSheet/>`}
+      : byAmount ? html`<div class="card list">${visible.map(e => html`<${ExpenseRow} key=${e.id} expense=${e} showSheet/>`)}</div>`
+      : html`<${DayGroups} expenses=${visible} totals=${dayTotals(shown)} showSheet/>`}
+    ${more}
   <//>`;
 }
 
@@ -48,7 +48,7 @@ export function FiltersSheet({filters, onApply}) {
   const {data} = getState();
   const [f, setF] = useState(filters), [error, setError] = useState('');
   const set = (key, value) => setF({...f, [key]: value});
-  const categories = [...new Set([...catalogValues(data, 'categories'), ...data.expenses.map(e => e.category)])].sort((a, b) => a.localeCompare(b));
+  const categories = categoryChoices(data);
   const people = data.names.map((n, i) => html`<option value=${i}>${i === data.seat ? 'You · ' : ''}${n}</option>`);
   const apply = () => {
     if (f.from && f.to && f.from > f.to) return setError('Choose an end date on or after the start.');
