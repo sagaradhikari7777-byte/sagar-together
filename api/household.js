@@ -1,4 +1,4 @@
-import {createHouse,identity,visible,mutate,assert,id,digest} from '../lib/model.js';
+import {createHouse,identity,visible,mutate,assert,id,digest,closeSettledSheets} from '../lib/model.js';
 const CAS="local current=redis.call('GET',KEYS[1]); if current~=ARGV[1] then return 0 end; redis.call('SET',KEYS[1],ARGV[2]); return 1";
 const receiptKey=(house,reference)=>`together:receipt:${house}:${reference.slice(8)}`;
 async function redis(...cmd){
@@ -71,6 +71,8 @@ export function makeHandler(db=redis){return async function handler(req,res){
    else assert(await db('GET',receiptKey(h.id,b.expense.receipt)),'Receipt not found. Attach it again.',400);
   }
   await separateReceipts(h,db);
+  // Reads never write; the one-time sheet cleanup travels with the next change.
+  closeSettledSheets(h,b.action==='archive'?b.id:'');
   mutate(h,seat,b);
   await separateReceipts(h,db);
   assert(await db('EVAL',CAS,1,storeKey,raw,JSON.stringify(h)),'New changes arrived. Refresh and try again.',409);

@@ -42,7 +42,7 @@ Keep Add Expense naturally scrolling and compact:
 - Settled expenses are locked. Only the recorder may reverse a settlement with a reason; keep the original and correction in history and unlock only its linked entries.
 - Archived sheets show settled entries and historical shares by default.
 - Splits are 50/50 or 100% assigned to either couple.
-- Recording a settlement marks the sheet's unsettled expenses as settled; it does not transfer money.
+- Recording a settlement marks the sheet's unsettled expenses as settled and closes the sheet (moves it to Archived); it does not transfer money. Reversing a settlement reopens the sheet. Reopen a sheet manually to add late expenses.
 - Preserve receipts, merchant/category catalogs, CSV export, archive/pin, dark mode, invitations and private access links.
 
 ## Engineering rules

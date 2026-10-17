@@ -36,8 +36,8 @@ test('historical shares retain every cent after settlement while outstanding bal
  const a=settlementOverview(h.expenses,'a',{includeSettled:true}),b=settlementOverview(h.expenses,'b',{includeSettled:true});assert.equal(a.share,50);assert.equal(b.share,51);assert.equal(a.paid,101);
 });
 test('only recorder can reverse, only linked entries unlock, archive reopens and audit remains',()=>{
- const {h}=createHouse({names,name:'Home',seat:0});mutate(h,0,{action:'expense',expense:expense(h)});mutate(h,0,{action:'settle',sheet:h.sheets[0].id});const first=h.settlements[0];
- mutate(h,1,{action:'expense',expense:expense(h,{cents:200})});mutate(h,1,{action:'settle',sheet:h.sheets[0].id});const second=h.settlements[0];mutate(h,0,{action:'archive',id:h.sheets[0].id});
+ const {h}=createHouse({names,name:'Home',seat:0});mutate(h,0,{action:'expense',expense:expense(h)});mutate(h,0,{action:'settle',sheet:h.sheets[0].id});const first=h.settlements[0];assert.equal(h.sheets[0].archived,true);mutate(h,0,{action:'archive',id:h.sheets[0].id});
+ mutate(h,1,{action:'expense',expense:expense(h,{cents:200})});mutate(h,1,{action:'settle',sheet:h.sheets[0].id});const second=h.settlements[0];assert.equal(h.sheets[0].archived,true);
  const before=JSON.stringify(h);assert.throws(()=>mutate(h,2,{action:'settlement-reverse',id:first.id,reason:'Wrong payment'}),{status:403});assert.equal(JSON.stringify(h),before);
  assert.throws(()=>mutate(h,0,{action:'settlement-reverse',id:first.id,reason:' '}));
  mutate(h,0,{action:'settlement-reverse',id:first.id,reason:'Payment not received'});
