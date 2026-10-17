@@ -1,97 +1,100 @@
 ---
 name: Together
-description: A warm, ink-on-paper household ledger where each couple has its own colour.
+description: A calm, native-feeling household wallet. Each couple has its own colour; glass is used only for navigation.
 colors:
-  paper: "#f5f4ef"
+  canvas: "#f3f2ef"
   surface: "#ffffff"
-  ink: "#15161a"
-  ink-2: "#52565e"
-  ink-3: "#8a8d95"
-  accent: "#17785a"
-  couple-a: "#5d5cdc"
-  couple-b: "#e06c35"
-  caution: "#9a5a07"
-  danger: "#c23b31"
-  dark-paper: "#0f1013"
-  dark-surface: "#1a1b1f"
+  sheet: "#f6f5f2"
+  label: "#111113"
+  accent: "#0b8f6c"
+  couple-a: "#6366f1"
+  couple-b: "#f5704f"
+  caution: "#b86e00"
+  danger: "#e5484d"
+  dark-canvas: "#0b0b0f"
+  dark-surface: "#17171c"
 typography:
   family: "Geist (self-hosted variable font), system fallback"
   body: "16px / 1.45"
   input: "16px minimum"
 rounded:
   control: "14px"
-  card: "20px"
-  feature: "28px"
+  inner: "16px"
+  card: "24px"
+  wallet: "30px"
+  sheet: "34px"
   pill: "999px"
 ---
 
 # Together
 
-Two couples, one household ledger. The interface reads like quality stationery: warm paper, white cards, near-black ink. Colour carries meaning instead of decoration.
+Two couples, one household wallet. The design follows the best iOS-native finance apps: one dark "wallet" card that answers "who owes whom?" at a glance, plain solid cards for content, and Liquid Glass only on the navigation layer (tab bar, top bar, toasts, floating buttons).
 
 ## Principles
 
-1. **Colour means something.** Indigo is couple A and tangerine is couple B, everywhere people appear: avatars, dots beside names, split bars and the payment flow. Green means interaction, settled or money coming to you. Amber means money you owe or something unfinished. Red is reserved for destructive actions.
-2. **One strong surface per screen.** On Home it is the dark balance card. On Settle it is the balance summary. Everything else stays quiet.
-3. **Numbers first.** Amounts use tabular figures. Large amounts are set in parts: a small currency symbol, bold dollars and lighter cents. Screen readers get the plain amount.
-4. **Native feel.** Use bottom sheets on phones, 44px minimum touch targets, 16px input text so iOS never zooms, swipe actions with visible menu alternatives, and the iPhone edge-back gesture.
-5. **Calm motion.** Use short eased transitions (160–380ms): the dock indicator slides, sheets rise, bars grow once. Everything stops under `prefers-reduced-motion`.
+1. **Colour is identity.** Indigo is couple A and coral is couple B. They appear wherever people do: avatars, dots, split bars, the fair-share bar, the payer → receiver flow, the aurora behind the app. Green means settled or money coming to you; amber means something waits; red is only for destructive actions.
+2. **One hero per screen.** Home has the wallet card; a sheet has its hero card; Settle has the amount. Everything else stays quiet.
+3. **Numbers first.** Amounts use tabular figures and are set in parts (small currency symbol, bold dollars, lighter cents). Screen readers get the plain amount.
+4. **Native feel.** Bottom sheets with a grabber and drag-to-dismiss, a custom keypad for amounts, swipe actions on rows, 44pt targets, 16px inputs so iOS never zooms, and the iPhone edge-back gesture in the installed app.
+5. **Deliberate money actions.** Recording a payment is a slide, not a tap. Destructive actions always confirm.
+6. **Springy, then still.** Sheets, the tab thumb and segmented controls use a spring curve; nothing loops except the wallet sheen and the dashed payment flow. Everything stops under `prefers-reduced-motion`.
 
-## Tokens
+## Tokens (`public/styles/base.css`)
 
-Defined once in `foundation.css` on `:root`, with dark values under `:root[data-theme=dark]` and `.theme-dark`:
+- **Canvas and surfaces:** `--bg`, `--surface`, `--surface-2`, `--sheet`, `--fill`, `--fill-2`, `--fill-strong`, `--separator`.
+- **Text:** `--label`, `--label-2`, `--label-3`.
+- **Meaning:** `--accent`/`--positive`, `--caution`, `--danger`, each with a `-soft` tint.
+- **People:** `--a` and `--b` with `-soft` and `-ink`. `.couple-a` / `.couple-b` expose them as `--c`, `--c-soft` and `--c-ink` to children.
+- **Categories:** `.tone-*` classes set `--t`, used by emoji glyphs, ribbons and bars.
+- **Glass:** `--glass`, `--glass-strong`, `--glass-edge`, `--glass-shadow` (navigation layer only).
+- **Shape and motion:** `--r-control`, `--r-inner`, `--r-card`; `--spring` (a `linear()` spring) and `--ease`.
 
-- **Surfaces:** `--paper` (canvas), `--surface` (cards), `--sunken` (tracks, icon tiles), `--input`, `--dialog`, `--line`, `--line-soft`.
-- **Ink:** `--ink`, `--ink-2` and `--ink-3` set the three levels of emphasis.
-- **Meaning:** `--accent`, `--positive`, `--caution` and `--danger`, each with a `-soft` tint.
-- **Couples:** `--couple-a` and `--couple-b`, each with `-soft` and `-ink` variants. Apply them with the `.couple-a` or `.couple-b` class, which exposes `--couple` to its children.
-- **Hero:** `--hero*` tokens for the dark balance card.
-- **Shape and depth:** radii `--r-sm` (10px), `--r-md` (14px), `--r-lg` (20px), `--r-xl` (28px) and `--r-pill`; shadows `--shadow-1`, `--shadow-2`, `--shadow-float` and `--shadow-hero`. Dark mode drops card shadows in favour of hairlines.
-- **Motion:** `--ease`, `--fast` and `--slow`.
-
-Category tiles read `--tone` from their category class (groceries, food, bills, travel, wifi, home, movie, gift or other) and tint themselves with `color-mix`. Every consumer falls back with `var(--tone, …)` so a parent row's tone reaches its icon.
+Dark mode redefines the same tokens under `:root[data-theme=dark]`; cards swap shadows for hairlines.
 
 ## Type
 
-The typeface is Geist, a variable font served from `/fonts` (OFL licence) with a system-font fallback.
+Geist variable, served from `/fonts` (OFL).
 
 | Role | Size | Weight |
 | --- | --- | --- |
-| Hero amount | 52px | 650 |
-| Page title | 30px | 680 |
-| Card amount | 34–46px | 650 |
-| Section heading | 17px | 600 |
-| Body | 16px | 400 |
-| Meta | 13px, ink-3 | 400 |
-| Eyebrow | 12px, uppercase, +0.06em | 600 |
+| Hero amount (wallet, settle) | 56–64px | 700 |
+| Large title | 34px | 750 |
+| Card amount | 32–44px | 700 |
+| Section heading | 20px | 700 |
+| Body | 16px | 400–600 |
+| Meta | 13px, `--label-2` | 400 |
+| Eyebrow | 11–12px, uppercase, +0.07em | 650 |
 
-## Components
+## Components (`public/app/ui.js`)
 
-- **Buttons:** `.primary` is an ink pill (light ink in dark mode). `.secondary` is a surface pill with a hairline. `.danger` uses a red tint. `.text-button` uses the accent colour.
-- **Balance flow:** `balanceFlow(from, to, settled)` in `app.js` shows payer → receiver with stacked avatars and names. The dashed line animates unless the balance is settled.
-- **Segmented controls:** a sunken track holds the options, and the active option is a raised surface.
-- **Lists:** grouped cards with inset hairlines (Settings, recent transactions, expense days).
-- **Dock:** a floating frosted bar with a sliding selection pill. Add is the ink circle in the centre.
-- **Sheets (dialogs):** bottom sheets on phones, with a grabber, a sticky header and keyboard-aware height. At the first level only Close is shown; Back appears on nested steps.
+- **Page:** large title that collapses into a glass top bar on scroll; remembers scroll per tab.
+- **Sheet:** a native `<dialog>` presented as a bottom sheet (a centred card on wide screens). Every sheet has a visible close; Escape, backdrop and drag close it through navigation so unsaved work can intercept.
+- **Wallet card:** the dark mesh-gradient balance card on Home.
+- **FairShareBar:** what each couple paid, with a tick at couple A's fair share. The gap between bar and tick is the debt.
+- **Flow:** payer couple → receiver couple with stacked initials.
+- **SlideToConfirm:** drag the knob to record; keyboard and assistive tech activate it directly.
+- **Keypad:** digits, decimal, ÷ × − + and delete (long-press clears). Amounts are exact cents via `amount-calculator.js`.
+- **CategoryGlyph / MerchantMark:** emoji tiles tinted by category; gradient monograms hued from the merchant name.
+- **Row / Group:** inset-grouped settings lists with coloured icon tiles; **ExpenseRow** swipes left for Edit / Delete.
+- **Segmented:** sliding thumb; **Pill**, **Avatar**, **CouplePair**, **Empty**.
 
 ## Screens
 
-- **Home:** greeting and household title; the dark balance card (status, amount, direction, flow, Settle up); draft banner; period card with a category ribbon and the top three categories; upcoming bills; recent transactions.
-- **Sheets:** unsettled summary, Open/Archived control with an "Unsettled only" switch, search, then sheet cards. Swiping a card reveals edit/pin and archive/delete.
-- **Sheet detail:** back header, sheet summary, Open/Settled and Filters, search with sort, result count with export, then day-grouped expenses.
-- **Settle:** a grouped scope card (View, Share for), the balance summary with flow and Record payment, balances by sheet, summary/history tools and the spending breakdown.
-- **Settings:** an identity card in the user's couple colour, then the Household, Preferences and "Lists & data" groups, export and sign out.
-- **Welcome:** brand, gradient headline, a live-looking example card with a settle flow, three steps, then the calls to action.
+- **Home:** greeting and household name; wallet card with Settle up; draft banner; current sheet card with a days-left ring and category ribbon; "Coming up" bills rail; recent activity.
+- **Activity:** search, Open / Settled / All, filters sheet, result total with couple share, day-grouped expenses, CSV export of the results.
+- **Sheets:** open sheet cards (progress meter, spent / unsettled / balance) and the Archived list. A sheet page has the hero card, fair-share bar, who-pays flow, and Expenses / Insights / Payments.
+- **Household:** both couples' people, Edit names and Invite, then Money, Lists, Preferences (expense defaults, Appearance) and Access & data, and sign out.
+- **Add (sheet):** live amount with expression, merchant field with frequent shortcuts, detail chips (category, date, payer, split, sheet, note, receipt), split preview, keypad and one Save.
+- **Settle (sheet):** choose a sheet when several have balances, review with flow and couple comparison, slide to record, success.
 
 ## Style ownership
 
-There are four stylesheets, loaded in this order and organised by cascade layers declared in `foundation.css` (`base, components, screens, entry`):
+Three stylesheets, loaded in order with one shared `?v=`:
 
-1. `foundation.css`: font, tokens, base elements, shared components, dialogs, feedback and onboarding.
-2. `screens.css`: shell, headers, Sheets, sheet detail, Settle, Settings and the dock.
-3. `home.css`: balance card, period snapshot, reminders and recent activity.
-4. `entry.css`: expense form, calculator, receipts and pickers.
+1. `styles/base.css` — font, tokens, base elements, buttons, forms, small components, toast.
+2. `styles/layers.css` — app shell, pages and top bar, tab bar, sheets, keypad, slide-to-confirm, loading.
+3. `styles/screens.css` — cards and lists, wallet, period, activity, sheets, household, welcome, editor, pickers, settle, bills; responsive rules.
 
-Change the rule that owns a style; don't add override files. Keep `!important` to hidden elements and the form-flow guarantees in `entry.css`. Bump the shared `?v=` in `index.html` with every release.
+Change the rule that owns a style; don't add override files. Bump the shared `?v=` in `index.html` with every release.
 
-Icons come from Lucide (ISC licence) and are generated into `public/icons.js`. Add new ones there by name.
+Icons come from Lucide (ISC) in `public/icons.js`; add new ones there by name. The original interface is kept at `/classic/` with its own stylesheets.

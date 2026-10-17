@@ -13,26 +13,23 @@ Do not add features unless they materially improve one of those jobs.
 
 ## Primary navigation
 
-- **Home** — one overall balance across open sheets, draft recovery and recent activity.
-- **Sheets** — Open by default, with Open / Archived views and an outstanding-only checkbox.
-- **Add** — focused modal expense entry. It is not a fifth navigable page while open.
-- **Settle** — overall and per-sheet balances, sheet payment recording, summary, payment history with corrections, then spending.
-- **Settings** — household identity, invitations/access, entry defaults, direct merchant/category management and export. Theme follows the device until the header icon saves a choice.
+- **Home** — the household balance on the wallet card (with Settle up), draft recovery, the current sheet, upcoming bills and recent activity.
+- **Activity** — every expense: search, Open / Settled / All, filters, result totals and CSV export of what is shown.
+- **Add** — the centre tab button opens expense entry as a sheet. It is not a page.
+- **Sheets** — open sheets, then Archived. Each sheet has its own page with Expenses, Insights and Payments, and its own Settle up.
+- **Household** — people, invitations and access, payment history, recurring bills, merchants and categories, expense defaults, appearance, export and sign out.
 
-Avoid duplicate controls across these destinations.
+Settling is an action, not a destination: it starts from the wallet card or a sheet. Avoid duplicate controls across these destinations.
 
 ## Expense entry
 
-Keep Add Expense naturally scrolling and compact:
+Keep Add Expense focused enough to finish with one thumb:
 
-- Merchant, amount, category, date.
-- Payer and split.
-- Optional note and visible receipt control.
-- Show the sheet selector only when more than one open sheet exists.
-- One primary Save action at the end. Do not add a second header Save or an internal app dock.
-- Editable inputs remain at least 16px on iPhone.
-- Cancelling the iOS receipt picker must keep the draft open.
-- Draft guards, receipt previews and validation errors stay in normal document flow.
+- The amount comes first, typed on the in-app keypad, which also calculates (÷ × − +). No system keyboard for amounts.
+- Merchant, then detail chips for category, date, payer, split, sheet (only with more than one open sheet), note and receipt.
+- A live split preview shows each couple's share.
+- One primary Save in the sheet footer. Closing with unsaved changes asks to keep editing, save a draft or discard.
+- Editable inputs remain at least 16px on iPhone. Cancelling the iOS receipt picker keeps the entry open.
 - Save unfinished entries locally, isolated by household and person. Recover them after reload, and offer a choice before replacing a draft.
 
 ## Data rules
@@ -52,4 +49,4 @@ Production: https://sagar-together.vercel.app.
 
 Vercel must run `npm test && npm run build` before publishing. GitHub Actions email QA is intentionally disabled.
 
-Prefer changing the owning component stylesheet over appending another override layer. When browser verification is requested, cover iPhone-sized viewports, keyboard-sized layouts, receipt attach/cancel/remove, draft protection, save/edit, navigation and dark mode. Respect the user’s instruction when they choose to do visual checking themselves.
+Prefer changing the owning stylesheet over appending another override layer. The previous interface remains at `/classic/` on the same data. When browser verification is requested, cover iPhone-sized viewports, keyboard-sized layouts, receipt attach/cancel/remove, draft protection, save/edit, navigation and dark mode. Respect the user’s instruction when they choose to do visual checking themselves.

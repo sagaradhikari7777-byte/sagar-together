@@ -1,110 +1,143 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readFileSync, readdirSync, existsSync} from 'node:fs';
+import {centsOf, applyKey, draftAmount} from '../public/app/amount-entry.js';
 
-const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
-const addExpenseCss=readFileSync(new URL('../public/entry.css',import.meta.url),'utf8');
-const themeCss=readFileSync(new URL('../public/foundation.css',import.meta.url),'utf8')+readFileSync(new URL('../public/screens.css',import.meta.url),'utf8');
-const homeCss=readFileSync(new URL('../public/home.css',import.meta.url),'utf8');
-const indexHtml=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
-const vercel=JSON.parse(readFileSync(new URL('../vercel.json',import.meta.url),'utf8'));
+const read = path => readFileSync(new URL('../' + path, import.meta.url), 'utf8');
+const appFiles = ['app/main.js', 'app/ui.js', 'app/common.js', 'app/nav.js', 'app/store.js',
+  ...readdirSync(new URL('../public/app/screens', import.meta.url)).map(f => 'app/screens/' + f),
+  ...readdirSync(new URL('../public/app/flows', import.meta.url)).map(f => 'app/flows/' + f)];
+const sources = Object.fromEntries(appFiles.map(f => [f, read('public/' + f)]));
+const allSource = Object.values(sources).join('\n');
+const main = sources['app/main.js'];
+const css = ['base', 'layers', 'screens'].map(n => read(`public/styles/${n}.css`)).join('\n');
+const indexHtml = read('public/index.html');
+const vercel = JSON.parse(read('vercel.json'));
 
-test('critical UI action targets are defined',()=>{
- const functions=[
-  'settingsHouseholdDialog','settingsMoreDialog','inviteDialog','accessDialog',
-  'newSheet','settleDialog','preferencesDialog','filtersDialog',
-  'settlementSummary','settlementHistory','openCatalog','exportCSV','expenseForm'
- ];
- for(const name of functions)assert.match(app,new RegExp('function\\s+'+name+'\\s*\\('),name+' must be defined');
- assert.doesNotMatch(app,/function\s+insightsDialog\s*\(/);
+/** Names registered in one of main.js's lookup tables, e.g. `const sheets = {...}`. */
+function registry(name) {
+  const body = main.match(new RegExp(`const ${name} = \\{([\\s\\S]*?)\\};`))[1];
+  return Object.fromEntries([...body.matchAll(/'?([\w-]+)'?: (\w+)/g)].map(m => [m[1], m[2]]));
+}
+
+test('every registered tab, page and sheet is imported from a module that exports it', () => {
+  for (const table of ['tabs', 'pages', 'sheets']) {
+    for (const [key, component] of Object.entries(registry(table))) {
+      const line = main.split('\n').find(l => l.startsWith('import') && new RegExp(`[{,\\s]${component}[,}\\s]`).test(l));
+      assert.ok(line, `${table}.${key} → ${component} is imported`);
+      const file = 'app/' + line.match(/from '\.\/(.+)'/)[1];
+      assert.match(sources[file], new RegExp(`export (async )?function ${component}\\b|export const ${component}\\b`), `${file} exports ${component}`);
+    }
+  }
 });
 
-test('main navigation exposes every primary destination',()=>{
- for(const tab of ['home','sheets','settle','settings'])assert.match(app,new RegExp("item\\('"+tab+"'"),tab+' tab must exist');
- assert.match(app,/data-action="add" data-nav-index="2"/);
+test('every present, replace and push call opens a registered layer', () => {
+  const sheets = registry('sheets'), pages = registry('pages');
+  for (const [, verb, type] of allSource.matchAll(/\b(present|replace|push)\('([\w-]+)'/g)) {
+    assert.ok(verb === 'push' ? pages[type] : sheets[type], `${verb}('${type}') is registered`);
+  }
 });
 
-test('Home is focused on balance, search and recent activity without duplicate filters or Add',()=>{
- assert.match(app,/OVERALL BALANCE/);
- assert.match(app,/data-action="home-search"/);
- assert.match(app,/Recent transactions/);
- assert.match(app,/function homeSpendingPulse\(\)/);
- assert.match(app,/This period/);
- assert.doesNotMatch(app,/data-home-filter=/);
- assert.doesNotMatch(app,/ref-home-tools[^\n]*data-action="add"/);
+test('main navigation has four tabs around a central Add', () => {
+  assert.deepEqual(Object.keys(registry('tabs')), ['home', 'activity', 'sheets', 'household']);
+  for (const tab of ['home', 'activity', 'sheets', 'household']) assert.match(main, new RegExp(`item\\('${tab}'`));
+  assert.match(main, /class="tab tab-add" data-action="add"/);
+  assert.match(main, /\{home: 0, activity: 1, sheets: 3, household: 4\}/, 'the thumb skips the Add slot');
 });
 
-test('Sheets and sheet detail default to open work',()=>{
- assert.match(app,/sheetFilter='open'/);
- assert.doesNotMatch(app,/filterChip\('all','All'\)/);
- assert.match(app,/chip\('open','Open','amber'\).*chip\('settled','Settled','green'\)/s);
- assert.doesNotMatch(app,/chip\('all','All'\)/);
- assert.match(app,/filter='open'/);
- assert.match(app,/data-view-sheet[\s\S]*filter='open';tab='expenses'/);
+test('settling is an action from Home and each sheet, and records through a deliberate slide', () => {
+  assert.match(sources['app/screens/home.js'], /data-action="open-settle" onClick=\$\{\(\) => present\('settle'/);
+  assert.match(sources['app/screens/sheets.js'], /data-action="settle" onClick=\$\{\(\) => present\('settle', \{sheetId: id\}\)/);
+  assert.match(sources['app/flows/settle.js'], /<\$\{SlideToConfirm\}[^>]*onConfirm=\$\{record\}/);
+  assert.match(sources['app/flows/settle.js'], /save\(\{action: 'settle', sheet: sheet\.id\}\)/);
 });
 
-test('Settings exposes household, expense lists and export directly',()=>{
- assert.match(app,/row\('settings-household'.*Household & names/);
- assert.match(app,/class="settings-catalogs"[\s\S]*data-action="merchants"[\s\S]*data-action="categories"/);
- assert.match(app,/class="text-button settings-export" data-action="export"/);
- assert.doesNotMatch(app,/row\('insights'/);
+test('the keypad builds amounts and calculations in cents', () => {
+  const type = (keys, start = '', fresh = false) => [...keys].reduce((expr, key, i) => applyKey(expr, key, fresh && i === 0), start);
+  assert.equal(type('86.4'), '86.4');
+  assert.equal(centsOf(type('86.4')), 8640);
+  assert.equal(type('12.345'), '12.34', 'two decimal places at most');
+  assert.equal(type('.5'), '0.5');
+  assert.equal(type('007'), '7', 'no leading zeros');
+  assert.equal(type('12+30'), '12+30');
+  assert.equal(centsOf('12+30'), 4200);
+  assert.equal(centsOf('24×3'), 7200);
+  assert.equal(centsOf('10÷4'), 250);
+  assert.equal(type('5+×'), '5×', 'a second operator replaces the first');
+  assert.equal(type('+'), '', 'an amount cannot start with an operator');
+  assert.equal(applyKey('86.40', '9', true), '9', 'editing starts fresh');
+  assert.equal(applyKey('86.40', '⌫', true), '');
+  assert.equal(applyKey('86.40', '⌫', false), '86.4');
+  assert.equal(applyKey('12+3', 'clear', false), '');
+  assert.equal(centsOf(''), 0);
+  assert.equal(centsOf('5÷0'), null);
+  assert.equal(draftAmount({amount: '24×3'}), '$72.00');
+  assert.equal(draftAmount({amount: ''}), '');
 });
 
-test('Settle keeps spending analysis and bottom history card without duplicate header history',()=>{
- assert.match(app,/function settlementSpendChart\(\)\{\s*const expenses=settleScope\(\),total=/);
- assert.match(app,/class="ref-settle-tool-card" data-action="settlement-history"/);
- assert.doesNotMatch(app,/class="ref-settle-history"/);
+test('sheets always keep a visible close, and browser-closed dialogs stay in sync', () => {
+  const ui = sources['app/ui.js'];
+  assert.match(ui, /left === undefined && right \? closeButton : left/);
+  assert.match(ui, /right === undefined \? closeButton : right/);
+  assert.match(ui, /addEventListener\('close', onClosed\)/);
 });
 
-test('Settle resolves a concrete sheet only in individual-sheet mode',()=>{
- assert.match(app,/if\(tab==='settle'&&!settleAll&&!activeSheet\)activeSheet=data\.sheets\.find\(s=>s\.pinned&&!s\.archived\)\?\.id\|\|data\.sheets\.find\(s=>!s\.archived\)\?\.id\|\|data\.sheets\[0\]\?\.id\|\|''/);
+test('the store re-renders subscribers that mount after a change', () => {
+  const store = sources['app/store.js'];
+  assert.match(store, /useLayoutEffect\(\(\) => \{\s*const update[^\n]*\n\s*if \(state !== rendered\) update\(\);/);
 });
 
-test('Add Expense is a focused modal with one primary Save and no duplicate app dock',()=>{
- assert.match(app,/id="save-expense"/);
- assert.doesNotMatch(app,/data-expense-tab=/);
- assert.doesNotMatch(app,/save-another/);
- assert.doesNotMatch(app,/ref-expense-save/);
- assert.match(app,/headerClose\.onclick=\(\)=>requestClose/);
- assert.match(addExpenseCss,/ref-expense-final-actions\.single/);
+test('a private access link signs in without the first-time access sheet', () => {
+  assert.match(sources['app/store.js'], /signIn\(\{\.\.\.\(await api\(\{action: 'read'\}\)\), key: query\.get\('key'\)\}, \{welcome: false\}\)/);
 });
 
-test('Add Expense hides the sheet selector when only one open sheet exists',()=>{
- assert.match(app,/const openSheets=data\.sheets\.filter\(s=>!s\.archived\)/);
- assert.match(app,/openSheets\.length>1\?/);
- assert.match(app,/type="hidden" name="sheet"/);
+test('payment history shows who paid using the server sign convention', () => {
+  // balance().net > 0 means couple B owes couple A.
+  assert.match(sources['app/screens/household.js'], /payer = r\.net > 0 \? 'b' : 'a'/);
 });
 
-test('Add Expense optional details keep receipt before the final Save',()=>{
- const options=app.indexOf('class="ref-expense-options-card"');
- const receipt=app.indexOf('class="ref-receipt-row"',options);
- const save=app.indexOf('class="ref-expense-submit-card"',options);
- assert.ok(options>=0&&receipt>options&&save>receipt);
- assert.match(addExpenseCss,/#expense-form > section\s*\{[\s\S]*position:static!important;[\s\S]*height:auto!important;[\s\S]*overflow:visible!important/);
- assert.match(addExpenseCss,/ref-remove-receipt\[hidden\][\s\S]*display:\s*none\s*!important/);
+test('Vercel blocks production deployment when unit tests fail', () => {
+  assert.equal(vercel.buildCommand, 'npm test && npm run build');
 });
 
-test('Expense picker selection mode hides catalog maintenance controls',()=>{
- assert.match(app,/classList\.toggle\('selection-mode',!!onPick\)/);
- assert.match(addExpenseCss,/catalog-dialog\.selection-mode \.catalog-edit/);
+test('the page loads only same-origin scripts, compatible with the CSP', () => {
+  const csp = vercel.headers[0].headers.find(h => h.key === 'Content-Security-Policy').value;
+  assert.match(csp, /script-src 'self' 'wasm-unsafe-eval'/);
+  assert.doesNotMatch(indexHtml, /<script>/, 'no inline scripts');
+  assert.match(indexHtml, /<script type="module" src="\/app\/main\.js\?v=/);
+  assert.match(main, /from '\.\.\/vendor\/preact-htm\.js'/);
+  assert.ok(existsSync(new URL('../public/vendor/preact-htm.js', import.meta.url)));
 });
 
-test('Vercel blocks production deployment when unit tests fail',()=>{
- assert.equal(vercel.buildCommand,'npm test && npm run build');
+test('stylesheets load once, in order, with one shared cache version', () => {
+  const sheets = [...indexHtml.matchAll(/<link rel="stylesheet" href="\/styles\/([a-z-]+\.css)\?v=([^"]+)"/g)];
+  assert.deepEqual(sheets.map(m => m[1]), ['base.css', 'layers.css', 'screens.css']);
+  assert.equal(new Set(sheets.map(m => m[2])).size, 1);
+  assert.ok(indexHtml.includes('/app/main.js?v=' + sheets[0][2]), 'main.js shares the stylesheet cache version');
+  assert.ok(indexHtml.includes('/theme-init.js?v=' + sheets[0][2]));
 });
 
-test('design system tokens, couple identity and motion preferences stay defined',()=>{
- for(const token of ['--paper','--surface','--ink','--accent','--couple-a','--couple-b','--r-lg','--shadow-1'])assert.match(themeCss,new RegExp(token+':'),token+' token');
- assert.match(themeCss,/:root\[data-theme=dark\]/);
- assert.match(themeCss,/#sheet\.saving \.dialog-head::after/);
- assert.match(themeCss,/@media \(prefers-reduced-motion: reduce\)/);
- assert.match(homeCss,/\.period-ribbon/);
- assert.match(app,/function balanceFlow\(/);
+test('design tokens, couple identity, glass navigation and reduced motion stay defined', () => {
+  for (const token of ['--bg', '--surface', '--sheet', '--label', '--accent', '--a', '--b', '--glass', '--r-card', '--spring'])
+    assert.match(css, new RegExp(`\\s${token}:`), token + ' token');
+  assert.match(css, /:root\[data-theme=dark\] \{/);
+  assert.match(css, /\.couple-a \{ --c: var\(--a\);/);
+  assert.match(css, /\.tabbar \{[^}]*backdrop-filter/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
 });
 
-test('stylesheets load once, in cascade-layer order, with a shared cache version',()=>{
- const sheets=[...indexHtml.matchAll(/<link rel="stylesheet" href="\/([a-z-]+\.css)\?v=([^"]+)"/g)];
- assert.deepEqual(sheets.map(m=>m[1]),['foundation.css','screens.css','home.css','entry.css']);
- assert.equal(new Set(sheets.map(m=>m[2])).size,1);
- assert.ok(indexHtml.includes('/app.js?v='+sheets[0][2]),'app.js shares the stylesheet cache version');
+test('every class the screens use has a style', () => {
+  const defined = new Set([...css.matchAll(/\.([a-z][a-z0-9-]*)/g)].map(m => m[1]));
+  const used = new Set();
+  for (const [, value] of allSource.matchAll(/class="([^"$]+)"/g)) value.split(/\s+/).forEach(c => used.add(c));
+  // Classes that only carry layout hooks shared with other selectors.
+  const hooks = new Set(['card-pad']);
+  const missing = [...used].filter(c => c && !defined.has(c) && !hooks.has(c));
+  assert.deepEqual(missing, []);
+});
+
+test('the classic app stays reachable at /classic', () => {
+  const classic = read('public/classic/index.html');
+  assert.match(classic, /src="\/classic\/app\.js\?v=/);
+  assert.match(sources['app/screens/household.js'], /href="\/classic\/"/);
 });

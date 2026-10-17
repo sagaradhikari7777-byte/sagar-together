@@ -1,4 +1,4 @@
-import {frequencies,upcomingBills} from './recurring.js';
+import {frequencies,upcomingBills} from '../recurring.js';
 // The host supplies app navigation and persistence; these dialogs add no new tab.
 export function billUI({getData,modal,save,close,esc,money,today,toast,splitOptions,errorIn,pick}){
  const fmt=date=>new Date(date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});

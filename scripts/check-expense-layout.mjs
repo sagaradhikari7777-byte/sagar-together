@@ -1,143 +1,134 @@
+// Browser checks for the expense editor in sample mode: layout at phone, tablet
+// and short (keyboard-sized) viewports in light and dark, then the full entry flow.
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
-const require=createRequire(import.meta.url);
-const assert=require('node:assert/strict');
-const fs=require('node:fs');
+const require = createRequire(import.meta.url);
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
 let browsers;
-try{browsers=require('playwright');}
-catch(error){if(!process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES)throw new Error('Install Playwright to run browser checks: npm install --no-save playwright');browsers=require(path.join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,'playwright'));}
-const {chromium,webkit}=browsers;
-const {spawn}=require('node:child_process');
-const source=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
-const out=process.env.TOGETHER_QA_OUTPUT;
-const url=process.argv.find(arg=>/^https?:/.test(arg))||'http://localhost:3010';
-const engines=process.argv.includes('--webkit')?[[webkit,'webkit']]:[[chromium,'chromium']];
+try { browsers = require('playwright'); }
+catch (error) {
+  if (!process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES) throw new Error('Install Playwright to run browser checks: npm install --no-save playwright');
+  browsers = require(path.join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES, 'playwright'));
+}
+const {chromium, webkit} = browsers;
+const {spawn} = require('node:child_process');
+const source = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const out = process.env.TOGETHER_QA_OUTPUT;
+const url = process.argv.find(arg => /^https?:/.test(arg)) || 'http://localhost:3010';
+const engines = process.argv.includes('--webkit') ? [[webkit, 'webkit']] : [[chromium, 'chromium']];
+const editor = 'dialog.editor[open]';
+const top = page => page.locator('dialog.sheet[open]:not(.is-closing)').last();
+const settle = page => page.waitForTimeout(500);
+const keyNames = {'.': 'Decimal point', '+': 'Add', '−': 'Subtract', '×': 'Multiply', '÷': 'Divide', '⌫': 'Delete'};
+const press = async (page, keys) => { for (const k of keys) await page.locator(`${editor} .keypad`).getByRole('button', {name: keyNames[k] || k, exact: true}).click(); };
 let server;
-async function entry(page){
- await page.goto(url);
- await page.locator('#demo-start').click();
- await page.locator('[data-action="add"]').first().click();
- await page.locator('#expense-form').waitFor();
+
+async function entry(page) {
+  await page.goto(url);
+  await page.locator('#demo-start').click();
+  await page.locator('.tabbar [data-action="add"]').click();
+  await page.locator(`${editor} .keypad`).waitFor();
+  await settle(page);
 }
-async function layout(page,label){
- const report=await page.evaluate(()=>{
-  const f=document.querySelector('#expense-form');
-  const r=e=>{const b=e.getBoundingClientRect();return {top:b.top,bottom:b.bottom,left:b.left,right:b.right,height:b.height};};
-  const cards=[...f.querySelectorAll(':scope > section')].map(e=>({name:e.className,...r(e),scrollHeight:e.scrollHeight,children:[...e.children].filter(c=>getComputedStyle(c).display!=='none').map(c=>({...r(c),tag:c.tagName}))}));
-  const inputs=[...f.querySelectorAll('input:not([type=file]),select')].map(e=>({name:e.name||e.id,size:parseFloat(getComputedStyle(e).fontSize),...r(e)}));
-  const shortcuts=f.querySelector('.merchant-shortcuts');
-  const merchantShortcuts=shortcuts&&getComputedStyle(shortcuts).display!=='none'?{...r(shortcuts),merchant:r(f.querySelector('.ref-expense-merchant')),buttons:[...shortcuts.querySelectorAll('button')].map(e=>({name:e.textContent,...r(e)}))}:null;
-  return {cards,inputs,merchantShortcuts,form:{width:f.clientWidth,scrollWidth:f.scrollWidth},note:r(f.elements.notes),receipt:r(f.querySelector('.ref-receipt-row')),save:r(f.querySelector('.ref-expense-submit-card'))};
- });
- for(const card of report.cards){
-  assert.ok(card.height>=card.scrollHeight-2,`${label}: ${card.name} collapsed (${card.height} < ${card.scrollHeight})`);
-  for(const child of card.children){assert.ok(child.top>=card.top-1 && child.bottom<=card.bottom+1,`${label}: ${child.tag} extends outside ${card.name}`);}
- }
- for(let i=1;i<report.cards.length;i++)assert.ok(report.cards[i].top>=report.cards[i-1].bottom,`${label}: adjacent cards overlap`);
- for(const input of report.inputs)assert.ok(input.size>=16,`${label}: ${input.name} font ${input.size} risks focus zoom`);
- assert.ok(report.form.scrollWidth<=report.form.width,`${label}: form has horizontal overflow`);
- if(report.merchantShortcuts){const s=report.merchantShortcuts;assert.ok(s.top>=s.merchant.bottom+8,`${label}: merchant shortcuts overlap the picker`);for(const b of s.buttons){assert.ok(b.left>=s.left-1&&b.right<=s.right+1,`${label}: ${b.name} shortcut extends outside the card`);assert.ok(b.height>=44,`${label}: shortcut tap target is too small`);}}
- assert.ok(report.receipt.top>=report.note.bottom,`${label}: receipt covers note`);
- assert.ok(report.save.top>=report.receipt.bottom,`${label}: Save covers receipt`);
- return report;
-}
-(async()=>{
- if(url.startsWith('http://localhost')){
-  server=spawn(process.execPath,['scripts/dev.mjs'],{cwd:source,env:{...process.env,PORT:'3010'},stdio:['ignore','pipe','pipe']});
-  await new Promise((resolve,reject)=>{server.stdout.once('data',resolve);server.on('error',reject);server.once('exit',code=>reject(new Error('Server exited '+code)));});
- }
- const results=[];
- if(out)fs.mkdirSync(out,{recursive:true});
- try{
-  for(const [engine,name] of engines){
-   const browser=await engine.launch({headless:true,...(name==='chromium'?{...(process.env.TOGETHER_QA_CHROMIUM?{executablePath:process.env.TOGETHER_QA_CHROMIUM}:{}),args:['--no-sandbox','--disable-gpu']}:(process.env.TOGETHER_QA_WEBKIT?{executablePath:process.env.TOGETHER_QA_WEBKIT}:{}))});
-   try{
-    for(const [width,height] of [[320,568],[375,667],[390,844],[440,956],[900,900]])for(const dark of [false,true]){
-     const page=await browser.newPage({viewport:{width,height},isMobile:width<700,hasTouch:width<700,deviceScaleFactor:1,locale:'en-AU',timezoneId:'Australia/Sydney'});
-     const errors=[];page.on('pageerror',e=>errors.push(e.message));
-     await page.route('**/api/household',route=>{errors.push('Sample-mode QA attempted a household API request');route.abort();});
-     await page.addInitScript(dark=>localStorage.setItem('together-theme',dark?'dark':'light'),dark);
-     await entry(page);
-     const label=`${name} ${width}x${height} ${dark?'dark':'light'}`;
-     await layout(page,label);
-     assert.equal(await page.locator('#remove-receipt').isVisible(),false);
-     assert.equal(await page.locator('#receipt-file').isVisible(),false);
-     await page.locator('[name="amount"]').fill('45.50');
-     await page.locator('[name="notes"]').fill('A note that should stay inside Extra details.');
-     await layout(page,label+' note focused');
-     await page.locator('#save-expense').scrollIntoViewIfNeeded();
-     const scroll=await page.evaluate(()=>({save:document.querySelector('#save-expense').getBoundingClientRect().toJSON(),form:document.querySelector('#expense-form').getBoundingClientRect().toJSON(),viewport:window.innerHeight}));
-     assert.ok(scroll.save.bottom<=scroll.viewport+1,label+' save cannot be scrolled above the viewport bottom');
-     assert.ok(scroll.save.top>=scroll.form.top-1,label+' save cannot be scrolled into view');
-     if(width===440){
-      if(out)await page.screenshot({path:`${out}/after-${name}-${dark?'dark':'light'}.png`});
-      await page.addStyleTag({content:'.ios-app { --safe-top:54px; --safe-bottom:34px; }'});
-      await page.setViewportSize({width,height:420});
-      await layout(page,label+' keyboard-sized viewport');
-      await page.locator('#save-expense').scrollIntoViewIfNeeded();
-     }
-     assert.deepEqual(errors,[],label+' console errors');
-     results.push({label,status:'PASS'});await page.close();
-    }
-    const page=await browser.newPage({viewport:{width:440,height:956},isMobile:true,hasTouch:true,locale:'en-AU',timezoneId:'Australia/Sydney'});
-    await entry(page);
-    await page.locator('[name="merchant"]').click();
-    await page.locator('[data-choice="Woolworths"]').click();
-    assert.equal(await page.locator('[name="merchant"]').inputValue(),'Woolworths');
-    await page.locator('[name="category"]').click();
-    await page.locator('[data-choice="Groceries"]').click();
-    await page.locator('[name="amount"]').fill('123.45');
-    await page.locator('[name="payer"]').selectOption('2');
-    await page.locator('[name="split"]').selectOption('b');
-    assert.match(await page.locator('#split-preview').innerText(),/Nabin & Sujata\s*\$123\.45/);
-    await page.locator('[name="notes"]').fill('Layout QA receipt expense');
-    await page.locator('#receipt-file').dispatchEvent('cancel');
-    assert.equal(await page.locator('#expense-form').isVisible(),true,'cancelling receipt picker must keep Add Expense open');
-    const chooserPromise=page.waitForEvent('filechooser');
-    await page.locator('#choose-receipt').click();
-    const chooser=await chooserPromise;
-    await chooser.setFiles({name:'test-receipt.png',mimeType:'image/png',buffer:fs.readFileSync(source+'/public/icon-192.png')});
-    await page.locator('#receipt-preview img').waitFor();
-    assert.equal(await page.locator('#remove-receipt').isVisible(),true);
-    assert.ok(await page.locator('#save-expense').isEnabled());
-    await layout(page,name+' attached receipt');
-    await page.locator('#remove-receipt').click();
-    assert.equal(await page.locator('#receipt-preview img').count(),0);
-    assert.equal(await page.locator('#remove-receipt').isVisible(),false);
-    await page.locator('#receipt-file').setInputFiles({name:'invalid.txt',mimeType:'text/plain',buffer:Buffer.from('invalid image')});
-    await page.locator('.form-error').filter({hasText:'could not be opened'}).waitFor();
-    assert.ok(await page.locator('#save-expense').isEnabled());
-    await layout(page,name+' receipt error');
-    await page.locator('#receipt-file').setInputFiles({name:'test-receipt.png',mimeType:'image/png',buffer:fs.readFileSync(source+'/public/icon-192.png')});
-    await page.locator('#receipt-preview img').waitFor();
-    await page.locator('#save-expense').click();
-    await page.locator('#sheet').waitFor({state:'hidden'});
-    await page.locator('[data-tab="sheets"]').click();
-    await page.locator('[data-view-sheet]').first().click();
-    const added=page.locator('[data-expense]').filter({hasText:'123.45'});
-    assert.equal(await added.count(),1);await added.click();
-    assert.equal(await page.locator('[name="notes"]').inputValue(),'Layout QA receipt expense');
-    assert.equal(await page.locator('#receipt-preview img').count(),1);
-    assert.equal(await page.locator('#save-expense').innerText(),'Save changes');
-    await page.locator('[name="notes"]').fill('Edited QA note');
-    assert.equal(await page.locator('#save-expense').innerText(),'Save changes');
-    await layout(page,name+' edit existing receipt');
-    await page.locator('#save-expense').click();
-    await page.locator('#sheet').waitFor({state:'hidden'});
-    await added.click();
-    assert.equal(await page.locator('[name="notes"]').inputValue(),'Edited QA note');
-    await page.locator('[name="notes"]').fill('Unsaved');
-    await page.locator('#sheet [data-close]').click();
-    await page.locator('.discard-prompt').waitFor();
-    await layout(page,name+' unsaved discard prompt');
-    await page.locator('[data-keep]').click();
-    assert.equal(await page.locator('[name="notes"]').inputValue(),'Unsaved');
-    results.push({label:name+' pickers / receipt cancel-attach-remove-error / edit / draft guard',status:'PASS'});
-    await page.close();
-   }finally{await browser.close();}
+
+/** The editor fits its viewport: nothing overflows sideways, blocks never overlap, Save stays reachable. */
+async function layout(page, label) {
+  const report = await page.evaluate(sel => {
+    const d = document.querySelector(sel), body = d.querySelector('.sheet-body'), panel = d.querySelector('.sheet-panel');
+    const r = e => e.getBoundingClientRect().toJSON();
+    const blocks = [...body.children].filter(e => getComputedStyle(e).display !== 'none' && getComputedStyle(e).position !== 'sticky').map(e => ({name: e.className || e.tagName, ...r(e)}));
+    const keys = [...d.querySelectorAll('.key')].map(r);
+    return {blocks, keys, body: {...r(body), scrollWidth: body.scrollWidth, clientWidth: body.clientWidth}, panel: r(panel), save: r(d.querySelector('#save-expense')), viewport: {width: innerWidth, height: innerHeight}};
+  }, editor);
+  assert.ok(report.body.scrollWidth <= report.body.clientWidth + 1, `${label}: editor has horizontal overflow`);
+  for (let i = 1; i < report.blocks.length; i++)
+    assert.ok(report.blocks[i].top >= report.blocks[i - 1].bottom - 1, `${label}: ${report.blocks[i].name} overlaps ${report.blocks[i - 1].name}`);
+  for (const key of report.keys) {
+    assert.ok(key.height >= 44 && key.width >= 44, `${label}: keypad key smaller than a 44pt target`);
+    assert.ok(key.left >= report.panel.left && key.right <= report.panel.right, `${label}: keypad extends outside the sheet`);
   }
-  if(out){fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'browser-results.json'),JSON.stringify(results,null,2));}
-  console.log(JSON.stringify(results,null,2));
- }finally{if(server)server.kill();}
-})().catch(e=>{console.error(e);if(server)server.kill();process.exitCode=1;});
+  assert.ok(report.panel.left >= 0 && report.panel.right <= report.viewport.width + 1, `${label}: sheet wider than the viewport`);
+  assert.ok(report.save.bottom <= report.viewport.height + 1 && report.save.top >= 0, `${label}: Save is off screen`);
+  return report;
+}
+
+(async () => {
+  if (url.startsWith('http://localhost')) {
+    server = spawn(process.execPath, ['scripts/dev.mjs'], {cwd: source, env: {...process.env, PORT: '3010'}, stdio: ['ignore', 'pipe', 'pipe']});
+    await new Promise((resolve, reject) => { server.stdout.once('data', resolve); server.on('error', reject); server.once('exit', code => reject(new Error('Server exited ' + code))); });
+  }
+  const results = [];
+  if (out) fs.mkdirSync(out, {recursive: true});
+  try {
+    for (const [engine, name] of engines) {
+      const executable = name === 'chromium' ? process.env.TOGETHER_QA_CHROMIUM : process.env.TOGETHER_QA_WEBKIT;
+      const browser = await engine.launch({headless: true, ...(executable ? {executablePath: executable} : {}), ...(name === 'chromium' ? {args: ['--no-sandbox', '--disable-gpu']} : {})});
+      try {
+        for (const [width, height] of [[320, 568], [375, 667], [390, 844], [440, 956], [900, 900]]) for (const dark of [false, true]) {
+          const page = await browser.newPage({viewport: {width, height}, isMobile: width < 700, hasTouch: width < 700, deviceScaleFactor: 1, locale: 'en-AU', timezoneId: 'Australia/Sydney'});
+          const errors = []; page.on('pageerror', e => errors.push(e.message));
+          await page.route('**/api/household', route => { errors.push('Sample-mode QA attempted a household API request'); route.abort(); });
+          await page.addInitScript(dark => localStorage.setItem('together-theme', dark ? 'dark' : 'light'), dark);
+          await entry(page);
+          const label = `${name} ${width}x${height} ${dark ? 'dark' : 'light'}`;
+          await layout(page, label);
+          await press(page, '45.5');
+          assert.equal(await page.locator('#expense-amount').getAttribute('data-value'), '4550');
+          await layout(page, label + ' amount entered');
+          if (width === 440 && out) await page.screenshot({path: `${out}/editor-${name}-${dark ? 'dark' : 'light'}.png`});
+          assert.deepEqual(errors, [], label + ' console errors');
+          results.push({label, status: 'PASS'});
+          await page.close();
+        }
+
+        const page = await browser.newPage({viewport: {width: 390, height: 844}, isMobile: true, hasTouch: true, locale: 'en-AU', timezoneId: 'Australia/Sydney'});
+        const errors = []; page.on('pageerror', e => errors.push(e.message));
+        await entry(page);
+        await press(page, '100+23.45');
+        assert.equal(await page.locator('#expense-amount').getAttribute('data-value'), '12345', 'the keypad calculates');
+        await page.locator(`${editor} [data-pick="merchants"]`).click(); await settle(page);
+        const search = top(page).locator('#catalog-search');
+        assert.ok(parseFloat(await search.evaluate(e => getComputedStyle(e).fontSize)) >= 16, 'search input avoids iOS focus zoom');
+        await search.fill('Wool');
+        await top(page).locator('[data-choice="Woolworths"]').click(); await settle(page);
+        assert.equal(await page.locator(`${editor} .merchant-field-text`).innerText(), 'Woolworths');
+        await page.locator(`${editor} [data-pick="categories"]`).click(); await settle(page);
+        await top(page).locator('[data-choice="Groceries"]').click(); await settle(page);
+        await page.locator(`${editor} [data-pick="payer"]`).click(); await settle(page);
+        await top(page).locator('.choice').filter({has: page.locator('strong', {hasText: /^Nabin/})}).click(); await settle(page);
+        await page.locator(`${editor} [data-pick="split"]`).click(); await settle(page);
+        await top(page).locator('.choice-split').nth(2).click(); await settle(page);
+        assert.match(await page.locator('#split-preview').innerText(), /Nabin & Sujata\s*\$123\.45/);
+        await layout(page, name + ' details chosen');
+
+        const chooserPromise = page.waitForEvent('filechooser');
+        await page.locator('#choose-receipt').click();
+        const chooser = await chooserPromise;
+        await chooser.setFiles({name: 'test-receipt.png', mimeType: 'image/png', buffer: fs.readFileSync(source + '/public/icon-192.png')});
+        await page.locator('#receipt-preview').waitFor();
+        assert.equal(await page.locator('#remove-receipt').isVisible(), true);
+        await page.locator('#remove-receipt').click();
+        assert.equal(await page.locator('#receipt-preview').count(), 0);
+        await page.locator('#receipt-file').setInputFiles({name: 'invalid.txt', mimeType: 'text/plain', buffer: Buffer.from('invalid image')});
+        await page.locator(`${editor} .form-error`).waitFor();
+
+        await page.locator(`${editor} .sheet-head [aria-label="Close"]`).click();
+        await page.locator(`${editor} .prompt`).waitFor();
+        await layout(page, name + ' unsaved prompt');
+        await page.locator('[data-keep]').click();
+        assert.equal(await page.locator(`${editor} .prompt`).count(), 0);
+        await page.locator('#save-expense').click();
+        await page.locator('.toast.is-shown', {hasText: 'Expense saved'}).waitFor();
+        await page.locator(editor).waitFor({state: 'detached'});
+        assert.equal(await page.locator('.xrow-title', {hasText: 'Woolworths'}).first().isVisible(), true);
+        assert.deepEqual(errors, [], name + ' flow console errors');
+        results.push({label: name + ' keypad / pickers / receipt attach-remove-error / unsaved prompt / save', status: 'PASS'});
+        await page.close();
+      } finally { await browser.close(); }
+    }
+    if (out) fs.writeFileSync(path.join(out, 'browser-results.json'), JSON.stringify(results, null, 2));
+    console.log(JSON.stringify(results, null, 2));
+  } finally { if (server) server.kill(); }
+})().catch(e => { console.error(e); if (server) server.kill(); process.exitCode = 1; });

@@ -7,12 +7,14 @@ Canonical repository: `sagaradhikari7777-byte/sagar-together` → `main`
 
 ## Core flow
 
-- **Home:** overall couple balance, matched-period spending, upcoming bills and recent transactions.
-- **Sheets:** open periods by default; Open / Archived, with an outstanding-only filter.
-- **Add:** merchant, amount with an optional inline calculator, category, date, payer, split, frequent merchant shortcuts, optional note/receipt, reviewed scan suggestions and one Save.
-- **Settle:** an overall balance with sheet balances, then per-sheet payment recording, summary/history and spending.
-- **Settings:** household names, invitations/access, recurring bills, entry defaults, merchants/categories and full CSV export. Appearance follows the device until changed with the header toggle.
-- **Journal search:** search merchant, category, payer/creator name, sheet, notes, date or amount; filter by payer, author, receipt presence, category and date. Shown results have an exact couple-share subtotal and their own CSV export.
+- **Home:** the wallet card with your couple's balance, a fair-share bar and Settle up; draft recovery; the current sheet with a days-left ring and category ribbon; upcoming bills; recent activity.
+- **Activity:** search merchant, category, payer/creator name, sheet, notes, date or amount; Open / Settled / All; filter by payer, author, receipt, category, sheet and dates. Results show a total with your couple's share and export to CSV.
+- **Add:** a keypad-first expense sheet with a built-in calculator, merchant shortcuts, category, date, payer, split, sheet, note and receipt (with on-device scanning), a split preview and one Save.
+- **Sheets:** open sheets and Archived. A sheet page shows its total, who paid against the fair share, who pays whom, and Expenses / Insights / Payments.
+- **Settle up:** from Home or a sheet; choose a sheet if several have balances, review, then slide to record. Recording archives the sheet.
+- **Household:** names, invitations and private access, payment history with reversal, recurring bills, merchants and categories, expense defaults, appearance (Auto / Light / Dark), full CSV export and sign out.
+
+The previous interface is still available at `/classic/` on the same data.
 
 ## Development
 
@@ -34,24 +36,22 @@ npm run test:browser
 npm run test:browser -- --webkit
 ```
 
-It uses Playwright when installed and is intended for iPhone-sized layout and expense-flow verification.
+It uses Playwright when installed and checks the expense sheet at iPhone, keyboard-sized and tablet viewports in light and dark, then the keypad, pickers, receipt and unsaved-changes flow.
 
 ## Architecture
 
-- `public/app.js` — vanilla JavaScript UI and interaction wiring.
-- `public/foundation.css`, `screens.css`, `home.css`, `entry.css` — the design system and screen styles, in cascade layers. See `DESIGN.md`.
+- `public/index.html` — loads `theme-init.js`, the three stylesheets and `app/main.js` as an ES module. No build step for the UI.
+- `public/vendor/preact-htm.js` — Preact with htm templates (one vendored file, no bundler; CSP-safe).
+- `public/app/main.js` — app shell, tab bar, sheet host and boot; `store.js` — one observable store, server calls and session; `nav.js` — tabs, pushed pages and sheets behind one history entry; `ui.js` — the component kit; `common.js` — shared rows and sheets; `format.js` — formatting helpers; `amount-entry.js` — keypad amount logic; `demo.js` — the sample household.
+- `public/app/screens/` — Home, Activity, Sheets (and the sheet page), Household, Welcome.
+- `public/app/flows/` — expense entry and details, pickers, settle up, recurring bills, export.
+- `public/styles/base.css`, `layers.css`, `screens.css` — the design system and screen styles. See `DESIGN.md`.
 - `public/icons.js` — Lucide icon shapes; `public/fonts/` — the self-hosted Geist font. See `THIRD_PARTY_NOTICES.md`.
-- `public/back-navigation.js` — view history and iPhone-style edge back gesture.
-- `public/journal.js` — pure filtering/repeat helpers.
-- `public/amount-calculator.js` — exact decimal arithmetic and an opt-in calculator inside expense entry.
-- `public/settlement-overview.js` — overall, per-sheet and historical couple share calculations.
-- `public/drafts.js` — local draft recovery, isolated by household and person.
-- `public/expense-policy.js` — expense ownership/normalisation.
+- `public/classic/` — the previous interface, kept as a fallback.
+- `public/journal.js`, `settlement-overview.js`, `period-insights.js`, `recurring.js`, `drafts.js`, `expense-policy.js`, `catalog.js`, `entry-shortcuts.js`, `receipt-scan.js`, `amount-calculator.js`, `expense-history.js`, `back-navigation.js` — pure logic shared by both interfaces.
 - `lib/model.js` — server-side validation and mutations.
 - `api/household.js` — Vercel API with authenticated access, rate limiting and atomic revision checks.
 - `tests/` — finance, policy, migration, storage and UI regression tests.
-
-The frontend intentionally stays framework-free.
 
 ## Data and access
 
@@ -70,7 +70,7 @@ Receipt images are resized/compressed and stored separately in the existing priv
 CSV export is a record export, not a complete restore backup.
 The journal Export button includes only the current search/filter/status results; the Settings export still includes the entire household journal. The result share is the signed-in member’s couple allocation, not an individual debt or a payment balance.
 
-The amount calculator supports addition, subtraction, multiplication, division and brackets. Decimal operands are represented exactly, with rounding to cents applied once to the final total. Previewing a calculation does not change or save an expense: use **Use amount** to fill the amount, then review the split and save normally. Incomplete calculations, division by zero and nonpositive/out-of-range expense totals are rejected.
+The keypad calculator supports addition, subtraction, multiplication and division. Decimal operands are represented exactly, with rounding to cents applied once to the final total. On the keypad, the expression stays visible above the live total; saving uses the total. Incomplete calculations, division by zero and nonpositive/out-of-range expense totals are rejected.
 
 ## Product rule
 
