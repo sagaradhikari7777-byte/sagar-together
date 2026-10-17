@@ -1,0 +1,203 @@
+/*
+ * Together · Home
+ * The couple balance, a period snapshot with a category ribbon, reminders and recent activity.
+ */
+@layer screens {
+  /* ───────── Balance card ───────── */
+  .ref-balance-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 20px 20px 18px;
+    border-radius: var(--r-xl);
+    background: var(--hero);
+    color: var(--hero-ink);
+    box-shadow: var(--shadow-hero);
+    --ring: var(--hero);
+    --flow-bg: var(--hero);
+  }
+  /* Two soft glows in the couples' colours give the card depth without decoration. */
+  .ref-balance-card::before, .ref-balance-card::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    filter: blur(8px);
+    opacity: .38;
+    pointer-events: none;
+  }
+  .ref-balance-card::before { top: -150px; right: -90px; background: radial-gradient(circle, var(--couple-a) 0, transparent 66%); }
+  .ref-balance-card::after { bottom: -170px; left: -110px; background: radial-gradient(circle, var(--couple-b) 0, transparent 66%); opacity: .26; }
+
+  .ref-balance-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .ref-balance-head > span { font-size: .875rem; font-weight: 550; color: var(--hero-ink-2); }
+  .ref-balance-card .ui-status-pill { background: var(--hero-fill); color: var(--hero-ink); box-shadow: inset 0 0 0 1px var(--hero-line); }
+  .ref-balance-card.owe .ui-status-pill { background: rgb(242 182 100 / .16); color: #f6c886; box-shadow: none; }
+  .ref-balance-card:is(.owed, .settled) .ui-status-pill { background: rgb(87 200 149 / .16); color: #7fd9ad; box-shadow: none; }
+
+  .ref-balance-amount { display: block; margin-top: 14px; font-size: 3.25rem; font-weight: 650; line-height: 1; letter-spacing: -.055em; overflow-wrap: anywhere; }
+  .home-balance-direction { margin-top: 8px; font-size: 1rem; font-weight: 500; color: var(--hero-ink); overflow-wrap: anywhere; }
+
+  .ref-balance-card .balance-flow { margin-top: 18px; }
+  .ref-balance-card .couple-chip-name { color: var(--hero-ink-2); }
+  .ref-balance-card .flow-line { color: var(--hero-ink-2); }
+
+  .home-balance-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--hero-line); }
+  .home-balance-scope { min-width: 0; font-size: .8125rem; color: var(--hero-ink-3); }
+  .home-balance-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: none;
+    min-height: 40px;
+    padding: 8px 14px 8px 16px;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: var(--hero-ink);
+    color: #15161a;
+    font-size: .875rem;
+    font-weight: 600;
+  }
+  .home-balance-action .icon { width: 16px; height: 16px; stroke-width: 2.4; }
+
+  /* ───────── Draft banner ───────── */
+  .draft-banner {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 12px 12px 14px;
+    border-radius: var(--r-lg);
+    background: var(--caution-soft);
+  }
+  .draft-banner > span { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: var(--surface); color: var(--caution); }
+  .draft-banner > span .icon { width: 18px; height: 18px; }
+  .draft-banner strong, .draft-banner small { display: block; overflow-wrap: anywhere; }
+  .draft-banner strong { font-size: .9375rem; }
+  .draft-banner small { margin-top: 1px; font-size: .8125rem; color: var(--ink-2); }
+  .draft-banner .secondary { min-height: 40px; padding: 8px 16px; font-size: .875rem; }
+
+  /* ───────── Period snapshot ───────── */
+  .home-period-card {
+    min-width: 0;
+    padding: 18px 20px 20px;
+    border: 1px solid var(--line-soft);
+    border-radius: var(--r-xl);
+    background: var(--surface);
+    box-shadow: var(--shadow-1);
+  }
+  .home-period-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .home-period-head > div { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px; min-width: 0; }
+  .home-period-head small { font-size: .75rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .home-period-head h2 { font-size: .9375rem; font-weight: 600; overflow-wrap: anywhere; }
+  .home-period-head > button { display: grid; place-items: center; flex: none; width: 36px; height: 36px; margin-right: -8px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--ink-3); }
+  .home-period-head > button:active:not(:disabled) { background: var(--sunken); }
+  .home-period-head > button .icon { width: 18px; height: 18px; }
+  .home-period-main { display: grid; gap: 4px; margin-top: 6px; }
+  .home-period-main > strong { font-size: 2.125rem; font-weight: 650; line-height: 1.1; letter-spacing: -.045em; overflow-wrap: anywhere; }
+  .home-period-main > span { font-size: .8125rem; color: var(--ink-3); }
+
+  .period-ribbon { display: flex; gap: 3px; height: 10px; margin-top: 16px; }
+  .period-ribbon > i { flex: 0 0 var(--w); min-width: 6px; border-radius: 3px; background: var(--tone, var(--ink-3)); transform-origin: left; animation: grow 700ms var(--ease) both; }
+  .period-ribbon > i:first-child { border-radius: 5px 3px 3px 5px; }
+  .period-ribbon > i:last-child { border-radius: 3px 5px 5px 3px; }
+  .period-ribbon > i:only-child { border-radius: 5px; }
+  .period-ribbon > i:nth-child(2) { animation-delay: 60ms; }
+  .period-ribbon > i:nth-child(3) { animation-delay: 120ms; }
+  .period-ribbon > i:nth-child(4) { animation-delay: 180ms; }
+  .period-ribbon > i:nth-child(5) { animation-delay: 240ms; }
+  .period-legend { display: grid; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
+  .period-legend > li { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; align-items: center; gap: 10px; font-size: .875rem; color: var(--ink-2); }
+  .period-legend > li > i { width: 10px; height: 10px; border-radius: 3px; background: var(--tone, var(--ink-3)); }
+  .period-legend > li > span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .period-legend > li > b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .period-empty { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 12px; border-radius: var(--r-md); background: var(--paper); font-size: .875rem; color: var(--ink-2); }
+  .period-empty .icon { width: 18px; height: 18px; color: var(--accent); }
+
+  .period-comparison-details { margin-top: 14px; border-top: 1px solid var(--line-soft); }
+  .period-comparison-details > summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; padding-top: 4px; font-size: .875rem; font-weight: 550; color: var(--accent); list-style: none; cursor: pointer; }
+  .period-comparison-details > summary::-webkit-details-marker { display: none; }
+  .period-comparison-details > summary .icon { width: 16px; height: 16px; transition: transform var(--slow) var(--ease); }
+  .period-comparison-details[open] > summary .icon { transform: rotate(90deg); }
+  .period-comparison { margin-bottom: 2px; font-size: .8125rem; line-height: 1.55; color: var(--ink-2); }
+
+  /* ───────── Upcoming bills ───────── */
+  .upcoming-card {
+    padding: 16px 20px 14px;
+    border: 1px solid var(--line-soft);
+    border-radius: var(--r-xl);
+    background: var(--surface);
+    box-shadow: var(--shadow-1);
+  }
+  .upcoming-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .upcoming-head h2 { font-size: 1.0625rem; }
+  .upcoming-head .text-button { min-height: 36px; font-size: .875rem; }
+  .upcoming-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 58px; padding: 10px 0; border: 0; border-bottom: 1px solid var(--line-soft); background: none; color: var(--ink); text-align: left; }
+  .upcoming-row > span { min-width: 0; }
+  .upcoming-row strong { display: block; font-size: .9375rem; overflow-wrap: anywhere; }
+  .upcoming-row small { display: block; margin-top: 1px; font-size: .8125rem; color: var(--ink-3); }
+  .upcoming-row > strong { font-variant-numeric: tabular-nums; }
+  .upcoming-card > p { margin-top: 10px; font-size: .75rem; line-height: 1.45; color: var(--ink-3); }
+
+  /* ───────── Recent transactions ───────── */
+  .home-recent-card {
+    min-width: 0;
+    padding: 16px 8px 6px;
+    border: 1px solid var(--line-soft);
+    border-radius: var(--r-xl);
+    background: var(--surface);
+    box-shadow: var(--shadow-1);
+  }
+  .home-recent-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 12px 4px; }
+  .home-recent-heading h2 { font-size: 1.0625rem; }
+  .home-recent-heading .text-button { min-height: 36px; padding-block: 4px; font-size: .875rem; }
+  .home-recent-list { display: grid; }
+  .home-recent-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 0;
+    border-radius: var(--r-md);
+    background: transparent;
+    color: var(--ink);
+    text-align: left;
+  }
+  .home-recent-row:active:not(:disabled) { transform: none; background: var(--input); }
+  .home-recent-row + .home-recent-row::before { content: ""; position: absolute; top: 0; right: 12px; left: 64px; height: 1px; background: var(--line-soft); }
+  .home-recent-row > .re-cat { margin-top: 1px; }
+  .home-recent-copy { display: grid; gap: 2px; min-width: 0; }
+  .home-recent-main, .home-recent-meta { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 10px; min-width: 0; }
+  .home-recent-merchant { min-width: 0; overflow: hidden; font-size: .9688rem; font-weight: 600; line-height: 1.3; letter-spacing: -.012em; white-space: nowrap; text-overflow: ellipsis; }
+  .home-recent-amount { font-size: .9688rem; font-weight: 650; line-height: 1.3; letter-spacing: -.015em; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .home-recent-meta { font-size: .8125rem; line-height: 1.35; color: var(--ink-3); }
+  .home-recent-author { min-width: 0; overflow-wrap: anywhere; }
+  .home-recent-meta > time { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .home-recent-sheet { display: flex; align-items: center; gap: 5px; min-width: 0; font-size: .75rem; line-height: 1.35; color: var(--ink-3); }
+  .home-recent-sheet > .icon { width: 12px; height: 12px; opacity: .8; }
+  .home-recent-sheet > span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  @media (hover: hover) { .home-recent-row:hover { background: var(--input); } }
+
+  /* ───────── Layout ───────── */
+  @media (min-width: 700px) {
+    .ref-home-body { grid-template-columns: 1fr 1fr; align-items: start; }
+    .ref-home-body > .ref-balance-card, .ref-home-body > .draft-banner { grid-column: 1 / -1; }
+    .ref-home-body > .home-period-card, .ref-home-body > .upcoming-card { grid-column: 1; }
+    .ref-home-body > .home-recent-card { grid-column: 2; grid-row: 2 / span 3; }
+    .ref-home-body:has(.draft-banner) > .home-recent-card { grid-row: 3 / span 3; }
+  }
+
+  @media (max-width: 359px) {
+    .ref-balance-card { padding-inline: 16px; }
+    .ref-balance-amount { font-size: 2.75rem; }
+    .home-recent-row { grid-template-columns: 34px minmax(0, 1fr); gap: 10px; padding-inline: 8px; }
+    .home-recent-row > .re-cat { width: 34px; height: 34px; }
+    .home-recent-row + .home-recent-row::before { left: 52px; }
+  }
+}

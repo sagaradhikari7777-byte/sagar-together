@@ -1,10 +1,9 @@
-// Apply the saved appearance before styles and the main app load.
-// Theme startup must also work when browser storage is unavailable.
+// Apply the appearance before styles and the main app load: a saved choice wins,
+// otherwise follow the device. Startup must also work when storage is unavailable.
 (() => {
-  let theme = 'light';
-  try {
-    if (localStorage.getItem('together-theme') === 'dark') theme = 'dark';
-  } catch {}
+  let theme = '';
+  try { theme = localStorage.getItem('together-theme') || ''; } catch {}
+  if (theme !== 'dark' && theme !== 'light') theme = window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   document.documentElement.dataset.theme = theme;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#0d1421' : '#f4f7fc');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#101114' : '#f5f4ef');
 })();

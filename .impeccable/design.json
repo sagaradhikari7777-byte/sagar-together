@@ -3,61 +3,72 @@
   "extensions": {
     "breakpoints": [
       {
-        "name": "mobile-max",
+        "name": "sheet-max",
+        "value": "650px"
+      },
+      {
+        "name": "wide-min",
         "value": "700px"
       },
       {
         "name": "narrow-max",
-        "value": "360px"
+        "value": "359px"
       }
     ],
     "sourceFiles": [
-      "public/style.css",
-      "public/theme.css",
-      "public/home-recent.css",
-      "public/add-expense-polish.css"
+      "public/foundation.css",
+      "public/screens.css",
+      "public/home.css",
+      "public/entry.css"
     ],
-    "motion": "180ms; disabled for prefers-reduced-motion",
-    "navigation": "66px frosted dock, 10px bottom gap plus safe-area inset, 26px blur"
+    "motion": "160ms / 320ms with cubic-bezier(.22,1,.36,1); disabled for prefers-reduced-motion",
+    "navigation": "68px frosted dock with a sliding selection pill and a central ink Add button"
   },
   "components": [
     {
       "name": "Primary button",
       "kind": "button",
       "html": "<button class=\"ds-primary\">Save expense</button>",
-      "css": ".ds-primary{background:var(--accent,#2468e8);color:#fff;border:1px solid var(--accent,#2468e8);border-radius:14px;min-height:48px;padding:12px 18px;font:600 15px system-ui}.ds-primary:hover{filter:brightness(.96)}.ds-primary:focus-visible{outline:2px solid var(--accent,#2468e8);outline-offset:3px}"
+      "css": ".ds-primary{background:var(--primary,#15161a);color:var(--primary-ink,#fff);border:0;border-radius:999px;min-height:50px;padding:12px 22px;font:600 15px Geist,system-ui}.ds-primary:focus-visible{outline:2px solid var(--focus,#17785a);outline-offset:2px}"
     },
     {
       "name": "Secondary button",
       "kind": "button",
       "html": "<button class=\"ds-secondary\">Keep editing</button>",
-      "css": ".ds-secondary{background:var(--surface,#fff);color:var(--ink,#18243a);border:1px solid var(--line,#e2e9f3);border-radius:14px;min-height:46px;padding:12px 16px;font:14px system-ui}.ds-secondary:hover{filter:brightness(.96)}.ds-secondary:focus-visible{outline:2px solid var(--accent,#2468e8);outline-offset:3px}"
+      "css": ".ds-secondary{background:var(--surface,#fff);color:var(--ink,#15161a);border:1px solid var(--line,#e4e2db);border-radius:999px;min-height:50px;padding:12px 22px;font:600 15px Geist,system-ui}"
     },
     {
       "name": "Text field",
       "kind": "input",
-      "html": "<label class=\"ds-field\">Sheet name<input placeholder=\"September expenses\"></label>",
-      "css": ".ds-field{display:grid;gap:7px;font:13px system-ui;color:var(--ink,#18243a)}.ds-field input{font:16px system-ui;padding:12px;background:var(--input,#f4f7fc);color:inherit;border:1px solid var(--line,#e2e9f3);border-radius:12px}.ds-field input:focus{outline:2px solid var(--accent,#2468e8);outline-offset:2px}"
+      "html": "<label class=\"ds-field\">Sheet name<input placeholder=\"October expenses\"></label>",
+      "css": ".ds-field{display:grid;gap:8px;font:500 14px Geist,system-ui;color:var(--ink-2,#52565e)}.ds-field input{font:16px Geist,system-ui;min-height:50px;padding:12px 14px;background:var(--input,#f6f5f1);color:var(--ink,#15161a);border:1px solid var(--line,#e4e2db);border-radius:14px}.ds-field input:focus{outline:0;border-color:var(--accent,#17785a);box-shadow:0 0 0 3px #17785a2e}"
     },
     {
       "name": "Content surface",
       "kind": "card",
       "html": "<section class=\"ds-surface\">Your household journal</section>",
-      "css": ".ds-surface{padding:20px;background:var(--surface,#fff);color:var(--ink,#18243a);border:1px solid var(--card-border,#e2e9f3);border-radius:22px;font:15px system-ui}"
+      "css": ".ds-surface{padding:20px;background:var(--surface,#fff);color:var(--ink,#15161a);border:1px solid var(--line-soft,#ecebe6);border-radius:28px;box-shadow:0 1px 2px #15161a0a,0 1px 3px #15161a08;font:15px Geist,system-ui}"
     },
     {
-      "name": "Glass navigation",
+      "name": "Couple chip",
+      "kind": "badge",
+      "html": "<span class=\"ds-couple\"><i>S</i><i>S</i></span>",
+      "css": ".ds-couple{display:inline-flex}.ds-couple i{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#5d5cdc;color:#fff;font:650 12px Geist,system-ui;font-style:normal;box-shadow:0 0 0 2px #fff}.ds-couple i+i{margin-left:-9px;background:#8f8ee6}"
+    },
+    {
+      "name": "Dock",
       "kind": "nav",
       "html": "<nav class=\"ds-nav\"><button aria-current=\"page\">Home</button><button>Sheets</button><button>Settle</button><button>Settings</button></nav>",
-      "css": ".ds-nav{display:grid;grid-template-columns:repeat(4,1fr);padding:4px;height:64px;border-radius:999px;background:linear-gradient(155deg,#ffffffb8,#ffffff70 55%,#ffffffa0);border:1px solid #ffffffd9;backdrop-filter:blur(22px) saturate(1.7);box-shadow:0 8px 30px #18263720}.ds-nav button{border:0;border-radius:999px;background:transparent;color:#606670;font:600 11px system-ui;min-width:44px;min-height:44px}.ds-nav button[aria-current]{background:#e8f0ff;color:#2468e8}.ds-nav button:hover{filter:brightness(.93)}.ds-nav button:focus-visible{outline:2px solid #2468e8;outline-offset:2px}"
+      "css": ".ds-nav{display:grid;grid-template-columns:repeat(4,1fr);padding:6px;height:68px;border-radius:26px;background:#ffffffcc;border:1px solid #15161a12;backdrop-filter:blur(24px) saturate(1.8);box-shadow:0 2px 8px #15161a0f,0 16px 40px #15161a24}.ds-nav button{border:0;border-radius:20px;background:transparent;color:#8a8d95;font:550 11px Geist,system-ui;min-height:44px}.ds-nav button[aria-current]{background:#ecebe5;color:#15161a}"
     }
   ],
   "narrative": {
-    "overview": "A calm household journal. Compact content, legible monetary amounts, familiar iPhone controls, and floating translucent navigation.",
+    "overview": "A warm, ink-on-paper household ledger. Each couple owns a colour that marks people everywhere; green and amber describe money; one strong surface per screen.",
     "keyCharacteristics": [
-      "Compact journal",
-      "White and blue identity",
-      "Glass navigation",
+      "Ink on warm paper",
+      "Couple identity colours",
+      "Amounts set in parts",
+      "Native bottom sheets and dock",
       "Light and dark themes"
     ]
   }

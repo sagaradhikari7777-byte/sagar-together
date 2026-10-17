@@ -17,7 +17,7 @@ Do not add features unless they materially improve one of those jobs.
 - **Sheets** — Open by default, with Open / Archived views and an outstanding-only checkbox.
 - **Add** — focused modal expense entry. It is not a fifth navigable page while open.
 - **Settle** — overall and per-sheet balances, sheet payment recording, summary, payment history with corrections, then spending.
-- **Settings** — household identity, invitations/access, entry defaults, direct merchant/category management and export. Theme is controlled by the header icon.
+- **Settings** — household identity, invitations/access, entry defaults, direct merchant/category management and export. Theme follows the device until the header icon saves a choice.
 
 Avoid duplicate controls across these destinations.
 

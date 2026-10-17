@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 
 const app=readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
-const addExpenseCss=readFileSync(new URL('../public/add-expense-polish.css',import.meta.url),'utf8');
-const themeCss=readFileSync(new URL('../public/style.css',import.meta.url),'utf8')+readFileSync(new URL('../public/theme.css',import.meta.url),'utf8');
-const homeCss=readFileSync(new URL('../public/home-recent.css',import.meta.url),'utf8');
+const addExpenseCss=readFileSync(new URL('../public/entry.css',import.meta.url),'utf8');
+const themeCss=readFileSync(new URL('../public/foundation.css',import.meta.url),'utf8')+readFileSync(new URL('../public/screens.css',import.meta.url),'utf8');
+const homeCss=readFileSync(new URL('../public/home.css',import.meta.url),'utf8');
+const indexHtml=readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
 const vercel=JSON.parse(readFileSync(new URL('../vercel.json',import.meta.url),'utf8'));
 
 test('critical UI action targets are defined',()=>{
@@ -80,7 +81,7 @@ test('Add Expense optional details keep receipt before the final Save',()=>{
  const save=app.indexOf('class="ref-expense-submit-card"',options);
  assert.ok(options>=0&&receipt>options&&save>receipt);
  assert.match(addExpenseCss,/#expense-form > section\s*\{[\s\S]*position:static!important;[\s\S]*height:auto!important;[\s\S]*overflow:visible!important/);
- assert.match(addExpenseCss,/ref-remove-receipt\[hidden\][\s\S]*display:none!important/);
+ assert.match(addExpenseCss,/ref-remove-receipt\[hidden\][\s\S]*display:\s*none\s*!important/);
 });
 
 test('Expense picker selection mode hides catalog maintenance controls',()=>{
@@ -92,12 +93,18 @@ test('Vercel blocks production deployment when unit tests fail',()=>{
  assert.equal(vercel.buildCommand,'npm test && npm run build');
 });
 
-
-
-test('premium design foundation stays consistent and respects reduced motion',()=>{
- assert.match(themeCss,/--ui-card-radius:19px/);
- assert.match(themeCss,/--ui-card-shadow:/);
+test('design system tokens, couple identity and motion preferences stay defined',()=>{
+ for(const token of ['--paper','--surface','--ink','--accent','--couple-a','--couple-b','--r-lg','--shadow-1'])assert.match(themeCss,new RegExp(token+':'),token+' token');
+ assert.match(themeCss,/:root\[data-theme=dark\]/);
  assert.match(themeCss,/#sheet\.saving \.dialog-head::after/);
- assert.match(themeCss,/@media\(prefers-reduced-motion:reduce\)/);
- assert.match(homeCss,/HOME PERIOD PULSE/);
+ assert.match(themeCss,/@media \(prefers-reduced-motion: reduce\)/);
+ assert.match(homeCss,/\.period-ribbon/);
+ assert.match(app,/function balanceFlow\(/);
+});
+
+test('stylesheets load once, in cascade-layer order, with a shared cache version',()=>{
+ const sheets=[...indexHtml.matchAll(/<link rel="stylesheet" href="\/([a-z-]+\.css)\?v=([^"]+)"/g)];
+ assert.deepEqual(sheets.map(m=>m[1]),['foundation.css','screens.css','home.css','entry.css']);
+ assert.equal(new Set(sheets.map(m=>m[2])).size,1);
+ assert.ok(indexHtml.includes('/app.js?v='+sheets[0][2]),'app.js shares the stylesheet cache version');
 });

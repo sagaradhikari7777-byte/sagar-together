@@ -90,7 +90,7 @@ async function layout(page,label){
     await page.locator('[name="amount"]').fill('123.45');
     await page.locator('[name="payer"]').selectOption('2');
     await page.locator('[name="split"]').selectOption('b');
-    assert.match(await page.locator('#split-preview').innerText(),/Nabin & Sujata: \$123\.45/);
+    assert.match(await page.locator('#split-preview').innerText(),/Nabin & Sujata\s*\$123\.45/);
     await page.locator('[name="notes"]').fill('Layout QA receipt expense');
     await page.locator('#receipt-file').dispatchEvent('cancel');
     assert.equal(await page.locator('#expense-form').isVisible(),true,'cancelling receipt picker must keep Add Expense open');
@@ -128,7 +128,7 @@ async function layout(page,label){
     await added.click();
     assert.equal(await page.locator('[name="notes"]').inputValue(),'Edited QA note');
     await page.locator('[name="notes"]').fill('Unsaved');
-    await page.locator('[data-modal-back]').click();
+    await page.locator('#sheet [data-close]').click();
     await page.locator('.discard-prompt').waitFor();
     await layout(page,name+' unsaved discard prompt');
     await page.locator('[data-keep]').click();

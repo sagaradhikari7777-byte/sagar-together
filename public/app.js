@@ -11,10 +11,8 @@ import {householdExpense,canManageExpenseAs} from './expense-policy.js';
 import {catalogValues,changeCatalog} from './catalog.js';
 import {filterExpenses,repeatPreset} from './journal.js';
 import {bindAmountCalculator} from './amount-calculator.js';
+import {icon} from './icons.js';
 const $=s=>document.querySelector(s), app=$('#app'), sheet=$('#sheet');
-const paths={wifi:'M3 8a14 14 0 0 1 18 0M6 12a9 9 0 0 1 12 0M9 16a4 4 0 0 1 6 0M12 20h.01',gift:'M3 8h18v5H3ZM5 13v8h14v-8M12 8v13M12 8C3 8 5 0 9 3l3 5ZM12 8c9 0 7-8 3-5l-3 5Z',movie:'M3 9h18v12H3ZM3 9 2 4l18-3 1 5ZM7 3l3 4m4-5 3 4',tag:'M3 3h8l10 10-8 8L3 11ZM7 7h.01',edit:'m15 4 5 5M4 20l4-1L21 6l-4-4L4 15Z',pin:'m8 3 8 0-1 7 3 4H6l3-4ZM12 14v8',archive:'M3 3h18v5H3ZM5 8v13h14V8M9 12h6',trash:'M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7m4-7v7',store:'M3 10h18L19 3H5ZM5 10v11h14V10M9 21v-7h6v7',home:'M3 10 12 3l9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z',list:'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',settle:'M19 6v5h-5M5 18v-5h5M6.2 8A7 7 0 0 1 18.8 6M5.2 18A7 7 0 0 0 17.8 16M12 5v14M15.5 8c-.8-1-2-1.5-3.5-1.5-2.1 0-3.5 1-3.5 2.5 0 1.7 1.5 2.3 3.6 2.7 2.1.4 3.4 1 3.4 2.8 0 1.6-1.4 2.8-3.5 2.8-1.6 0-2.9-.5-3.8-1.5',settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2',plus:'M12 5v14M5 12h14',close:'m6 6 12 12M6 18 18 6',food:'M4 3v6q0 3 3 3V3m0 9v9M18 3q-5 5 0 10v8M18 3v10',groceries:'m3 4 2 0 3 12h11l2-8H6M9 21h.01M18 21h.01',bills:'m13 2-9 12h7l-1 8 10-12h-7Z',travel:'M3 16h18M5 16l1-8h12l2 8M7 20v-4m10 4v-4M8 12h.01M16 12h.01',other:'M4 5h16v15H4zM8 2v6m8-6v6M4 10h16',check:'m5 12 4 4L19 6',lock:'M5 10h14v11H5zM8 10V6a4 4 0 0 1 8 0v4',folder:'M3 6V4h7l3 3h8v13H3Z',arrow:'M5 12h14m-5-5 5 5-5 5',refresh:'M20 7v5h-5M4 17v-5h5M5 7a8 8 0 0 1 13-2l2 3M4 16l2 3a8 8 0 0 0 13-2',receipt:'M5 3h14v18l-3-2-4 2-4-2-3 2ZM8 7h8M8 11h8M8 15h4',moon:'M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10'};
-Object.assign(paths,{calendar:'M6 2v3m12-3v3M3 8h18M5 4h14a2 2 0 0 1 2 2v15H3V6a2 2 0 0 1 2-2ZM7 12h.01M12 12h.01M17 12h.01M7 16h.01M12 16h.01M17 16h.01',user:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 21a8 8 0 0 1 16 0',search:'m21 21-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',people:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M13 3a4 4 0 0 1 0 8M22 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0',chevron:'m9 5 7 7-7 7',settings:'M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1ZM16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0',chart:'M4 20V10m6 10V4m6 16v-7m5 7H2',copy:'M8 8h13v13H8ZM16 8V3H3v13h5',calculator:'M5 2h14v20H5ZM8 6h8M8 11h1m6 0h1m-8 4h1m6 0h1m-8 4h1m6 0h1',filter:'M3 5h18M6 12h12M10 19h4',sun:'M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42M18.36 5.64l-1.42 1.42M7.06 16.94l-1.42 1.42M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0',dots:'M5 12h.01M12 12h.01M19 12h.01'});
-const icon=n=>`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[n]||paths.other}"/></svg>`;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=c=>new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD'}).format(c/100);
 const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
@@ -24,12 +22,12 @@ const recurringDialog=()=>bills.list(),recurringHomeCard=()=>bills.homeCard();
 const catIcon=c=>/grocer/i.test(c)?'groceries':/dining|food|coffee/i.test(c)?'food':/bill|rent/i.test(c)?'bills':/transport|travel/i.test(c)?'travel':'other';
 const viewScroll=new Map(), navigationTrail=createNavigationTrail();
 let navigationOwner='', modalTrail=[];
-const backIcon=()=>'<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8"/></svg>';
+const backIcon=()=>icon('back');
 function backOneModal(){
  if(busy)return;
  const previous=modalTrail.pop();
  if(!previous){sheet.close();return;}
- sheet.replaceChildren(...previous.nodes);sheet.oncancel=previous.cancel;sheet.scrollTop=previous.scroll;
+ sheet.replaceChildren(...previous.nodes);sheet.oncancel=previous.cancel;sheet.scrollTop=previous.scroll;sheet.dataset.depth=modalTrail.length;
  syncOverlayLayers();
  (sheet.querySelector('#dialog-title')||sheet.querySelector('button'))?.focus({preventScroll:true});
 }
@@ -72,11 +70,19 @@ document.body.classList.toggle('theme-dark',document.documentElement.dataset.the
 function syncThemeColor(){
  const dark=document.body.classList.contains('theme-dark');
  document.documentElement.dataset.theme=dark?'dark':'light';
- document.querySelector('meta[name=theme-color]').content=dark?'#0d1421':'#f4f7fc';
+ document.querySelector('meta[name=theme-color]').content=dark?'#101114':'#f5f4ef';
 }
 syncThemeColor();
 const initials=n=>n.split(' ').map(x=>x[0]).join('').slice(0,2);
 const couple=g=>data.names.slice(g==='a'?0:2,g==='a'?2:4).join(' & ');
+const coupleMembers=g=>data.names.slice(g==='a'?0:2,g==='a'?2:4);
+// Large figures de-emphasise the currency symbol and cents; screen readers get the plain amount.
+function amountHTML(cents){const text=money(cents),[whole,dec='00']=text.replace('$','').split('.');return `<span class="amt"><span class="sr-only">${text}</span><span aria-hidden="true"><span class="amt-cur">$</span>${whole}<span class="amt-dec">.${dec}</span></span></span>`;}
+// Each couple keeps one identity colour everywhere: avatars, split bars and payment flow.
+function chip(g,members){return `<span class="couple-chip couple-${g}"><span class="avatar-stack">${members.map(n=>`<i>${esc(initials(n))}</i>`).join('')}</span><span class="couple-chip-name">${esc(members.join(' & '))}</span></span>`;}
+const coupleChip=g=>chip(g,coupleMembers(g));
+function balanceFlow(from,to,settled){return `<div class="balance-flow${settled?' is-settled':''}" aria-hidden="true">${coupleChip(from)}<span class="flow-line"><i></i>${icon(settled?'check':'arrow')}</span>${coupleChip(to)}</div>`;}
+const coupleDot=seat=>`<i class="dot couple-${group(seat)}" aria-hidden="true"></i>`;
 function splitOptions(selected){return [['half','50 / 50'],['a',couple('a')+' · 100%'],['b',couple('b')+' · 100%']].map(([value,label])=>`<option value="${value}" ${value===selected?'selected':''}>${esc(label)}</option>`).join('');}
 function expenseShareLabel(e){
  const label=e.split==='half'?'50 / 50':couple(e.split)+' · 100%';
@@ -92,6 +98,7 @@ function toast(t){$('#toast').textContent=t;$('#toast').classList.add('show');cl
 function modal(title,body){
  if(sheet.open&&sheet.querySelector('#dialog-title')?.textContent!==title){modalTrail.push({nodes:[...sheet.childNodes],cancel:sheet.oncancel,scroll:sheet.scrollTop});}
  if(!sheet.open)modalTrail=[];
+ sheet.dataset.depth=modalTrail.length;
  sheet.innerHTML=`<div class="dialog-head"><button type="button" class="back-button" data-modal-back aria-label="Go back">${backIcon()}</button><h2 id="dialog-title" tabindex="-1">${esc(title)}</h2><button type="button" class="icon-button" data-close aria-label="Close">${icon('close')}</button></div>${body}`;
  sheet.querySelector('[data-modal-back]').onclick=backOneModal;
  sheet.oncancel=ev=>{if(ev.target!==sheet)return;ev.preventDefault();sheet.querySelector('[data-modal-back]').click();};
@@ -120,8 +127,7 @@ function settleName(){return settleAll?'All open sheets':currentName();}
 function scope(){return data.expenses.filter(e=>!activeSheet||e.sheet===activeSheet);}
 function currentName(){return data.sheets.find(s=>s.id===activeSheet)?.name||'All sheets';}
 function header(){
- const inner=isInnerPage();
- return `<header class="re-top"><div class="re-top-left">${inner?`<button type="button" class="re-glass-circle back-button" data-action="back" aria-label="Go back">${backIcon()}</button><div class="re-inner-label"><small>SHEET</small><strong>${esc(currentName())}</strong></div>`:`<button type="button" class="re-house" data-tab="home" aria-label="Open home"><span class="re-house-mark"><img src="/icon.svg" alt=""></span><span><small>Household</small><strong>${esc(data.name)}</strong></span>${icon('chevron')}</button>`}</div><button class="re-profile" data-action="settings" aria-label="${demo?'Demo user':'Signed in as'} ${esc(data.names[data.seat])}. Open settings"><span>${esc(initials(data.names[data.seat]))}</span></button></header>${demo?'<div class="re-demo">Sample household <button class="text-button" data-action="exit-demo">Make it yours</button></div>':''}`;
+ return demo?'<div class="re-demo"><span>Sample household · not saved</span><button class="text-button" data-action="exit-demo">Make it yours</button></div>':'';
 }
 function themeButton(){
  const dark=document.body.classList.contains('theme-dark');
@@ -140,17 +146,17 @@ function nav(){
 function selectSheet(){return `<select aria-label="Expense sheet" id="sheet-select">${data.sheets.map(s=>`<option value="${s.id}" ${s.id===activeSheet?'selected':''}>${esc(s.name)}${s.archived?' · Archived':''}</option>`).join('')}</select>`;}
 function expenseRows(items){
  if(!items.length)return `<div class="liquid-empty"><span class="liquid-empty-icon">${icon('receipt')}</span><h3>No expenses here yet</h3><p>Add your first expense and Together will work out the share.</p><button class="primary" data-action="add">${icon('plus')} Add expense</button></div>`;
- return `<div class="liquid-expense-list">${items.map(e=>`<div class="expense-row" data-swipe-expense="${e.id}">${canManageExpense(e)?`<div class="expense-swipe-action expense-swipe-left" aria-hidden="true"><button type="button" tabindex="-1" data-expense-edit="${e.id}" aria-label="Edit ${esc(e.merchant)} expense" ${data.sheets.find(s=>s.id===e.sheet)?.archived?'disabled':''}>${icon('edit')}</button></div><div class="expense-swipe-action expense-swipe-right" aria-hidden="true"><button type="button" tabindex="-1" data-expense-delete="${e.id}" aria-label="Delete ${esc(e.merchant)} expense">${icon('trash')}</button></div>`:''}<div class="expense-front"><button class="expense liquid-expense" data-expense="${e.id}"><span class="liquid-category ${catIcon(e.category)}">${icon(catIcon(e.category))}</span><span class="expense-info"><strong>${esc(e.merchant)}</strong><span>${esc(data.names[e.payer])} · ${esc(new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}))}${e.receipt?' · Receipt':''}</span><span class="expense-share">${esc(expenseShareLabel(e))}</span></span><span class="expense-total"><strong>${money(e.cents)}</strong><small>${e.settlement?'Settled':'Shared'}</small></span></button><button type="button" class="expense-more" data-expense-options="${e.id}" aria-label="Actions for ${esc(e.merchant)} expense" aria-haspopup="dialog">•••</button></div></div>`).join('')}</div>`;
+ return `<div class="liquid-expense-list">${items.map(e=>`<div class="expense-row" data-swipe-expense="${e.id}">${canManageExpense(e)?`<div class="expense-swipe-action expense-swipe-left" aria-hidden="true"><button type="button" tabindex="-1" data-expense-edit="${e.id}" aria-label="Edit ${esc(e.merchant)} expense" ${data.sheets.find(s=>s.id===e.sheet)?.archived?'disabled':''}>${icon('edit')}</button></div><div class="expense-swipe-action expense-swipe-right" aria-hidden="true"><button type="button" tabindex="-1" data-expense-delete="${e.id}" aria-label="Delete ${esc(e.merchant)} expense">${icon('trash')}</button></div>`:''}<div class="expense-front"><button class="expense liquid-expense" data-expense="${e.id}"><span class="liquid-category ${catIcon(e.category)}">${icon(catIcon(e.category))}</span><span class="expense-info"><strong>${esc(e.merchant)}</strong><span>${coupleDot(e.payer)}${esc(data.names[e.payer])} · ${esc(new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'}))}${e.receipt?' · Receipt':''}</span><span class="expense-share">${esc(expenseShareLabel(e))}</span></span><span class="expense-total"><strong>${money(e.cents)}</strong><small>${e.settlement?'Settled':'Shared'}</small></span></button><button type="button" class="expense-more" data-expense-options="${e.id}" aria-label="Actions for ${esc(e.merchant)} expense" aria-haspopup="dialog">•••</button></div></div>`).join('')}</div>`;
 }
 function homeRecentTransactions(){
  const recent=data.expenses.map((expense,index)=>({expense,index,added:Date.parse(expense.created)||0})).sort((a,b)=>b.added-a.added||a.index-b.index).slice(0,5);
- return `<section class="home-recent-card" aria-labelledby="home-recent-title"><div class="home-recent-heading"><h2 id="home-recent-title">Recent transactions</h2><span>${recent.length?'Latest '+recent.length:'Activity'}</span></div>${recent.length?`<div class="home-recent-list">${recent.map(({expense:e})=>{
+ return `<section class="home-recent-card" aria-labelledby="home-recent-title"><div class="home-recent-heading"><h2 id="home-recent-title">Recent transactions</h2>${recent.length?'<button type="button" class="text-button" data-action="home-search">See all</button>':''}</div>${recent.length?`<div class="home-recent-list">${recent.map(({expense:e})=>{
   const sheetName=data.sheets.find(s=>s.id===e.sheet)?.name||'Expense sheet';
   const dateLabel=new Date(e.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'});
   const authorLabel=Number.isInteger(e.creator)?'Added by '+expenseAuthor(e):expenseAuthor(e);
   const categoryLabel=e.category||'Other';
   const rowLabel=`${e.merchant}, ${money(e.cents)}, ${authorLabel}, ${categoryLabel}, ${dateLabel}, ${sheetName}`;
-  return `<button type="button" class="home-recent-row" data-expense="${esc(e.id)}" aria-label="${esc(rowLabel)}"><span class="re-cat ${catIcon(e.category)}" title="${esc(categoryLabel)}" aria-hidden="true">${icon(catIcon(e.category))}</span><span class="home-recent-copy"><span class="home-recent-main"><strong class="home-recent-merchant" title="${esc(e.merchant)}">${esc(e.merchant)}</strong><strong class="home-recent-amount">${money(e.cents)}</strong></span><span class="home-recent-meta"><span class="home-recent-author">${esc(authorLabel)}</span><time datetime="${esc(e.date)}">${esc(dateLabel)}</time></span><span class="home-recent-sheet" title="${esc(sheetName)}">${icon('folder')}<span>${esc(sheetName)}</span></span></span></button>`;
+  return `<button type="button" class="home-recent-row" data-expense="${esc(e.id)}" aria-label="${esc(rowLabel)}"><span class="re-cat ${catIcon(e.category)}" title="${esc(categoryLabel)}" aria-hidden="true">${icon(catIcon(e.category))}</span><span class="home-recent-copy"><span class="home-recent-main"><strong class="home-recent-merchant" title="${esc(e.merchant)}">${esc(e.merchant)}</strong><strong class="home-recent-amount">${money(e.cents)}</strong></span><span class="home-recent-meta"><span class="home-recent-author">${Number.isInteger(e.creator)?coupleDot(e.creator):''}${esc(authorLabel)}</span><time datetime="${esc(e.date)}">${esc(dateLabel)}</time></span><span class="home-recent-sheet" title="${esc(sheetName)}">${icon('folder')}<span>${esc(sheetName)}</span></span></span></button>`;
  }).join('')}</div>`:`<div class="home-recent-empty">${icon('receipt')}<strong>No transactions yet</strong><p>Your latest expenses and who added them will appear here.</p><button type="button" class="secondary" data-action="add">Add an expense</button></div>`}</section>`;
 }
 function homeSpendingPulse(){
@@ -160,24 +166,34 @@ function homeSpendingPulse(){
  const insight=periodInsight(data.sheets,data.expenses,current,today());
  const entries=data.expenses.filter(e=>e.sheet===current.id),total=entries.reduce((sum,e)=>sum+e.cents,0);
  const totals=new Map();entries.forEach(e=>totals.set(e.category,(totals.get(e.category)||0)+e.cents));
- const top=[...totals.entries()].sort((a,b)=>b[1]-a[1])[0];
- const comparison=insight?.delta!=null?`${insight.delta>0?'+':''}${insight.delta}% on matched dates`:`${insight?.count??entries.length} expenses in this period`;
+ const ranked=[...totals.entries()].sort((a,b)=>b[1]-a[1]),rest=ranked.slice(4).reduce((sum,[,cents])=>sum+cents,0);
+ const segments=[...ranked.slice(0,4).map(([name,cents])=>({name,cents,tone:catalogIcon(name)})),...(rest?[{name:'Other',cents:rest,tone:'other'}]:[])];
+ const pct=cents=>Math.round(cents/total*100);
+ const comparison=insight?.delta!=null?`${insight.delta>0?'+':''}${insight.delta}% on matched dates`:`${insight?.count??entries.length} expense${(insight?.count??entries.length)===1?'':'s'} in this period`;
  const range=(from,to)=>new Date(from+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'})+'–'+new Date(to+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short'});
  const explanation=insight?.previous?`<details class="period-comparison-details"><summary>How this compares ${icon('chevron')}</summary><p class="period-comparison">Same ${insight.days} days: ${esc(range(current.start,insight.currentEnd))} (${money(insight.total)}) vs ${esc(insight.previous.name)}, ${esc(range(insight.previous.start,insight.previousEnd))} (${money(insight.previousTotal)}).${insight.previousTotal===0?' No earlier spending to compare.':insight.changed?.delta?` ${esc(insight.changed.category)} ${insight.changed.delta>0?'increased':'decreased'} by ${money(Math.abs(insight.changed.delta))}.`:''}</p></details>`:'';
+ const breakdown=total?`<div class="period-ribbon" role="img" aria-label="${esc(segments.map(s=>`${s.name} ${pct(s.cents)}%`).join(', '))}">${segments.map(s=>`<i class="${s.tone}" style="--w:${(s.cents/total*100).toFixed(2)}%"></i>`).join('')}</div><ul class="period-legend">${segments.slice(0,3).map(s=>`<li><i class="${s.tone}" aria-hidden="true"></i><span>${esc(s.name)}</span><b>${money(s.cents)}</b></li>`).join('')}</ul>`:`<p class="period-empty">${icon('sparkles')} Add an expense to see where this period’s money goes.</p>`;
  return `<section class="home-period-card" aria-label="Current period spending">
   <div class="home-period-head"><div><small>This period</small><h2>${esc(current.name)}</h2></div><button type="button" data-view-sheet="${esc(current.id)}" aria-label="Open ${esc(current.name)}">${icon('chevron')}</button></div>
-  <div class="home-period-columns"><div class="home-period-main"><strong>${money(total)}</strong><span>${esc(comparison)}</span></div><div class="home-period-detail"><span class="re-cat ${top?catIcon(top[0]):'other'}">${icon(top?catIcon(top[0]):'chart')}</span><div><small>${top?'Top category':'Get started'}</small><strong>${top?esc(top[0]):'No spending yet'}</strong><p>${top?money(top[1]):'Add your first expense'}</p></div></div></div>${explanation}
+  <div class="home-period-main"><strong>${amountHTML(total)}</strong><span>${esc(comparison)}</span></div>
+  ${breakdown}${explanation}
  </section>`;
 }
 function home(){
- const o=householdOverview(data,group(data.seat)),other=group(data.seat)==='a'?'b':'a';
+ const mine=group(data.seat),o=householdOverview(data,mine),other=mine==='a'?'b':'a';
  const status=o.net===0?'settled':o.net>0?'owe':'owed';
  const direction=o.net===0?(o.rows.length?'Your couples are balanced':'No outstanding expenses'):o.net>0?`You owe ${couple(other)}`:`${couple(other)} owes you`;
- const members=data.names.slice(group(data.seat)==='a'?0:2,group(data.seat)==='a'?2:4);
+ const [from,to]=o.net<0?[other,mine]:[mine,other];
  return `<section class="re-page sp-page sp-home ref-home">
  ${pageHeader('home',data.name||'Together','Hello, '+data.names[data.seat],`<button type="button" class="ref-search" data-action="home-search" aria-label="Search expenses">${icon('search')}</button>`)}
  <div class="ref-home-body">
-  <section class="ref-balance-card ${status}"><div class="ref-balance-head"><span>Your couple’s balance</span><em class="ui-status-pill">${icon(o.net?'settle':'check')}${o.net>0?'To pay':o.net<0?'To receive':'Balanced'}</em></div><strong class="ref-balance-amount">${money(Math.abs(o.net))}</strong><p class="home-balance-direction">${esc(direction)}</p><p class="home-balance-scope">${o.rows.length} outstanding expense${o.rows.length===1?'':'s'} · ${o.sheets.length} open sheet${o.sheets.length===1?'':'s'}</p><div class="home-balance-footer"><div class="home-couple"><span class="home-couple-avatars" aria-hidden="true">${members.map(name=>`<i>${esc(initials(name))}</i>`).join('')}</span><span>${esc(couple(group(data.seat)))}</span></div><button class="home-balance-action" data-action="open-settle">View settlement</button></div></section>
+  <section class="ref-balance-card ${status}" aria-labelledby="balance-label">
+   <div class="ref-balance-head"><span id="balance-label">Your couple’s balance</span><em class="ui-status-pill">${o.net>0?'To pay':o.net<0?'To receive':'Balanced'}</em></div>
+   <strong class="ref-balance-amount">${amountHTML(Math.abs(o.net))}</strong>
+   <p class="home-balance-direction">${esc(direction)}</p>
+   ${balanceFlow(from,to,o.net===0)}
+   <div class="home-balance-footer"><p class="home-balance-scope">${o.rows.length} unsettled · ${o.sheets.length} open sheet${o.sheets.length===1?'':'s'}</p><button class="home-balance-action" data-action="open-settle">Settle up ${icon('arrow')}</button></div>
+  </section>
   ${draftBanner()}
   ${homeSpendingPulse()}
   ${recurringHomeCard()}
@@ -205,7 +221,7 @@ function expenses(){
   <div class="ref-inside-body">
    <section class="ref-inside-summary">
     <div class="ref-inside-summary-head"><span>Sheet spending</span><em>${archived?'Archived':unsettled?unsettled+' unsettled':items.length?'Settled':'No expenses'}</em></div>
-    <strong class="ref-inside-total">${money(total)}</strong><p>Total spending · ${esc(range)}</p><p class="sheet-outstanding">Unsettled spending: ${money(items.filter(e=>!e.settlement).reduce((n,e)=>n+e.cents,0))}</p>
+    <strong class="ref-inside-total">${amountHTML(total)}</strong><p>Total spending · ${esc(range)}</p><p class="sheet-outstanding">Unsettled spending: ${money(items.filter(e=>!e.settlement).reduce((n,e)=>n+e.cents,0))}</p>
     <div class="ref-inside-stats"><span><small>Your total share</small><b>${money(overview.share)}</b></span><span><small>Total you paid</small><b>${money(overview.paid)}</b></span></div>
    </section>
    <div class="ref-inside-filters">${chip('open','Open','amber')}${chip('settled','Settled','green')}<button data-action="filters" class="${count?'has-count':''}">${icon('settings')} Filters${count?` (${count})`:''}</button></div>
@@ -253,7 +269,7 @@ function sheetsView(){
    <div class="swipe-actions left" aria-hidden="true"><button tabindex="-1" data-sheet-edit="${sh.id}">${icon('edit')}</button><button tabindex="-1" class="pin-action" data-sheet-pin="${sh.id}">${icon('pin')}</button></div>
    <div class="swipe-actions right" aria-hidden="true"><button tabindex="-1" data-sheet-archive="${sh.id}">${icon('archive')}</button><button tabindex="-1" class="delete-action" data-sheet-delete="${sh.id}" ${canDeleteSheet(sh.id)?'':'disabled'}>${icon('trash')}</button></div>
    <div class="sheet-front ref-sheet-front"><button class="ref-sheet-open" data-view-sheet="${sh.id}">
-    <span class="ref-sheet-icon">${icon(cardIcon)}</span>
+    <span class="ref-sheet-icon${sh.pinned?' is-pinned':''}">${icon(cardIcon)}</span>
     <span class="ref-sheet-copy"><strong>${esc(sh.name)}</strong><small>${esc(sheetDateRange(sh))}</small></span>
     <span class="ui-sheet-footer"><em class="ui-status-pill ${sh.archived?'is-archived':unsettled?'is-open':'is-balanced'}">${status}</em><span class="ref-sheet-amount"><small>${sh.archived?'Total spent':'Unsettled'}</small><strong>${money(sh.archived?es.reduce((n,e)=>n+e.cents,0):unsettledTotal)}</strong></span></span>
    </button><button class="sheet-more ref-sheet-more" data-sheet-options="${sh.id}" aria-label="Actions for ${esc(sh.name)}">•••</button></div>
@@ -263,8 +279,8 @@ function sheetsView(){
  return `<section class="re-page sp-page ref-sheets">
   ${pageHeader('sheets','Sheets','',`<button type="button" class="ref-sheets-add" data-action="new-sheet" aria-label="Create a new sheet">${icon('plus')}<span>New</span></button>`)}
   <div class="ref-sheets-body">
-   <section class="ref-sheets-summary"><div class="ref-sheets-summary-head"><span><i></i>Unsettled spending</span></div><strong class="ref-sheets-total">${money(unsettledTotal)}</strong><p>${unsettledExpenses.length} expense${unsettledExpenses.length===1?'':'s'} across ${unsettledSheets.length} open sheet${unsettledSheets.length===1?'':'s'} · before splitting</p><div class="ui-summary-stats"><span><small>Your couple’s share</small><b>${money(overview.share)}</b></span><span><small>Your couple paid</small><b>${money(overview.paid)}</b></span></div></section>
-   <div class="sheet-browse-controls"><div class="ref-sheets-filters">${filterChip('open','Open')}${filterChip('archived','Archived')}</div>${sheetFilter==='open'?`<label class="sheet-unsettled-toggle"><input type="checkbox" id="unsettled-only" ${unsettledOnly?'checked':''}>Unsettled only</label>`:''}</div>
+   <section class="ref-sheets-summary"><div class="ref-sheets-summary-head"><span>Unsettled spending</span></div><strong class="ref-sheets-total">${amountHTML(unsettledTotal)}</strong><p>${unsettledExpenses.length} expense${unsettledExpenses.length===1?'':'s'} across ${unsettledSheets.length} open sheet${unsettledSheets.length===1?'':'s'} · before splitting</p><div class="ui-summary-stats"><span><small>${coupleDot(data.seat)}Your couple’s share</small><b>${money(overview.share)}</b></span><span><small>Your couple paid</small><b>${money(overview.paid)}</b></span></div></section>
+   <div class="sheet-browse-controls"><div class="ref-sheets-filters">${filterChip('open','Open')}${filterChip('archived','Archived')}</div>${sheetFilter==='open'?`<label class="sheet-unsettled-toggle"><span>Unsettled only</span><input type="checkbox" role="switch" id="unsettled-only" ${unsettledOnly?'checked':''}></label>`:''}</div>
    <div class="ref-sheets-search">${icon('search')}<input id="sheet-search" type="search" placeholder="Search sheets" aria-label="Search sheets" value="${esc(sheetSearch)}"><button type="button" data-action="clear-sheet-search" aria-label="Clear sheet search" ${sheetSearch?'':'disabled aria-hidden="true"'}>${icon('close')}</button></div>
    <div class="ref-sheets-list">${items.length?items.map(card).join(''):`<div class="ref-sheets-empty"><span>${icon('folder')}</span><strong>${sheetSearch?'No matching sheets':sheetFilter==='archived'?'No archived sheets':'No sheets here'}</strong><p>${sheetSearch?'Try another search.':'Create a sheet to start a new shared period.'}</p>${!sheetSearch&&sheetFilter!=='archived'?'<button class="primary" data-action="new-sheet">Create sheet</button>':''}</div>`}</div>
   </div>
@@ -338,9 +354,9 @@ function settleView(){
   ${pageHeader('settle','Settle','')}
   <div class="ref-settle-body">
    <div class="ref-settle-controls"><label class="ref-settle-sheet"><span>View</span><div>${icon('folder')}<select aria-label="Expense sheet" id="sheet-select"><option value="overall" ${settleAll?'selected':''}>All open sheets</option>${data.sheets.map(s=>`<option value="${esc(s.id)}" ${!settleAll&&s.id===activeSheet?'selected':''}>${esc(s.name)}${s.archived?' · Archived':''}</option>`).join('')}</select></div></label><label class="ref-settle-couple"><span>Share for</span><select id="settle-couple">${['a','b'].map(g=>`<option value="${g}" ${g===selected?'selected':''}>${esc(couple(g))}${g===group(data.seat)?' · yours':''}</option>`).join('')}</select></label></div>
-   <section class="ref-settle-summary ${status}"><div class="ref-settle-summary-head"><span>${settleAll?'OVERALL BALANCE':'REMAINING BALANCE'}</span><em>${statusLabel}</em></div><strong class="ref-settle-amount">${money(Math.abs(o.net))}</strong><p>${o.net===0?(items.length?'These expenses balance; no payment is needed.':'Nothing outstanding.'):`${esc(couple(from))} → ${esc(couple(to))}`}</p><div class="ref-settle-stats"><span><small>Outstanding share</small><b>${money(o.share)}</b></span><span><small>Already paid</small><b>${money(o.paid)}</b></span></div>${!settleAll&&items.length?`<button class="primary settlement-record" data-action="settle">${icon('check')} ${o.net?'Record payment':'Close balanced expenses'}</button><p class="settlement-help">Records a completed payment and locks these ${items.length} expenses.</p>`:''}${settleAll&&outstanding.length>1?'<p class="settlement-help">Choose a sheet below to record payment. Opposite sheet balances can offset.</p>':''}</section>
+   <section class="ref-settle-summary ${status}"><div class="ref-settle-summary-head"><span>${settleAll?'OVERALL BALANCE':'REMAINING BALANCE'}</span><em>${statusLabel}</em></div><strong class="ref-settle-amount">${amountHTML(Math.abs(o.net))}</strong><p>${o.net===0?(items.length?'These expenses balance; no payment is needed.':'Nothing outstanding.'):`${esc(couple(from))} pays ${esc(couple(to))}`}</p>${balanceFlow(o.net===0?selected:from,o.net===0?other:to,o.net===0)}<div class="ref-settle-stats"><span><small>Outstanding share</small><b>${money(o.share)}</b></span><span><small>Already paid</small><b>${money(o.paid)}</b></span></div>${!settleAll&&items.length?`<button class="primary settlement-record" data-action="settle">${icon('check')} ${o.net?'Record payment':'Close balanced expenses'}</button><p class="settlement-help">Records a completed payment and locks these ${items.length} expenses.</p>`:''}${settleAll&&outstanding.length>1?'<p class="settlement-help">Choose a sheet below to record payment. Opposite sheet balances can offset.</p>':''}</section>
    ${settleAll?settlementSheets(selected):`<details class="settle-detail-block" data-ui-details="unsettled-expenses"><summary>${icon('receipt')}<strong>Unsettled expenses</strong><span>${items.length} open</span>${icon('chevron')}</summary><div class="settle-detail-content ref-settle-breakdown">${settlementBreakdown()}</div></details>`}
-   <section class="ref-settle-actions" aria-label="Settlement tools"><button class="ref-settle-tool-card" data-action="settlement-summary">${icon('copy')}<strong>Copy summary</strong></button><button class="ref-settle-tool-card" data-action="settlement-history">${icon('receipt')}<strong>History</strong><small>${history.length}</small></button></section>
+   <section class="ref-settle-actions" aria-label="Settlement tools"><button class="ref-settle-tool-card" data-action="settlement-summary">${icon('copy')}<strong>Copy summary</strong></button><button class="ref-settle-tool-card" data-action="settlement-history">${icon('history')}<strong>History</strong><small>${history.length}</small></button></section>
    <details class="settle-detail-block" data-ui-details="spending-breakdown"><summary>${icon('chart')}<strong>Spending breakdown</strong><span>${money(entries.reduce((sum,e)=>sum+e.cents,0))}</span>${icon('chevron')}</summary><div class="settle-detail-content">${settlementSpendChart()}</div></details>
   </div>
  </section>`;
@@ -384,11 +400,11 @@ function settings(){
  return `<section class="re-page sp-page ref-settings">
   ${pageHeader('settings','Settings','')}
   <div class="ref-settings-body">
-   <section class="settings-identity"><span>${esc(initials(data.names[data.seat]))}</span><div><small>Signed in as</small><strong>${esc(data.names[data.seat])}</strong><p>${esc(couple(group(data.seat)))} · ${esc(data.name)}</p></div></section>
-   <div class="ref-settings-section-head"><h2>Household</h2></div><section class="ref-settings-group">${row('settings-household','people','Household & names','Members, couples and household name')}${row('invite','plus','Invite members','Share access safely')}${row('access','lock','Private access link','Your personal sign-in link')}</section>
-   <div class="ref-settings-section-head"><h2>Preferences</h2></div><section class="ref-settings-group">${row('recurring-bills','calendar','Recurring bills','Due dates and reminders on Home')}${row('entry-preferences','settings','Expense preferences','Defaults for faster entry')}</section>
-   <div class="settings-catalogs"><button type="button" data-action="merchants">${icon('store')}<strong>Merchants</strong></button><button type="button" data-action="categories">${icon('tag')}<strong>Categories</strong></button></div><button type="button" class="text-button settings-export" data-action="export">${icon('receipt')} Export all expenses</button>
-   <button class="ref-settings-signout" data-action="signout">${icon('arrow')}<span>${demo?'Leave demo':'Sign out'}</span></button>
+   <section class="settings-identity couple-${group(data.seat)}"><span>${esc(initials(data.names[data.seat]))}</span><div><small>Signed in as</small><strong>${esc(data.names[data.seat])}</strong><p>${esc(couple(group(data.seat)))} · ${esc(data.name)}</p></div></section>
+   <div class="ref-settings-section-head"><h2>Household</h2></div><section class="ref-settings-group">${row('settings-household','people','Household & names','Members, couples and household name')}${row('invite','invite','Invite members','Share access safely')}${row('access','key','Private access link','Your personal sign-in link')}</section>
+   <div class="ref-settings-section-head"><h2>Preferences</h2></div><section class="ref-settings-group">${row('recurring-bills','calendar','Recurring bills','Due dates and reminders on Home')}${row('entry-preferences','sparkles','Expense preferences','Defaults for faster entry')}</section>
+   <div class="ref-settings-section-head"><h2>Lists & data</h2></div><div class="settings-catalogs"><button type="button" data-action="merchants"><span class="ref-settings-icon">${icon('store')}</span><strong>Merchants</strong>${icon('chevron')}</button><button type="button" data-action="categories"><span class="ref-settings-icon">${icon('tag')}</span><strong>Categories</strong>${icon('chevron')}</button></div><button type="button" class="text-button settings-export" data-action="export">${icon('download')} Export all expenses</button>
+   <button class="ref-settings-signout" data-action="signout">${icon('logout')}<span>${demo?'Leave demo':'Sign out'}</span></button>
   </div>
  </section>`;
 }
@@ -405,10 +421,13 @@ function springToTab(next,button){
  if(dock&&index!=null&&!reduce){
   dock.dataset.activeIndex=index;
   dock.querySelectorAll('[data-tab]').forEach(el=>{el.classList.toggle('active',el===button);el.toggleAttribute('aria-current',el===button);});
-  window.setTimeout(()=>{tab=next;render();},120);
+  // Record the destination now so a tap during the slide cannot be overridden; draw once.
+  tab=next;const drawn=renders;window.setTimeout(()=>{if(renders===drawn)render();},120);
  }else{tab=next;render();}
 }
+let renders=0;
 function render(){
+ renders++;
  if(!data)return auth();
  if(activeSheet&&!data.sheets.some(s=>s.id===activeSheet))activeSheet=data.sheets.find(s=>!s.archived)?.id||'';
  if(tab==='settle'&&!settleAll&&!activeSheet)activeSheet=data.sheets.find(s=>s.pinned&&!s.archived)?.id||data.sheets.find(s=>!s.archived)?.id||data.sheets[0]?.id||'';
@@ -433,7 +452,22 @@ function action(a,source=null){if(a==='recurring-bills')return recurringDialog()
 }if(a==='new-sheet')newSheet();if(a==='settle')settleDialog();if(a==='invite')inviteDialog();if(a==='access')accessDialog();if(a==='export')exportCSV();if(a==='theme'){document.body.classList.toggle('theme-dark');syncThemeColor();try{localStorage.setItem('together-theme',document.body.classList.contains('theme-dark')?'dark':'light');}catch{}render();}if(a==='exit-demo'){flushExpenseDraft=null;demo=false;data=null;auth();}if(a==='signout'){flushExpenseDraft=null;if(demo){demo=false;data=null;auth();}else confirmDialog('Sign out?', 'Keep your private access link so you can sign in again.',async()=>{credentials=null;data=null;try{localStorage.removeItem('together-access');}catch{}sheet.close();auth();},'Sign out');}}
 function auth(){navigationTrail.reset();navigationOwner='';modalTrail=[];
  viewScroll.clear();app.classList.remove('has-navigation');
- app.innerHTML=`<main class="re-welcome"><div class="re-auth"><div class="re-auth-brand"><img src="/icon.svg" alt=""><strong>together<span>.</span></strong></div><p class="re-eyebrow">MONEY IS BETTER TOGETHER</p><h1>Share the home.<br><span>Skip the maths.</span></h1><p class="re-auth-copy">A calm shared journal for two couples. Add expenses, see everyone’s share and settle without spreadsheets.</p><section class="re-auth-preview"><div class="re-preview-top"><span>${icon('receipt')} Shared today</span><em>Example</em></div><div class="re-preview-row"><span class="re-cat groceries">${icon('groceries')}</span><span><strong>The weekly shop</strong><small>Avery paid</small></span><b>$86.40</b></div><div class="re-preview-row"><span class="re-cat food">${icon('food')}</span><span><strong>Dinner together</strong><small>Jordan paid</small></span><b>$72.00</b></div><div class="re-preview-summary"><span><small>Total</small><strong>$158.40</strong></span><span><small>Your share</small><strong>$79.20</strong></span></div></section><div class="re-auth-points"><span>${icon('plus')} Add it</span><span>${icon('people')} Share it</span><span>${icon('settle')} Settle it</span></div><button id="create-start" class="primary full">Create your household ${icon('arrow')}</button><button id="join-start" class="secondary full">I already have a link</button><button id="demo-start" class="text-button full">Explore a sample household</button><p class="re-auth-foot">Four people · Two couples · One shared journal</p></div></main>`;
+ app.innerHTML=`<main class="re-welcome"><div class="re-auth">
+  <div class="re-auth-brand"><img src="/icon.svg" alt=""><strong>together<span>.</span></strong></div>
+  <p class="re-eyebrow">Money is better together</p>
+  <h1>Share the home.<br><span>Skip the maths.</span></h1>
+  <p class="re-auth-copy">A calm shared journal for two couples. Add expenses, see everyone’s share and settle without spreadsheets.</p>
+  <section class="re-auth-preview" aria-label="Example household">
+   <div class="re-preview-top"><span>Shared this week</span><em>Example</em></div>
+   <div class="re-preview-row"><span class="re-cat groceries">${icon('groceries')}</span><span><strong>The weekly shop</strong><small><i class="dot couple-a" aria-hidden="true"></i>Avery paid</small></span><b>$86.40</b></div>
+   <div class="re-preview-row"><span class="re-cat food">${icon('food')}</span><span><strong>Dinner together</strong><small><i class="dot couple-b" aria-hidden="true"></i>Jordan paid</small></span><b>$72.00</b></div>
+   <div class="re-preview-summary"><span><small>Total</small><strong>$158.40</strong></span><span><small>Your share</small><strong>$79.20</strong></span></div>
+   <div class="re-preview-settle"><div class="balance-flow" aria-hidden="true">${chip('b',['Jordan','Riley'])}<span class="flow-line"><i></i>${icon('arrow')}</span>${chip('a',['Avery','Sam'])}</div><p>Jordan &amp; Riley owe you <strong>$7.20</strong></p></div>
+  </section>
+  <ol class="re-auth-points"><li>${icon('plus')}<span>Add it</span></li><li>${icon('people')}<span>Share it</span></li><li>${icon('settle')}<span>Settle it</span></li></ol>
+  <div class="re-auth-actions"><button id="create-start" class="primary full">Create your household ${icon('arrow')}</button><button id="join-start" class="secondary full">I already have a link</button><button id="demo-start" class="text-button full">Explore a sample household</button></div>
+  <p class="re-auth-foot">Four people · Two couples · One shared journal</p>
+ </div></main>`;
  $('#create-start').onclick=()=>createForm();$('#join-start').onclick=joinForm;$('#demo-start').onclick=startDemo;
 }
 
@@ -533,7 +567,7 @@ function expenseForm(e=null,preset={},resume=null){
  const archived=e&&data.sheets.find(s=>s.id===e.sheet)?.archived;
  const editable=!e||(canManageExpense(e)&&!archived);
  if(!editable){
-  modal(x.merchant,`<div class="amount" style="font-size:38px;font-weight:700">${money(x.cents)}</div><p class="muted">Paid by ${esc(data.names[x.payer])} · ${esc(x.date)}</p><p class="small muted">Added by ${esc(expenseAuthor(x))}</p><div class="glass panel"><p class="small">${esc(x.category)} · ${x.split==='half'?'Split equally':`Assigned to ${esc(couple(x.split))}`}</p><p class="small">${esc(x.notes||'No notes')}</p></div><div id="view-receipt">${receiptPreviewMarkup(x.receipt)}</div><p class="small muted">${x.settlement?'This expense is settled and locked.':archived?'Reopen this sheet before editing the expense.':'Only the person who added this expense can edit or delete it.'}</p>`);
+  modal(x.merchant,`<div class="amount expense-view-amount">${amountHTML(x.cents)}</div><p class="muted">Paid by ${esc(data.names[x.payer])} · ${esc(new Date(x.date+'T12:00:00').toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}))}</p><p class="small muted">Added by ${esc(expenseAuthor(x))}</p><div class="glass panel"><p class="small">${esc(x.category)} · ${x.split==='half'?'Split equally':`Assigned to ${esc(couple(x.split))}`}</p><p class="small">${esc(x.notes||'No notes')}</p></div><div id="view-receipt">${receiptPreviewMarkup(x.receipt)}</div><p class="small muted">${x.settlement?'This expense is settled and locked.':archived?'Reopen this sheet before editing the expense.':'Only the person who added this expense can edit or delete it.'}</p>`);
   const historyButton=document.createElement('button');historyButton.type='button';historyButton.className='secondary';historyButton.textContent='View change history';historyButton.onclick=()=>expenseHistoryDialog(x);sheet.append(historyButton);bindReceiptPreview($('#view-receipt'),x);return;
  }
  if(!resume&&savedDraft())return chooseExpenseDraft(()=>expenseForm(e,preset));
@@ -646,7 +680,8 @@ function expenseForm(e=null,preset={},resume=null){
  if(e)$('#view-expense-history').onclick=()=>expenseHistoryDialog(e);
  const update=()=>{
   const amount=Math.round(Number(f.elements.amount.value)*100)||0,split=f.elements.split.value;
-  $('#split-preview').innerHTML=`<span><small>${esc(couple('a'))}</small><strong>${money(split==='half'?Math.floor(amount/2):split==='a'?amount:0)}</strong></span><span><small>${esc(couple('b'))}</small><strong>${money(split==='half'?amount-Math.floor(amount/2):split==='b'?amount:0)}</strong></span>`;
+  const share=split==='half'?50:split==='a'?100:0;
+  $('#split-preview').innerHTML=`<div class="split-bar" aria-hidden="true"><i class="couple-a" style="--w:${share}%"></i><i class="couple-b" style="--w:${100-share}%"></i></div><span>${coupleDot(0)}<small>${esc(couple('a'))}</small><strong>${money(split==='half'?Math.floor(amount/2):split==='a'?amount:0)}</strong></span><span>${coupleDot(2)}<small>${esc(couple('b'))}</small><strong>${money(split==='half'?amount-Math.floor(amount/2):split==='b'?amount:0)}</strong></span>`;
  };
  let duplicateAccepted='';
  f.oninput=()=>{

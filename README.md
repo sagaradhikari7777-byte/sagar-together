@@ -11,7 +11,7 @@ Canonical repository: `sagaradhikari7777-byte/sagar-together` → `main`
 - **Sheets:** open periods by default; Open / Archived, with an outstanding-only filter.
 - **Add:** merchant, amount with an optional inline calculator, category, date, payer, split, frequent merchant shortcuts, optional note/receipt, reviewed scan suggestions and one Save.
 - **Settle:** an overall balance with sheet balances, then per-sheet payment recording, summary/history and spending.
-- **Settings:** household names, invitations/access, recurring bills, entry defaults, merchants/categories and full CSV export. Theme switching stays in each main screen’s header.
+- **Settings:** household names, invitations/access, recurring bills, entry defaults, merchants/categories and full CSV export. Appearance follows the device until changed with the header toggle.
 - **Journal search:** search merchant, category, payer/creator name, sheet, notes, date or amount; filter by payer, author, receipt presence, category and date. Shown results have an exact couple-share subtotal and their own CSV export.
 
 ## Development
@@ -39,7 +39,8 @@ It uses Playwright when installed and is intended for iPhone-sized layout and ex
 ## Architecture
 
 - `public/app.js` — vanilla JavaScript UI and interaction wiring.
-- `public/*.css` — active screen/component styling.
+- `public/foundation.css`, `screens.css`, `home.css`, `entry.css` — the design system and screen styles, in cascade layers. See `DESIGN.md`.
+- `public/icons.js` — Lucide icon shapes; `public/fonts/` — the self-hosted Geist font. See `THIRD_PARTY_NOTICES.md`.
 - `public/back-navigation.js` — view history and iPhone-style edge back gesture.
 - `public/journal.js` — pure filtering/repeat helpers.
 - `public/amount-calculator.js` — exact decimal arithmetic and an opt-in calculator inside expense entry.

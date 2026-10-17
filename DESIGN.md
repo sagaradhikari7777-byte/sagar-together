@@ -1,73 +1,97 @@
 ---
 name: Together
-description: Compact shared expenses with white surfaces, blue balances and frosted navigation.
+description: A warm, ink-on-paper household ledger where each couple has its own colour.
 colors:
-  primary: "#2468e8"
-  ink: "#18243a"
-  muted: "#65748a"
-  canvas: "#f4f7fc"
+  paper: "#f5f4ef"
   surface: "#ffffff"
-  input: "#f4f7fc"
-  border: "#e2e9f3"
-  dark-canvas: "#0d1421"
-  dark-surface: "#172233"
+  ink: "#15161a"
+  ink-2: "#52565e"
+  ink-3: "#8a8d95"
+  accent: "#17785a"
+  couple-a: "#5d5cdc"
+  couple-b: "#e06c35"
+  caution: "#9a5a07"
+  danger: "#c23b31"
+  dark-paper: "#0f1013"
+  dark-surface: "#1a1b1f"
 typography:
-  body:
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-    fontSize: "16px"
-  input:
-    fontSize: "16px"
+  family: "Geist (self-hosted variable font), system fallback"
+  body: "16px / 1.45"
+  input: "16px minimum"
 rounded:
-  surface: "19px"
-  control: "13px"
-  dialog: "26px"
+  control: "14px"
+  card: "20px"
+  feature: "28px"
+  pill: "999px"
 ---
 
 # Together
 
-An iPhone-first household wallet. Use white and blue, compact rows, readable amounts and a single clear action hierarchy. Reduce containers and repeated labels before reducing font sizes.
+Two couples, one household ledger. The interface reads like quality stationery: warm paper, white cards, near-black ink. Colour carries meaning instead of decoration.
 
-## Composition
+## Principles
 
-- Home: a rich blue balance card with couple identity and settlement access, a compact period snapshot, then the latest five transactions. Recent activity uses one neutral list with inset dividers and category icon tints. Align amounts to the right, give the author a clear line beside the date, and keep sheet context below. Home scrolls as needed.
-- Sheets: one outstanding-spending summary, inline Open/Archived controls and Unsettled only, search, then compact sheet cards with full start/end dates and visible actions.
-- Sheet detail: a back header, sheet totals and couple shares, search/filter controls, and grouped expense rows. Back appears only on nested screens; retain edge swipe.
-- Settle: scope and couple selection, the balance and payment action, then inline expandable sheet balances and spending analysis. Keep history and copy actions available.
-- Settings: unboxed signed-in identity, household and preference rows, direct merchant/category controls, export and sign-out. Theme remains in the top-right header.
+1. **Colour means something.** Indigo is couple A and tangerine is couple B, everywhere people appear: avatars, dots beside names, split bars and the payment flow. Green means interaction, settled or money coming to you. Amber means money you owe or something unfinished. Red is reserved for destructive actions.
+2. **One strong surface per screen.** On Home it is the dark balance card. On Settle it is the balance summary. Everything else stays quiet.
+3. **Numbers first.** Amounts use tabular figures. Large amounts are set in parts: a small currency symbol, bold dollars and lighter cents. Screen readers get the plain amount.
+4. **Native feel.** Use bottom sheets on phones, 44px minimum touch targets, 16px input text so iOS never zooms, swipe actions with visible menu alternatives, and the iPhone edge-back gesture.
+5. **Calm motion.** Use short eased transitions (160–380ms): the dock indicator slides, sheets rise, bars grow once. Everything stops under `prefers-reduced-motion`.
 
-## Type and surfaces
+## Tokens
 
-Use system fonts. Body and editable input text stay at 16px; regular controls and labels are 14px or larger. Use 12–13px for supporting dates, counts and captions. Amounts use tabular numerals. Do not clip essential information.
+Defined once in `foundation.css` on `:root`, with dark values under `:root[data-theme=dark]` and `.theme-dark`:
 
-White content surfaces sit on a cool neutral canvas. Blue is the primary action colour; the Home balance is the strongest surface. Use blue-family category tints with restrained violet for dining. Keep whole-row tints faint. Light and dark modes use the same composition and spacing.
+- **Surfaces:** `--paper` (canvas), `--surface` (cards), `--sunken` (tracks, icon tiles), `--input`, `--dialog`, `--line`, `--line-soft`.
+- **Ink:** `--ink`, `--ink-2` and `--ink-3` set the three levels of emphasis.
+- **Meaning:** `--accent`, `--positive`, `--caution` and `--danger`, each with a `-soft` tint.
+- **Couples:** `--couple-a` and `--couple-b`, each with `-soft` and `-ink` variants. Apply them with the `.couple-a` or `.couple-b` class, which exposes `--couple` to its children.
+- **Hero:** `--hero*` tokens for the dark balance card.
+- **Shape and depth:** radii `--r-sm` (10px), `--r-md` (14px), `--r-lg` (20px), `--r-xl` (28px) and `--r-pill`; shadows `--shadow-1`, `--shadow-2`, `--shadow-float` and `--shadow-hero`. Dark mode drops card shadows in favour of hairlines.
+- **Motion:** `--ease`, `--fast` and `--slow`.
 
-Night mode uses a deep navy canvas, layered graphite surfaces, soft off-white text and muted blue actions. The balance card, dock, dialogs, chart bars and picker selection each have deliberate night colours. Preserve readable contrast without white avatar fills, bright borders or blue glow. Apply the saved theme before the main app renders, and keep the page canvas and browser theme colour in sync.
+Category tiles read `--tone` from their category class (groceries, food, bills, travel, wifi, home, movie, gift or other) and tint themselves with `color-mix`. Every consumer falls back with `var(--tone, …)` so a parent row's tone reaches its icon.
 
-Use blur only on the floating dock and header chrome. Skip refraction filters, decorative art and nested decorative cards. Respect reduced motion and reduced transparency.
+## Type
 
-Header Back actions use one 44px circular glass control with a thin outer border, a bright inner rim and a bold rounded chevron. Share it across sheet details, dialogs and pickers. Keep Back on nested screens and dialogs, with a tinted navy material in night mode and an opaque fallback for reduced transparency.
+The typeface is Geist, a variable font served from `/fonts` (OFL licence) with a system-font fallback.
 
-## Entry and pickers
+| Role | Size | Weight |
+| --- | --- | --- |
+| Hero amount | 52px | 650 |
+| Page title | 30px | 680 |
+| Card amount | 34–46px | 650 |
+| Section heading | 17px | 600 |
+| Body | 16px | 400 |
+| Meta | 13px, ink-3 | 400 |
+| Eyebrow | 12px, uppercase, +0.06em | 600 |
 
-Add Expense is one natural scrolling column: expense details, payment/split, optional note/receipt, then one Save action. Hide the sheet selector when only one open sheet exists. The native receipt input stays hidden. Cancelling the iPhone picker must preserve the open draft.
+## Components
 
-Merchant selection uses compact searchable tiles with initials, frequency and a clear selected state. Categories use compact icon rows. Keep Add and maintenance controls available. Edits do not change historical expenses.
+- **Buttons:** `.primary` is an ink pill (light ink in dark mode). `.secondary` is a surface pill with a hairline. `.danger` uses a red tint. `.text-button` uses the accent colour.
+- **Balance flow:** `balanceFlow(from, to, settled)` in `app.js` shows payer → receiver with stacked avatars and names. The dashed line animates unless the balance is settled.
+- **Segmented controls:** a sunken track holds the options, and the active option is a raised surface.
+- **Lists:** grouped cards with inset hairlines (Settings, recent transactions, expense days).
+- **Dock:** a floating frosted bar with a sliding selection pill. Add is the ink circle in the centre.
+- **Sheets (dialogs):** bottom sheets on phones, with a grabber, a sticky header and keyboard-aware height. At the first level only Close is shown; Back appears on nested steps.
 
-## Interaction and data
+## Screens
 
-Retain creator-only edit/delete, settlement locking and audited reversal, receipt references, draft recovery, private access, member invitations, charts, export, recurring bills and the calculator. Record payment is a confirmation action, not a transfer.
-
-Minimum primary interactive targets remain 44px. Swipe actions retain visible menu alternatives. Keep all input, saving, empty and error states in the normal flow.
-
-Startup uses a centered 64px mark, Together wordmark and quiet loading dots on the theme canvas. Include the loading content in the initial HTML so it appears before the app module loads. Respect reduced motion and open the household as soon as it is ready.
+- **Home:** greeting and household title; the dark balance card (status, amount, direction, flow, Settle up); draft banner; period card with a category ribbon and the top three categories; upcoming bills; recent transactions.
+- **Sheets:** unsettled summary, Open/Archived control with an "Unsettled only" switch, search, then sheet cards. Swiping a card reveals edit/pin and archive/delete.
+- **Sheet detail:** back header, sheet summary, Open/Settled and Filters, search with sort, result count with export, then day-grouped expenses.
+- **Settle:** a grouped scope card (View, Share for), the balance summary with flow and Record payment, balances by sheet, summary/history tools and the spending breakdown.
+- **Settings:** an identity card in the user's couple colour, then the Household, Preferences and "Lists & data" groups, export and sign out.
+- **Welcome:** brand, gradient headline, a live-looking example card with a settle flow, three steps, then the calls to action.
 
 ## Style ownership
 
-Load exactly four CSS files, in this order:
+There are four stylesheets, loaded in this order and organised by cascade layers declared in `foundation.css` (`base, components, screens, entry`):
 
-1. `style.css`: shared tokens, controls, dialogs, onboarding and system feedback.
-2. `theme.css`: dark tokens, main screens, sheet/expense rows, charts and navigation.
-3. `home-recent.css`: Home period snapshot, recent transactions, drafts and reminders.
-4. `add-expense-polish.css`: expense entry, calculator, receipt controls and pickers.
+1. `foundation.css`: font, tokens, base elements, shared components, dialogs, feedback and onboarding.
+2. `screens.css`: shell, headers, Sheets, sheet detail, Settle, Settings and the dock.
+3. `home.css`: balance card, period snapshot, reminders and recent activity.
+4. `entry.css`: expense form, calculator, receipts and pickers.
 
-Update the owning rule. Do not add another override stylesheet. Keep `!important` limited to hidden elements and explicit form-flow guarantees. Cache versions in `index.html` must change with releases.
+Change the rule that owns a style; don't add override files. Keep `!important` to hidden elements and the form-flow guarantees in `entry.css`. Bump the shared `?v=` in `index.html` with every release.
+
+Icons come from Lucide (ISC licence) and are generated into `public/icons.js`. Add new ones there by name.
