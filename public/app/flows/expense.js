@@ -7,7 +7,7 @@ import {repeatPreset} from '../../journal.js';
 import {useStore, getState, save, toast, entryPreferences, savedDraft, clearDraft, draftsChanged, draftStore, currentDraftKey, loadReceipt} from '../store.js';
 import {expenseById, sheetsById, orderedSheets, shortcutMerchants, lastCategory} from '../derive.js';
 import {present, replace, closeSheet, guardClose, back} from '../nav.js';
-import {Sheet, Icon, Amount, Avatar, CategoryGlyph, MerchantMark, Keypad, Pill, Group, Row, Dot, cx} from '../ui.js';
+import {Sheet, Icon, Amount, Avatar, CouplePair, CategoryGlyph, MerchantMark, Keypad, Pill, Group, Row, Dot, cx} from '../ui.js';
 import {deleteExpense} from '../common.js';
 import {operator, centsOf, applyKey, groupThousands, draftAmount} from '../amount-entry.js';
 import {money, today, dayLabel, longDate, shortDate, group, coupleName, firstName, stamp} from '../format.js';
@@ -42,6 +42,8 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
   const [error, setError] = useState(''), [duplicate, setDuplicate] = useState(''), [prompt, setPrompt] = useState(false);
   const [draftNote, setDraftNote] = useState(resume ? 'Recovered draft · check it before saving' : '');
   const [receiptBusy, setReceiptBusy] = useState(false);
+  // The keypad slides up only while the amount is being entered, so every option stays in view.
+  const [keypad, setKeypad] = useState(false);
   const snapshot = (values, r) => JSON.stringify([values, r]);
   const original = useRef(snapshot(initial.values, initial.receipt));
   const latest = useRef({}); latest.current = {v, receipt};
@@ -85,6 +87,7 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
       if (last && catalogValues(data, 'categories').includes(last)) patch.category = last;
     }
     set(patch);
+    if (!latest.current.v.amount) setKeypad(true);
   };
 
   const submit = async () => {
@@ -122,11 +125,24 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
   const title = existing ? 'Edit expense' : preset.repeat ? 'Repeat expense' : 'New expense';
   const sheet = data.sheets.find(s => s.id === v.sheet);
   const aShare = cents ? (v.split === 'half' ? Math.floor(cents / 2) : v.split === 'a' ? cents : 0) : 0;
+  const amountText = isExpr ? (cents === null ? '—' : money(cents).slice(1)) : v.amount ? groupThousands(v.amount) : '0';
+  const openKeypad = () => { setKeypad(true); requestAnimationFrame(() => document.getElementById('amount-entry')?.scrollIntoView({block: 'start', behavior: 'smooth'})); };
+  const role = seat => seat === data.seat ? 'You' : group(seat) === group(data.seat) ? 'Partner' : 'Other couple';
+  const pick = (seat, name) => html`<button type="button" role="radio" aria-checked=${Number(v.payer) === seat} class=${cx('person-pick', 'couple-' + group(seat), Number(v.payer) === seat && 'is-selected')} data-payer=${seat} onClick=${() => set({payer: String(seat)})}>
+      <${Avatar} name=${name} seat=${seat} size="sm"/><span>${firstName(name)}</span><small>${role(seat)}</small>
+    </button>`;
+  const splitOption = (value, top, label, note) => html`<button type="button" role="radio" aria-checked=${v.split === value} class=${cx('split-pick', value !== 'half' && 'couple-' + value, v.split === value && 'is-selected')} data-split=${value} onClick=${() => set({split: value})}>
+      ${top}<span>${label}</span><small>${note}</small>
+    </button>`;
   return html`<${Sheet} title=${title} size="full" class="editor" closing=${closing}
-    footer=${html`<div class="editor-foot">
-      ${existing && html`<button type="button" class="btn btn-danger-quiet" id="delete-expense" onClick=${() => deleteExpense(existing.id)} aria-label="Delete expense"><${Icon} name="trash"/></button>`}
-      <button type="button" class="btn btn-primary btn-block btn-large" id="save-expense" onClick=${submit} disabled=${busy || receiptBusy}>${busy ? 'Saving…' : duplicate ? 'Save anyway' : existing ? 'Save changes' : cents ? `Save ${money(cents)}` : 'Save expense'}</button>
-    </div>`}>
+    footer=${html`${keypad && html`<div class="keypad-dock">
+        <div class="keypad-bar"><span>Calculate with ÷ × − +</span><button type="button" class="nav-text nav-text-strong" data-keypad-done onClick=${() => setKeypad(false)}>Done</button></div>
+        <${Keypad} onKey=${press}/>
+      </div>`}
+      <div class="editor-foot">
+        ${existing && html`<button type="button" class="btn btn-danger-quiet" id="delete-expense" onClick=${() => deleteExpense(existing.id)} aria-label="Delete expense"><${Icon} name="trash"/></button>`}
+        <button type="button" class="btn btn-primary btn-block btn-large" id="save-expense" onClick=${submit} disabled=${busy || receiptBusy}>${busy ? 'Saving…' : duplicate ? 'Save anyway' : existing ? 'Save changes' : cents ? `Save ${money(cents)}` : 'Save expense'}</button>
+      </div>`}>
     ${prompt && html`<div class="prompt" role="alertdialog" aria-labelledby="discard-title">
       <strong id="discard-title">Keep this expense?</strong><p>Your changes haven’t been saved to the household yet.</p>
       <div class="prompt-actions">
@@ -136,38 +152,71 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
       </div>
     </div>`}
     ${preset.repeat && html`<p class="editor-note">A new expense for today. Check the amount, then save.</p>`}
-    <div class="amount-entry" aria-live="polite">
-      ${isExpr && html`<p class="amount-expr">${v.amount}</p>`}
-      <p class=${cx('amount-live', !v.amount && 'is-empty', cents === null && 'is-invalid')}>
-        <span class="amount-live-cur">$</span><span id="expense-amount" data-value=${cents ?? ''}>${isExpr ? (cents === null ? '—' : money(cents).slice(1)) : v.amount ? groupThousands(v.amount) : '0'}</span>
-      </p>
-    </div>
-    <button type="button" class=${cx('merchant-field', !v.merchant && 'is-empty')} name="merchant" data-pick="merchants" onClick=${() => present('catalog', {kind: 'merchants', selected: v.merchant, onPick: pickMerchant})}>
-      ${v.merchant ? html`<${MerchantMark} name=${v.merchant}/>` : html`<span class="mark mark-md mark-empty"><${Icon} name="store"/></span>`}
-      <span class="merchant-field-text">${v.merchant || 'Where was it?'}</span><${Icon} name="chevron-down"/>
+    <button type="button" id="amount-entry" class=${cx('amount-entry', keypad && 'is-editing')} aria-live="polite" aria-label=${`Amount ${cents ? money(cents) : 'not entered'}. ${keypad ? 'Use the keypad below.' : 'Opens the keypad.'}`} onClick=${() => keypad ? null : openKeypad()}>
+      ${isExpr && html`<span class="amount-expr">${v.amount}</span>`}
+      <span class=${cx('amount-live', !v.amount && 'is-empty', cents === null && 'is-invalid')}>
+        <span class="amount-live-cur">$</span><span id="expense-amount" data-value=${cents ?? ''}>${amountText}</span>
+      </span>
+      <span class="amount-hint">${keypad ? 'Type the amount, or a sum like 24 × 3' : v.amount ? 'Tap to change the amount' : 'Tap to enter the amount'}</span>
     </button>
-    ${shortcuts.length > 0 && html`<div class="rail rail-tight" aria-label="Your frequent merchants">${shortcuts.map(m => html`<button type="button" class="chip" data-quick-merchant=${m} onClick=${() => pickMerchant(m)}>${m}</button>`)}</div>`}
-    <div class="detail-chips">
-      <button type="button" class="chip chip-detail" data-pick="categories" onClick=${() => present('catalog', {kind: 'categories', selected: v.category, onPick: category => set({category})})}><${CategoryGlyph} name=${v.category} size="xs"/>${v.category}</button>
-      <label class="chip chip-detail chip-date"><${Icon} name="calendar"/>${v.date === today() ? 'Today' : dayLabel(v.date)}
-        <input type="date" name="date" value=${v.date} required onClick=${e => { try { e.currentTarget.showPicker?.(); } catch {} }} onInput=${e => e.currentTarget.value && set({date: e.currentTarget.value})} aria-label="Date"/></label>
-      <button type="button" class="chip chip-detail" data-pick="payer" onClick=${() => present('payer', {value: Number(v.payer), onPick: p => set({payer: String(p)})})}><${Avatar} name=${data.names[v.payer]} seat=${Number(v.payer)} size="xs"/>${Number(v.payer) === data.seat ? 'You paid' : firstName(data.names[v.payer]) + ' paid'}</button>
-      <button type="button" class="chip chip-detail" data-pick="split" onClick=${() => present('split', {value: v.split, cents, onPick: split => set({split})})}><${Icon} name="pie"/>${v.split === 'half' ? 'Split 50/50' : v.split === group(data.seat) ? 'All ours' : 'All theirs'}</button>
-      ${openSheets.length > 1 && html`<button type="button" class="chip chip-detail" data-pick="sheet" onClick=${() => present('sheet-chooser', {value: v.sheet, onPick: s => set({sheet: s})})}><${Icon} name="folder"/>${sheet?.name || 'Choose sheet'}</button>`}
-      <button type="button" class=${cx('chip chip-detail', v.notes && 'is-set')} data-pick="notes" onClick=${() => present('note', {value: v.notes, onDone: notes => set({notes})})}><${Icon} name="note"/>${v.notes ? 'Note' : 'Add note'}</button>
-      <${ReceiptChip} receipt=${receipt} setReceipt=${r => { setReceipt(r); setError(''); }} setBusy=${setReceiptBusy} setError=${setError}/>
+
+    <div class="editor-form" onClickCapture=${() => { if (keypad) setKeypad(false); }}>
+      <section class="form-section" aria-labelledby="details-title">
+        <h3 class="form-section-title" id="details-title">Expense details</h3>
+        <div class="form-card">
+          <button type="button" class=${cx('field-row', 'field-row-merchant', !v.merchant && 'is-empty')} name="merchant" data-pick="merchants" onClick=${() => present('catalog', {kind: 'merchants', selected: v.merchant, onPick: pickMerchant})}>
+            ${v.merchant ? html`<${MerchantMark} name=${v.merchant}/>` : html`<span class="mark mark-md mark-empty"><${Icon} name="store"/></span>`}
+            <span class="field-row-text"><small>Merchant</small><strong>${v.merchant || 'Choose merchant'}</strong></span><${Icon} name="chevron"/>
+          </button>
+          ${shortcuts.length > 0 && html`<div class="rail rail-tight field-shortcuts" aria-label="Your frequent merchants">${shortcuts.map(m => html`<button type="button" class="chip" data-quick-merchant=${m} onClick=${() => pickMerchant(m)}>${m}</button>`)}</div>`}
+          <button type="button" class="field-row" name="category" data-pick="categories" onClick=${() => present('catalog', {kind: 'categories', selected: v.category, onPick: category => set({category})})}>
+            <${CategoryGlyph} name=${v.category} size="sm"/><span class="field-row-text"><small>Category</small><strong>${v.category}</strong></span><${Icon} name="chevron"/>
+          </button>
+          <label class="field-row field-row-date">
+            <span class="field-row-icon"><${Icon} name="calendar"/></span><span class="field-row-text"><small>Date</small><strong>${v.date === today() ? 'Today' : dayLabel(v.date)} · ${longDate(v.date)}</strong></span><${Icon} name="chevron"/>
+            <input type="date" name="date" value=${v.date} required onClick=${e => { try { e.currentTarget.showPicker?.(); } catch {} }} onInput=${e => e.currentTarget.value && set({date: e.currentTarget.value})} aria-label="Date"/>
+          </label>
+          ${openSheets.length > 1
+            ? html`<button type="button" class="field-row" name="sheet" data-pick="sheet" onClick=${() => present('sheet-chooser', {value: v.sheet, onPick: s => set({sheet: s})})}>
+                <span class="field-row-icon"><${Icon} name="folder"/></span><span class="field-row-text"><small>Sheet</small><strong>${sheet?.name || 'Choose sheet'}</strong></span><${Icon} name="chevron"/></button>`
+            : html`<div class="field-row" data-sheet-info><span class="field-row-icon"><${Icon} name="folder"/></span><span class="field-row-text"><small>Sheet</small><strong>${sheet?.name || 'No open sheet'}</strong></span></div>`}
+        </div>
+      </section>
+
+      <section class="form-section" aria-labelledby="payment-title">
+        <h3 class="form-section-title" id="payment-title">Payment & split</h3>
+        <div class="form-card form-card-pad">
+          <p class="field-label" id="payer-label">Paid by</p>
+          <div class="person-picks" role="radiogroup" aria-labelledby="payer-label">${data.names.map((name, seat) => pick(seat, name))}</div>
+          <p class="field-label" id="split-label">Split</p>
+          <div class="split-picks" role="radiogroup" aria-labelledby="split-label">
+            ${splitOption('half', html`<span class="split-icon" aria-hidden="true"><i class="couple-a"></i><i class="couple-b"></i></span>`, 'Equally', '50 / 50')}
+            ${splitOption('a', html`<${CouplePair} names=${data.names} couple="a" size="xs"/>`, coupleName(data.names, 'a'), 'pays all')}
+            ${splitOption('b', html`<${CouplePair} names=${data.names} couple="b" size="xs"/>`, coupleName(data.names, 'b'), 'pays all')}
+          </div>
+          <div class="split-preview" id="split-preview" aria-label="Split preview">
+            <div class="split-bar" aria-hidden="true"><i class="couple-a" style=${`--w:${v.split === 'half' ? 50 : v.split === 'a' ? 100 : 0}%`}></i><i class="couple-b" style=${`--w:${v.split === 'half' ? 50 : v.split === 'b' ? 100 : 0}%`}></i></div>
+            <span><${Dot} couple="a"/>${coupleName(data.names, 'a')} <b>${money(aShare)}</b></span>
+            <span><${Dot} couple="b"/>${coupleName(data.names, 'b')} <b>${money((cents || 0) - aShare)}</b></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section" aria-labelledby="extra-title">
+        <h3 class="form-section-title" id="extra-title">Extra details</h3>
+        <div class="form-card">
+          <label class="field-row field-row-input">
+            <span class="field-row-icon"><${Icon} name="note"/></span>
+            <span class="field-row-text"><small>Description · optional</small><input name="notes" maxlength="500" placeholder="What was it for?" value=${v.notes} onInput=${e => set({notes: e.currentTarget.value})} autocomplete="off"/></span>
+          </label>
+          <${ReceiptRow} receipt=${receipt} setReceipt=${r => { setReceipt(r); setError(''); }} setBusy=${setReceiptBusy} setError=${setError}/>
+        </div>
+        ${receipt && html`<${ReceiptPanel} expense=${existing} receipt=${receipt} onRemove=${() => setReceipt('')} onApply=${patch => { if (patch.merchant) pickMerchant(patch.merchant); set({...(patch.amount ? {amount: patch.amount} : {}), ...(patch.date ? {date: patch.date} : {})}); setFresh(false); }}/>`}
+      </section>
     </div>
-    ${v.notes && html`<p class="editor-notes" onClick=${() => present('note', {value: v.notes, onDone: notes => set({notes})})}>“${v.notes}”</p>`}
-    <div class="split-preview" id="split-preview" aria-label="Split preview">
-      <div class="split-bar" aria-hidden="true"><i class="couple-a" style=${`--w:${v.split === 'half' ? 50 : v.split === 'a' ? 100 : 0}%`}></i><i class="couple-b" style=${`--w:${v.split === 'half' ? 50 : v.split === 'b' ? 100 : 0}%`}></i></div>
-      <span><${Dot} couple="a"/>${coupleName(data.names, 'a')} <b>${money(aShare)}</b></span>
-      <span><${Dot} couple="b"/>${coupleName(data.names, 'b')} <b>${money((cents || 0) - aShare)}</b></span>
-    </div>
-    ${receipt && html`<${ReceiptPanel} expense=${existing} receipt=${receipt} onRemove=${() => setReceipt('')} onApply=${patch => { if (patch.merchant) pickMerchant(patch.merchant); set({...(patch.amount ? {amount: patch.amount} : {}), ...(patch.date ? {date: patch.date} : {})}); setFresh(false); }}/>`}
     ${draftNote && html`<p class="draft-status" role="status">${draftNote}</p>`}
     ${duplicate && html`<p class="notice" role="alert">A matching expense already exists for this person, date and sheet. Save again only if it’s a separate purchase.</p>`}
     ${error && html`<p class="form-error" role="alert">${error}</p>`}
-    <${Keypad} onKey=${press}/>
     ${existing && html`<button type="button" class="link link-center" id="view-expense-history" onClick=${() => present('expense-history', {id: existing.id})}>View change history</button>`}
   <//>`;
 }
@@ -188,14 +237,19 @@ export async function compressImage(file) {
   finally { URL.revokeObjectURL(url); }
 }
 
-function ReceiptChip({receipt, setReceipt, setBusy, setError}) {
+/** "Attach receipt" row; the photo or screenshot is compressed on the device. */
+function ReceiptRow({receipt, setReceipt, setBusy, setError}) {
   const input = useRef();
   const onChange = async event => {
     const file = event.currentTarget.files[0]; if (!file) return;
     setBusy(true);
     try { setReceipt(await compressImage(file)); } catch (e) { setError(e.message); } finally { setBusy(false); event.target.value = ''; }
   };
-  return html`<button type="button" class=${cx('chip chip-detail', receipt && 'is-set')} id="choose-receipt" onClick=${() => input.current.click()}><${Icon} name="paperclip"/>${receipt ? 'Replace receipt' : 'Receipt'}</button>
+  return html`<button type="button" class=${cx('field-row', receipt && 'is-set')} id="choose-receipt" onClick=${() => input.current.click()}>
+      <span class="field-row-icon"><${Icon} name="paperclip"/></span>
+      <span class="field-row-text"><small>Receipt · optional</small><strong>${receipt ? 'Attached' : 'Photo or screenshot'}</strong></span>
+      <span class="btn btn-secondary btn-small" aria-hidden="true">${receipt ? 'Replace' : 'Choose'}</span>
+    </button>
     <input type="file" id="receipt-file" accept="image/*" hidden ref=${input} onChange=${onChange}/>`;
 }
 
@@ -245,41 +299,6 @@ function ReceiptPanel({expense, receipt, onRemove, onApply}) {
 }
 
 // ───────── Small pickers ─────────
-export function NoteSheet({sheetKey, value, onDone}) {
-  const [text, setText] = useState(value || '');
-  const done = () => { onDone(text.slice(0, 500)); closeSheet(sheetKey); };
-  return html`<${Sheet} title="Note" right=${html`<button type="button" class="nav-text nav-text-strong" onClick=${done}>Done</button>`}>
-    <textarea class="note-input" name="notes" rows="4" maxlength="500" autofocus placeholder="What was it for?" value=${text} onInput=${e => setText(e.currentTarget.value)}></textarea>
-    <p class="form-hint">${text.length}/500</p>
-  <//>`;
-}
-
-export function PayerSheet({sheetKey, value, onPick}) {
-  const {data} = getState();
-  return html`<${Sheet} title="Who paid?" class="sheet-compact">
-    <div class="choice-list">${data.names.map((name, i) => html`<button type="button" class=${cx('choice', value === i && 'is-selected')} onClick=${() => { onPick(i); closeSheet(sheetKey); }}>
-      <${Avatar} name=${name} seat=${i}/><span class="choice-text"><strong>${name}${i === data.seat ? ' (you)' : ''}</strong><small>${coupleName(data.names, group(i))}</small></span>${value === i && html`<${Icon} name="check" class="choice-check"/>`}
-    </button>`)}</div>
-  <//>`;
-}
-
-export function SplitSheet({sheetKey, value, cents, onPick}) {
-  const {data} = getState(), amount = cents || 0;
-  const options = [
-    {value: 'half', title: 'Split equally', text: 'Each couple pays half', a: Math.floor(amount / 2)},
-    {value: 'a', title: `All on ${coupleName(data.names, 'a')}`, text: 'Only this couple’s cost', a: amount},
-    {value: 'b', title: `All on ${coupleName(data.names, 'b')}`, text: 'Only this couple’s cost', a: 0},
-  ];
-  return html`<${Sheet} title="How is it shared?" class="sheet-compact">
-    <div class="choice-list">${options.map(o => html`<button type="button" class=${cx('choice', 'choice-split', value === o.value && 'is-selected')} onClick=${() => { onPick(o.value); closeSheet(sheetKey); }}>
-      <span class="choice-text"><strong>${o.title}</strong><small>${o.text}</small>
-        <span class="split-bar split-bar-sm" aria-hidden="true"><i class="couple-a" style=${`--w:${o.value === 'half' ? 50 : o.value === 'a' ? 100 : 0}%`}></i><i class="couple-b" style=${`--w:${o.value === 'half' ? 50 : o.value === 'b' ? 100 : 0}%`}></i></span>
-        ${amount > 0 && html`<small class="choice-figures"><span><${Dot} couple="a"/>${money(o.a)}</span><span><${Dot} couple="b"/>${money(amount - o.a)}</span></small>`}</span>
-      ${value === o.value && html`<${Icon} name="check" class="choice-check"/>`}
-    </button>`)}</div>
-  <//>`;
-}
-
 export function SheetChooser({sheetKey, value, onPick}) {
   const {data} = getState();
   return html`<${Sheet} title="Which sheet?" class="sheet-compact">

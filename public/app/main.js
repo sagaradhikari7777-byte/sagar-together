@@ -10,7 +10,7 @@ import {Activity, FiltersSheet} from './screens/activity.js';
 import {Sheets, SheetPage, SheetActions, SheetForm} from './screens/sheets.js';
 import {Household, NamesSheet, InviteSheet, AccessSheet, PreferencesSheet, PaymentsSheet, ReverseSheet} from './screens/household.js';
 import {Welcome, LoadError, CreateSheet, JoinSheet, ClaimSheet} from './screens/welcome.js';
-import {ExpenseEditor, ExpenseDetail, ExpenseHistory, DraftChoice, NoteSheet, PayerSheet, SplitSheet, SheetChooser, openAddExpense} from './flows/expense.js';
+import {ExpenseEditor, ExpenseDetail, ExpenseHistory, DraftChoice, SheetChooser, openAddExpense} from './flows/expense.js';
 import {CatalogSheet, CatalogEdit} from './flows/pickers.js';
 import {SettleSheet} from './flows/settle.js';
 import {BillsSheet, BillEditor, RecordBill} from './flows/bills.js';
@@ -21,7 +21,7 @@ const sheets = {
   confirm: ConfirmSheet, actions: ActionsSheet,
   create: CreateSheet, join: JoinSheet, claim: ClaimSheet,
   'expense-editor': ExpenseEditor, 'expense-detail': ExpenseDetail, 'expense-history': ExpenseHistory, 'draft-choice': DraftChoice,
-  note: NoteSheet, payer: PayerSheet, split: SplitSheet, 'sheet-chooser': SheetChooser,
+  'sheet-chooser': SheetChooser,
   catalog: CatalogSheet, 'catalog-edit': CatalogEdit,
   settle: SettleSheet, filters: FiltersSheet,
   'sheet-form': SheetForm, 'sheet-actions': SheetActions,

@@ -85,7 +85,7 @@ Geist variable, served from `/fonts` (OFL).
 - **Activity:** search, Open / Settled / All, filters sheet, result total with couple share, day-grouped expenses, CSV export of the results.
 - **Sheets:** open sheet cards (progress meter, spent / unsettled / balance) and the Archived list. A sheet page has the hero card, fair-share bar, who-pays flow, and Expenses / Insights / Payments.
 - **Household:** both couples' people, Edit names and Invite, then Money, Lists, Preferences (expense defaults, Appearance) and Access & data, and sign out.
-- **Add (sheet):** live amount with expression, merchant field with frequent shortcuts, detail chips (category, date, payer, split, sheet, note, receipt), split preview, keypad and one Save.
+- **Add (sheet):** the amount at the top (tap to enter it on the docked calculator keypad), then labelled sections with every option visible: Expense details (merchant and shortcuts, category, date, sheet), Payment & split (person and split buttons, live preview) and Extra details (description, receipt). One Save.
 - **Settle (sheet):** choose a sheet when several have balances, review with flow and couple comparison, slide to record, success.
 
 ## Style ownership

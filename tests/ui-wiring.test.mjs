@@ -52,6 +52,19 @@ test('settling is an action from Home and each sheet, and records through a deli
   assert.match(sources['app/flows/settle.js'], /save\(\{action: 'settle', sheet: sheet\.id\}\)/);
 });
 
+test('the expense form shows every option, like the original', () => {
+  const editor = sources['app/flows/expense.js'];
+  for (const title of ['Expense details', 'Payment & split', 'Extra details']) assert.ok(editor.includes(`>${title}</h3>`), title + ' section');
+  for (const control of ['data-pick="merchants"', 'data-pick="categories"', 'type="date" name="date"', 'data-payer=${seat}', "splitOption('half'", "splitOption('a'", "splitOption('b'", 'name="notes"', 'id="choose-receipt"', 'id="split-preview"'])
+    assert.ok(editor.includes(control), control + ' is on the form');
+  assert.ok(editor.includes('data-pick="sheet"') && editor.includes('data-sheet-info'), 'the sheet always shows; it is a picker when several are open');
+  // The keypad docks only while the amount is entered, so it never hides the options.
+  assert.match(editor, /const \[keypad, setKeypad\] = useState\(false\)/);
+  assert.match(editor, /\$\{keypad && html`<div class="keypad-dock">/);
+  assert.match(editor, /onClickCapture=\$\{\(\) => \{ if \(keypad\) setKeypad\(false\); \}\}/, 'using another option puts the keypad away first');
+  assert.match(editor, /if \(!latest\.current\.v\.amount\) setKeypad\(true\)/, 'choosing a merchant opens the keypad when no amount is set');
+});
+
 test('the keypad builds amounts and calculations in cents', () => {
   const type = (keys, start = '', fresh = false) => [...keys].reduce((expr, key, i) => applyKey(expr, key, fresh && i === 0), start);
   assert.equal(type('86.4'), '86.4');

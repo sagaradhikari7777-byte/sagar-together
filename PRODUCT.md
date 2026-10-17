@@ -25,9 +25,8 @@ Settling is an action, not a destination: it starts from the wallet card or a sh
 
 Keep Add Expense focused enough to finish with one thumb:
 
-- The amount comes first, typed on the in-app keypad, which also calculates (÷ × − +). No system keyboard for amounts.
-- Merchant, then detail chips for category, date, payer, split, sheet (only with more than one open sheet), note and receipt.
-- A live split preview shows each couple's share.
+- Every option is visible on the form in labelled sections, as in the original app: **Expense details** (merchant with frequent shortcuts, category, date, sheet), **Payment & split** (who paid and the split as tap-to-choose buttons, with a live preview of each couple's share) and **Extra details** (description and receipt). Don't hide options behind chips or extra sheets.
+- The amount is typed on the in-app keypad, which also calculates (÷ × − +). The keypad docks above Save only while the amount is being entered, opens on its own after choosing a merchant when no amount is set, and goes away when another option is used.
 - One primary Save in the sheet footer. Closing with unsaved changes asks to keep editing, save a draft or discard.
 - Editable inputs remain at least 16px on iPhone. Cancelling the iOS receipt picker keeps the entry open.
 - Save unfinished entries locally, isolated by household and person. Recover them after reload, and offer a choice before replacing a draft.

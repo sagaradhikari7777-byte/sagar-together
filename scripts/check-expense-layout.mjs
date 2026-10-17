@@ -22,14 +22,18 @@ const editor = 'dialog.editor[open]';
 const top = page => page.locator('dialog.sheet[open]:not(.is-closing)').last();
 const settle = page => page.waitForTimeout(500);
 const keyNames = {'.': 'Decimal point', '+': 'Add', '−': 'Subtract', '×': 'Multiply', '÷': 'Divide', '⌫': 'Delete'};
-const press = async (page, keys) => { for (const k of keys) await page.locator(`${editor} .keypad`).getByRole('button', {name: keyNames[k] || k, exact: true}).click(); };
+const press = async (page, keys) => {
+  // The keypad docks above Save while the amount is being entered; tapping the amount opens it.
+  if (!(await page.locator(`${editor} .keypad`).count())) await page.locator('#amount-entry').click();
+  for (const k of keys) await page.locator(`${editor} .keypad`).getByRole('button', {name: keyNames[k] || k, exact: true}).click();
+};
 let server;
 
 async function entry(page) {
   await page.goto(url);
   await page.locator('#demo-start').click();
   await page.locator('.tabbar [data-action="add"]').click();
-  await page.locator(`${editor} .keypad`).waitFor();
+  await page.locator(`${editor} .editor-form`).waitFor();
   await settle(page);
 }
 
@@ -48,6 +52,7 @@ async function layout(page, label) {
   for (const key of report.keys) {
     assert.ok(key.height >= 44 && key.width >= 44, `${label}: keypad key smaller than a 44pt target`);
     assert.ok(key.left >= report.panel.left && key.right <= report.panel.right, `${label}: keypad extends outside the sheet`);
+    assert.ok(key.top >= 0 && key.bottom <= report.viewport.height + 1, `${label}: keypad is off screen`);
   }
   assert.ok(report.panel.left >= 0 && report.panel.right <= report.viewport.width + 1, `${label}: sheet wider than the viewport`);
   assert.ok(report.save.bottom <= report.viewport.height + 1 && report.save.top >= 0, `${label}: Save is off screen`);
@@ -74,6 +79,8 @@ async function layout(page, label) {
           await entry(page);
           const label = `${name} ${width}x${height} ${dark ? 'dark' : 'light'}`;
           await layout(page, label);
+          for (const sel of ['[data-pick="merchants"]', '[data-pick="categories"]', 'input[name="date"]', '[data-payer="0"]', '[data-payer="3"]', '[data-split="half"]', '[data-split="b"]', 'input[name="notes"]', '#choose-receipt'])
+            assert.equal(await page.locator(`${editor} ${sel}`).count(), 1, `${label}: ${sel} is on the form`);
           await press(page, '45.5');
           assert.equal(await page.locator('#expense-amount').getAttribute('data-value'), '4550');
           await layout(page, label + ' amount entered');
@@ -93,13 +100,14 @@ async function layout(page, label) {
         assert.ok(parseFloat(await search.evaluate(e => getComputedStyle(e).fontSize)) >= 16, 'search input avoids iOS focus zoom');
         await search.fill('Wool');
         await top(page).locator('[data-choice="Woolworths"]').click(); await settle(page);
-        assert.equal(await page.locator(`${editor} .merchant-field-text`).innerText(), 'Woolworths');
+        assert.equal(await page.locator(`${editor} .field-row-merchant strong`).innerText(), 'Woolworths');
         await page.locator(`${editor} [data-pick="categories"]`).click(); await settle(page);
         await top(page).locator('[data-choice="Groceries"]').click(); await settle(page);
-        await page.locator(`${editor} [data-pick="payer"]`).click(); await settle(page);
-        await top(page).locator('.choice').filter({has: page.locator('strong', {hasText: /^Nabin/})}).click(); await settle(page);
-        await page.locator(`${editor} [data-pick="split"]`).click(); await settle(page);
-        await top(page).locator('.choice-split').nth(2).click(); await settle(page);
+        await page.locator(`${editor} [data-payer="2"]`).click();
+        await page.locator(`${editor} [data-split="b"]`).click();
+        assert.equal(await page.locator(`${editor} [data-payer="2"]`).getAttribute('aria-checked'), 'true');
+        assert.equal(await page.locator(`${editor} .keypad`).count(), 0, 'choosing an option puts the keypad away');
+        await page.locator(`${editor} [name="notes"]`).fill('Layout QA expense');
         assert.match(await page.locator('#split-preview').innerText(), /Nabin & Sujata\s*\$123\.45/);
         await layout(page, name + ' details chosen');
 

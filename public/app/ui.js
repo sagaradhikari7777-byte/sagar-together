@@ -118,7 +118,7 @@ export function Page({title, eyebrow, back: showBack, actions, children, class: 
       if (now !== scrolled) bar.current?.classList.toggle('is-scrolled', scrolled = now);
       if (scrollKey) scrollMemory.set(scrollKey, el.scrollTop);
     };
-    onScroll();
+    if (active) onScroll();
     el.addEventListener('scroll', onScroll, {passive: true});
     return () => el.removeEventListener('scroll', onScroll);
   }, [scrollKey]);
