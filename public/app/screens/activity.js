@@ -9,7 +9,8 @@ import {exportCSV} from '../flows/export.js';
 
 export const emptyFilters = () => ({payer: '', creator: '', receipt: '', category: '', sheet: '', from: '', to: '', sort: 'newest'});
 // Activity keeps its search while you move between tabs.
-const memory = {query: '', status: 'all', filters: emptyFilters(), focus: false};
+// Activity opens on Open: unsettled expenses first, the full history one tap away.
+const memory = {query: '', status: 'open', filters: emptyFilters(), focus: false};
 export function focusActivitySearch() { memory.focus = true; }
 
 export function Activity() {
@@ -24,7 +25,8 @@ export function Activity() {
   const visible = shown.slice(0, count);
   const active = ['payer', 'creator', 'receipt', 'category', 'sheet', 'from', 'to'].filter(k => filters[k]).length + (filters.sort !== 'newest' ? 1 : 0);
   const byAmount = ['largest', 'smallest'].includes(filters.sort);
-  const clear = () => { setQuery(''); setStatus('all'); setFilters(emptyFilters()); };
+  const clear = () => { setQuery(''); setStatus('open'); setFilters(emptyFilters()); };
+  const nothingOpen = !shown.length && status === 'open' && !query.trim() && !active && data.expenses.length > 0;
   return html`<${Page} title="Activity" scrollKey="activity"
     actions=${html`<button type="button" class="nav-button" onClick=${() => exportCSV(shown)} disabled=${!shown.length} aria-label="Export shown expenses as CSV" data-action="export-results"><${Icon} name="download"/></button>`}>
     <div class="searchbar">
@@ -32,11 +34,14 @@ export function Activity() {
         ${query && html`<button type="button" class="search-clear" onClick=${() => { setQuery(''); search.current?.focus(); }} aria-label="Clear search"><${Icon} name="x-circle"/></button>`}</label>
     </div>
     <div class="toolbar">
-      <${Segmented} label="Status" value=${status} onChange=${setStatus} options=${[{value: 'all', label: 'All'}, {value: 'open', label: 'Open'}, {value: 'settled', label: 'Settled'}]}/>
+      <${Segmented} label="Status" value=${status} onChange=${setStatus} options=${[{value: 'open', label: 'Open'}, {value: 'settled', label: 'Settled'}, {value: 'all', label: 'All'}]}/>
       <button type="button" class=${cx('chip-button', active && 'is-active')} data-action="filters" onClick=${() => present('filters', {filters, onApply: setFilters})}><${Icon} name="sliders"/>Filters${active ? ` · ${active}` : ''}</button>
     </div>
     ${shown.length > 0 && html`<div class="result-line"><span>${plural(shown.length, 'expense')} · <b>${money(summary.total)}</b></span><span>Your couple’s share <b>${money(summary.share)}</b></span></div>`}
-    ${shown.length === 0 ? html`<div class="card card-pad"><${Empty} emoji=${data.expenses.length ? '🔎' : '🧾'} title=${data.expenses.length ? 'No matches' : 'No expenses yet'} text=${data.expenses.length ? 'Try a different search or clear your filters.' : 'Add an expense and it will show up here.'}>
+    ${nothingOpen ? html`<div class="card card-pad"><${Empty} emoji="✅" title="Nothing open" text="Every expense is settled. Earlier expenses are under Settled.">
+        <button type="button" class="btn btn-secondary" data-action="show-settled" onClick=${() => setStatus('settled')}>Show settled expenses</button><//></div>`
+      : shown.length === 0 ? html`<div class="card card-pad"><${Empty} emoji=${data.expenses.length ? '🔎' : '🧾'} title=${data.expenses.length ? 'No matches' : 'No expenses yet'} text=${data.expenses.length ? 'Try a different search or clear your filters.' : 'Add an expense and it will show up here.'}>
+        ${data.expenses.length > 0 && status !== 'all' && html`<button type="button" class="btn btn-primary" data-action="search-all" onClick=${() => setStatus('all')}>Search all expenses</button>`}
         ${data.expenses.length > 0 && html`<button type="button" class="btn btn-secondary" data-action="reset-filters" onClick=${clear}>Clear search and filters</button>`}<//></div>`
       : byAmount ? html`<div class="card list">${visible.map(e => html`<${ExpenseRow} key=${e.id} expense=${e} showSheet/>`)}</div>`
       : html`<${DayGroups} expenses=${visible} totals=${dayTotals(shown)} showSheet/>`}

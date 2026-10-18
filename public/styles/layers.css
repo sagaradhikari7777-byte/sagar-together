@@ -185,7 +185,9 @@ dialog.sheet.is-closing .sheet-panel { animation: sheet-down .3s var(--ease) for
 .sheet-side-end { justify-content: flex-end; }
 .sheet .nav-button { background: var(--fill); box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
 .sheet .nav-button-accent { background: var(--primary); }
-.sheet-body { flex: 1 1 auto; display: grid; align-content: start; gap: 14px; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 6px 18px calc(18px + var(--safe-bottom)); }
+/* Rows keep their full height so long lists scroll the sheet. Without max-content rows, a
+   card that clips its overflow (a list) shrinks to fit the sheet and its rest can't be reached. */
+.sheet-body { flex: 1 1 auto; display: grid; grid-auto-rows: max-content; align-content: start; gap: 14px; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 6px 18px calc(18px + var(--safe-bottom)); }
 .sheet-foot + .sheet-body, .sheet-panel:has(.sheet-foot) .sheet-body { padding-bottom: 12px; }
 .sheet-foot { flex: none; padding: 10px 18px calc(12px + var(--safe-bottom)); background: linear-gradient(to top, var(--sheet) 70%, transparent); }
 .sheet-lede { color: var(--label-2); font-size: .9375rem; }

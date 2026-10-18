@@ -65,6 +65,20 @@ test('the expense form shows every option, like the original', () => {
   assert.match(editor, /if \(!latest\.current\.v\.amount\) setKeypad\(true\)/, 'choosing a merchant opens the keypad when no amount is set');
 });
 
+test('long lists in sheets keep their height so the sheet scrolls', () => {
+  // A list card clips its overflow; in a grid without max-content rows it shrank to fit and could not be scrolled.
+  assert.match(css, /\.sheet-body \{[^}]*display: grid; grid-auto-rows: max-content;[^}]*overflow-y: auto;/);
+});
+
+test('Activity opens on Open, with the full history one tap away', () => {
+  const activity = sources['app/screens/activity.js'];
+  assert.match(activity, /const memory = \{query: '', status: 'open'/);
+  assert.match(activity, /options=\$\{\[\{value: 'open', label: 'Open'\}, \{value: 'settled', label: 'Settled'\}, \{value: 'all', label: 'All'\}\]\}/);
+  assert.match(activity, /setStatus\('open'\); setFilters\(emptyFilters\(\)\)/, 'clearing returns to Open');
+  assert.match(activity, /data-action="show-settled"/);
+  assert.match(activity, /data-action="search-all"/);
+});
+
 test('the keypad builds amounts and calculations in cents', () => {
   const type = (keys, start = '', fresh = false) => [...keys].reduce((expr, key, i) => applyKey(expr, key, fresh && i === 0), start);
   assert.equal(type('86.4'), '86.4');
