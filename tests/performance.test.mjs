@@ -43,6 +43,10 @@ test('derived figures match the settlement engine', () => {
   assert.deepEqual(sheetSummary(data, 's1').settled.map(e => e.id), [1]);
   assert.equal(sheetsById(data).get('s2').name, 'Two');
   assert.deepEqual(recentExpenses(data, 2).map(e => e.id), [3, 4]);
+  // Recent activity on Home leaves out settled expenses and anything on a closed sheet.
+  assert.deepEqual(recentExpenses(data, 10).map(e => e.id), [3, 4, 2]);
+  const legacy = {...data, expenses: [...data.expenses, expense(9, 's1', 0, 400, '2026-09-20')]};
+  assert.ok(!recentExpenses(legacy, 10).some(e => e.id === 9), 'an unsettled expense on a closed sheet stays out');
 });
 
 test('picker order and search results are cached and correct', () => {

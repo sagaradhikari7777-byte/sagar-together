@@ -7,7 +7,7 @@ Canonical repository: `sagaradhikari7777-byte/sagar-together` → `main`
 
 ## Core flow
 
-- **Home:** the wallet card with your couple's balance, a fair-share bar and Settle up; draft recovery; the current sheet with a days-left ring and category ribbon; upcoming bills; recent activity.
+- **Home:** the wallet card with your couple's balance, a fair-share bar and Settle up; draft recovery; the current sheet with a days-left ring and category ribbon; upcoming bills; recent activity, which lists only open expenses (settled ones and closed sheets stay in Activity and Sheets).
 - **Activity:** search merchant, category, payer/creator name, sheet, notes, date or amount; Open / Settled / All; filter by payer, author, receipt, category, sheet and dates. Results show a total with your couple's share and export to CSV.
 - **Add:** a full expense form with every option visible: merchant (with frequent shortcuts), category, date and sheet; who paid and how it's split, with a live preview; a description and a receipt (with on-device scanning). The amount uses a calculator keypad that slides up only while you enter it. One Save.
 - **Sheets:** open sheets and Archived. A sheet page shows its total, who paid against the fair share, who pays whom, and Expenses / Insights / Payments.

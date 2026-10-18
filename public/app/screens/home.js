@@ -39,8 +39,10 @@ export function Home() {
       </button>`)}</div>
     </section>`}
     <section class="section">
-      <div class="section-head"><h2>Recent activity</h2>${recent.length > 0 && html`<button type="button" class="link" onClick=${() => go('activity')}>See all</button>`}</div>
+      <div class="section-head"><h2>Recent activity</h2>${data.expenses.length > 0 && html`<button type="button" class="link" onClick=${() => go('activity')}>See all</button>`}</div>
       ${recent.length ? html`<div class="card list">${recent.map(e => html`<${ExpenseRow} key=${e.id} expense=${e} showAuthor/>`)}</div>`
+        : data.expenses.length ? html`<div class="card card-pad"><${Empty} emoji="✅" title="All settled" text="Nothing open right now. Settled expenses and closed sheets are still in Activity and Sheets.">
+            <button type="button" class="btn btn-primary" onClick=${() => openAddExpense()}><${Icon} name="plus"/> Add an expense</button><//></div>`
         : html`<div class="card card-pad"><${Empty} emoji="🧾" title="Nothing yet" text="Your household’s expenses will appear here as soon as someone adds one.">
             <button type="button" class="btn btn-primary" onClick=${() => openAddExpense()}><${Icon} name="plus"/> Add an expense</button><//></div>`}
     </section>

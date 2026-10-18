@@ -13,7 +13,7 @@ Do not add features unless they materially improve one of those jobs.
 
 ## Primary navigation
 
-- **Home** — the household balance on the wallet card (with Settle up), draft recovery, the current sheet, upcoming bills and recent activity.
+- **Home** — the household balance on the wallet card (with Settle up), draft recovery, the current sheet, upcoming bills and recent activity. Recent activity shows only open expenses: never settled ones or anything on a closed sheet.
 - **Activity** — every expense: search, Open / Settled / All, filters, result totals and CSV export of what is shown.
 - **Add** — the centre tab button opens expense entry as a sheet. It is not a page.
 - **Sheets** — open sheets, then Archived. Each sheet has its own page with Expenses, Insights and Payments, and its own Settle up.

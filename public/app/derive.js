@@ -103,7 +103,9 @@ export const lastCategory = perSnapshot((data, seat, merchant) => {
   return best?.category || '';
 });
 
-export const recentExpenses = perSnapshot((data, count) => [...data.expenses]
+/** The most recently added expenses that are still open: not settled and not on a closed sheet. */
+export const recentExpenses = perSnapshot((data, count) => data.expenses
+  .filter(e => !e.settlement && !sheetsById(data).get(e.sheet)?.archived)
   .sort((a, b) => (Date.parse(b.created) || 0) - (Date.parse(a.created) || 0) || newestFirst(a, b))
   .slice(0, count));
 export const upcomingBills = perSnapshot((data, day) => upcoming(data.recurring, day));

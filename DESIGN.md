@@ -81,7 +81,7 @@ Geist variable, served from `/fonts` (OFL).
 
 ## Screens
 
-- **Home:** greeting and household name; wallet card with Settle up; draft banner; current sheet card with a days-left ring and category ribbon; "Coming up" bills rail; recent activity.
+- **Home:** greeting and household name; wallet card with Settle up; draft banner; current sheet card with a days-left ring and category ribbon; "Coming up" bills rail; recent activity (open expenses only, or "All settled").
 - **Activity:** search, Open / Settled / All, filters sheet, result total with couple share, day-grouped expenses, CSV export of the results.
 - **Sheets:** open sheet cards (progress meter, spent / unsettled / balance) and the Archived list. A sheet page has the hero card, fair-share bar, who-pays flow, and Expenses / Insights / Payments.
 - **Household:** both couples' people, Edit names and Invite, then Money, Lists, Preferences (expense defaults, Appearance) and Access & data, and sign out.
