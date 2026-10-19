@@ -2,7 +2,7 @@
 // sheets present above everything as native modal dialogs.
 import {html, render, useEffect, useRef, useState} from '../vendor/preact-htm.js';
 import {useStore, getState, setState, refresh, applyTheme, openLink, toast} from './store.js';
-import {installNavigation, go, present, depth} from './nav.js';
+import {installNavigation, go, present} from './nav.js';
 import {Icon, cx, SheetContext, TabActive, memo} from './ui.js';
 import {ConfirmSheet, ActionsSheet} from './common.js';
 import {Home} from './screens/home.js';
@@ -137,7 +137,8 @@ if (window.visualViewport) {
   const vv = visualViewport, fit = () => document.documentElement.style.setProperty('--keyboard', Math.max(0, Math.round(innerHeight - vv.height - vv.offsetTop)) + 'px');
   vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit); fit();
 }
-const quietRefresh = () => { const s = getState(); if (s.data && !s.demo && !s.busy && !depth() && document.visibilityState === 'visible') refresh(false); };
+// Pages are read-only, so they refresh too; an open sheet (a form) never has its data swapped underneath it.
+const quietRefresh = () => { const s = getState(); if (s.data && !s.demo && !s.busy && !s.nav.sheets.length && document.visibilityState === 'visible') refresh(false); };
 setInterval(quietRefresh, 30000);
 document.addEventListener('visibilitychange', quietRefresh);
 addEventListener('online', quietRefresh);

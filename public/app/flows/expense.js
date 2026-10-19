@@ -79,10 +79,10 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
 
   const press = key => { setV(cur => ({...cur, amount: applyKey(cur.amount, key, fresh)})); setFresh(false); setError(''); setDuplicate(''); };
   const cents = centsOf(v.amount), isExpr = operator.test(v.amount);
-  const shortcuts = existing ? [] : shortcutMerchants(data, data.seat).filter(m => m !== v.merchant);
+  const shortcuts = id ? [] : shortcutMerchants(data, data.seat).filter(m => m !== v.merchant);
   const pickMerchant = name => {
     const patch = {merchant: name};
-    if (!existing) {
+    if (!id) {
       const last = lastCategory(data, data.seat, name);
       if (last && catalogValues(data, 'categories').includes(last)) patch.category = last;
     }
@@ -98,13 +98,14 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
     if (cents > 999999999) return setError('Enter an amount from $0.01 to $9,999,999.99.');
     if (!v.sheet) return setError('Choose an open sheet.');
     const key = JSON.stringify([v.merchant.toLowerCase(), cents, v.date, v.payer, v.sheet]);
-    if (!existing && duplicate !== key && data.expenses.some(e => e.merchant.toLowerCase() === v.merchant.toLowerCase() && e.cents === cents && e.date === v.date && e.payer === Number(v.payer) && e.sheet === v.sheet)) {
+    if (!id && duplicate !== key && data.expenses.some(e => e.merchant.toLowerCase() === v.merchant.toLowerCase() && e.cents === cents && e.date === v.date && e.payer === Number(v.payer) && e.sheet === v.sheet)) {
       setDuplicate(key); return;
     }
     persist();
     try {
-      await save({action: 'expense', expense: {id: existing?.id, creator: existing?.creator, merchant: v.merchant, cents, category: v.category, date: v.date, payer: Number(v.payer), visibility: 'shared', split: v.split, sheet: v.sheet, notes: v.notes, receipt}});
-      ended.current = true; clearDraft(); closeSheet(sheetKey); toast(existing ? 'Changes saved' : 'Expense saved');
+      // An edit always names its expense, so the server refuses (rather than re-creates) one deleted meanwhile.
+      await save({action: 'expense', expense: {id: id || undefined, creator: existing?.creator, merchant: v.merchant, cents, category: v.category, date: v.date, payer: Number(v.payer), visibility: 'shared', split: v.split, sheet: v.sheet, notes: v.notes, receipt}});
+      ended.current = true; clearDraft(); closeSheet(sheetKey); toast(id ? 'Changes saved' : 'Expense saved');
     } catch (e) { setError(e.message); }
   };
 
@@ -122,7 +123,12 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
     return () => document.removeEventListener('keydown', onKey);
   });
 
-  const title = existing ? 'Edit expense' : preset.repeat ? 'Repeat expense' : 'New expense';
+  const title = id ? 'Edit expense' : preset.repeat ? 'Repeat expense' : 'New expense';
+  // Deleted on another phone while this form was open: nothing to save it back to.
+  const gone = !!id && !existing;
+  if (gone) ended.current = true;
+  // The sheet can always be changed when it was closed meanwhile, even with one open sheet left.
+  const chooseSheet = openSheets.length > 1 || !openSheets.some(s => s.id === v.sheet);
   const sheet = data.sheets.find(s => s.id === v.sheet);
   const aShare = cents ? (v.split === 'half' ? Math.floor(cents / 2) : v.split === 'a' ? cents : 0) : 0;
   const amountText = isExpr ? (cents === null ? '—' : money(cents).slice(1)) : v.amount ? groupThousands(v.amount) : '0';
@@ -141,7 +147,7 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
       </div>`}
       <div class="editor-foot">
         ${existing && html`<button type="button" class="btn btn-danger-quiet" id="delete-expense" onClick=${() => deleteExpense(existing.id)} aria-label="Delete expense"><${Icon} name="trash"/></button>`}
-        <button type="button" class="btn btn-primary btn-block btn-large" id="save-expense" onClick=${submit} disabled=${busy || receiptBusy}>${busy ? 'Saving…' : duplicate ? 'Save anyway' : existing ? 'Save changes' : cents ? `Save ${money(cents)}` : 'Save expense'}</button>
+        <button type="button" class="btn btn-primary btn-block btn-large" id="save-expense" onClick=${submit} disabled=${busy || receiptBusy || gone}>${busy ? 'Saving…' : duplicate ? 'Save anyway' : existing ? 'Save changes' : cents ? `Save ${money(cents)}` : 'Save expense'}</button>
       </div>`}>
     ${prompt && html`<div class="prompt" role="alertdialog" aria-labelledby="discard-title">
       <strong id="discard-title">Keep this expense?</strong><p>Your changes haven’t been saved to the household yet.</p>
@@ -151,6 +157,7 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
         <button type="button" class="btn btn-danger-quiet btn-small" data-discard onClick=${() => { ended.current = true; clearDraft(); closeSheet(sheetKey); }}>Discard</button>
       </div>
     </div>`}
+    ${gone && html`<p class="notice" role="alert">This expense was deleted, perhaps on another phone, so these changes can’t be saved.</p>`}
     ${preset.repeat && html`<p class="editor-note">A new expense for today. Check the amount, then save.</p>`}
     <button type="button" id="amount-entry" class=${cx('amount-entry', keypad && 'is-editing')} aria-live="polite" aria-label=${`Amount ${cents ? money(cents) : 'not entered'}. ${keypad ? 'Use the keypad below.' : 'Opens the keypad.'}`} onClick=${() => keypad ? null : openKeypad()}>
       ${isExpr && html`<span class="amount-expr">${v.amount}</span>`}
@@ -176,9 +183,9 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
             <span class="field-row-icon"><${Icon} name="calendar"/></span><span class="field-row-text"><small>Date</small><strong>${v.date === today() ? 'Today' : dayLabel(v.date)} · ${longDate(v.date)}</strong></span><${Icon} name="chevron"/>
             <input type="date" name="date" value=${v.date} required onClick=${e => { try { e.currentTarget.showPicker?.(); } catch {} }} onInput=${e => e.currentTarget.value && set({date: e.currentTarget.value})} aria-label="Date"/>
           </label>
-          ${openSheets.length > 1
+          ${chooseSheet
             ? html`<button type="button" class="field-row" name="sheet" data-pick="sheet" onClick=${() => present('sheet-chooser', {value: v.sheet, onPick: s => set({sheet: s})})}>
-                <span class="field-row-icon"><${Icon} name="folder"/></span><span class="field-row-text"><small>Sheet</small><strong>${sheet?.name || 'Choose sheet'}</strong></span><${Icon} name="chevron"/></button>`
+                <span class="field-row-icon"><${Icon} name="folder"/></span><span class="field-row-text"><small>Sheet</small><strong>${sheet ? sheet.name + (sheet.archived ? ' · closed, choose another' : '') : 'Choose sheet'}</strong></span><${Icon} name="chevron"/></button>`
             : html`<div class="field-row" data-sheet-info><span class="field-row-icon"><${Icon} name="folder"/></span><span class="field-row-text"><small>Sheet</small><strong>${sheet?.name || 'No open sheet'}</strong></span></div>`}
         </div>
       </section>

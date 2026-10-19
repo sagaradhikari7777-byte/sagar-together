@@ -79,6 +79,18 @@ test('Activity opens on Open, with the full history one tap away', () => {
   assert.match(activity, /data-action="search-all"/);
 });
 
+test('an edit never re-creates an expense deleted meanwhile, and a closed sheet can be changed', () => {
+  const editor = sources['app/flows/expense.js'];
+  assert.match(editor, /expense: \{id: id \|\| undefined,/, 'the edit names its expense');
+  assert.match(editor, /const gone = !!id && !existing;/);
+  assert.match(editor, /disabled=\$\{busy \|\| receiptBusy \|\| gone\}/);
+  assert.match(editor, /const chooseSheet = openSheets\.length > 1 \|\| !openSheets\.some\(s => s\.id === v\.sheet\)/);
+});
+
+test('pages refresh in the background; open forms never have their data swapped', () => {
+  assert.match(main, /!s\.nav\.sheets\.length && document\.visibilityState === 'visible'\) refresh\(false\)/);
+});
+
 test('the keypad builds amounts and calculations in cents', () => {
   const type = (keys, start = '', fresh = false) => [...keys].reduce((expr, key, i) => applyKey(expr, key, fresh && i === 0), start);
   assert.equal(type('86.4'), '86.4');

@@ -72,7 +72,7 @@ Each household member receives a private access key; only its SHA-256 hash is st
 
 Only the authenticated creator can edit/delete an eligible expense. Settled expenses are locked. Recording settlement does not move money; it records the household's settlement state.
 
-Writes use revision checks so simultaneous edits do not silently overwrite each other. The app refreshes household data while visible when no modal is open. Unchanged revisions return a small acknowledgement. Expense drafts survive reloads on the same device; draft storage is local and is not a shared backup.
+Writes use revision checks so simultaneous edits do not silently overwrite each other. Adding something new (an expense, sheet, list item or bill) is applied on top of anyone else's change automatically; edits, deletions and settling ask the person to review when someone else saved first. An edit always names its expense, so one deleted on another phone is never re-created. If a save's connection drops, the app reloads the household so a retry can't duplicate it. The app refreshes household data while visible when no modal is open. Unchanged revisions return a small acknowledgement. Expense drafts survive reloads on the same device; draft storage is local and is not a shared backup.
 
 Only the settlement recorder can reverse a record, with a required reason. Reversal reopens only the linked expenses and retains the original payment and correction in history. An archived sheet reopens with them.
 

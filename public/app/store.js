@@ -55,22 +55,39 @@ export function toast(text, tone = '') {
 }
 
 // ───────── Server ─────────
+const unreachable = 'Couldn’t reach the household. Check your connection and try again.';
+/** One request to the household API. Errors carry a message people can act on. */
 export async function api(body) {
   const {credentials, data} = state;
-  const res = await fetch('/api/household', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json', ...(credentials ? {Authorization: `Bearer ${credentials.key}`} : {})},
-    body: JSON.stringify({house: credentials?.house, rev: data?.rev, receiptMode: 'reference', ...body}),
-    signal: AbortSignal.timeout?.(20000),
-  });
-  const json = await res.json();
-  if (!res.ok) throw Object.assign(new Error(json.error || 'Could not save changes.'), {status: res.status});
+  let res;
+  try {
+    res = await fetch('/api/household', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', ...(credentials ? {Authorization: `Bearer ${credentials.key}`} : {})},
+      body: JSON.stringify({house: credentials?.house, rev: data?.rev, receiptMode: 'reference', ...body}),
+      signal: AbortSignal.timeout?.(20000),
+    });
+  } catch {
+    // A dropped connection or a timeout: the change may or may not have arrived.
+    throw Object.assign(new Error(navigator.onLine ? unreachable : 'You’re offline. Reconnect and try again.'), {network: true});
+  }
+  let json = null;
+  try { json = await res.json(); } catch {}
+  if (!res.ok || !json) {
+    const fallback = res.status >= 500 || !json ? 'The household service had a problem. Try again in a moment.' : 'Could not save changes.';
+    throw Object.assign(new Error(json?.error || fallback), {status: res.status});
+  }
   return json;
 }
 
-/** Applies one household change. Returns true when saved. */
+// Adding something new never overwrites anyone's work, so when someone else saved
+// first these are applied again on top of their change instead of asking to retry.
+const additive = change => (change.action === 'expense' && !change.expense?.id) || change.action === 'sheet'
+  || (change.action === 'catalog' && change.operation === 'add') || (change.action === 'recurring' && !change.bill?.id);
+
+/** Applies one household change, or throws with a message to show. */
 export async function save(change) {
-  if (state.busy) return false;
+  if (state.busy) throw new Error('Still saving the last change. Try again in a moment.');
   if (!state.demo && !navigator.onLine) throw new Error('You’re offline. Reconnect to save changes to the household.');
   setState({busy: true});
   try {
@@ -79,7 +96,13 @@ export async function save(change) {
       demoMutation(data, change);
       setState({data});
     } else {
-      setState({data: (await api(change)).data});
+      try { setState({data: (await api(change)).data}); }
+      catch (error) {
+        if (error.status !== 409 || !additive(change)) throw error;
+        const latest = await api({action: 'read'});
+        setState({data: latest.data});
+        setState({data: (await api(change)).data});
+      }
     }
     return true;
   } catch (error) {
@@ -87,6 +110,10 @@ export async function save(change) {
       setState({busy: false});
       await refresh(false);
       error.message = 'New changes arrived. Review and save again.';
+    } else if (error.network) {
+      // If the change did arrive, show it, so saving again isn't a duplicate.
+      setState({busy: false});
+      refresh(false);
     }
     throw error;
   } finally {
