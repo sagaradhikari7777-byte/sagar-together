@@ -7,7 +7,7 @@ import {repeatPreset} from '../../journal.js';
 import {useStore, getState, save, toast, entryPreferences, savedDraft, clearDraft, draftsChanged, draftStore, currentDraftKey, loadReceipt} from '../store.js';
 import {expenseById, sheetsById, orderedSheets, shortcutMerchants, lastCategory} from '../derive.js';
 import {present, replace, closeSheet, guardClose, back} from '../nav.js';
-import {Sheet, Icon, Amount, Avatar, CouplePair, CategoryGlyph, MerchantMark, Keypad, Pill, Group, Row, Dot, cx} from '../ui.js';
+import {Sheet, Icon, Amount, Avatar, CategoryGlyph, MerchantMark, Keypad, Pill, Group, Row, Dot, cx} from '../ui.js';
 import {deleteExpense} from '../common.js';
 import {operator, centsOf, applyKey, groupThousands, draftAmount} from '../amount-entry.js';
 import {money, today, dayLabel, longDate, shortDate, group, coupleName, firstName, stamp} from '../format.js';
@@ -134,12 +134,12 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
   const amountText = isExpr ? (cents === null ? '—' : money(cents).slice(1)) : v.amount ? groupThousands(v.amount) : '0';
   const openKeypad = () => { setKeypad(true); requestAnimationFrame(() => document.getElementById('amount-entry')?.scrollIntoView({block: 'start', behavior: 'smooth'})); };
   const role = seat => seat === data.seat ? 'You' : group(seat) === group(data.seat) ? 'Partner' : 'Other couple';
-  const pick = (seat, name) => html`<button type="button" role="radio" aria-checked=${Number(v.payer) === seat} class=${cx('person-pick', 'couple-' + group(seat), Number(v.payer) === seat && 'is-selected')} data-payer=${seat} onClick=${() => set({payer: String(seat)})}>
-      <${Avatar} name=${name} seat=${seat} size="sm"/><span>${firstName(name)}</span><small>${role(seat)}</small>
+  const pick = (seat, name) => html`<button type="button" role="radio" aria-checked=${Number(v.payer) === seat} class=${cx('person-pick', 'couple-' + group(seat), Number(v.payer) === seat && 'is-selected')} data-payer=${seat} aria-label=${`${name}, ${role(seat).toLowerCase()}`} onClick=${() => set({payer: String(seat)})}>
+      <span>${firstName(name)}</span>
     </button>`;
-  const splitOption = (value, top, label, note) => html`<button type="button" role="radio" aria-checked=${v.split === value} class=${cx('split-pick', value !== 'half' && 'couple-' + value, v.split === value && 'is-selected')} data-split=${value} onClick=${() => set({split: value})}>
-      ${top}<span>${label}</span><small>${note}</small>
-    </button>`;
+  // Compact choices: the couples' names are in the preview below, so the buttons stay one short line.
+  const splitOption = (value, label, spoken) => html`<button type="button" role="radio" aria-checked=${v.split === value} class=${cx('split-pick', value !== 'half' && 'couple-' + value, v.split === value && 'is-selected')} data-split=${value} aria-label=${spoken} onClick=${() => set({split: value})}>${label}</button>`;
+  const allOf = g => g === group(data.seat) ? 'All ours' : 'All theirs';
   return html`<${Sheet} title=${title} size="full" class="editor" closing=${closing}
     footer=${html`${keypad && html`<div class="keypad-dock">
         <div class="keypad-bar"><span>Calculate with ÷ × − +</span><button type="button" class="nav-text nav-text-strong" data-keypad-done onClick=${() => setKeypad(false)}>Done</button></div>
@@ -197,15 +197,14 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
           <div class="person-picks" role="radiogroup" aria-labelledby="payer-label">${data.names.map((name, seat) => pick(seat, name))}</div>
           <p class="field-label" id="split-label">Split</p>
           <div class="split-picks" role="radiogroup" aria-labelledby="split-label">
-            ${splitOption('half', html`<span class="split-icon" aria-hidden="true"><i class="couple-a"></i><i class="couple-b"></i></span>`, 'Equally', '50 / 50')}
-            ${splitOption('a', html`<${CouplePair} names=${data.names} couple="a" size="xs"/>`, coupleName(data.names, 'a'), 'pays all')}
-            ${splitOption('b', html`<${CouplePair} names=${data.names} couple="b" size="xs"/>`, coupleName(data.names, 'b'), 'pays all')}
+            ${splitOption('half', '50 / 50', 'Equally, 50 / 50')}
+            ${splitOption('a', allOf('a'), `${coupleName(data.names, 'a')} pays all`)}
+            ${splitOption('b', allOf('b'), `${coupleName(data.names, 'b')} pays all`)}
           </div>
-          <div class="split-preview" id="split-preview" aria-label="Split preview">
-            <div class="split-bar" aria-hidden="true"><i class="couple-a" style=${`--w:${v.split === 'half' ? 50 : v.split === 'a' ? 100 : 0}%`}></i><i class="couple-b" style=${`--w:${v.split === 'half' ? 50 : v.split === 'b' ? 100 : 0}%`}></i></div>
+          <p class="split-preview" id="split-preview" aria-label="Split preview">
             <span><${Dot} couple="a"/>${coupleName(data.names, 'a')} <b>${money(aShare)}</b></span>
             <span><${Dot} couple="b"/>${coupleName(data.names, 'b')} <b>${money((cents || 0) - aShare)}</b></span>
-          </div>
+          </p>
         </div>
       </section>
 
