@@ -81,3 +81,10 @@ test('resetting a schedule date cannot create a second existing occurrence',()=>
  const h=setup();mutate(h,0,{action:'recurring',bill:schedule(h)});const bill=h.recurring[0];mutate(h,0,{action:'recurring-record',id:bill.id,due:bill.nextDue,sheet:bill.sheet});mutate(h,0,{action:'recurring',bill:{...bill,nextDue:'2026-01-31'}});assert.throws(()=>mutate(h,0,{action:'recurring-record',id:bill.id,due:'2026-01-31',sheet:bill.sheet}),{status:409});assert.equal(h.expenses.length,1);
 });
 test('receipt amounts above $999 retain every digit',()=>{assert.equal(parseReceipt('Shop\nTOTAL $1234.56').cents,123456);assert.equal(parseReceipt('Shop\nTOTAL $10000.99').cents,1000099);});
+test('only the person who added a recurring bill can delete it, and recorded expenses stay',()=>{
+ const h=setup();mutate(h,0,{action:'recurring',bill:schedule(h)});const bill=h.recurring[0];
+ mutate(h,0,{action:'recurring-record',id:bill.id,due:bill.nextDue,sheet:bill.sheet});assert.equal(h.expenses.length,1);
+ assert.throws(()=>mutate(h,1,{action:'recurring-delete',id:bill.id}),/Only the person who added this bill/);assert.equal(h.recurring.length,1);
+ mutate(h,0,{action:'recurring-delete',id:bill.id});assert.equal(h.recurring.length,0);assert.equal(h.expenses.length,1);
+ assert.throws(()=>mutate(h,0,{action:'recurring-delete',id:bill.id}),/no longer exists/);
+});

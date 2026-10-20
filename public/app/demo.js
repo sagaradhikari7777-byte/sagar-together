@@ -49,7 +49,7 @@ export function demoMutation(data, b) {
   const fail = message => { throw new Error(message); };
   const seat = data.seat, canManage = e => canManageExpenseAs(e, seat);
   switch (b.action) {
-    case 'recurring': case 'recurring-record':
+    case 'recurring': case 'recurring-record': case 'recurring-delete':
       changeRecurring(data, seat, b, {id: uid, record: (expense, link) => { demoMutation(data, {action: 'expense', expense}); data.rev--; data.expenses[0].recurring = link; }});
       break;
     case 'catalog': changeCatalog(data, b); break;

@@ -12,6 +12,11 @@ export function nextOccurrence(bill){
 }
 export function changeRecurring(h,seat,b,{id,record}){
  const bills=h.recurring||[],old=bills.find(x=>x.id===(b.bill?.id||b.id));
+ if(b.action==='recurring-delete'){
+  // Expenses already recorded from this bill stay; only the schedule is removed.
+  check(old,'Bill no longer exists.',404);check(old.creator===seat,'Only the person who added this bill can delete it.',403);
+  h.recurring=bills.filter(x=>x.id!==old.id);return;
+ }
  if(b.action==='recurring'){
   const x=b.bill;check(x&&(!x.id||old),'Bill no longer exists.',404);check(!old||old.creator===seat,'Only the person who added this bill can change it.',403);
   const text=(v,max)=>{check(typeof v==='string'&&v.trim()&&v.length<=max,'Check the bill details.');return v.trim();};

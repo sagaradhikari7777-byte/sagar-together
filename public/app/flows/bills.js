@@ -3,8 +3,23 @@ import {frequencies} from '../../recurring.js';
 import {catalogValues} from '../../catalog.js';
 import {useStore, getState, save, toast} from '../store.js';
 import {present, closeSheet} from '../nav.js';
+import {confirm} from '../common.js';
 import {Sheet, Icon, CategoryGlyph, Empty, Switch, Pill, Segmented, cx} from '../ui.js';
 import {money, longDate, today, coupleName, shortDate} from '../format.js';
+
+function deleteBill(id) {
+  const bill = (getState().data.recurring || []).find(b => b.id === id);
+  if (!bill) return;
+  confirm({
+    title: 'Delete this recurring bill?', message: `${bill.merchant} — ${money(bill.cents)} ${frequencies[bill.frequency].toLowerCase()} will stop. Expenses already recorded from it stay.`,
+    confirm: 'Delete bill', destructive: true,
+    run: async () => {
+      await save({action: 'recurring-delete', id});
+      getState().nav.sheets.filter(s => ['bill-editor', 'bill-record'].includes(s.type) && s.props.id === id).reverse().forEach(s => closeSheet(s.key));
+      toast('Recurring bill deleted');
+    },
+  });
+}
 
 export function BillsSheet() {
   const {data} = useStore('data');
@@ -20,6 +35,7 @@ export function BillsSheet() {
           <div class="bill-actions">
             ${b.active && html`<button type="button" class="btn btn-secondary btn-small" data-record=${b.id} onClick=${() => present('bill-record', {id: b.id})}>Record now</button>`}
             ${b.creator === data.seat && html`<button type="button" class="btn btn-quiet btn-small" data-edit=${b.id} onClick=${() => present('bill-editor', {id: b.id})}>Edit</button>`}
+            ${b.creator === data.seat && html`<button type="button" class="btn btn-danger-quiet btn-small" data-delete=${b.id} onClick=${() => deleteBill(b.id)}>Delete</button>`}
           </div>
         </article>`)}</div>`}
   <//>`;
@@ -64,6 +80,7 @@ export function BillEditor({sheetKey, id}) {
       <p class="form-hint">Reminders show inside the app; nothing is sent while it’s closed.</p>
       ${error && html`<p class="form-error" role="alert">${error}</p>`}
       <button type="submit" class="btn btn-primary btn-block" disabled=${busy}>Save bill</button>
+      ${old && old.creator === data.seat && html`<button type="button" class="btn btn-danger-quiet btn-block" id="delete-bill" disabled=${busy} onClick=${() => deleteBill(old.id)}>Delete bill</button>`}
     </form>
   <//>`;
 }
