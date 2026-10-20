@@ -160,6 +160,12 @@ test('stylesheets load once, in order, with one shared cache version', () => {
   assert.ok(indexHtml.includes('/theme-init.js?v=' + sheets[0][2]));
 });
 
+test('Home has a one-tap light/dark toggle that saves the choice', () => {
+  assert.match(sources['app/screens/home.js'], /<\$\{ThemeToggle\}\/>/);
+  assert.match(sources['app/common.js'], /export function ThemeToggle\b[\s\S]*?setTheme\(dark \? 'light' : 'dark'\)/);
+  assert.match(sources['app/store.js'], /localStorage\.setItem\('together-theme', theme\)/);
+});
+
 test('design tokens, couple identity, glass navigation and reduced motion stay defined', () => {
   for (const token of ['--bg', '--surface', '--sheet', '--label', '--accent', '--a', '--b', '--glass', '--r-card', '--spring'])
     assert.match(css, new RegExp(`\\s${token}:`), token + ' token');

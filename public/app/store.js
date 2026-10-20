@@ -15,6 +15,7 @@ let state = {
   toast: null,
   drafts: 0,
   theme: readTheme(),
+  dark: false,
   nav: {tab: 'home', pages: [], sheets: []},
 };
 const listeners = new Set();
@@ -238,4 +239,5 @@ export function applyTheme() {
   const dark = state.theme === 'dark' || (state.theme === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
   document.querySelector('meta[name=theme-color]')?.setAttribute('content', dark ? '#0b0b0f' : '#f3f2ef');
+  if (state.dark !== dark) setState({dark});
 }

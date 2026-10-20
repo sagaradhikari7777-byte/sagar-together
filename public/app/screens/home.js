@@ -2,7 +2,7 @@ import {html} from '../../vendor/preact-htm.js';
 import {useStore, savedDraft} from '../store.js';
 import {present, push, go} from '../nav.js';
 import {Page, Amount, Icon, FairShareBar, CategoryGlyph, Empty, CouplePair, cx} from '../ui.js';
-import {ExpenseRow} from '../common.js';
+import {ExpenseRow, ThemeToggle} from '../common.js';
 import {group, otherCouple, coupleName, greeting, money, plural, today, periodProgress, rangeLabel, categoryLook, shortDate, firstName} from '../format.js';
 import {householdOverview, currentSheet as current, recentExpenses, upcomingBills, sheetSummary, sheetCategories, insightFor} from '../derive.js';
 import {openAddExpense} from '../flows/expense.js';
@@ -18,7 +18,7 @@ export function Home() {
   const recent = recentExpenses(data, 5);
   const bills = upcomingBills(data, day);
   return html`<${Page} title=${data.name || 'Together'} eyebrow=${`${greeting()}, ${firstName(data.names[data.seat])}`} scrollKey="home"
-    actions=${html`<button type="button" class="nav-button" onClick=${() => go('activity')} aria-label="Search expenses"><${Icon} name="search"/></button>`}>
+    actions=${html`<${ThemeToggle}/><button type="button" class="nav-button" onClick=${() => go('activity')} aria-label="Search expenses"><${Icon} name="search"/></button>`}>
     <${BalanceCard} data=${data} yours=${yours} coupleA=${coupleA} mine=${mine} other=${other} sheet=${yours.sheets.length === 1 ? sheet : null}/>
     ${draft && html`<button type="button" class="card draft" onClick=${() => openAddExpense()}>
       <span class="draft-emoji" aria-hidden="true">✍️</span>

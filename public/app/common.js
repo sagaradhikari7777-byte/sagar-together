@@ -4,8 +4,15 @@ import {canManageExpenseAs, householdExpense} from '../expense-policy.js';
 import {Sheet, Icon, Amount, CategoryGlyph, Dot, cx, memo} from './ui.js';
 import {sheetsById, expenseById} from './derive.js';
 import {back, closeSheet, present} from './nav.js';
-import {getState, toast, save, savedDraft, clearDraft} from './store.js';
+import {getState, toast, save, savedDraft, clearDraft, useStore, setTheme} from './store.js';
 import {dayLabel, money, shortDate, group, firstName} from './format.js';
+
+/** Header button that flips between light and dark. Until tapped, the app follows the device. */
+export function ThemeToggle() {
+  const {dark} = useStore('dark');
+  return html`<button type="button" class="nav-button" data-action="toggle-theme" onClick=${() => setTheme(dark ? 'light' : 'dark')}
+    aria-label=${dark ? 'Switch to light mode' : 'Switch to dark mode'}><${Icon} name=${dark ? 'sun' : 'moon'}/></button>`;
+}
 
 /** Confirmation with one primary action. `run` may throw to show an error. */
 export function ConfirmSheet({sheetKey, title, message, confirm = 'Confirm', destructive, run}) {
