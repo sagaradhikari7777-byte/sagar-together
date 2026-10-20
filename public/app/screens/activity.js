@@ -23,6 +23,8 @@ export function Activity() {
   const {shown, summary} = journal(data, options, group(data.seat));
   const [count, more] = useIncremental(shown.length, {resetKey: JSON.stringify(options)});
   const visible = shown.slice(0, count);
+  // Name each expense's sheet only when the results span more than one.
+  const showSheet = new Set(shown.map(e => e.sheet)).size > 1;
   const active = ['payer', 'creator', 'receipt', 'category', 'sheet', 'from', 'to'].filter(k => filters[k]).length + (filters.sort !== 'newest' ? 1 : 0);
   const byAmount = ['largest', 'smallest'].includes(filters.sort);
   const clear = () => { setQuery(''); setStatus('open'); setFilters(emptyFilters()); };
@@ -43,8 +45,8 @@ export function Activity() {
       : shown.length === 0 ? html`<div class="card card-pad"><${Empty} emoji=${data.expenses.length ? '🔎' : '🧾'} title=${data.expenses.length ? 'No matches' : 'No expenses yet'} text=${data.expenses.length ? 'Try a different search or clear your filters.' : 'Add an expense and it will show up here.'}>
         ${data.expenses.length > 0 && status !== 'all' && html`<button type="button" class="btn btn-primary" data-action="search-all" onClick=${() => setStatus('all')}>Search all expenses</button>`}
         ${data.expenses.length > 0 && html`<button type="button" class="btn btn-secondary" data-action="reset-filters" onClick=${clear}>Clear search and filters</button>`}<//></div>`
-      : byAmount ? html`<div class="card list">${visible.map(e => html`<${ExpenseRow} key=${e.id} expense=${e} showSheet/>`)}</div>`
-      : html`<${DayGroups} expenses=${visible} totals=${dayTotals(shown)} showSheet/>`}
+      : byAmount ? html`<div class="card list">${visible.map(e => html`<${ExpenseRow} key=${e.id} expense=${e} showSheet=${showSheet}/>`)}</div>`
+      : html`<${DayGroups} expenses=${visible} totals=${dayTotals(shown)} showSheet=${showSheet}/>`}
     ${more}
   <//>`;
 }

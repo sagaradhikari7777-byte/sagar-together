@@ -13,13 +13,17 @@ Do not add features unless they materially improve one of those jobs.
 
 ## Primary navigation
 
-- **Home** — the household balance on the wallet card (with Settle up), draft recovery, the current sheet, upcoming bills and recent activity. Recent activity shows only open expenses: never settled ones or anything on a closed sheet.
+- **Home** — the household balance on the wallet card (with Settle up, and the open sheet's name, spend and days left when only one sheet is open), draft recovery, the current sheet as its own card only when several are open, upcoming bills and recent activity. Recent activity shows only open expenses: never settled ones or anything on a closed sheet.
 - **Activity** — every expense, opening on Open (unsettled) with Settled and All one tap away: search, filters, result totals and CSV export of what is shown.
 - **Add** — the centre tab button opens expense entry as a sheet. It is not a page.
 - **Sheets** — open sheets, then Archived. Each sheet has its own page with Expenses, Insights and Payments, and its own Settle up.
 - **Household** — people, invitations and access, payment history, recurring bills, merchants and categories, expense defaults, appearance, export and sign out.
 
 Settling is an action, not a destination: it starts from the wallet card or a sheet. Avoid duplicate controls across these destinations.
+
+## Expense rows
+
+Every expense row says who paid and what it means for your couple: "You lent $X" (green), "You owe $X" (amber), "Not shared" when no money moves, or Settled. Day-grouped lists are one card with each day's heading and total inside it.
 
 ## Expense entry
 

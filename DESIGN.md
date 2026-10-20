@@ -76,14 +76,14 @@ Geist variable, served from `/fonts` (OFL).
 - **SlideToConfirm:** drag the knob to record; keyboard and assistive tech activate it directly.
 - **Keypad:** digits, decimal, ÷ × − + and delete (long-press clears). Amounts are exact cents via `amount-calculator.js`.
 - **CategoryGlyph / MerchantMark:** emoji tiles tinted by category; gradient monograms hued from the merchant name.
-- **Row / Group:** inset-grouped settings lists with coloured icon tiles; **ExpenseRow** swipes left for Edit / Delete.
+- **Row / Group:** inset-grouped settings lists with coloured icon tiles; **ExpenseRow** shows who paid and your couple's effect (lent in green, owe in amber, Not shared, Settled) and swipes left for Edit / Delete; **DayGroups** is one card with day headings inside.
 - **Segmented:** sliding thumb; **Pill**, **Avatar**, **CouplePair**, **Empty**.
 
 ## Screens
 
-- **Home:** greeting and household name; wallet card with Settle up; draft banner; current sheet card with a days-left ring and category ribbon; "Coming up" bills rail; recent activity (open expenses only, or "All settled").
+- **Home:** greeting and household name; wallet card with Settle up (with one open sheet, its foot links to that sheet with spend and days left; the sheet card with a days-left ring and category ribbon appears only when several sheets are open); draft banner; "Coming up" bills rail; recent activity (open expenses only, or "All settled").
 - **Activity:** search, Open (the default) / Settled / All, filters sheet, result total with couple share, day-grouped expenses, CSV export of the results.
-- **Sheets:** open sheet cards (progress meter, spent / unsettled / balance) and the Archived list. A sheet page has the hero card, fair-share bar, who-pays flow, and Expenses / Insights / Payments.
+- **Sheets:** open sheet cards (progress meter, spent / unsettled / balance) and the Archived list. A sheet page has a compact hero card (total, status, ring, fair-share bar, one-line who pays), then Expenses / Insights / Payments; the Open / Settled filter appears only when a sheet holds both.
 - **Household:** both couples' people, Edit names and Invite, then Money, Lists, Preferences (expense defaults, Appearance) and Access & data, and sign out.
 - **Add (sheet):** the amount at the top (tap to enter it on the docked calculator keypad), then labelled sections with every option visible: Expense details (merchant and shortcuts, category, date, sheet), Payment & split (person and split buttons, live preview) and Extra details (description, receipt). One Save.
 - **Settle (sheet):** choose a sheet when several have balances, review with flow and couple comparison, slide to record, success.

@@ -13,7 +13,7 @@ export function Welcome() {
     <p class="welcome-copy">One calm place for two couples to log what they spend, see who’s ahead and settle up in a swipe.</p>
     <div class="welcome-card wallet is-owed" aria-label="Example balance">
       <div class="wallet-sheen" aria-hidden="true"></div>
-      <div class="wallet-top"><span class="wallet-label">Example · this fortnight</span><span class="wallet-status">To receive</span></div>
+      <span class="wallet-label">Example · this fortnight</span>
       <${Amount} cents=${720} class="amount-hero"/>
       <p class="wallet-line">Jordan & Riley owe you</p>
       <${FairShareBar} names=${exampleNames} overview=${{total: 15840, paid: 8640, share: 7920}}/>

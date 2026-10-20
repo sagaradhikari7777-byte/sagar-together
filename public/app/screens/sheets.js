@@ -1,7 +1,7 @@
 import {html, useState} from '../../vendor/preact-htm.js';
 import {useStore, getState, save, toast} from '../store.js';
 import {present, push, back, closeSheet, replace} from '../nav.js';
-import {Page, Icon, Amount, Pill, Empty, Sheet, Segmented, FairShareBar, Flow, CategoryGlyph, Avatar, cx, useIncremental} from '../ui.js';
+import {Page, Icon, Amount, Pill, Empty, Sheet, Segmented, FairShareBar, CategoryGlyph, Avatar, cx, useIncremental} from '../ui.js';
 import {DayGroups, ActionsSheet, confirm} from '../common.js';
 import {Ring} from './home.js';
 import {PaymentsList} from './household.js';
@@ -72,8 +72,10 @@ export function SheetPage({id}) {
   const sheet = sheetsById(data).get(id);
   const [tab, setTab] = useState('expenses'), [status, setStatus] = useState(sheet?.archived ? 'settled' : 'open');
   const st = sheet ? sheetState(data, sheet) : null;
-  const listed = !st ? [] : status === 'all' ? st.items : status === 'open' ? st.open : st.settled;
-  const [count, more] = useIncremental(tab === 'expenses' ? listed.length : 0, {first: 25, resetKey: status});
+  // Open and Settled only split the list when a sheet holds both; otherwise every expense shows.
+  const mixed = !!st && st.open.length > 0 && st.settled.length > 0, view = mixed ? status : 'all';
+  const listed = !st ? [] : view === 'all' ? st.items : view === 'open' ? st.open : st.settled;
+  const [count, more] = useIncremental(tab === 'expenses' ? listed.length : 0, {first: 25, resetKey: view});
   if (!sheet) return html`<${Page} title="Sheet" back><div class="card card-pad"><${Empty} emoji="🗑️" title="This sheet no longer exists"/></div><//>`;
   const stat = statusOf(sheet, st), progress = periodProgress(sheet);
   const coupleA = sheetOverview(data, id, 'a'), mine = group(data.seat), yours = sheetOverview(data, id, mine);
@@ -83,11 +85,11 @@ export function SheetPage({id}) {
     actions=${html`<button type="button" class="nav-button" onClick=${() => present('sheet-actions', {id})} aria-label=${'Actions for ' + sheet.name}><${Icon} name="dots"/></button>`}>
     <section class="card hero-card">
       <div class="hero-row">
-        <div><${Pill} tone=${stat.tone}>${stat.label}<//><${Amount} cents=${st.total} class="amount-xl"/><p class="muted">Total spent${st.unsettled && st.unsettled !== st.total ? ` · ${money(st.unsettled)} unsettled` : ''}</p></div>
+        <div><${Amount} cents=${st.total} class="amount-lg"/><p class="muted">Spent · <span class=${'hero-status is-' + stat.tone}>${st.open.length && st.unsettled !== st.total ? money(st.unsettled) + ' unsettled' : stat.label.toLowerCase()}</span></p></div>
         ${!sheet.archived && html`<${Ring} progress=${progress}/>`}
       </div>
       ${st.total > 0 && html`<${FairShareBar} names=${data.names} overview=${coupleA}/>`}
-      ${yours.net !== 0 ? html`<div class="hero-owe"><${Flow} names=${data.names} from=${from} to=${to}/><p><b>${coupleName(data.names, from)}</b> pay <b>${money(Math.abs(yours.net))}</b> to ${coupleName(data.names, to)}</p></div>`
+      ${yours.net !== 0 ? html`<p class="hero-owe"><b>${coupleName(data.names, from)}</b> pay <b>${money(Math.abs(yours.net))}</b> to ${coupleName(data.names, to)}</p>`
         : st.open.length ? html`<p class="hero-even">✨ These expenses balance out.</p>` : ''}
       <div class="hero-actions">
         ${!sheet.archived && html`<button type="button" class="btn btn-secondary" data-action="add" onClick=${() => openAddExpense({sheet: id})}><${Icon} name="plus"/> Add expense</button>`}
@@ -97,8 +99,8 @@ export function SheetPage({id}) {
     </section>
     <${Segmented} label="Sheet view" value=${tab} onChange=${setTab} class="segmented-wide" options=${[{value: 'expenses', label: 'Expenses'}, {value: 'insights', label: 'Insights'}, {value: 'payments', label: `Payments${payments.length ? ' · ' + payments.length : ''}`}]}/>
     ${tab === 'expenses' && html`
-      <div class="toolbar"><${Segmented} label="Expense status" value=${status} onChange=${setStatus} options=${[{value: 'open', label: `Open · ${st.open.length}`}, {value: 'settled', label: `Settled · ${st.items.length - st.open.length}`}, {value: 'all', label: 'All'}]}/></div>
-      ${listed.length ? html`<${DayGroups} expenses=${listed.slice(0, count)} totals=${dayTotals(listed)} showAuthor/>${more}` : html`<div class="card card-pad"><${Empty} emoji=${st.items.length ? '✅' : '🧾'} title=${st.items.length ? (status === 'open' ? 'Nothing unsettled' : 'Nothing settled yet') : 'This sheet is empty'} text=${st.items.length ? '' : 'Expenses you add to this sheet will appear here.'}/></div>`}`}
+      ${mixed && html`<div class="toolbar"><${Segmented} label="Expense status" value=${status} onChange=${setStatus} options=${[{value: 'open', label: `Open · ${st.open.length}`}, {value: 'settled', label: `Settled · ${st.items.length - st.open.length}`}, {value: 'all', label: 'All'}]}/></div>`}
+      ${listed.length ? html`<${DayGroups} expenses=${listed.slice(0, count)} totals=${dayTotals(listed)}/>${more}` : html`<div class="card card-pad"><${Empty} emoji=${st.items.length ? '✅' : '🧾'} title=${st.items.length ? (view === 'open' ? 'Nothing unsettled' : 'Nothing settled yet') : 'This sheet is empty'} text=${st.items.length ? '' : 'Expenses you add to this sheet will appear here.'}/></div>`}`}
     ${tab === 'insights' && html`<${Insights} data=${data} id=${id} items=${st.items}/>`}
     ${tab === 'payments' && html`<${PaymentsList} records=${payments}/>`}
   <//>`;

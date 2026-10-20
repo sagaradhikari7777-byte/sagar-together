@@ -1,11 +1,11 @@
 // Shared sheets and rows used by several screens.
 import {html, useRef, useState} from '../vendor/preact-htm.js';
-import {canManageExpenseAs} from '../expense-policy.js';
+import {canManageExpenseAs, householdExpense} from '../expense-policy.js';
 import {Sheet, Icon, Amount, CategoryGlyph, Dot, cx, memo} from './ui.js';
 import {sheetsById, expenseById} from './derive.js';
 import {back, closeSheet, present} from './nav.js';
 import {getState, toast, save, savedDraft, clearDraft} from './store.js';
-import {dayLabel, money, shortDate, group} from './format.js';
+import {dayLabel, money, shortDate, group, firstName} from './format.js';
 
 /** Confirmation with one primary action. `run` may throw to show an error. */
 export function ConfirmSheet({sheetKey, title, message, confirm = 'Confirm', destructive, run}) {
@@ -42,11 +42,27 @@ export const confirm = props => present('confirm', props);
 
 // ───────── Expense rows ─────────
 const actionWidth = 148;
+
+/** What an expense means for your couple: what you paid minus your share (same cent rounding as settling). */
+export function coupleImpact(expense, couple) {
+  const e = householdExpense(expense);
+  const a = e.split === 'half' ? Math.floor(e.cents / 2) : e.split === 'a' ? e.cents : 0;
+  return (group(e.payer) === couple ? e.cents : 0) - (couple === 'a' ? a : e.cents - a);
+}
+
+/** The row's second figure: settled, what your couple lent or owes, or not shared when no money moves. */
+function impactLine(e, mine) {
+  if (e.settlement) return {text: html`<${Icon} name="check"/> Settled`, label: 'settled'};
+  const net = coupleImpact(e, mine);
+  if (net > 0) return {text: `You lent ${money(net)}`, label: `you lent ${money(net)}`, tone: 'is-owed'};
+  if (net < 0) return {text: `You owe ${money(-net)}`, label: `you owe ${money(-net)}`, tone: 'is-owe'};
+  return {text: 'Not shared', label: 'not shared'};
+}
 /**
  * One expense. Your own unsettled expenses swipe left to reveal Edit and Delete.
  * Memoized: a row re-renders only when its expense (or how it is shown) changes.
  */
-export const ExpenseRow = memo(function ExpenseRow({expense: e, showSheet = false, showAuthor = false}) {
+export const ExpenseRow = memo(function ExpenseRow({expense: e, showSheet = false}) {
   const {data} = getState();
   const manageable = canManageExpenseAs(e, data.seat);
   const sheet = sheetsById(data).get(e.sheet), archived = sheet?.archived;
@@ -80,23 +96,24 @@ export const ExpenseRow = memo(function ExpenseRow({expense: e, showSheet = fals
     present('expense-detail', {id: e.id});
   };
   const sheetName = sheet?.name;
-  const who = showAuthor && Number.isInteger(e.creator) ? data.names[e.creator] : data.names[e.payer];
+  const who = e.payer === data.seat ? 'You paid' : `${firstName(data.names[e.payer])} paid`;
   const meta = [e.category, showSheet && sheetName].filter(Boolean).join(' · ');
+  const impact = impactLine(e, group(data.seat));
   return html`<div class=${cx('xrow', e.settlement && 'is-settled')}>
     ${manageable && html`<div class="xrow-actions" aria-hidden=${!open}>
       <button type="button" class="xrow-edit" tabindex=${open ? 0 : -1} disabled=${archived} onClick=${() => present('expense-editor', {id: e.id})} aria-label=${'Edit ' + e.merchant}><${Icon} name="edit"/><span>Edit</span></button>
       <button type="button" class="xrow-delete" tabindex=${open ? 0 : -1} onClick=${() => deleteExpense(e.id)} aria-label=${'Delete ' + e.merchant}><${Icon} name="trash"/><span>Delete</span></button>
     </div>`}
     <button type="button" class="xrow-front" ref=${front} data-expense=${e.id} onPointerDown=${onDown} onPointerMove=${onMove} onPointerUp=${onUp} onPointerCancel=${onUp} onClick=${openDetail}
-      aria-label=${`${e.merchant}, ${money(e.cents)}, ${showAuthor ? 'added by' : 'paid by'} ${who}, ${meta}, ${dayLabel(e.date)}${e.settlement ? ', settled' : ''}`}>
+      aria-label=${`${e.merchant}, ${money(e.cents)}, ${who.toLowerCase()}, ${impact.label}, ${meta}, ${dayLabel(e.date)}`}>
       <${CategoryGlyph} name=${e.category}/>
       <span class="xrow-text">
         <span class="xrow-title">${e.merchant}</span>
-        <span class="xrow-meta"><${Dot} seat=${showAuthor && Number.isInteger(e.creator) ? e.creator : e.payer}/>${showAuthor ? 'Added by ' : ''}${who}${meta && html`<span class="xrow-sep"> · </span>${meta}`}</span>
+        <span class="xrow-meta"><${Dot} seat=${e.payer}/>${who}${meta && html`<span class="xrow-sep"> · </span>${meta}`}</span>
       </span>
       <span class="xrow-end">
         <${Amount} cents=${e.cents} class="xrow-amount"/>
-        <span class="xrow-sub">${e.settlement ? html`<${Icon} name="check"/> Settled` : e.split === 'half' ? '50 / 50' : e.split === group(data.seat) ? 'All ours' : 'All theirs'}</span>
+        <span class=${cx('xrow-sub', impact.tone)}>${impact.text}</span>
       </span>
     </button>
   </div>`;
@@ -119,14 +136,13 @@ export function deleteExpense(id) {
 }
 
 /**
- * Day-grouped expenses with daily totals. When only part of a list is shown,
- * pass `totals` for the whole list so a partly shown day still totals in full.
+ * Day-grouped expenses in one list, each day headed by its total. When only part
+ * of a list is shown, pass `totals` for the whole list so a partly shown day still totals in full.
  */
-export function DayGroups({expenses, totals, showSheet, showAuthor}) {
+export function DayGroups({expenses, totals, showSheet}) {
   const days = new Map();
   for (const e of expenses) { if (!days.has(e.date)) days.set(e.date, []); days.get(e.date).push(e); }
-  return html`${[...days].map(([day, items]) => html`<section class="day" key=${day}>
-    <h3 class="day-head"><span>${dayLabel(day)}</span><span>${money(totals?.get(day) ?? items.reduce((n, e) => n + e.cents, 0))}</span></h3>
-    <div class="card list">${items.map(e => html`<${ExpenseRow} key=${e.id} expense=${e} showSheet=${showSheet} showAuthor=${showAuthor}/>`)}</div>
-  </section>`)}`;
+  return html`<div class="card list days">${[...days].map(([day, items]) => html`
+    <h3 class="day-head" key=${'d' + day}><span>${dayLabel(day)}</span><span>${money(totals?.get(day) ?? items.reduce((n, e) => n + e.cents, 0))}</span></h3>
+    ${items.map(e => html`<${ExpenseRow} key=${e.id} expense=${e} showSheet=${showSheet}/>`)}`)}</div>`;
 }
