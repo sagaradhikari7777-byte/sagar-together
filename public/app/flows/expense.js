@@ -42,8 +42,9 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
   const [error, setError] = useState(''), [duplicate, setDuplicate] = useState(''), [prompt, setPrompt] = useState(false);
   const [draftNote, setDraftNote] = useState(resume ? 'Recovered draft · check it before saving' : '');
   const [receiptBusy, setReceiptBusy] = useState(false);
-  // The keypad slides up only while the amount is being entered, so every option stays in view.
-  const [keypad, setKeypad] = useState(false);
+  // A new expense opens with the keypad up so the amount can be typed straight away.
+  // It slides away when another option is used, so every option stays in view.
+  const [keypad, setKeypad] = useState(() => !id && !initial.values.amount);
   const snapshot = (values, r) => JSON.stringify([values, r]);
   const original = useRef(snapshot(initial.values, initial.receipt));
   const latest = useRef({}); latest.current = {v, receipt};

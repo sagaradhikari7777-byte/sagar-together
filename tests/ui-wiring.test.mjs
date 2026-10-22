@@ -58,8 +58,8 @@ test('the expense form shows every option, like the original', () => {
   for (const control of ['data-pick="merchants"', 'data-pick="categories"', 'type="date" name="date"', 'data-payer=${seat}', "splitOption('half'", "splitOption('a'", "splitOption('b'", 'name="notes"', 'id="choose-receipt"', 'id="split-preview"'])
     assert.ok(editor.includes(control), control + ' is on the form');
   assert.ok(editor.includes('data-pick="sheet"') && editor.includes('data-sheet-info'), 'the sheet always shows; it is a picker when several are open');
-  // The keypad docks only while the amount is entered, so it never hides the options.
-  assert.match(editor, /const \[keypad, setKeypad\] = useState\(false\)/);
+  // A new expense opens with the keypad up; it docks only while the amount is entered, so it never hides the options.
+  assert.match(editor, /const \[keypad, setKeypad\] = useState\(\(\) => !id && !initial\.values\.amount\)/, 'a new expense with no amount opens with the keypad up');
   assert.match(editor, /\$\{keypad && html`<div class="keypad-dock">/);
   assert.match(editor, /onClickCapture=\$\{\(\) => \{ if \(keypad\) setKeypad\(false\); \}\}/, 'using another option puts the keypad away first');
   assert.match(editor, /if \(!latest\.current\.v\.amount\) setKeypad\(true\)/, 'choosing a merchant opens the keypad when no amount is set');
