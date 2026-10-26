@@ -6,8 +6,9 @@ import {DayGroups, ActionsSheet, confirm} from '../common.js';
 import {Ring} from './home.js';
 import {PaymentsList} from './household.js';
 import {group, otherCouple, coupleName, money, plural, rangeLabel, periodProgress, today, categoryLook, addDays, pad} from '../format.js';
-import {orderedSheets, sheetSummary, sheetOverview, sheetBreakdown, sheetsById, dayTotals, canDeleteSheet as canDeleteInSnapshot} from '../derive.js';
+import {orderedSheets, sheetSummary, sheetOverview, sheetPartPayments, sheetBreakdown, sheetsById, dayTotals, canDeleteSheet as canDeleteInSnapshot} from '../derive.js';
 import {exportCSV, summaryText, shareText} from '../flows/export.js';
+import {partTotal} from '../../settlement-overview.js';
 import {openAddExpense} from '../flows/expense.js';
 
 const sheetState = (data, sheet) => sheetSummary(data, sheet.id);
@@ -62,7 +63,7 @@ function SheetCard({sheet, data}) {
       <span><small>Unsettled</small><b>${money(st.unsettled)}</b></span>
       <span><small>${o.net > 0 ? 'You owe' : o.net < 0 ? 'Owed to you' : 'Balance'}</small><b class=${o.net > 0 ? 'is-owe' : o.net < 0 ? 'is-owed' : ''}>${o.net ? money(Math.abs(o.net)) : 'Even'}</b></span>
     </div>
-    ${o.net !== 0 && html`<p class="sheetcard-line">${o.net > 0 ? `${coupleName(data.names, mine)} → ${coupleName(data.names, other)}` : `${coupleName(data.names, other)} → ${coupleName(data.names, mine)}`}</p>`}
+    ${o.net !== 0 && html`<p class="sheetcard-line">${o.net > 0 ? `${coupleName(data.names, mine)} → ${coupleName(data.names, other)}` : `${coupleName(data.names, other)} → ${coupleName(data.names, mine)}`}${o.payments.length ? ` · ${money(partTotal(o.payments))} part-paid` : ''}</p>`}
   </button>`;
 }
 
@@ -80,7 +81,8 @@ export function SheetPage({id}) {
   const stat = statusOf(sheet, st), progress = periodProgress(sheet);
   const coupleA = sheetOverview(data, id, 'a'), mine = group(data.seat), yours = sheetOverview(data, id, mine);
   const other = otherCouple(mine), [from, to] = yours.net < 0 ? [other, mine] : [mine, other];
-  const payments = data.settlements.filter(r => r.sheet === id);
+  const payments = data.settlements.filter(r => r.sheet === id), parts = sheetPartPayments(data, id);
+  const partPaid = partTotal(parts);
   return html`<${Page} title=${sheet.name} eyebrow=${rangeLabel(sheet)} back scrollKey=${'sheet-' + id}
     actions=${html`<button type="button" class="nav-button" onClick=${() => present('sheet-actions', {id})} aria-label=${'Actions for ' + sheet.name}><${Icon} name="dots"/></button>`}>
     <section class="card hero-card">
@@ -90,10 +92,11 @@ export function SheetPage({id}) {
       </div>
       ${st.total > 0 && html`<${FairShareBar} names=${data.names} overview=${coupleA}/>`}
       ${yours.net !== 0 ? html`<p class="hero-owe"><b>${coupleName(data.names, from)}</b> pay <b>${money(Math.abs(yours.net))}</b> to ${coupleName(data.names, to)}</p>`
-        : st.open.length ? html`<p class="hero-even">✨ These expenses balance out.</p>` : ''}
+        : st.open.length ? html`<p class="hero-even">✨ ${parts.length ? 'Part payments have covered the balance.' : 'These expenses balance out.'}</p>` : ''}
+      ${parts.length > 0 && html`<p class="hero-part" data-part-paid=${partPaid}>${money(partPaid)} already paid in ${plural(parts.length, 'part payment')}</p>`}
       <div class="hero-actions">
         ${!sheet.archived && html`<button type="button" class="btn btn-secondary" data-action="add" onClick=${() => openAddExpense({sheet: id})}><${Icon} name="plus"/> Add expense</button>`}
-        ${st.open.length > 0 && html`<button type="button" class="btn btn-primary" data-action="settle" onClick=${() => present('settle', {sheetId: id})}>${yours.net ? 'Settle up' : 'Close sheet'}</button>`}
+        ${(st.open.length > 0 || parts.length > 0) && html`<button type="button" class="btn btn-primary" data-action="settle" onClick=${() => present('settle', {sheetId: id})}>${yours.net ? 'Settle up' : 'Close sheet'}</button>`}
         ${sheet.archived && html`<button type="button" class="btn btn-secondary" onClick=${() => sheetAction('archive', id)}><${Icon} name="undo"/> Reopen sheet</button>`}
       </div>
     </section>
@@ -101,20 +104,26 @@ export function SheetPage({id}) {
     ${tab === 'expenses' && html`
       ${mixed && html`<div class="toolbar"><${Segmented} label="Expense status" value=${status} onChange=${setStatus} options=${[{value: 'open', label: `Open · ${st.open.length}`}, {value: 'settled', label: `Settled · ${st.items.length - st.open.length}`}, {value: 'all', label: 'All'}]}/></div>`}
       ${listed.length ? html`<${DayGroups} expenses=${listed.slice(0, count)} totals=${dayTotals(listed)}/>${more}` : html`<div class="card card-pad"><${Empty} emoji=${st.items.length ? '✅' : '🧾'} title=${st.items.length ? (view === 'open' ? 'Nothing unsettled' : 'Nothing settled yet') : 'This sheet is empty'} text=${st.items.length ? '' : 'Expenses you add to this sheet will appear here.'}/></div>`}`}
-    ${tab === 'insights' && html`<${Insights} data=${data} id=${id} items=${st.items}/>`}
+    ${tab === 'insights' && html`<${Insights} data=${data} id=${id} items=${st.items} yours=${yours} partPaid=${partPaid} parts=${parts.length}/>`}
     ${tab === 'payments' && html`<${PaymentsList} records=${payments}/>`}
   <//>`;
 }
 
-function Insights({data, id, items}) {
+function Insights({data, id, items, yours, partPaid, parts}) {
   const [mode, setMode] = useState('category');
   if (!items.length) return html`<div class="card card-pad"><${Empty} emoji="📊" title="No spending yet" text="Insights appear once this sheet has expenses."/></div>`;
+  // Part payments are money moving between couples, not spending, so they sit above the breakdown.
+  const progress = parts > 0 && html`<section class="card card-pad settle-progress" aria-label="Settling progress">
+    <div class="settle-progress-head"><span><small>Paid so far</small><b>${money(partPaid)}</b></span><span><small>Still to settle</small><b>${money(Math.abs(yours.net))}</b></span></div>
+    <div class="meter" aria-hidden="true"><i style=${`--w:${Math.round(partPaid / (partPaid + Math.abs(yours.net) || 1) * 100)}%`}></i></div>
+    <p class="muted">${plural(parts, 'part payment')} recorded. Spending below is unchanged by payments.</p>
+  </section>`;
   const total = items.reduce((n, e) => n + e.cents, 0);
   const key = mode === 'category' ? 'category' : mode === 'merchant' ? 'merchant' : 'payer';
   let rows = sheetBreakdown(data, id, key);
   if (rows.length > 6) rows = [...rows.slice(0, 5), {name: 'Everything else', cents: rows.slice(5).reduce((n, r) => n + r.cents, 0), count: rows.slice(5).reduce((n, r) => n + r.count, 0), rest: true}];
   const max = Math.max(...rows.map(r => r.cents), 1);
-  return html`<section class="card card-pad insights" aria-label="Spending breakdown">
+  return html`${progress}<section class="card card-pad insights" aria-label="Spending breakdown">
     <${Segmented} label="Group by" value=${mode} onChange=${setMode} options=${[{value: 'category', label: 'Categories'}, {value: 'merchant', label: 'Merchants'}, {value: 'payer', label: 'People'}]}/>
     <div class="bars">${rows.map(r => {
       const label = mode === 'payer' && !r.rest ? data.names[r.name] : r.name;
@@ -139,11 +148,11 @@ export function SheetActions({sheetKey, id}) {
   const st = sheetState(data, s), deletable = canDeleteSheet(data, id);
   const done = fn => async () => { if (await fn()) closeSheet(sheetKey); };
   return html`<${ActionsSheet} title=${s.name} subtitle=${rangeLabel(s)}
-    footnote=${!deletable ? 'This sheet includes someone else’s expenses or settled records, so it can’t be deleted. Archive it instead.' : s.archived ? '' : st.open.length ? 'Settle the open expenses to archive this sheet.' : ''}
+    footnote=${!deletable ? 'This sheet includes someone else’s expenses or settled records, so it can’t be deleted. Archive it instead.' : s.archived ? '' : st.open.length || sheetPartPayments(data, id).length ? 'Settle the open expenses to archive this sheet.' : ''}
     actions=${[
       {label: 'Edit sheet', icon: 'edit', id: 'option-edit', run: () => replace('sheet-form', {id})},
       {label: s.pinned ? 'Unpin sheet' : 'Pin to Home', icon: 'pin', id: 'option-pin', run: done(() => sheetAction('pin', id))},
-      {label: s.archived ? 'Reopen sheet' : 'Archive sheet', icon: s.archived ? 'undo' : 'archive', id: 'option-archive', disabled: !s.archived && st.open.length > 0, run: done(() => sheetAction('archive', id))},
+      {label: s.archived ? 'Reopen sheet' : 'Archive sheet', icon: s.archived ? 'undo' : 'archive', id: 'option-archive', disabled: !s.archived && (st.open.length > 0 || sheetPartPayments(data, id).length > 0), run: done(() => sheetAction('archive', id))},
       {label: 'Share summary', icon: 'share', run: () => shareText(summaryText(st.items, s.name)).catch(() => {})},
       {label: 'Export as CSV', icon: 'download', disabled: !st.items.length, run: () => exportCSV(st.items)},
       {label: 'Delete sheet', icon: 'trash', destructive: true, id: 'option-delete', disabled: !deletable, run: () => confirm({

@@ -19,6 +19,6 @@ test('every payer, split and legacy allocation agrees with the settlement engine
 });
 test('empty and fully settled sheets show zero without an outstanding balance',()=>{
  for(const items of [[],[expense(5000,0,'half',{settlement:'done'})]]){
-  assert.deepEqual(settlementOverview(items,'b'),{rows:[],total:0,share:0,paid:0,net:0});
+  assert.deepEqual(settlementOverview(items,'b'),{rows:[],total:0,share:0,paid:0,partPaid:0,payments:[],net:0});
  }
 });

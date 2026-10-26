@@ -1,5 +1,6 @@
 import {html, useState} from '../../vendor/preact-htm.js';
 import {catalogValues} from '../../catalog.js';
+import {isPartPayment} from '../../settlement-overview.js';
 import {useStore, getState, save, toast, signOut, exitDemo, setTheme, shareLink, entryPreferences, setEntryPreferences} from '../store.js';
 import {present, back, closeSheet} from '../nav.js';
 import {Page, Group, Row, Icon, Avatar, Sheet, Segmented, Empty, Pill, cx} from '../ui.js';
@@ -127,19 +128,21 @@ export function PreferencesSheet({sheetKey}) {
 // ───────── Payments ─────────
 export function PaymentsList({records}) {
   const {data} = useStore('data');
-  if (!records.length) return html`<div class="card card-pad"><${Empty} emoji="🤝" title="No payments recorded yet" text="When a sheet is settled, the payment appears here."/></div>`;
+  if (!records.length) return html`<div class="card card-pad"><${Empty} emoji="🤝" title="No payments recorded yet" text="When a sheet is settled or part-paid, the payment appears here."/></div>`;
   return html`<div class="stack">${records.map(r => {
     const names = r.names || data.names, payer = r.net > 0 ? 'b' : 'a', receiver = otherCouple(payer);
-    const sheet = data.sheets.find(s => s.id === r.sheet);
-    return html`<article class=${cx('card', 'payment', r.reversed && 'is-reversed')}>
+    const sheet = data.sheets.find(s => s.id === r.sheet), part = isPartPayment(r);
+    const detail = part ? 'Part payment' : plural(r.count, 'expense') + (r.partPaid ? ` · after ${money(r.partPaid)} in part payments` : '');
+    return html`<article class=${cx('card', 'payment', r.reversed && 'is-reversed', part && 'is-part')} data-payment-kind=${part ? 'partial' : 'full'}>
       <div class="payment-head">
-        <span class="payment-icon" aria-hidden="true">${r.reversed ? '↩️' : '🤝'}</span>
+        <span class="payment-icon" aria-hidden="true">${r.reversed ? '↩️' : part ? '💸' : '🤝'}</span>
         <span class="payment-text"><strong>${r.net ? `${coupleName(names, payer)} → ${coupleName(names, receiver)}` : 'Balanced expenses closed'}</strong>
-          <small>${sheet?.name || 'Sheet'} · ${stamp(r.date)} · ${plural(r.count, 'expense')}</small>
+          <small>${sheet?.name || 'Sheet'} · ${stamp(r.date)} · ${detail}</small>
           <small>Recorded by ${names[r.by] || 'Household member'}</small></span>
         <b class="payment-amount">${money(Math.abs(r.net))}</b>
       </div>
       ${r.reversed ? html`<p class="payment-note">Reversed by ${data.names[r.reversed.by]} · ${stamp(r.reversed.date)}<br/>“${r.reversed.reason}”</p>`
+        : part && r.closedBy ? html`<p class="payment-note">Included when the sheet was settled. Reverse that payment to change this one.</p>`
         : r.by === data.seat && html`<button type="button" class="link link-danger" data-reverse-settlement=${r.id} onClick=${() => present('reverse', {id: r.id})}>Reverse this payment</button>`}
     </article>`;
   })}</div>`;
@@ -154,16 +157,18 @@ export function ReverseSheet({sheetKey, id}) {
   const {data} = getState(), r = data.settlements.find(x => x.id === id);
   const [reason, setReason] = useState(''), [error, setError] = useState(''), [busy, setBusy] = useState(false);
   if (!r) return '';
+  const part = isPartPayment(r);
   const submit = async event => {
     event.preventDefault();
     if (!reason.trim()) return setError('Add a short reason for the record.');
     setBusy(true);
-    try { await save({action: 'settlement-reverse', id, reason: reason.trim()}); closeSheet(sheetKey); toast('Payment reversed · expenses reopened'); }
+    try { await save({action: 'settlement-reverse', id, reason: reason.trim()}); closeSheet(sheetKey); toast(part ? 'Part payment reversed · balance restored' : 'Payment reversed · expenses reopened'); }
     catch (e) { setError(e.message); setBusy(false); }
   };
   return html`<${Sheet} title="Reverse payment">
     <form id="reverse-settlement-form" class="form" onSubmit=${submit}>
-      <p class="sheet-lede">This reopens the ${plural(r.count, 'linked expense')} and the sheet. The original payment and your reason stay in the history. No money moves.</p>
+      <p class="sheet-lede">${part ? `This takes the ${money(Math.abs(r.net))} part payment off the record, so the sheet’s balance goes back up by that amount.`
+        : `This reopens the ${plural(r.count, 'linked expense')} and the sheet.${r.partPaid ? ` The ${money(r.partPaid)} in part payments before it count toward the balance again.` : ''}`} The original payment and your reason stay in the history. No money moves.</p>
       <label class="field"><span>Reason</span><textarea name="reason" rows="3" maxlength="300" required placeholder="e.g. Recorded before the transfer arrived" value=${reason} onInput=${e => setReason(e.currentTarget.value)}></textarea></label>
       ${error && html`<p class="form-error" role="alert">${error}</p>`}
       <button type="submit" class="btn btn-danger btn-block" disabled=${busy}>Reverse payment</button>

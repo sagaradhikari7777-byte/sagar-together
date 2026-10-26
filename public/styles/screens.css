@@ -256,6 +256,8 @@ button.row:active:not(:disabled) { background: var(--fill-2); }
 .toolbar .segmented { flex: 1 1 200px; }
 .result-line { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; padding: 0 6px; font-size: .8125rem; color: var(--label-2); }
 .result-line b { color: var(--label); font-weight: 650; font-variant-numeric: tabular-nums; }
+.result-parts { align-items: baseline; }
+.result-parts .link { font-size: inherit; }
 
 /* ───────── Sheets ───────── */
 .tally { display: flex; gap: 18px; margin-top: -6px; padding: 0 4px; font-size: .9375rem; color: var(--label-2); }
@@ -293,6 +295,7 @@ button.row:active:not(:disabled) { background: var(--fill-2); }
 .hero-status.is-caution { font-weight: 600; color: var(--caution); }
 .hero-owe { padding: 12px 14px; border-radius: var(--r-inner); background: var(--surface-2); font-size: .9375rem; color: var(--label-2); text-align: center; }
 .hero-owe b { color: var(--label); }
+.hero-part { margin-top: -4px; font-size: .8125rem; color: var(--label-2); text-align: center; }
 .hero-even { padding: 12px; border-radius: var(--r-inner); background: var(--accent-soft); color: var(--positive); font-weight: 600; text-align: center; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .hero-actions .btn { flex: 1 1 140px; }
@@ -511,6 +514,15 @@ img.receipt-image { display: block; width: 100%; max-height: 320px; object-fit: 
 .couple-compare > div > span:not(.compare-head) { display: grid; min-width: 0; }
 .couple-compare small { font-size: .6875rem; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--label-2); }
 .couple-compare b { font-size: .9375rem; font-variant-numeric: tabular-nums; }
+.settle-parts { font-size: .8125rem; }
+.settle-part { display: grid; gap: 10px; }
+.settle-part input { font-variant-numeric: tabular-nums; }
+.settle-progress { display: grid; gap: 10px; }
+.settle-progress-head { display: flex; justify-content: space-between; gap: 12px; }
+.settle-progress-head span { display: grid; gap: 2px; }
+.settle-progress-head span:last-child { text-align: right; }
+.settle-progress-head small { font-size: .6875rem; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--label-3); }
+.settle-progress-head b { font-size: 1.0625rem; font-variant-numeric: tabular-nums; }
 .settle-note { display: flex; gap: 8px; font-size: .8125rem; color: var(--label-2); }
 .settle-note .icon { flex: none; width: 16px; height: 16px; margin-top: 2px; }
 .success { display: grid; justify-items: center; gap: 12px; padding: 24px 0 8px; text-align: center; }

@@ -4,6 +4,7 @@ import {householdExpense, canManageExpenseAs} from '../expense-policy.js';
 import {expenseHistory} from '../expense-history.js';
 import {changeRecurring} from '../recurring.js';
 import {changeCatalog} from '../catalog.js';
+import {openPartPayments, isPartPayment} from '../settlement-overview.js';
 import {today, addDays} from './format.js';
 
 const uid = () => crypto.randomUUID();
@@ -77,24 +78,36 @@ export function demoMutation(data, b) {
     case 'pin': { const was = data.sheets.find(s => s.id === b.id)?.pinned; data.sheets.forEach(s => s.pinned = s.id === b.id && !was); break; }
     case 'archive': {
       const s = data.sheets.find(s => s.id === b.id);
-      if (!s.archived && data.expenses.some(e => e.sheet === s.id && !e.settlement)) fail('Settle expenses before archiving.');
+      if (!s.archived && (data.expenses.some(e => e.sheet === s.id && !e.settlement) || openPartPayments(data.settlements, new Set([s.id])).length)) fail('Settle expenses before archiving.');
       s.archived = !s.archived;
       break;
     }
     case 'settle': {
-      const es = data.expenses.filter(e => e.sheet === b.sheet && !e.settlement);
-      if (!es.length) fail('No shared expenses to settle.');
-      const record = {id: uid(), sheet: b.sheet, net: balanceNet(es), date: new Date().toISOString(), count: es.length, by: seat, names: [...data.names], expenses: es.map(e => e.id)};
+      const es = data.expenses.filter(e => e.sheet === b.sheet && !e.settlement), parts = openPartPayments(data.settlements, new Set([b.sheet]));
+      if (!es.length && !parts.length) fail('No shared expenses to settle.');
+      const record = {id: uid(), sheet: b.sheet, net: balanceNet(es) - parts.reduce((n, r) => n + r.net, 0), date: new Date().toISOString(), count: es.length, by: seat, names: [...data.names], expenses: es.map(e => e.id)};
+      if (parts.length) Object.assign(record, {partials: parts.map(r => r.id), partPaid: parts.reduce((n, r) => n + r.cents, 0)});
       es.forEach(e => e.settlement = record.id);
+      parts.forEach(r => r.closedBy = record.id);
       data.settlements.unshift(record);
       const sheet = data.sheets.find(s => s.id === b.sheet); if (sheet) sheet.archived = true;
       break;
     }
+    case 'settle-partial': {
+      const es = data.expenses.filter(e => e.sheet === b.sheet && !e.settlement);
+      const net = balanceNet(es) - openPartPayments(data.settlements, new Set([b.sheet])).reduce((n, r) => n + r.net, 0);
+      if (!es.length || !net) fail('Nothing is owed on this sheet.');
+      if (!Number.isInteger(b.cents) || b.cents <= 0 || b.cents >= Math.abs(net)) fail('Enter less than the full balance, or settle in full.');
+      data.settlements.unshift({id: uid(), sheet: b.sheet, kind: 'partial', net: Math.sign(net) * b.cents, cents: b.cents, date: new Date().toISOString(), count: 0, by: seat, names: [...data.names], expenses: []});
+      break;
+    }
     case 'settlement-reverse': {
       const r = data.settlements.find(r => r.id === b.id);
-      if (!r || r.by !== seat || r.reversed) fail('This settlement cannot be reversed.');
+      if (!r || r.by !== seat || r.reversed || r.closedBy) fail('This settlement cannot be reversed.');
       r.reversed = {by: seat, date: new Date().toISOString(), reason: b.reason};
+      if (isPartPayment(r)) break;
       data.expenses.filter(e => e.settlement === r.id).forEach(e => e.settlement = null);
+      data.settlements.filter(x => x.closedBy === r.id).forEach(x => delete x.closedBy);
       const sheet = data.sheets.find(s => s.id === r.sheet); if (sheet) sheet.archived = false;
       break;
     }

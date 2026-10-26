@@ -6,6 +6,7 @@ import {DayGroups, ExpenseRow} from '../common.js';
 import {group, money, plural} from '../format.js';
 import {journal, dayTotals, categoryChoices} from '../derive.js';
 import {exportCSV} from '../flows/export.js';
+import {openPartPayments, partTotal} from '../../settlement-overview.js';
 
 export const emptyFilters = () => ({payer: '', creator: '', receipt: '', category: '', sheet: '', from: '', to: '', sort: 'newest'});
 // Activity keeps its search while you move between tabs.
@@ -28,6 +29,8 @@ export function Activity() {
   const active = ['payer', 'creator', 'receipt', 'category', 'sheet', 'from', 'to'].filter(k => filters[k]).length + (filters.sort !== 'newest' ? 1 : 0);
   const byAmount = ['largest', 'smallest'].includes(filters.sort);
   const clear = () => { setQuery(''); setStatus('open'); setFilters(emptyFilters()); };
+  // Part payments aren't expenses, but they change what the open expenses still cost, so Open and All mention them.
+  const parts = status === 'settled' ? [] : openPartPayments(data.settlements, new Set(data.sheets.filter(s => !s.archived && (!filters.sheet || s.id === filters.sheet)).map(s => s.id)));
   const nothingOpen = !shown.length && status === 'open' && !query.trim() && !active && data.expenses.length > 0;
   return html`<${Page} title="Activity" scrollKey="activity"
     actions=${html`<button type="button" class="nav-button" onClick=${() => exportCSV(shown)} disabled=${!shown.length} aria-label="Export shown expenses as CSV" data-action="export-results"><${Icon} name="download"/></button>`}>
@@ -40,6 +43,7 @@ export function Activity() {
       <button type="button" class=${cx('chip-button', active && 'is-active')} data-action="filters" onClick=${() => present('filters', {filters, onApply: setFilters})}><${Icon} name="sliders"/>Filters${active ? ` · ${active}` : ''}</button>
     </div>
     ${shown.length > 0 && html`<div class="result-line"><span>${plural(shown.length, 'expense')} · <b>${money(summary.total)}</b></span><span>Your couple’s share <b>${money(summary.share)}</b></span></div>`}
+    ${parts.length > 0 && html`<div class="result-line result-parts"><span>${plural(parts.length, 'part payment')} on open sheets · <b>${money(partTotal(parts))}</b> already off the balance</span><button type="button" class="link" data-action="part-payments" onClick=${() => present('payments')}>History</button></div>`}
     ${nothingOpen ? html`<div class="card card-pad"><${Empty} emoji="✅" title="Nothing open" text="Every expense is settled. Earlier expenses are under Settled.">
         <button type="button" class="btn btn-secondary" data-action="show-settled" onClick=${() => setStatus('settled')}>Show settled expenses</button><//></div>`
       : shown.length === 0 ? html`<div class="card card-pad"><${Empty} emoji=${data.expenses.length ? '🔎' : '🧾'} title=${data.expenses.length ? 'No matches' : 'No expenses yet'} text=${data.expenses.length ? 'Try a different search or clear your filters.' : 'Add an expense and it will show up here.'}>

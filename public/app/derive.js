@@ -2,7 +2,7 @@
 // every screen and sheet. The store replaces `data` on every change, so caching
 // by its identity can never serve stale figures, and nothing is recomputed when
 // a tab, page or sheet merely re-renders or opens.
-import {settlementOverview, householdOverview as overview} from '../settlement-overview.js';
+import {settlementOverview, householdOverview as overview, openPartPayments} from '../settlement-overview.js';
 import {frequentMerchants} from '../entry-shortcuts.js';
 import {upcomingBills as upcoming} from '../recurring.js';
 import {periodInsight} from '../period-insights.js';
@@ -59,8 +59,10 @@ export const sheetSummary = perSnapshot((data, id) => {
   const items = [...sheetExpenses(data, id)].sort(newestFirst), open = items.filter(e => !e.settlement);
   return {items, open, settled: items.filter(e => e.settlement), total: sum(items), unsettled: sum(open)};
 });
-/** A couple's share, paid and net over a sheet's unsettled expenses (or all of them). */
-export const sheetOverview = perSnapshot((data, id, couple, includeSettled = false) => settlementOverview(sheetExpenses(data, id), couple, {includeSettled}));
+/** Part payments still counting toward a sheet's balance, newest first. */
+export const sheetPartPayments = perSnapshot((data, id) => openPartPayments(data.settlements, new Set([id])));
+/** A couple's share, paid and net over a sheet's unsettled expenses less part payments (or all of them, historically). */
+export const sheetOverview = perSnapshot((data, id, couple, includeSettled = false) => settlementOverview(sheetExpenses(data, id), couple, includeSettled ? {includeSettled} : {payments: sheetPartPayments(data, id)}));
 export const householdOverview = perSnapshot((data, couple) => overview(data, couple));
 export const canDeleteSheet = perSnapshot((data, id) => !data.settlements.some(s => s.sheet === id) && sheetExpenses(data, id).every(e => canManageExpenseAs(e, data.seat)));
 

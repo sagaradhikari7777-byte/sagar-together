@@ -43,6 +43,7 @@ Keep Add Expense focused enough to finish with one thumb:
 - Archived sheets show settled entries and historical shares by default.
 - Splits are 50/50 or 100% assigned to either couple.
 - Recording a settlement marks the sheet's unsettled expenses as settled and closes the sheet (moves it to Archived); it does not transfer money. Reversing a settlement reopens the sheet. Reopen a sheet manually to add late expenses.
+- Settle up can record a part payment instead: any amount below what is owed. It lowers the sheet's balance everywhere a balance shows (wallet, sheets, Settle up, summaries) but settles no expenses and leaves the sheet open. Part payments appear in Payments and Payment history, on the sheet and in its Insights, and in Activity's Open view. Settling in full then records only what is left and folds the part payments in. The recorder can reverse an unfolded part payment; a folded one changes only by reversing the full payment, which makes its part payments count again.
 - Preserve receipts, merchant/category catalogs, CSV export, archive/pin, dark mode, invitations and private access links.
 
 ## Engineering rules

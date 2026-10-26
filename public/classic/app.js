@@ -5,7 +5,7 @@ import {periodInsight} from '../period-insights.js';
 import {frequentMerchants} from '../entry-shortcuts.js';
 import {scanReceipt,parseReceipt} from '../receipt-scan.js';
 import {createNavigationTrail,installEdgeBack} from '../back-navigation.js';
-import {settlementOverview,householdOverview} from '../settlement-overview.js';
+import {settlementOverview,householdOverview,openPartPayments} from '../settlement-overview.js';
 import {draftKey,readDraft,writeDraft} from '../drafts.js';
 import {householdExpense,canManageExpenseAs} from '../expense-policy.js';
 import {catalogValues,changeCatalog} from '../catalog.js';
@@ -356,7 +356,7 @@ function settlementSheets(selected){
  return `<details class="settle-detail-block" data-ui-details="sheet-balances" ${rows.length===1?'open':''}><summary>${icon('folder')}<strong>Balances by sheet</strong><span>${rows.length} open</span>${icon('chevron')}</summary><div class="settle-detail-content settlement-sheet-list">${rows.length?rows.map(row=>`<button data-settle-sheet="${esc(row.sheet.id)}"><span><strong>${esc(row.sheet.name)}</strong><small>${row.rows.length} outstanding expenses · ${esc(sheetDateRange(row.sheet))}</small></span><span><b>${money(Math.abs(row.net))}</b><small>${row.net>0?'To pay':row.net<0?'To receive':'Balanced'}</small></span>${icon('chevron')}</button>`).join(''):'<p class="settlement-empty">No outstanding expenses. Past payments remain in history.</p>'}</div></details>`;
 }
 function settleView(){
- const entries=settleScope(),items=entries.filter(e=>!e.settlement),selected=settleCouple||group(data.seat),o=settlementOverview(entries,selected),other=selected==='a'?'b':'a',from=o.net>0?selected:other,to=o.net>0?other:selected;
+ const entries=settleScope(),items=entries.filter(e=>!e.settlement),selected=settleCouple||group(data.seat),o=settlementOverview(entries,selected,{payments:settleAll?householdOverview(data,selected).payments:openPartPayments(data.settlements,new Set([activeSheet]))}),other=selected==='a'?'b':'a',from=o.net>0?selected:other,to=o.net>0?other:selected;
  const status=o.net===0?'balanced':o.net>0?'pay':'receive',mine=selected===group(data.seat);
  const statusLabel=status==='balanced'?'Balanced':status==='pay'?(mine?'You pay':'To pay'):(mine?'You receive':'To receive');
  const history=data.settlements.filter(s=>settleAll||s.sheet===activeSheet);
@@ -946,7 +946,7 @@ function settlementHistory(){
  const history=data.settlements.filter(s=>settleAll||s.sheet===activeSheet);
  modal('Payment history',history.length?`<div class="history-modal-list">${history.map(r=>{
   const names=r.names||data.names,recordCouple=g=>names.slice(g==='a'?0:2,g==='a'?2:4).join(' & ');
-  return `<section class="settlement-history-entry ${r.reversed?'is-reversed':''}"><div class="history-modal-row"><span class="liquid-history-icon">${icon(r.reversed?'refresh':'check')}</span><span><strong>${r.net?`${esc(recordCouple(r.net>0?'b':'a'))} → ${esc(recordCouple(r.net>0?'a':'b'))}`:'Balanced expenses closed'}</strong><small>${esc(data.sheets.find(s=>s.id===r.sheet)?.name||'Sheet')} · ${new Date(r.date).toLocaleDateString('en-AU')} · ${r.count} expenses</small><small>Recorded by ${esc(names[r.by]||'Household member')}</small></span><b>${money(Math.abs(r.net))}</b></div>${r.reversed?`<p class="settlement-reversal-note">Reversed by ${esc(data.names[r.reversed.by])} on ${new Date(r.reversed.date).toLocaleDateString('en-AU')}: ${esc(r.reversed.reason)}</p>`:r.by===data.seat?`<button class="text-button" data-reverse-settlement="${esc(r.id)}">Reverse this settlement</button>`:''}</section>`;
+  return `<section class="settlement-history-entry ${r.reversed?'is-reversed':''}"><div class="history-modal-row"><span class="liquid-history-icon">${icon(r.reversed?'refresh':'check')}</span><span><strong>${r.net?`${esc(recordCouple(r.net>0?'b':'a'))} → ${esc(recordCouple(r.net>0?'a':'b'))}`:'Balanced expenses closed'}</strong><small>${esc(data.sheets.find(s=>s.id===r.sheet)?.name||'Sheet')} · ${new Date(r.date).toLocaleDateString('en-AU')} · ${r.kind==='partial'?'Part payment':r.count+' expenses'}</small><small>Recorded by ${esc(names[r.by]||'Household member')}</small></span><b>${money(Math.abs(r.net))}</b></div>${r.reversed?`<p class="settlement-reversal-note">Reversed by ${esc(data.names[r.reversed.by])} on ${new Date(r.reversed.date).toLocaleDateString('en-AU')}: ${esc(r.reversed.reason)}</p>`:r.by===data.seat?`<button class="text-button" data-reverse-settlement="${esc(r.id)}">Reverse this settlement</button>`:''}</section>`;
  }).join('')}</div>`:`<div class="liquid-empty"><span class="liquid-empty-icon">${icon('receipt')}</span><h3>No payments recorded yet</h3><p>Your settlement history will appear here.</p></div>`);
  sheet.querySelectorAll('[data-reverse-settlement]').forEach(button=>button.onclick=()=>reverseSettlementDialog(button.dataset.reverseSettlement));
 }
