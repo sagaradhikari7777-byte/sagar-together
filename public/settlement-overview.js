@@ -12,6 +12,8 @@ export function openPartPayments(settlements = [], sheets) {
 export const partTotal = payments => payments.reduce((sum, r) => sum + r.cents, 0);
 /** What a couple has paid (positive) or received (negative) in part payments. */
 export const partPaidBy = (payments, couple) => payments.reduce((sum, r) => sum + (couple === 'b' ? r.net : -r.net), 0);
+/** What a couple has put in: bills paid plus any part payments they sent. */
+export const paidWithParts = overview => overview.paid + Math.max(overview.partPaid || 0, 0);
 
 // Allocation follows the same cent rounding as the settlement engine. Shares
 // belong to couples; paying a bill and owing a share are separate quantities.

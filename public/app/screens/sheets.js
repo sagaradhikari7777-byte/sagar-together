@@ -60,10 +60,12 @@ function SheetCard({sheet, data}) {
     ${progress?.total && html`<div class="meter" aria-hidden="true"><i style=${`--w:${Math.round(progress.pct * 100)}%`}></i></div>`}
     <div class="sheetcard-figures">
       <span><small>Spent</small><${Amount} cents=${st.total} class="amount-md"/></span>
-      <span><small>Unsettled</small><b>${money(st.unsettled)}</b></span>
+      ${o.payments.length ? html`<span><small>Part-paid</small><b>${money(partTotal(o.payments))}</b></span>`
+        : st.unsettled !== st.total ? html`<span><small>Unsettled</small><b>${money(st.unsettled)}</b></span>`
+        : html`<span><small>Expenses</small><b>${st.items.length}</b></span>`}
       <span><small>${o.net > 0 ? 'You owe' : o.net < 0 ? 'Owed to you' : 'Balance'}</small><b class=${o.net > 0 ? 'is-owe' : o.net < 0 ? 'is-owed' : ''}>${o.net ? money(Math.abs(o.net)) : 'Even'}</b></span>
     </div>
-    ${o.net !== 0 && html`<p class="sheetcard-line">${o.net > 0 ? `${coupleName(data.names, mine)} → ${coupleName(data.names, other)}` : `${coupleName(data.names, other)} → ${coupleName(data.names, mine)}`}${o.payments.length ? ` · ${money(partTotal(o.payments))} part-paid` : ''}</p>`}
+    ${o.net !== 0 && html`<p class="sheetcard-line">${o.net > 0 ? `${coupleName(data.names, mine)} → ${coupleName(data.names, other)}` : `${coupleName(data.names, other)} → ${coupleName(data.names, mine)}`}</p>`}
   </button>`;
 }
 

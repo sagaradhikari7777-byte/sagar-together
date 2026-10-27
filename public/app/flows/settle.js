@@ -1,7 +1,7 @@
 import {html, useState} from '../../vendor/preact-htm.js';
 import {householdOverview, sheetSummary, sheetOverview, sheetPartPayments} from '../derive.js';
 import {centsOf} from '../amount-entry.js';
-import {partTotal} from '../../settlement-overview.js';
+import {partTotal, paidWithParts} from '../../settlement-overview.js';
 import {useStore, getState, save, toast} from '../store.js';
 import {closeSheet} from '../nav.js';
 import {Sheet, SheetBack, Icon, Amount, Flow, SlideToConfirm, Empty, CouplePair, FairShareBar, Segmented, cx} from '../ui.js';
@@ -98,7 +98,7 @@ export function SettleSheet({sheetKey, sheetId}) {
       <div class="couple-compare">
         ${[['a', a], ['b', b]].map(([g, o]) => html`<div class=${'couple-' + g}>
           <span class="compare-head"><${CouplePair} names=${data.names} couple=${g} size="sm"/>${coupleName(data.names, g)}</span>
-          <span><small>Share</small><b>${money(o.share)}</b></span><span><small>Paid</small><b>${money(o.paid)}</b></span>
+          <span><small>Share</small><b>${money(o.share)}</b></span><span><small>Paid</small><b>${money(paidWithParts(o))}</b></span>
         </div>`)}
       </div>`}
       <p class="settle-note"><${Icon} name="info"/> ${partial

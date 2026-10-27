@@ -1,4 +1,4 @@
-import {settlementOverview, openPartPayments, partTotal} from '../../settlement-overview.js';
+import {settlementOverview, openPartPayments, partTotal, paidWithParts} from '../../settlement-overview.js';
 import {getState, toast} from '../store.js';
 import {today, coupleName, money, numericToday} from '../format.js';
 
@@ -28,8 +28,8 @@ export function summaryText(expenses, scopeName) {
   const payments = openPartPayments(data.settlements, open);
   const a = settlementOverview(items, 'a', {payments}), b = settlementOverview(items, 'b', {payments});
   const owing = a.net > 0 ? `${coupleName(data.names, 'a')} owe ${money(a.net)} to ${coupleName(data.names, 'b')}.` : a.net < 0 ? `${coupleName(data.names, 'b')} owe ${money(-a.net)} to ${coupleName(data.names, 'a')}.` : 'Both couples are even.';
-  const parts = payments.length ? `\nPart payments so far: ${money(partTotal(payments))} (already taken off the balance)` : '';
-  return `Together · ${scopeName}\n${owing}\n${items.length} unsettled expenses · Total ${money(a.total)}\n${coupleName(data.names, 'a')}: share ${money(a.share)} · paid ${money(a.paid)}\n${coupleName(data.names, 'b')}: share ${money(b.share)} · paid ${money(b.paid)}${parts}\nAs of ${numericToday()}. Please check Together for the latest balance.\nThis is a summary, not a payment confirmation.`;
+  const parts = payments.length ? `\nPart payments so far: ${money(partTotal(payments))} (counted as paid and already taken off the balance)` : '';
+  return `Together · ${scopeName}\n${owing}\n${items.length} unsettled expenses · Total ${money(a.total)}\n${coupleName(data.names, 'a')}: share ${money(a.share)} · paid ${money(paidWithParts(a))}\n${coupleName(data.names, 'b')}: share ${money(b.share)} · paid ${money(paidWithParts(b))}${parts}\nAs of ${numericToday()}. Please check Together for the latest balance.\nThis is a summary, not a payment confirmation.`;
 }
 export async function shareText(text, title = 'Together') {
   if (navigator.share) {

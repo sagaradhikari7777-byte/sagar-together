@@ -102,3 +102,17 @@ test('the fair-share bar counts part payments as paid and nets them in the bar',
   const [aw] = text.match(/--w:[\d.]+/).map(w => +w.slice(4)), x = +text.match(/--x:([\d.]+)/)[1];
   assert.ok(Math.abs((aw - x) / 100 * 107122 - 41911) < 1, 'the gap to the tick is what is still owed');
 });
+
+test('paid figures count part payments for the couple that sent them, and the sheet card shows them', async () => {
+  const {paidWithParts} = await import('../public/settlement-overview.js');
+  const expenses = [{id: 'x', date: '2026-10-20', cents: 107122, payer: 0, split: 'half', sheet: 's'}];
+  const payments = [{kind: 'partial', cents: 30000, net: 30000, sheet: 's'}];
+  const a = settlementOverview(expenses, 'a', {payments}), b = settlementOverview(expenses, 'b', {payments});
+  assert.equal(paidWithParts(a), 107122);
+  assert.equal(paidWithParts(b), 30000);
+  assert.equal(b.net, 53561 - 30000);
+  const {readFileSync} = await import('node:fs');
+  const sheets = readFileSync(new URL('../public/app/screens/sheets.js', import.meta.url), 'utf8');
+  assert.match(sheets, /<small>Part-paid<\/small><b>\$\{money\(partTotal\(o\.payments\)\)\}<\/b>/);
+  assert.match(readFileSync(new URL('../public/app/flows/settle.js', import.meta.url), 'utf8'), /<small>Paid<\/small><b>\$\{money\(paidWithParts\(o\)\)\}/);
+});
