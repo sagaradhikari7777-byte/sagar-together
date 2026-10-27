@@ -212,9 +212,11 @@ export const SheetBack = () => html`<button type="button" class="nav-button" onC
  * paid; the tick marks couple A's fair share. The gap between them is the debt.
  */
 export function FairShareBar({names, overview}) {
-  const total = overview.total || 0;
-  const aPaid = overview.paid, aShare = overview.share, bPaid = total - aPaid;
-  const paidPct = total ? aPaid / total * 100 : 50, sharePct = total ? aShare / total * 100 : 50;
+  // Labels add part payments to what each couple paid; the bar nets them, so its gap to the tick is what's still owed.
+  const total = overview.total || 0, part = overview.partPaid || 0;
+  const aPaid = overview.paid + Math.max(part, 0), aShare = overview.share, bPaid = total - overview.paid + Math.max(-part, 0);
+  const aNet = Math.min(Math.max(overview.paid + part, 0), total);
+  const paidPct = total ? aNet / total * 100 : 50, sharePct = total ? aShare / total * 100 : 50;
   return html`<div class="fair">
     <div class="fair-bar" role="img" aria-label=${`${coupleName(names, 'a')} paid ${money(aPaid)}, ${coupleName(names, 'b')} paid ${money(bPaid)}`}>
       <i class="fair-a" style=${`--w:${paidPct}%`}></i><i class="fair-b" style=${`--w:${100 - paidPct}%`}></i>

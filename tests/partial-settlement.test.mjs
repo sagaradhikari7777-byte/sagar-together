@@ -86,3 +86,19 @@ test('the sample household follows the same part payment rules', () => {
   assert.equal(Math.abs(data.settlements[0].net), owed - 1000);
   assert.equal(data.settlements[1].closedBy, data.settlements[0].id);
 });
+
+test('the fair-share bar counts part payments as paid and nets them in the bar', async () => {
+  const {FairShareBar} = await import('../public/app/ui.js');
+  const {settlementOverview} = await import('../public/settlement-overview.js');
+  const expenses = [
+    {id: 'x', date: '2026-10-20', cents: 70422, payer: 0, split: 'half', sheet: 's'},
+    {id: 'y', date: '2026-10-21', cents: 36700, payer: 0, split: 'b', sheet: 's'},
+  ];
+  const a = settlementOverview(expenses, 'a', {payments: [{kind: 'partial', cents: 30000, net: 30000, sheet: 's'}]});
+  assert.equal(a.net, -41911);
+  const text = JSON.stringify(FairShareBar({names: ['Sagar', 'Sushma', 'Nabin', 'Sujata'], overview: a}));
+  assert.match(text, /\$1,071\.22/);
+  assert.match(text, /\$300\.00/);
+  const [aw] = text.match(/--w:[\d.]+/).map(w => +w.slice(4)), x = +text.match(/--x:([\d.]+)/)[1];
+  assert.ok(Math.abs((aw - x) / 100 * 107122 - 41911) < 1, 'the gap to the tick is what is still owed');
+});
