@@ -193,6 +193,6 @@ test('the classic app stays reachable at /classic', () => {
 
 test('the Home pass line accounts for part payments already inside the balance', () => {
   const home = read('public/app/screens/home.js');
-  assert.match(home, /yours\.partPaid < 0 \? `\$\{join\}they’ve paid you \$\{money\(-yours\.partPaid\)\} back`/);
-  assert.match(home, /they paid \$\{money\(total - minePaid\)\}`\}\$\{backPaid\}<\/p>/);
+  assert.match(home, /theyPaid = total - minePaid \+ Math\.max\(-yours\.partPaid, 0\)/);
+  assert.match(home, /you paid \$\{money\(youPaid\)\}, they paid \$\{money\(theyPaid\)\}/);
 });

@@ -63,16 +63,14 @@ function BalanceCard({data, yours, coupleA, mine, other, sheet}) {
   const total = coupleA.total || 0, minePaid = mine === 'a' ? coupleA.paid : total - coupleA.paid;
   const them = html`<b>${coupleName(data.names, other)}</b>`;
   const who = net > 0 ? html`to ${them}` : net < 0 ? html`from ${them}` : open ? 'Your couples are even' : 'All square';
-  // Part payments already sit inside the amount; say so, so the bills paid add up to it.
-  const join = total > 0 ? ', and ' : ' · ';
-  const backPaid = yours.partPaid < 0 ? `${join}they’ve paid you ${money(-yours.partPaid)} back`
-    : yours.partPaid > 0 ? `${join}you’ve paid them ${money(yours.partPaid)} back` : '';
+  // Part payments count as paid, as on the sheet, so the figures add up to the amount still owed.
+  const youPaid = minePaid + Math.max(yours.partPaid, 0), theyPaid = total - minePaid + Math.max(-yours.partPaid, 0);
   return html`<section class=${cx('pass', 'is-' + status)} aria-labelledby="wallet-label">
     <div class="pass-top">
       <div class="pass-main">
         <span id="wallet-label" class="pass-label">${label}</span>
         <${Amount} cents=${Math.abs(net)} class="amount-hero"/>
-        <p class="pass-line">${who}${total > 0 && html` · you paid ${money(minePaid)}, they paid ${money(total - minePaid)}`}${backPaid}</p>
+        <p class="pass-line">${who}${(total > 0 || parts > 0) && html` · you paid ${money(youPaid)}, they paid ${money(theyPaid)}`}</p>
       </div>
       ${total > 0 && html`<span class="pass-ring" style=${`--a:${(coupleA.paid / total * 100).toFixed(1)}%`} role="img"
         aria-label=${`${money(total)} spent. ${coupleName(data.names, 'a')} paid ${money(coupleA.paid)}, ${coupleName(data.names, 'b')} paid ${money(total - coupleA.paid)}`}>
