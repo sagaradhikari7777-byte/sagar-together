@@ -113,60 +113,70 @@ button.row:active:not(:disabled) { background: var(--fill-2); }
 .day-head span:last-child { color: var(--label-3); font-variant-numeric: tabular-nums; }
 
 /* ───────── Home · wallet ───────── */
+/* One smooth gradient per state: indigo into coral while you owe, green when
+   money is coming to you, calm indigo when even. Two faint rings and a soft
+   highlight give it depth without the muddy dark blobs. */
 .wallet {
-  --ring: #191822;
+  --ring: rgb(255 255 255 / .9);
+  --w-glow: rgb(79 70 229 / .5);
   position: relative;
   display: grid;
-  gap: 4px;
-  padding: 20px 20px 16px;
+  gap: 2px;
+  padding: 18px 18px 14px;
   overflow: hidden;
   border-radius: 30px;
   isolation: isolate;
   color: #fff;
   background:
-    radial-gradient(110% 85% at 0% 0%, rgb(99 102 241 / .78), transparent 58%),
-    radial-gradient(100% 90% at 100% 100%, rgb(245 112 79 / .72), transparent 56%),
-    radial-gradient(70% 55% at 95% 0%, rgb(61 219 178 / .28), transparent 62%),
-    #15141c;
-  box-shadow: 0 26px 50px -24px rgb(48 36 110 / .6), inset 0 1px 0 rgb(255 255 255 / .14);
+    radial-gradient(90% 70% at 0% 0%, rgb(255 255 255 / .2), transparent 60%),
+    linear-gradient(150deg, #312e81 0%, #4f46e5 50%, #8b7cf6 100%);
+  box-shadow: 0 24px 44px -22px var(--w-glow), 0 2px 6px -2px rgb(17 17 19 / .12), inset 0 1px 0 rgb(255 255 255 / .22);
 }
-:root[data-theme=dark] .wallet { box-shadow: 0 26px 60px -26px rgb(0 0 0 / .8), inset 0 0 0 .5px rgb(255 255 255 / .12), inset 0 1px 0 rgb(255 255 255 / .14); }
-.wallet.is-owe { background:
-    radial-gradient(110% 85% at 0% 0%, rgb(99 102 241 / .7), transparent 58%),
-    radial-gradient(110% 95% at 100% 100%, rgb(245 112 79 / .85), transparent 58%),
-    radial-gradient(70% 55% at 95% 0%, rgb(255 190 92 / .26), transparent 62%),
-    #15141c; }
-.wallet.is-even { background:
-    radial-gradient(110% 85% at 0% 0%, rgb(99 102 241 / .62), transparent 58%),
-    radial-gradient(100% 90% at 100% 100%, rgb(61 219 178 / .55), transparent 56%),
-    #15141c; }
+.wallet.is-owe { --w-glow: rgb(214 82 92 / .55); background:
+    radial-gradient(90% 70% at 0% 0%, rgb(255 255 255 / .16), transparent 60%),
+    radial-gradient(70% 80% at 100% 100%, rgb(255 168 104 / .55), transparent 70%),
+    linear-gradient(150deg, #4338ca 0%, #7a3fc4 40%, #c8457a 74%, #ea6a4e 100%); }
+.wallet.is-owed { --w-glow: rgb(11 143 108 / .5); background:
+    radial-gradient(90% 70% at 0% 0%, rgb(255 255 255 / .18), transparent 60%),
+    radial-gradient(70% 80% at 100% 100%, rgb(120 230 190 / .4), transparent 70%),
+    linear-gradient(150deg, #134e6f 0%, #0d7a72 45%, #0b8f6c 75%, #22a87c 100%); }
+:root[data-theme=dark] .wallet { box-shadow: 0 24px 50px -26px var(--w-glow), inset 0 0 0 .5px rgb(255 255 255 / .16), inset 0 1px 0 rgb(255 255 255 / .2); }
+/* Rings: decorative, top right, like the embossing on a bank card. */
+.wallet::after { content: ""; position: absolute; top: -90px; right: -70px; z-index: -1; width: 240px; height: 240px; border-radius: 50%; background: radial-gradient(circle, transparent 54%, rgb(255 255 255 / .1) 54.5%, rgb(255 255 255 / .1) 55.5%, transparent 56%, transparent 74%, rgb(255 255 255 / .07) 74.5%, rgb(255 255 255 / .07) 75.5%, transparent 76%), radial-gradient(circle, rgb(255 255 255 / .12), transparent 60%); }
 .wallet-sheen { position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: inherit; }
-.wallet-sheen::before { content: ""; position: absolute; top: 0; bottom: 0; left: -45%; width: 45%; background: linear-gradient(105deg, transparent, rgb(255 255 255 / .09), transparent); animation: sheen 10s ease-in-out infinite; }
+.wallet-sheen::before { content: ""; position: absolute; top: 0; bottom: 0; left: -45%; width: 45%; background: linear-gradient(105deg, transparent, rgb(255 255 255 / .1), transparent); animation: sheen 10s ease-in-out infinite; }
 @keyframes sheen { 0%, 55% { transform: translateX(0); } 100% { transform: translateX(360%); } }
-.wallet::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: radial-gradient(120% 60% at 50% -10%, rgb(255 255 255 / .1), transparent 60%); }
-.wallet-label { display: block; margin-bottom: 10px; font-size: .875rem; font-weight: 550; color: rgb(255 255 255 / .74); }
-.wallet .amount-hero { font-size: clamp(3.1rem, 15vw, 4.1rem); text-shadow: 0 2px 20px rgb(0 0 0 / .18); }
-.wallet .amount-cur, .wallet .amount-dec { opacity: .62; }
-.wallet-line { margin: 4px 0 16px; font-size: 1.0625rem; font-weight: 550; color: rgb(255 255 255 / .88); }
-.wallet .fair-bar { background: rgb(255 255 255 / .1); }
-.wallet .fair-legend { color: rgb(255 255 255 / .7); }
+.wallet-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 30px; margin-bottom: 6px; }
+.wallet-label { display: block; margin-bottom: 10px; font-size: .9375rem; font-weight: 600; color: rgb(255 255 255 / .82); }
+.wallet-top .wallet-label { margin: 0; }
+.wallet-with { display: inline-flex; align-items: center; gap: 6px; padding: 3px; border-radius: 999px; background: rgb(255 255 255 / .16); box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .22); }
+.wallet-with > .icon { width: 14px; height: 14px; stroke-width: 2.6; opacity: .85; }
+.wallet-with .pair i { box-shadow: 0 0 0 1.5px rgb(255 255 255 / .9); }
+.wallet .amount-hero { font-size: clamp(3.2rem, 16vw, 4.25rem); letter-spacing: -.055em; text-shadow: 0 4px 24px rgb(0 0 0 / .14); }
+.wallet .amount-cur, .wallet .amount-dec { opacity: .7; }
+.wallet-line { margin: 6px 0 18px; font-size: 1.0625rem; font-weight: 550; color: rgb(255 255 255 / .9); }
+.wallet .fair { gap: 8px; }
+.wallet .fair-bar { height: 8px; gap: 2px; background: rgb(255 255 255 / .16); }
+.wallet .fair-legend { color: rgb(255 255 255 / .78); }
 .wallet .fair-legend b { color: #fff; }
-.wallet .fair-tick { background: #fff; box-shadow: 0 0 0 2px #1a1824; }
-.wallet .fair-a { background: #9a9dff; }
-.wallet .fair-b { background: #ff9a80; }
-.wallet .couple-a { --c: #7c7ff7; }
-.wallet .couple-b { --c: #ff8a6c; }
-.wallet-couples { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: .875rem; color: rgb(255 255 255 / .82); }
-.wallet-couples i { font-style: normal; opacity: .5; }
-.wallet-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding-top: 14px; box-shadow: inset 0 .5px 0 rgb(255 255 255 / .16); font-size: .8125rem; color: rgb(255 255 255 / .68); }
-.wallet-cta { display: inline-flex; flex: none; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: #fff; color: #121216; font-size: .9375rem; font-weight: 650; box-shadow: 0 8px 18px -8px rgb(0 0 0 / .55); transition: transform .2s var(--ease); }
+.wallet .fair-tick { top: -4px; bottom: -4px; background: #fff; box-shadow: 0 0 0 2px rgb(0 0 0 / .18); }
+.wallet .fair-a { background: #c7c9ff; }
+.wallet .fair-b { background: #ffc2ae; }
+.wallet .couple-a { --c: #6366f1; }
+.wallet .couple-b { --c: #f5704f; }
+/* The footer is a frosted panel holding the sheet and Settle up. */
+.wallet-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; padding: 10px 8px 10px 14px; border-radius: 20px; background: rgb(255 255 255 / .14); box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .24); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-size: .8125rem; color: rgb(255 255 255 / .8); }
+.wallet-note { padding: 4px 0; }
+.wallet-cta { display: inline-flex; flex: none; align-items: center; gap: 6px; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #fff; color: #121216; font-size: .9375rem; font-weight: 650; box-shadow: 0 8px 18px -8px rgb(0 0 0 / .45); transition: transform .2s var(--ease); }
 .wallet-cta:active { transform: scale(.95); }
 .wallet-cta .icon { width: 16px; height: 16px; stroke-width: 2.6; }
 /* With one open sheet, the wallet names it and links to it in place of a second card. */
 .wallet-sheet { display: grid; flex: 1; gap: 2px; min-width: 0; min-height: 44px; padding: 0; border: 0; background: none; color: inherit; font-size: .8125rem; text-align: left; }
 .wallet-sheet strong { display: flex; align-items: center; gap: 2px; overflow: hidden; color: #fff; font-size: .9375rem; font-weight: 650; white-space: nowrap; text-overflow: ellipsis; }
-.wallet-sheet .icon { flex: none; width: 15px; height: 15px; stroke-width: 2.6; opacity: .6; }
+.wallet-sheet .icon { flex: none; width: 15px; height: 15px; stroke-width: 2.6; opacity: .7; }
 .wallet-sheet:active { opacity: .7; }
+.wallet-progress { position: relative; display: block; height: 4px; margin-top: 6px; overflow: hidden; border-radius: 999px; background: rgb(255 255 255 / .2); }
+.wallet-progress::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--p); border-radius: inherit; background: #fff; }
 
 /* Who paid against the fair share */
 .fair { display: grid; gap: 10px; }

@@ -28,7 +28,7 @@ rounded:
 
 # Together
 
-Two couples, one household wallet. The design follows the best iOS-native finance apps: one dark "wallet" card that answers "who owes whom?" at a glance, plain solid cards for content, and Liquid Glass only on the navigation layer (tab bar, top bar, toasts, floating buttons).
+Two couples, one household wallet. The design follows the best iOS-native finance apps: one gradient "wallet" card that answers "who owes whom?" at a glance, plain solid cards for content, and Liquid Glass only on the navigation layer (tab bar, top bar, toasts, floating buttons).
 
 ## Principles
 
@@ -70,7 +70,7 @@ Geist variable, served from `/fonts` (OFL).
 
 - **Page:** large title that collapses into a glass top bar on scroll. The four tabs stay mounted, so each keeps its scroll and state.
 - **Sheet:** a native `<dialog>` presented as a bottom sheet (a centred card on wide screens), opened before its first paint so it appears whole. Every sheet has a visible close; Escape, backdrop and drag close it through navigation so unsaved work can intercept.
-- **Wallet card:** the dark mesh-gradient balance card on Home.
+- **Wallet card:** the balance card on Home. Its gradient follows the balance (indigo into coral while you owe, green when you are owed, indigo when even); it shows who pays whom, the fair-share bar, and a frosted footer with the open sheet, its days-left bar and Settle up.
 - **FairShareBar:** what each couple paid, with a tick at couple A's fair share. The gap between bar and tick is the debt.
 - **Flow:** payer couple → receiver couple with stacked initials.
 - **SlideToConfirm:** drag the knob to record; keyboard and assistive tech activate it directly.
