@@ -1,7 +1,7 @@
 import {html} from '../../vendor/preact-htm.js';
 import {useStore, savedDraft} from '../store.js';
 import {present, push, go} from '../nav.js';
-import {Page, Amount, Icon, FairShareBar, CategoryGlyph, Empty, CouplePair, cx} from '../ui.js';
+import {Page, Amount, Icon, CategoryGlyph, Empty, cx} from '../ui.js';
 import {ExpenseRow, ThemeToggle} from '../common.js';
 import {group, otherCouple, coupleName, greeting, money, plural, today, periodProgress, rangeLabel, categoryLook, shortDate, firstName} from '../format.js';
 import {householdOverview, currentSheet as current, recentExpenses, upcomingBills, sheetSummary, sheetCategories, insightFor, sheetPartPayments} from '../derive.js';
@@ -51,36 +51,44 @@ export function Home() {
   <//>`;
 }
 
-/** The balance, and with one open sheet that sheet too, so Home has a single hero. */
+/**
+ * The balance as a compact pass: the amount, who paid what and a ring of the
+ * split on top; the open sheet and Settle up on a tear-off stub below. With
+ * one open sheet the stub names it, so Home has a single hero.
+ */
 function BalanceCard({data, yours, coupleA, mine, other, sheet}) {
   const net = yours.net, open = yours.rows.length, parts = yours.payments.length;
   const status = net > 0 ? 'owe' : net < 0 ? 'owed' : 'even';
   const label = net > 0 ? 'You owe' : net < 0 ? 'Owed to you' : 'Balance';
-  const line = net > 0 ? `to ${coupleName(data.names, other)}` : net < 0 ? `from ${coupleName(data.names, other)}` : open ? 'Your couples are even' : 'All square';
-  return html`<section class=${cx('wallet', 'is-' + status)} aria-labelledby="wallet-label">
-    <div class="wallet-sheen" aria-hidden="true"></div>
-    <div class="wallet-top">
-      <span id="wallet-label" class="wallet-label">${label}</span>
-      <span class="wallet-with" aria-hidden="true"><${CouplePair} names=${data.names} couple=${net < 0 ? other : mine} size="sm"/><${Icon} name=${net ? 'arrow' : 'check'}/><${CouplePair} names=${data.names} couple=${net < 0 ? mine : other} size="sm"/></span>
+  const total = coupleA.total || 0, minePaid = mine === 'a' ? coupleA.paid : total - coupleA.paid;
+  const them = html`<b>${coupleName(data.names, other)}</b>`;
+  const who = net > 0 ? html`to ${them}` : net < 0 ? html`from ${them}` : open ? 'Your couples are even' : 'All square';
+  return html`<section class=${cx('pass', 'is-' + status)} aria-labelledby="wallet-label">
+    <div class="pass-top">
+      <div class="pass-main">
+        <span id="wallet-label" class="pass-label">${label}</span>
+        <${Amount} cents=${Math.abs(net)} class="amount-hero"/>
+        <p class="pass-line">${who}${total > 0 && html` · you paid ${money(minePaid)}, they paid ${money(total - minePaid)}`}</p>
+      </div>
+      ${total > 0 && html`<span class="pass-ring" style=${`--a:${(coupleA.paid / total * 100).toFixed(1)}%`} role="img"
+        aria-label=${`${money(total)} spent. ${coupleName(data.names, 'a')} paid ${money(coupleA.paid)}, ${coupleName(data.names, 'b')} paid ${money(total - coupleA.paid)}`}>
+        <span aria-hidden="true"><b>${money(Math.round(total / 100) * 100).replace(/\.00$/, '')}</b>spent</span>
+      </span>`}
     </div>
-    <${Amount} cents=${Math.abs(net)} class="amount-hero"/>
-    <p class="wallet-line">${line}</p>
-    ${coupleA.total > 0 && html`<${FairShareBar} names=${data.names} overview=${coupleA}/>`}
-    <div class="wallet-foot">
+    <div class="pass-stub">
       ${sheet ? html`<${WalletSheet} data=${data} sheet=${sheet}/>`
-        : html`<span class="wallet-note">${open ? `${plural(open, 'unsettled expense')} · ${plural(yours.sheets.length, 'open sheet')}` : 'Nothing waiting to be settled'}${parts ? ` · ${money(partTotal(yours.payments))} part-paid` : ''}</span>`}
-      ${(open > 0 || parts > 0) && html`<button type="button" class="wallet-cta" data-action="open-settle" onClick=${() => present('settle', {})}>Settle up <${Icon} name="arrow"/></button>`}
+        : html`<span class="pass-note">${open ? `${plural(open, 'unsettled expense')} · ${plural(yours.sheets.length, 'open sheet')}` : 'Nothing waiting to be settled'}${parts ? ` · ${money(partTotal(yours.payments))} part-paid` : ''}</span>`}
+      ${(open > 0 || parts > 0) && html`<button type="button" class="pass-cta" data-action="open-settle" onClick=${() => present('settle', {})}>Settle up <${Icon} name="arrow"/></button>`}
     </div>
   </section>`;
 }
 
 function WalletSheet({data, sheet}) {
-  const {total} = sheetSummary(data, sheet.id), progress = periodProgress(sheet), parts = sheetPartPayments(data, sheet.id);
+  const parts = sheetPartPayments(data, sheet.id), progress = periodProgress(sheet);
   const left = progress?.total ? (progress.left === 0 ? 'ends today' : plural(progress.left, 'day') + ' left') : progress ? `day ${progress.day}` : '';
-  return html`<button type="button" class="wallet-sheet" data-view-sheet=${sheet.id} onClick=${() => push('sheet', {id: sheet.id})} aria-label=${`Open ${sheet.name}`}>
+  return html`<button type="button" class="pass-sheet" data-view-sheet=${sheet.id} onClick=${() => push('sheet', {id: sheet.id})} aria-label=${`Open ${sheet.name}`}>
     <strong>${sheet.name}<${Icon} name="chevron"/></strong>
-    <span>${money(total)} spent${parts.length ? ' · ' + money(partTotal(parts)) + ' part-paid' : ''}${left ? ' · ' + left : ''}</span>
-    ${progress?.total && html`<i class="wallet-progress" style=${`--p:${(progress.pct * 100).toFixed(1)}%`} aria-hidden="true"></i>`}
+    <span>${[left, parts.length && money(partTotal(parts)) + ' part-paid'].filter(Boolean).join(' · ')}</span>
   </button>`;
 }
 

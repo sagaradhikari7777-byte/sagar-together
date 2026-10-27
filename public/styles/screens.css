@@ -112,47 +112,57 @@ button.row:active:not(:disabled) { background: var(--fill-2); }
 .days > .xrow + .day-head { margin-top: 4px; box-shadow: inset 0 .5px 0 var(--separator); }
 .day-head span:last-child { color: var(--label-3); font-variant-numeric: tabular-nums; }
 
-/* ───────── Home · wallet ───────── */
-/* One smooth gradient per state: indigo into coral while you owe, green when
-   money is coming to you, calm indigo when even. Two faint rings and a soft
-   highlight give it depth without the muddy dark blobs. */
-.wallet {
-  --ring: rgb(255 255 255 / .9);
-  --w-glow: rgb(79 70 229 / .5);
-  position: relative;
-  display: grid;
-  gap: 2px;
-  padding: 18px 18px 14px;
-  overflow: hidden;
-  border-radius: 30px;
-  isolation: isolate;
-  color: #fff;
-  background:
-    radial-gradient(90% 70% at 0% 0%, rgb(255 255 255 / .2), transparent 60%),
-    linear-gradient(150deg, #312e81 0%, #4f46e5 50%, #8b7cf6 100%);
-  box-shadow: 0 24px 44px -22px var(--w-glow), 0 2px 6px -2px rgb(17 17 19 / .12), inset 0 1px 0 rgb(255 255 255 / .22);
+/* ───────── Home · balance pass ───────── */
+/* A compact pass: a gradient top that follows the balance (indigo into coral
+   while you owe, green when owed, indigo when even) and a tear-off stub in the
+   surface colour. The notches are masks, so the page shows through them. */
+.pass { --pass-glow: rgb(214 82 92 / .24); display: grid; filter: drop-shadow(0 16px 22px var(--pass-glow)); }
+.pass.is-owed { --pass-glow: rgb(11 143 108 / .24); }
+.pass.is-even { --pass-glow: rgb(79 70 229 / .24); }
+:root[data-theme=dark] .pass { filter: none; }
+.pass-top, .pass-stub { -webkit-mask: var(--m1) left / 51% 100% no-repeat, var(--m2) right / 51% 100% no-repeat; mask: var(--m1) left / 51% 100% no-repeat, var(--m2) right / 51% 100% no-repeat; }
+.pass-top {
+  --m1: radial-gradient(circle 11px at 0 100%, transparent 10.5px, #000 11px);
+  --m2: radial-gradient(circle 11px at 100% 100%, transparent 10.5px, #000 11px);
+  display: flex; align-items: center; gap: 12px; padding: 16px 16px 18px 18px; border-radius: 26px 26px 0 0; color: #fff;
+  background: radial-gradient(80% 90% at 0% 0%, rgb(255 255 255 / .18), transparent 60%), linear-gradient(140deg, #312e81 0%, #4f46e5 55%, #8b7cf6 100%);
 }
-.wallet.is-owe { --w-glow: rgb(214 82 92 / .55); background:
-    radial-gradient(90% 70% at 0% 0%, rgb(255 255 255 / .16), transparent 60%),
-    radial-gradient(70% 80% at 100% 100%, rgb(255 168 104 / .55), transparent 70%),
-    linear-gradient(150deg, #4338ca 0%, #7a3fc4 40%, #c8457a 74%, #ea6a4e 100%); }
-.wallet.is-owed { --w-glow: rgb(11 143 108 / .5); background:
-    radial-gradient(90% 70% at 0% 0%, rgb(255 255 255 / .18), transparent 60%),
-    radial-gradient(70% 80% at 100% 100%, rgb(120 230 190 / .4), transparent 70%),
-    linear-gradient(150deg, #134e6f 0%, #0d7a72 45%, #0b8f6c 75%, #22a87c 100%); }
-:root[data-theme=dark] .wallet { box-shadow: 0 24px 50px -26px var(--w-glow), inset 0 0 0 .5px rgb(255 255 255 / .16), inset 0 1px 0 rgb(255 255 255 / .2); }
-/* Rings: decorative, top right, like the embossing on a bank card. */
-.wallet::after { content: ""; position: absolute; top: -90px; right: -70px; z-index: -1; width: 240px; height: 240px; border-radius: 50%; background: radial-gradient(circle, transparent 54%, rgb(255 255 255 / .1) 54.5%, rgb(255 255 255 / .1) 55.5%, transparent 56%, transparent 74%, rgb(255 255 255 / .07) 74.5%, rgb(255 255 255 / .07) 75.5%, transparent 76%), radial-gradient(circle, rgb(255 255 255 / .12), transparent 60%); }
+.pass.is-owe .pass-top { background: radial-gradient(80% 90% at 0% 0%, rgb(255 255 255 / .18), transparent 60%), linear-gradient(140deg, #4338ca 0%, #8b3fbf 50%, #e7604f 100%); }
+.pass.is-owed .pass-top { background: radial-gradient(80% 90% at 0% 0%, rgb(255 255 255 / .18), transparent 60%), linear-gradient(140deg, #134e6f 0%, #0d7a72 50%, #1fa57a 100%); }
+.pass-main { flex: 1; min-width: 0; }
+.pass-label { font-size: .8125rem; font-weight: 600; color: rgb(255 255 255 / .82); }
+.pass .amount-hero { margin: 6px 0 6px; font-size: clamp(2.5rem, 12vw, 2.9rem); }
+.pass .amount-cur, .pass .amount-dec { opacity: .7; }
+.pass-line { margin: 0; font-size: .8125rem; line-height: 1.4; color: rgb(255 255 255 / .85); }
+.pass-line b { color: #fff; font-weight: 600; }
+/* Ring: couple A's share of what was paid, then couple B's. */
+.pass-ring { position: relative; flex: none; display: grid; place-items: center; width: 78px; height: 78px; }
+.pass-ring::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(#c7c9ff 0 var(--a), #ffc2ae 0); -webkit-mask: radial-gradient(circle, transparent 29px, #000 30px); mask: radial-gradient(circle, transparent 29px, #000 30px); }
+.pass-ring > span { position: relative; display: grid; text-align: center; font-size: .625rem; line-height: 1.2; color: rgb(255 255 255 / .78); }
+.pass-ring b { font-size: .875rem; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
+.pass-stub {
+  --m1: radial-gradient(circle 11px at 0 0, transparent 10.5px, #000 11px);
+  --m2: radial-gradient(circle 11px at 100% 0, transparent 10.5px, #000 11px);
+  position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 64px; padding: 10px 10px 10px 18px; border-radius: 0 0 26px 26px; background: var(--surface); font-size: .8125rem; color: var(--label-2);
+}
+:root[data-theme=dark] .pass-stub { background: #1d1d23; }
+.pass-stub::before { content: ""; position: absolute; top: 0; left: 16px; right: 16px; border-top: 2px dashed var(--separator); }
+.pass-note { padding: 4px 0; }
+.pass-sheet { display: grid; flex: 1; gap: 1px; min-width: 0; min-height: 44px; padding: 0; border: 0; background: none; color: inherit; font-size: .8125rem; text-align: left; align-content: center; }
+.pass-sheet strong { display: flex; align-items: center; gap: 2px; overflow: hidden; color: var(--label); font-size: .9375rem; font-weight: 650; white-space: nowrap; text-overflow: ellipsis; }
+.pass-sheet .icon { flex: none; width: 15px; height: 15px; stroke-width: 2.6; opacity: .5; }
+.pass-sheet:active { opacity: .6; }
+.pass-cta { display: inline-flex; flex: none; align-items: center; gap: 6px; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: var(--primary); color: var(--primary-ink); font-size: .9375rem; font-weight: 650; transition: transform .2s var(--ease); }
+.pass-cta:active { transform: scale(.95); }
+.pass-cta .icon { width: 16px; height: 16px; stroke-width: 2.6; }
+
+/* The welcome screen's example balance keeps the earlier gradient card. */
+.wallet { position: relative; display: grid; gap: 2px; padding: 18px; overflow: hidden; border-radius: 30px; isolation: isolate; color: #fff; background: radial-gradient(90% 70% at 0% 0%, rgb(255 255 255 / .18), transparent 60%), linear-gradient(150deg, #134e6f 0%, #0d7a72 45%, #0b8f6c 75%, #22a87c 100%); box-shadow: 0 24px 44px -22px rgb(11 143 108 / .5), inset 0 1px 0 rgb(255 255 255 / .22); }
 .wallet-sheen { position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: inherit; }
 .wallet-sheen::before { content: ""; position: absolute; top: 0; bottom: 0; left: -45%; width: 45%; background: linear-gradient(105deg, transparent, rgb(255 255 255 / .1), transparent); animation: sheen 10s ease-in-out infinite; }
 @keyframes sheen { 0%, 55% { transform: translateX(0); } 100% { transform: translateX(360%); } }
-.wallet-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 30px; margin-bottom: 6px; }
 .wallet-label { display: block; margin-bottom: 10px; font-size: .9375rem; font-weight: 600; color: rgb(255 255 255 / .82); }
-.wallet-top .wallet-label { margin: 0; }
-.wallet-with { display: inline-flex; align-items: center; gap: 6px; padding: 3px; border-radius: 999px; background: rgb(255 255 255 / .16); box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .22); }
-.wallet-with > .icon { width: 14px; height: 14px; stroke-width: 2.6; opacity: .85; }
-.wallet-with .pair i { box-shadow: 0 0 0 1.5px rgb(255 255 255 / .9); }
-.wallet .amount-hero { font-size: clamp(3.2rem, 16vw, 4.25rem); letter-spacing: -.055em; text-shadow: 0 4px 24px rgb(0 0 0 / .14); }
+.wallet .amount-hero { font-size: clamp(3.2rem, 16vw, 4.25rem); letter-spacing: -.055em; }
 .wallet .amount-cur, .wallet .amount-dec { opacity: .7; }
 .wallet-line { margin: 6px 0 18px; font-size: 1.0625rem; font-weight: 550; color: rgb(255 255 255 / .9); }
 .wallet .fair { gap: 8px; }
@@ -164,19 +174,7 @@ button.row:active:not(:disabled) { background: var(--fill-2); }
 .wallet .fair-b { background: #ffc2ae; }
 .wallet .couple-a { --c: #6366f1; }
 .wallet .couple-b { --c: #f5704f; }
-/* The footer is a frosted panel holding the sheet and Settle up. */
-.wallet-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; padding: 10px 8px 10px 14px; border-radius: 20px; background: rgb(255 255 255 / .14); box-shadow: inset 0 0 0 .5px rgb(255 255 255 / .24); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font-size: .8125rem; color: rgb(255 255 255 / .8); }
-.wallet-note { padding: 4px 0; }
-.wallet-cta { display: inline-flex; flex: none; align-items: center; gap: 6px; min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #fff; color: #121216; font-size: .9375rem; font-weight: 650; box-shadow: 0 8px 18px -8px rgb(0 0 0 / .45); transition: transform .2s var(--ease); }
-.wallet-cta:active { transform: scale(.95); }
-.wallet-cta .icon { width: 16px; height: 16px; stroke-width: 2.6; }
-/* With one open sheet, the wallet names it and links to it in place of a second card. */
-.wallet-sheet { display: grid; flex: 1; gap: 2px; min-width: 0; min-height: 44px; padding: 0; border: 0; background: none; color: inherit; font-size: .8125rem; text-align: left; }
-.wallet-sheet strong { display: flex; align-items: center; gap: 2px; overflow: hidden; color: #fff; font-size: .9375rem; font-weight: 650; white-space: nowrap; text-overflow: ellipsis; }
-.wallet-sheet .icon { flex: none; width: 15px; height: 15px; stroke-width: 2.6; opacity: .7; }
-.wallet-sheet:active { opacity: .7; }
-.wallet-progress { position: relative; display: block; height: 4px; margin-top: 6px; overflow: hidden; border-radius: 999px; background: rgb(255 255 255 / .2); }
-.wallet-progress::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--p); border-radius: inherit; background: #fff; }
+.wallet .pair i { box-shadow: 0 0 0 1.5px rgb(255 255 255 / .9); }
 
 /* Who paid against the fair share */
 .fair { display: grid; gap: 10px; }
