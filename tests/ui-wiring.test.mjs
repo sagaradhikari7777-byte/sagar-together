@@ -190,3 +190,9 @@ test('the classic app stays reachable at /classic', () => {
   assert.match(classic, /src="\/classic\/app\.js\?v=/);
   assert.match(sources['app/screens/household.js'], /href="\/classic\/"/);
 });
+
+test('the Home pass line accounts for part payments already inside the balance', () => {
+  const home = read('public/app/screens/home.js');
+  assert.match(home, /yours\.partPaid < 0 \? `\$\{join\}they’ve paid you \$\{money\(-yours\.partPaid\)\} back`/);
+  assert.match(home, /they paid \$\{money\(total - minePaid\)\}`\}\$\{backPaid\}<\/p>/);
+});
