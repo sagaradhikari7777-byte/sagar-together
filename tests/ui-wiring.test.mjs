@@ -166,12 +166,13 @@ test('Home has a one-tap light/dark toggle that saves the choice', () => {
   assert.match(sources['app/store.js'], /localStorage\.setItem\('together-theme', theme\)/);
 });
 
-test('design tokens, couple identity, glass navigation and reduced motion stay defined', () => {
+test('design tokens, couple identity, the solid tab bar and reduced motion stay defined', () => {
   for (const token of ['--bg', '--surface', '--sheet', '--label', '--accent', '--a', '--b', '--glass', '--r-card', '--spring'])
     assert.match(css, new RegExp(`\\s${token}:`), token + ' token');
   assert.match(css, /:root\[data-theme=dark\] \{/);
   assert.match(css, /\.couple-a \{ --c: var\(--a\);/);
-  assert.match(css, /\.tabbar \{[^}]*backdrop-filter/);
+  assert.match(css, /\.tabbar \{[^}]*background: var\(--bar\)/);
+  assert.match(css, /:root\[data-theme=dark\] \{[^}]*--primary: #c8f25a/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
 });
 
@@ -191,8 +192,9 @@ test('the classic app stays reachable at /classic', () => {
   assert.match(sources['app/screens/household.js'], /href="\/classic\/"/);
 });
 
-test('the Home pass line accounts for part payments already inside the balance', () => {
+test('the Home ledger accounts for part payments already inside the balance', () => {
   const home = read('public/app/screens/home.js');
   assert.match(home, /theyPaid = total - minePaid \+ Math\.max\(-yours\.partPaid, 0\)/);
-  assert.match(home, /you paid \$\{money\(youPaid\)\}, they paid \$\{money\(theyPaid\)\}/);
+  assert.match(home, /You paid <b>\$\{money\(youPaid\)\}<\/b>/);
+  assert.match(home, /They paid <b>\$\{money\(theyPaid\)\}<\/b>/);
 });

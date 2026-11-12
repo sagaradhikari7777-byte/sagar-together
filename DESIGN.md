@@ -1,18 +1,19 @@
 ---
 name: Together
-description: A calm, native-feeling household wallet. Each couple has its own colour; glass is used only for navigation.
+description: A calm household ledger in light (Calm ledger) and a bold Night mode in dark. Each couple has its own colour.
 colors:
-  canvas: "#f3f2ef"
+  canvas: "#f6f6f3"
   surface: "#ffffff"
-  sheet: "#f6f5f2"
-  label: "#111113"
-  accent: "#0b8f6c"
-  couple-a: "#6366f1"
-  couple-b: "#f5704f"
-  caution: "#b86e00"
-  danger: "#e5484d"
-  dark-canvas: "#0b0b0f"
-  dark-surface: "#17171c"
+  sheet: "#f6f6f3"
+  label: "#15171c"
+  accent: "#1e6b52"
+  couple-a: "#4e5ad6"
+  couple-b: "#d9573a"
+  caution: "#9a5400"
+  danger: "#d93a3f"
+  dark-canvas: "#0b0c0f"
+  dark-surface: "#15171c"
+  dark-accent: "#c8f25a"
 typography:
   family: "Geist (self-hosted variable font), system fallback"
   body: "16px / 1.45"
@@ -28,7 +29,7 @@ rounded:
 
 # Together
 
-Two couples, one household wallet. The design follows the best iOS-native finance apps: one compact balance "pass" that answers "who owes whom?" at a glance, plain solid cards for content, and Liquid Glass only on the navigation layer (tab bar, top bar, toasts, floating buttons).
+Two couples, one household wallet. Since 2026-11-12 the app has two looks that share one layout. Light mode is **Calm ledger**: paper-white canvas, near-black ink, white lists with hairlines, a plain balance with no hero card. Dark mode is **Night**: near-black canvas, lime accent (`#c8f25a`) for primary actions, and monospace figures (`--mono`). There is no aurora wash or glass; the tab bar is a solid bar with a hairline.
 
 ## Principles
 
@@ -70,7 +71,7 @@ Geist variable, served from `/fonts` (OFL).
 
 - **Page:** large title that collapses into a glass top bar on scroll. The four tabs stay mounted, so each keeps its scroll and state.
 - **Sheet:** a native `<dialog>` presented as a bottom sheet (a centred card on wide screens), opened before its first paint so it appears whole. Every sheet has a visible close; Escape, backdrop and drag close it through navigation so unsaved work can intercept.
-- **Balance pass:** Home's hero (`.pass`). A gradient top that follows the balance (indigo into coral while you owe, green when owed, indigo when even) holds the amount, who it's to or from, what each side paid and a ring of the split with the total spent. A tear-off stub in the surface colour, with notches at the fold, holds the open sheet and Settle up. The welcome screen's example keeps the older `.wallet` card.
+- **Balance ledger:** Home's hero (`.ledger`), with no card. "You owe Nabin & Sujata", the amount in large type, one meta line (sheet, spent, days left), a bar of what each couple paid with the difference striped in `--gap` (ink in light, lime at night), then Settle up and Open sheet. Coming-up bills are plain rows. The welcome screen's example keeps the older `.wallet` card.
 - **FairShareBar:** what each couple paid, with a tick at couple A's fair share. The gap between bar and tick is the debt.
 - **Flow:** payer couple → receiver couple with stacked initials.
 - **SlideToConfirm:** drag the knob to record; keyboard and assistive tech activate it directly.

@@ -1,6 +1,6 @@
 /*
  * Together · layers
- * App shell, pages, the glass tab bar, sheets, keypad and slide-to-confirm.
+ * App shell, pages, the tab bar, sheets, keypad and slide-to-confirm.
  */
 #app, .app { position: relative; min-height: 100dvh; }
 .shell { position: fixed; inset: 0; z-index: 1; overflow: hidden; }
@@ -45,17 +45,17 @@
 }
 .topbar.is-scrolled {
   background: var(--glass);
-  box-shadow: inset 0 -.5px 0 var(--separator);
-  -webkit-backdrop-filter: blur(24px) saturate(1.8);
-  backdrop-filter: blur(24px) saturate(1.8);
+  box-shadow: inset 0 -1px 0 var(--separator);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
 }
 .topbar-title { max-width: 60vw; overflow: hidden; font-size: 1.0625rem; font-weight: 650; text-align: center; white-space: nowrap; text-overflow: ellipsis; opacity: 0; transform: translateY(6px); transition: opacity .25s, transform .3s var(--ease); }
 .topbar.is-scrolled .topbar-title { opacity: 1; transform: none; }
 .topbar-side { display: flex; align-items: center; gap: 8px; min-width: 40px; }
 .topbar-actions { justify-content: flex-end; }
 .page-head { padding: 0 var(--gutter) 14px; margin-top: -4px; }
-.page-eyebrow { margin-bottom: 2px; font-size: .9375rem; font-weight: 550; color: var(--label-2); }
-.page-title { font-size: 2.125rem; font-weight: 750; line-height: 1.1; letter-spacing: -.035em; overflow-wrap: anywhere; }
+.page-eyebrow { margin-bottom: 2px; font-size: .875rem; font-weight: 500; color: var(--label-2); }
+.page-title { font-size: 2rem; font-weight: 700; line-height: 1.1; letter-spacing: -.03em; overflow-wrap: anywhere; }
 .page-body { display: grid; gap: 14px; padding: 0 var(--gutter); }
 
 .demo-banner {
@@ -84,53 +84,41 @@
 .tabbar {
   position: fixed;
   z-index: 30;
-  bottom: calc(10px + var(--safe-bottom));
-  left: 50%;
+  right: 0;
+  bottom: 0;
+  left: 0;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  align-items: center;
-  width: min(420px, calc(100% - 24px));
-  height: 66px;
-  padding: 5px;
-  border-radius: 999px;
-  background: var(--glass);
-  box-shadow: var(--glass-shadow), inset 0 0 0 .5px var(--glass-edge), inset 0 1px 0 rgb(255 255 255 / .5);
-  -webkit-backdrop-filter: blur(28px) saturate(2);
-  backdrop-filter: blur(28px) saturate(2);
-  transform: translateX(-50%);
+  align-items: start;
+  width: 100%;
+  max-width: 600px;
+  margin-inline: auto;
+  padding: 6px 8px calc(6px + max(var(--safe-bottom), 10px));
+  background: var(--bar);
+  box-shadow: inset 0 1px 0 var(--separator);
   isolation: isolate;
 }
-:root[data-theme=dark] .tabbar { box-shadow: var(--glass-shadow), inset 0 0 0 .5px var(--glass-edge), inset 0 1px 0 rgb(255 255 255 / .06); }
-.tabbar-thumb {
-  position: absolute;
-  z-index: -1;
-  top: 5px;
-  bottom: 5px;
-  left: 5px;
-  width: calc((100% - 10px) / 5);
-  border-radius: 999px;
-  background: var(--fill);
-  transform: translateX(calc(var(--index) * 100%));
-  transition: transform .55s var(--spring);
-}
-.tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; height: 56px; min-width: 0; padding: 0; border: 0; background: none; color: var(--label-2); transition: color .2s; }
-.tab .icon { width: 23px; height: 23px; stroke-width: 1.9; }
-.tab span { font-size: .6875rem; font-weight: 600; letter-spacing: 0; }
+@media (min-width: 601px) { .tabbar { bottom: 12px; border-radius: 20px; padding-bottom: 6px; box-shadow: var(--glass-shadow), inset 0 0 0 1px var(--separator); } }
+.tabbar-thumb { display: none; }
+.tab { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; height: 52px; min-width: 0; padding: 0; border: 0; background: none; color: var(--label-2); transition: color .2s; }
+.tab .icon { width: 24px; height: 24px; stroke-width: 1.9; }
+.tab span { font-size: .6875rem; font-weight: 550; letter-spacing: 0; }
 .tab.is-active { color: var(--label); }
 .tab.is-active .icon { stroke-width: 2.3; }
+/* Night: a small lime dot under the active tab. */
+:root[data-theme=dark] .tab.is-active::after { content: ""; position: absolute; bottom: -2px; width: 4px; height: 4px; border-radius: 2px; background: var(--accent); }
 .tab-add-orb {
   display: grid;
   place-items: center;
   width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: radial-gradient(120% 120% at 20% 15%, rgb(255 255 255 / .35), transparent 45%), linear-gradient(135deg, var(--a), var(--b));
-  color: #fff;
-  box-shadow: 0 8px 22px -6px color-mix(in srgb, var(--b) 70%, transparent), inset 0 1px 0 rgb(255 255 255 / .45);
+  height: 44px;
+  border-radius: 14px;
+  background: var(--primary);
+  color: var(--primary-ink);
   transition: transform .3s var(--spring);
 }
-.tab-add:active .tab-add-orb { transform: scale(.9); }
-.tab-add .icon { width: 26px; height: 26px; stroke-width: 2.6; }
+.tab-add:active .tab-add-orb { transform: scale(.92); }
+.tab-add .icon { width: 24px; height: 24px; stroke-width: 2.4; }
 
 /* ───────── Sheets ───────── */
 dialog.sheet {
@@ -159,7 +147,7 @@ dialog.sheet.is-closing::backdrop { animation: fade-out .3s var(--ease) forwards
   width: min(100%, 600px);
   max-height: calc(100dvh - var(--safe-top) - 10px - var(--keyboard, 0px));
   margin-inline: auto;
-  border-radius: 34px 34px 0 0;
+  border-radius: 26px 26px 0 0;
   background: var(--sheet);
   box-shadow: 0 -10px 40px rgb(0 0 0 / .14), inset 0 .5px 0 var(--glass-edge);
   /* The whole sheet starts on screen, so it is drawn in one piece before it moves. */
@@ -183,7 +171,7 @@ dialog.sheet.is-closing .sheet-panel { animation: sheet-down .3s var(--ease) for
 .sheet-bar h2 { max-width: 62vw; overflow: hidden; font-size: 1.0625rem; font-weight: 650; text-align: center; white-space: nowrap; text-overflow: ellipsis; outline: none; }
 .sheet-side { display: flex; align-items: center; gap: 6px; min-width: 40px; }
 .sheet-side-end { justify-content: flex-end; }
-.sheet .nav-button { background: var(--fill); box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.sheet .nav-button { background: var(--fill); box-shadow: none; }
 .sheet .nav-button-accent { background: var(--primary); }
 /* Rows keep their full height so long lists scroll the sheet. Without max-content rows, a
    card that clips its overflow (a list) shrinks to fit the sheet and its rest can't be reached. */
@@ -218,24 +206,25 @@ dialog.sheet.is-closing .sheet-panel { animation: sheet-down .3s var(--ease) for
 .key {
   height: 54px;
   border: 0;
-  border-radius: 18px;
+  border-radius: 14px;
   background: var(--surface);
   color: var(--label);
   font-size: 1.625rem;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  box-shadow: var(--card-shadow), inset 0 0 0 .5px var(--separator);
+  box-shadow: inset 0 0 0 1px var(--separator);
   transition: transform .12s, background-color .15s;
 }
 .key:active { transform: scale(.94); background: var(--fill); }
-.key-op { background: var(--fill-2); color: var(--label-2); font-size: 1.5rem; box-shadow: none; }
+:root[data-theme=dark] .key { font-family: var(--mono); font-size: 1.5rem; box-shadow: none; }
+.key-op { background: var(--fill); color: var(--label-2); font-size: 1.5rem; box-shadow: none; }
 .key-del { background: transparent; box-shadow: none; display: grid; place-items: center; }
 .key-del .icon { width: 26px; height: 26px; }
 
 /* ───────── Slide to confirm ───────── */
-.slide { position: relative; height: 64px; border-radius: 999px; background: var(--fill); overflow: hidden; isolation: isolate; }
-.slide::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, var(--a-soft), var(--b-soft)); }
-.slide-label { position: absolute; inset: 0; display: grid; place-items: center; padding-left: 56px; font-weight: 650; color: var(--label-2); animation: hint 2.4s ease-in-out infinite; }
+.slide { position: relative; height: 64px; border-radius: 18px; background: var(--slide-track); overflow: hidden; isolation: isolate; }
+:root[data-theme=dark] .slide { box-shadow: inset 0 0 0 1px var(--fill-strong); }
+.slide-label { position: absolute; inset: 0; display: grid; place-items: center; padding-left: 56px; font-weight: 650; color: var(--slide-label); animation: hint 2.4s ease-in-out infinite; }
 @keyframes hint { 50% { opacity: .55; } }
 .slide-knob {
   position: absolute;
@@ -247,10 +236,10 @@ dialog.sheet.is-closing .sheet-panel { animation: sheet-down .3s var(--ease) for
   height: 56px;
   padding: 0;
   border: 0;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--a), var(--b));
-  color: #fff;
-  box-shadow: 0 6px 16px -4px rgb(0 0 0 / .3);
+  border-radius: 14px;
+  background: var(--slide-knob);
+  color: var(--slide-knob-ink);
+  box-shadow: 0 2px 6px rgb(0 0 0 / .2);
   transform: translateX(var(--x, 0px));
   transition: transform .5s var(--spring);
   touch-action: none;
@@ -259,7 +248,7 @@ dialog.sheet.is-closing .sheet-panel { animation: sheet-down .3s var(--ease) for
 .slide-knob .icon { width: 24px; height: 24px; stroke-width: 2.6; }
 .slide-knob:disabled { opacity: 1; }
 .slide.is-done .slide-label { opacity: 0; }
-.slide.is-done .slide-knob { background: var(--positive); }
+.slide.is-done .slide-knob { background: var(--positive); color: #fff; }
 .slide.is-disabled { opacity: .55; }
 
 /* ───────── Loading & welcome ───────── */

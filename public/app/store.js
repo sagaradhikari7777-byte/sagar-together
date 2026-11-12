@@ -238,6 +238,6 @@ export function setTheme(theme) {
 export function applyTheme() {
   const dark = state.theme === 'dark' || (state.theme === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-  document.querySelector('meta[name=theme-color]')?.setAttribute('content', dark ? '#0b0b0f' : '#f3f2ef');
+  document.querySelector('meta[name=theme-color]')?.setAttribute('content', dark ? '#0b0c0f' : '#f6f6f3');
   if (state.dark !== dark) setState({dark});
 }

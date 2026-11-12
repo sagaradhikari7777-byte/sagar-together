@@ -4,7 +4,7 @@ import {present, push, go} from '../nav.js';
 import {Page, Amount, Icon, CategoryGlyph, Empty, cx} from '../ui.js';
 import {ExpenseRow, ThemeToggle} from '../common.js';
 import {group, otherCouple, coupleName, greeting, money, plural, today, periodProgress, rangeLabel, categoryLook, shortDate, firstName} from '../format.js';
-import {householdOverview, currentSheet as current, recentExpenses, upcomingBills, sheetSummary, sheetCategories, insightFor, sheetPartPayments} from '../derive.js';
+import {householdOverview, currentSheet as current, recentExpenses, upcomingBills, sheetSummary, sheetCategories, insightFor} from '../derive.js';
 import {partTotal} from '../../settlement-overview.js';
 import {openAddExpense} from '../flows/expense.js';
 import {draftAmount} from '../amount-entry.js';
@@ -32,15 +32,14 @@ export function Home() {
       <//></div>`}
     ${bills.length > 0 && html`<section class="section">
       <div class="section-head"><h2>Coming up</h2><button type="button" class="link" onClick=${() => present('bills')}>All bills</button></div>
-      <div class="rail">${bills.slice(0, 6).map(b => html`<button type="button" class="card bill-chip" data-bill-record=${b.id} onClick=${() => present('bill-record', {id: b.id})}>
+      <div class="card list">${bills.slice(0, 3).map(b => html`<button type="button" class="srow bill-row" data-bill-record=${b.id} onClick=${() => present('bill-record', {id: b.id})}>
         <${CategoryGlyph} name=${b.category} size="sm"/>
-        <strong>${b.merchant}</strong>
-        <span class=${cx('bill-due', b.nextDue < today() && 'is-overdue')}>${b.nextDue < today() ? 'Overdue' : b.nextDue === today() ? 'Due today' : 'Due ' + shortDate(b.nextDue)}</span>
-        <b>${money(b.cents)}</b>
+        <span class="bill-row-text"><strong>${b.merchant}</strong><span class=${cx('bill-due', b.nextDue < today() && 'is-overdue')}>${b.nextDue < today() ? 'Overdue' : b.nextDue === today() ? 'Due today' : 'Due ' + shortDate(b.nextDue)}</span></span>
+        <${Amount} cents=${b.cents} class="bill-row-amount"/>
       </button>`)}</div>
     </section>`}
     <section class="section">
-      <div class="section-head"><h2>Recent activity</h2>${data.expenses.length > 0 && html`<button type="button" class="link" onClick=${() => go('activity')}>See all</button>`}</div>
+      <div class="section-head"><h2>Recent</h2>${data.expenses.length > 0 && html`<button type="button" class="link" onClick=${() => go('activity')}>See all</button>`}</div>
       ${recent.length ? html`<div class="card list">${recent.map(e => html`<${ExpenseRow} key=${e.id} expense=${e}/>`)}</div>`
         : data.expenses.length ? html`<div class="card card-pad"><${Empty} emoji="✅" title="All settled" text="Nothing open right now. Settled expenses and closed sheets are still in Activity and Sheets.">
             <button type="button" class="btn btn-primary" onClick=${() => openAddExpense()}><${Icon} name="plus"/> Add an expense</button><//></div>`
@@ -52,46 +51,41 @@ export function Home() {
 }
 
 /**
- * The balance as a compact pass: the amount, who paid what and a ring of the
- * split on top; the open sheet and Settle up on a tear-off stub below. With
- * one open sheet the stub names it, so Home has a single hero.
+ * The balance as a calm ledger: who owes whom and how much in plain type, a
+ * bar of what each couple paid with the difference marked, then Settle up.
+ * With one open sheet it names that sheet, so Home has a single hero.
  */
 function BalanceCard({data, yours, coupleA, mine, other, sheet}) {
   const net = yours.net, open = yours.rows.length, parts = yours.payments.length;
   const status = net > 0 ? 'owe' : net < 0 ? 'owed' : 'even';
-  const label = net > 0 ? 'You owe' : net < 0 ? 'Owed to you' : 'Balance';
   const total = coupleA.total || 0, minePaid = mine === 'a' ? coupleA.paid : total - coupleA.paid;
   const them = html`<b>${coupleName(data.names, other)}</b>`;
-  const who = net > 0 ? html`to ${them}` : net < 0 ? html`from ${them}` : open ? 'Your couples are even' : 'All square';
+  const label = net > 0 ? html`You owe ${them}` : net < 0 ? html`${them} owe you` : open ? 'Your couples are even' : 'All square';
   // Part payments count as paid, as on the sheet, so the figures add up to the amount still owed.
   const youPaid = minePaid + Math.max(yours.partPaid, 0), theyPaid = total - minePaid + Math.max(-yours.partPaid, 0);
-  return html`<section class=${cx('pass', 'is-' + status)} aria-labelledby="wallet-label">
-    <div class="pass-top">
-      <div class="pass-main">
-        <span id="wallet-label" class="pass-label">${label}</span>
-        <${Amount} cents=${Math.abs(net)} class="amount-hero"/>
-        <p class="pass-line">${who}${(total > 0 || parts > 0) && html` · you paid ${money(youPaid)}, they paid ${money(theyPaid)}`}</p>
+  const paid = youPaid + theyPaid, share = youPaid + net, gap = Math.abs(net);
+  const pct = cents => (paid > 0 ? Math.max(0, Math.min(100, cents / paid * 100)) : 0).toFixed(2) + '%';
+  const progress = sheet && periodProgress(sheet);
+  const left = progress?.total ? (progress.left === 0 ? 'ends today' : plural(progress.left, 'day') + ' left') : '';
+  const meta = sheet ? [sheet.name, total > 0 && money(total) + ' spent', left, parts && money(partTotal(yours.payments)) + ' part-paid'].filter(Boolean).join(' · ')
+    : (open ? `${plural(open, 'unsettled expense')} · ${plural(yours.sheets.length, 'open sheet')}` : 'Nothing waiting to be settled') + (parts ? ` · ${money(partTotal(yours.payments))} part-paid` : '');
+  const settle = open > 0 || parts > 0;
+  return html`<section class=${cx('ledger', 'is-' + status)} aria-labelledby="wallet-label">
+    <p id="wallet-label" class="ledger-label">${label}</p>
+    <${Amount} cents=${gap} class="amount-hero"/>
+    <p class="ledger-meta">${meta}</p>
+    ${paid > 0 && html`<div class="ledger-bar" role="img" aria-label=${`You paid ${money(youPaid)}, they paid ${money(theyPaid)}. Your fair share is ${money(share)}.`}>
+        <i class=${'couple-' + mine} style=${`--w:${pct(Math.min(youPaid, share))}`}></i>${gap > 0 && html`<i class="ledger-gap" style=${`--w:${pct(gap)}`}></i>`}<i class=${'couple-' + other} style="flex:1"></i>
       </div>
-      ${total > 0 && html`<span class="pass-ring" style=${`--a:${(coupleA.paid / total * 100).toFixed(1)}%`} role="img"
-        aria-label=${`${money(total)} spent. ${coupleName(data.names, 'a')} paid ${money(coupleA.paid)}, ${coupleName(data.names, 'b')} paid ${money(total - coupleA.paid)}`}>
-        <span aria-hidden="true"><b>${money(Math.round(total / 100) * 100).replace(/\.00$/, '')}</b>spent</span>
-      </span>`}
-    </div>
-    <div class="pass-stub">
-      ${sheet ? html`<${WalletSheet} data=${data} sheet=${sheet}/>`
-        : html`<span class="pass-note">${open ? `${plural(open, 'unsettled expense')} · ${plural(yours.sheets.length, 'open sheet')}` : 'Nothing waiting to be settled'}${parts ? ` · ${money(partTotal(yours.payments))} part-paid` : ''}</span>`}
-      ${(open > 0 || parts > 0) && html`<button type="button" class="pass-cta" data-action="open-settle" onClick=${() => present('settle', {})}>Settle up <${Icon} name="arrow"/></button>`}
-    </div>
+      <div class="ledger-legend">
+        <span class=${'couple-' + mine}><i class="dot"></i>You paid <b>${money(youPaid)}</b></span>
+        <span class=${'couple-' + other}>They paid <b>${money(theyPaid)}</b><i class="dot"></i></span>
+      </div>`}
+    ${(settle || sheet) && html`<div class="ledger-actions">
+      ${settle && html`<button type="button" class="btn btn-primary" data-action="open-settle" onClick=${() => present('settle', {})}>Settle up</button>`}
+      ${sheet && html`<button type="button" class="btn btn-secondary" data-view-sheet=${sheet.id} onClick=${() => push('sheet', {id: sheet.id})} aria-label=${`Open ${sheet.name}`}>Open sheet</button>`}
+    </div>`}
   </section>`;
-}
-
-function WalletSheet({data, sheet}) {
-  const parts = sheetPartPayments(data, sheet.id), progress = periodProgress(sheet);
-  const left = progress?.total ? (progress.left === 0 ? 'ends today' : plural(progress.left, 'day') + ' left') : progress ? `day ${progress.day}` : '';
-  return html`<button type="button" class="pass-sheet" data-view-sheet=${sheet.id} onClick=${() => push('sheet', {id: sheet.id})} aria-label=${`Open ${sheet.name}`}>
-    <strong>${sheet.name}<${Icon} name="chevron"/></strong>
-    <span>${[left, parts.length && money(partTotal(parts)) + ' part-paid'].filter(Boolean).join(' · ')}</span>
-  </button>`;
 }
 
 function PeriodCard({data, sheet}) {
