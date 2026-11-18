@@ -1,21 +1,19 @@
 ---
 name: Together
-description: A calm household ledger in light (Calm ledger) and a bold Night mode in dark. Each couple has its own colour.
+description: Cozy home. A warm, friendly household notebook: cream paper and a soft serif in light, warm cocoa in dark. Each couple has its own colour.
 colors:
-  canvas: "#f6f6f3"
+  canvas: "#fbf6ee"
   surface: "#ffffff"
-  sheet: "#f6f6f3"
-  label: "#15171c"
-  accent: "#1e6b52"
-  couple-a: "#4e5ad6"
-  couple-b: "#d9573a"
-  caution: "#9a5400"
-  danger: "#d93a3f"
-  dark-canvas: "#0b0c0f"
-  dark-surface: "#15171c"
-  dark-accent: "#c8f25a"
+  surface-2: "#f3e8d8"
+  label: "#2b211b"
+  accent: "#c35f36"
+  couple-a: "#4f7a63"
+  couple-b: "#c35f36"
+  dark-canvas: "#16110e"
+  dark-surface: "#221b16"
+  dark-accent: "#e8875a"
 typography:
-  family: "Geist (self-hosted variable font), system fallback"
+  family: "Nunito for text, Fraunces for titles and big amounts (both self-hosted variable fonts)"
   body: "16px / 1.45"
   input: "16px minimum"
 rounded:
@@ -29,7 +27,7 @@ rounded:
 
 # Together
 
-Two couples, one household wallet. Since 2026-11-12 the app has two looks that share one layout. Light mode is **Calm ledger**: paper-white canvas, near-black ink, white lists with hairlines, a plain balance with no hero card. Dark mode is **Night**: near-black canvas, lime accent (`#c8f25a`) for primary actions, and monospace figures (`--mono`). There is no aurora wash or glass; the tab bar is a solid bar with a hairline.
+Two couples, one household wallet. Since 2026-11-18 the look is **Cozy home** (Sagar picked it from four options on 2026-11-18, after rejecting the 2026-11-12 Calm ledger/Night look). Light mode is cream paper (`#fbf6ee`) with white cards and warm brown ink; dark mode is warm cocoa (`#16110e`). Titles, section headings and big amounts use the Fraunces serif; everything else uses Nunito, mostly at bold weights. Couple A is sage, couple B is terracotta, and terracotta is also the primary action colour. Buttons are pills, cards are rounded (24px, the Home balance card 30px), and the tab bar floats as a rounded pill with a round + in the middle. New expense asks plain questions ("What was it?", "Who paid?", "How do we split it?", "Anything else?").
 
 ## Principles
 
@@ -71,7 +69,7 @@ Geist variable, served from `/fonts` (OFL).
 
 - **Page:** large title that collapses into a glass top bar on scroll. The four tabs stay mounted, so each keeps its scroll and state.
 - **Sheet:** a native `<dialog>` presented as a bottom sheet (a centred card on wide screens), opened before its first paint so it appears whole. Every sheet has a visible close; Escape, backdrop and drag close it through navigation so unsaved work can intercept.
-- **Balance ledger:** Home's hero (`.ledger`), with no card. "You owe Nabin & Sujata", the amount in large type, one meta line (sheet, spent, days left), a bar of what each couple paid with the difference striped in `--gap` (ink in light, lime at night), then Settle up and Open sheet. Coming-up bills are plain rows. The welcome screen's example keeps the older `.wallet` card.
+- **Balance card:** Home's hero (`.ledger`), a warm `--surface-2` card with no gradient. It has a tag naming the open sheet and days left (it opens the sheet), "You owe Nabin & Sujata", the amount in Fraunces, a two-part bar of what each couple paid in couple colours, a "spent together" line, and a full-width Settle up. Coming-up bills are plain rows. The welcome screen's example keeps the `.wallet` card, now in sage.
 - **FairShareBar:** what each couple paid, with a tick at couple A's fair share. The gap between bar and tick is the debt.
 - **Flow:** payer couple → receiver couple with stacked initials.
 - **SlideToConfirm:** drag the knob to record; keyboard and assistive tech activate it directly.

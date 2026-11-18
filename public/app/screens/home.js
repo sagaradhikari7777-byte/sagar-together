@@ -39,7 +39,7 @@ export function Home() {
       </button>`)}</div>
     </section>`}
     <section class="section">
-      <div class="section-head"><h2>Recent</h2>${data.expenses.length > 0 && html`<button type="button" class="link" onClick=${() => go('activity')}>See all</button>`}</div>
+      <div class="section-head"><h2>Recently</h2>${data.expenses.length > 0 && html`<button type="button" class="link" onClick=${() => go('activity')}>See all</button>`}</div>
       ${recent.length ? html`<div class="card list">${recent.map(e => html`<${ExpenseRow} key=${e.id} expense=${e}/>`)}</div>`
         : data.expenses.length ? html`<div class="card card-pad"><${Empty} emoji="✅" title="All settled" text="Nothing open right now. Settled expenses and closed sheets are still in Activity and Sheets.">
             <button type="button" class="btn btn-primary" onClick=${() => openAddExpense()}><${Icon} name="plus"/> Add an expense</button><//></div>`
@@ -51,9 +51,9 @@ export function Home() {
 }
 
 /**
- * The balance as a calm ledger: who owes whom and how much in plain type, a
- * bar of what each couple paid with the difference marked, then Settle up.
- * With one open sheet it names that sheet, so Home has a single hero.
+ * The balance card: the open sheet as a tag, who owes whom, the amount in
+ * serif, a bar of what each couple paid, then a full-width Settle up.
+ * With one open sheet the tag opens it, so Home has a single hero.
  */
 function BalanceCard({data, yours, coupleA, mine, other, sheet}) {
   const net = yours.net, open = yours.rows.length, parts = yours.payments.length;
@@ -67,24 +67,23 @@ function BalanceCard({data, yours, coupleA, mine, other, sheet}) {
   const pct = cents => (paid > 0 ? Math.max(0, Math.min(100, cents / paid * 100)) : 0).toFixed(2) + '%';
   const progress = sheet && periodProgress(sheet);
   const left = progress?.total ? (progress.left === 0 ? 'ends today' : plural(progress.left, 'day') + ' left') : '';
-  const meta = sheet ? [sheet.name, total > 0 && money(total) + ' spent', left, parts && money(partTotal(yours.payments)) + ' part-paid'].filter(Boolean).join(' · ')
-    : (open ? `${plural(open, 'unsettled expense')} · ${plural(yours.sheets.length, 'open sheet')}` : 'Nothing waiting to be settled') + (parts ? ` · ${money(partTotal(yours.payments))} part-paid` : '');
+  const note = (open ? `${plural(open, 'unsettled expense')} · ${plural(yours.sheets.length, 'open sheet')}` : 'Nothing waiting to be settled') + (parts ? ` · ${money(partTotal(yours.payments))} part-paid` : '');
   const settle = open > 0 || parts > 0;
+  const tag = sheet ? [sheet.name, left].filter(Boolean).join(' · ') : '';
+  const meta = sheet ? [total > 0 && money(total) + ' spent together', parts && money(partTotal(yours.payments)) + ' part-paid'].filter(Boolean).join(' · ') : note;
   return html`<section class=${cx('ledger', 'is-' + status)} aria-labelledby="wallet-label">
+    ${sheet && html`<button type="button" class="ledger-tag" data-view-sheet=${sheet.id} onClick=${() => push('sheet', {id: sheet.id})} aria-label=${`Open ${sheet.name}`}><${Icon} name="calendar"/>${tag}<${Icon} name="chevron"/></button>`}
     <p id="wallet-label" class="ledger-label">${label}</p>
     <${Amount} cents=${gap} class="amount-hero"/>
-    <p class="ledger-meta">${meta}</p>
     ${paid > 0 && html`<div class="ledger-bar" role="img" aria-label=${`You paid ${money(youPaid)}, they paid ${money(theyPaid)}. Your fair share is ${money(share)}.`}>
-        <i class=${'couple-' + mine} style=${`--w:${pct(Math.min(youPaid, share))}`}></i>${gap > 0 && html`<i class="ledger-gap" style=${`--w:${pct(gap)}`}></i>`}<i class=${'couple-' + other} style="flex:1"></i>
+        <i class=${'couple-' + mine} style=${`--w:${pct(youPaid)}`}></i><i class=${'couple-' + other} style="flex:1"></i>
       </div>
       <div class="ledger-legend">
         <span class=${'couple-' + mine}><i class="dot"></i>You paid <b>${money(youPaid)}</b></span>
-        <span class=${'couple-' + other}>They paid <b>${money(theyPaid)}</b><i class="dot"></i></span>
+        <span class=${'couple-' + other}>They paid <b>${money(theyPaid)}</b></span>
       </div>`}
-    ${(settle || sheet) && html`<div class="ledger-actions">
-      ${settle && html`<button type="button" class="btn btn-primary" data-action="open-settle" onClick=${() => present('settle', {})}>Settle up</button>`}
-      ${sheet && html`<button type="button" class="btn btn-secondary" data-view-sheet=${sheet.id} onClick=${() => push('sheet', {id: sheet.id})} aria-label=${`Open ${sheet.name}`}>Open sheet</button>`}
-    </div>`}
+    ${meta && html`<p class="ledger-meta">${meta}</p>`}
+    ${settle && html`<button type="button" class="btn btn-primary btn-large btn-block ledger-cta" data-action="open-settle" onClick=${() => present('settle', {})}>Settle up <${Icon} name="arrow"/></button>`}
   </section>`;
 }
 

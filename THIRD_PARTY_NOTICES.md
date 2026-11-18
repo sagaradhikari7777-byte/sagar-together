@@ -13,6 +13,10 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 
 `public/fonts/Geist-Variable.woff2` is Geist by Vercel, licensed under the SIL Open Font License 1.1. The full licence is in `public/fonts/Geist-OFL.txt`.
 
+## Fraunces and Nunito fonts
+
+`public/fonts/Fraunces-Variable.woff2` (Fraunces, by Undercase Type) and `public/fonts/Nunito-Variable.woff2` (Nunito, by Vernon Adams and the Nunito Project Authors) are Latin subsets of the variable fonts, licensed under the SIL Open Font License 1.1. The full licences are in `public/fonts/Fraunces-OFL.txt` and `public/fonts/Nunito-OFL.txt`.
+
 ## Lucide icons
 
 The icon shapes in `public/icons.js` come from Lucide (https://lucide.dev).

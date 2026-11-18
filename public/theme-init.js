@@ -5,5 +5,5 @@
   try { theme = localStorage.getItem('together-theme') || 'auto'; } catch {}
   const dark = theme === 'dark' || (theme !== 'light' && window.matchMedia?.('(prefers-color-scheme: dark)').matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0b0c0f' : '#f6f6f3');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#16110e' : '#fbf6ee');
 })();

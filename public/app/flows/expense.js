@@ -170,7 +170,7 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
 
     <div class="editor-form" onClickCapture=${() => { if (keypad) setKeypad(false); }}>
       <section class="form-section" aria-labelledby="details-title">
-        <h3 class="form-section-title" id="details-title">Expense details</h3>
+        <h3 class="form-section-title" id="details-title">What was it?</h3>
         <div class="form-card">
           <button type="button" class=${cx('field-row', 'field-row-merchant', !v.merchant && 'is-empty')} name="merchant" data-pick="merchants" onClick=${() => present('catalog', {kind: 'merchants', selected: v.merchant, onPick: pickMerchant})}>
             ${v.merchant ? html`<${MerchantMark} name=${v.merchant}/>` : html`<span class="mark mark-md mark-empty"><${Icon} name="store"/></span>`}
@@ -192,11 +192,11 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
       </section>
 
       <section class="form-section" aria-labelledby="payment-title">
-        <h3 class="form-section-title" id="payment-title">Payment & split</h3>
+        <h3 class="form-section-title" id="payment-title">Who paid?</h3>
         <div class="form-card form-card-pad">
-          <p class="field-label" id="payer-label">Paid by</p>
+          <p class="sr-only" id="payer-label">Paid by</p>
           <div class="person-picks" role="radiogroup" aria-labelledby="payer-label">${data.names.map((name, seat) => pick(seat, name))}</div>
-          <p class="field-label" id="split-label">Split</p>
+          <p class="field-label" id="split-label">How do we split it?</p>
           <div class="split-picks" role="radiogroup" aria-labelledby="split-label">
             ${splitOption('half', '50 / 50', 'Equally, 50 / 50')}
             ${splitOption('a', allOf('a'), `${coupleName(data.names, 'a')} pays all`)}
@@ -210,7 +210,7 @@ export function ExpenseEditor({sheetKey, id, preset = {}, resume, closing}) {
       </section>
 
       <section class="form-section" aria-labelledby="extra-title">
-        <h3 class="form-section-title" id="extra-title">Extra details</h3>
+        <h3 class="form-section-title" id="extra-title">Anything else?</h3>
         <div class="form-card">
           <label class="field-row field-row-input">
             <span class="field-row-icon"><${Icon} name="note"/></span>

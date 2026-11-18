@@ -11,9 +11,9 @@ button.card { display: block; width: 100%; padding: 0; border: 0; color: inherit
 button.card:active { transform: scale(.985); }
 .card-pad { padding: 18px; }
 .list { overflow: hidden; }
-.section { display: grid; gap: 8px; margin-top: 14px; }
-.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0 4px; }
-.section-head h2 { font-size: 1.0625rem; font-weight: 650; letter-spacing: -.015em; }
+.section { display: grid; gap: 10px; margin-top: 14px; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0 6px; }
+.section-head h2 { font-family: var(--serif); font-size: 1.3125rem; font-weight: 600; letter-spacing: -.01em; }
 .eyebrow { font-size: .75rem; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--label-3); }
 .fineprint { margin: 16px 0 4px; font-size: .8125rem; color: var(--label-3); text-align: center; }
 .fineprint a { color: var(--label-2); }
@@ -38,7 +38,7 @@ button.card:active { transform: scale(.985); }
 
 /* Settings-style groups */
 .group { display: grid; gap: 8px; }
-.group-title { padding: 0 6px; font-size: .8125rem; font-weight: 600; color: var(--label-2); }
+.group-title { padding: 0 6px; font-size: .875rem; font-weight: 800; color: var(--label-2); }
 .group-body { overflow: hidden; border-radius: var(--r-card); background: var(--surface); box-shadow: var(--card-shadow); }
 :root[data-theme=dark] .group-body { box-shadow: inset 0 0 0 .5px var(--separator); }
 .group-footer { padding: 0 6px; font-size: .8125rem; color: var(--label-3); }
@@ -93,46 +93,46 @@ button.row:active:not(:disabled) { background: var(--fill-2); }
 .xrow-front.is-dragging { transition: none; }
 .xrow-front:active { background: color-mix(in srgb, var(--surface) 92%, var(--label)); }
 .xrow-text { display: grid; flex: 1; gap: 2px; min-width: 0; }
-.xrow-title { overflow: hidden; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
+.xrow-title { overflow: hidden; font-weight: 800; white-space: nowrap; text-overflow: ellipsis; }
 .xrow-meta { overflow: hidden; font-size: .8125rem; color: var(--label-2); white-space: nowrap; text-overflow: ellipsis; }
 .xrow-end { display: grid; flex: none; justify-items: end; gap: 2px; }
-.xrow-amount { font-size: 1rem; font-weight: 650; }
+.xrow-amount { font-size: 1rem; font-weight: 800; }
 .xrow-sep { color: var(--label-3); }
 .xrow-sub { display: flex; align-items: center; gap: 3px; font-size: .75rem; color: var(--label-3); }
 .xrow-sub .icon { width: 12px; height: 12px; stroke-width: 3; }
-.xrow-sub.is-owe { font-weight: 600; color: var(--caution); }
-.xrow-sub.is-owed { font-weight: 600; color: var(--positive); }
+.xrow-sub.is-owe { font-weight: 700; color: var(--caution); }
+.xrow-sub.is-owed { font-weight: 700; color: var(--positive); }
 .xrow.is-settled .xrow-sub { color: var(--positive); }
 .xrow.is-settled .xrow-amount { color: var(--label-2); }
 
 /* The next page of a long list loads as you near it; the button covers keyboard and assistive use. */
 .more { display: block; width: 100%; min-height: 44px; border: 0; border-radius: 999px; background: none; color: var(--label-2); font-size: .875rem; font-weight: 600; }
 /* Day-grouped lists are one card; each day's heading sits inside it with the day's total. */
-.day-head { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px 2px; font-size: .8125rem; font-weight: 600; color: var(--label-2); }
+.day-head { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px 2px; font-size: .875rem; font-weight: 800; color: var(--label-2); }
 .days > .xrow + .day-head { margin-top: 4px; box-shadow: inset 0 .5px 0 var(--separator); }
 .day-head span:last-child { color: var(--label-3); font-variant-numeric: tabular-nums; }
 
-/* ───────── Home · balance ledger ───────── */
-/* No card: the amount in plain type on the page, a bar of what each couple
-   paid with the difference striped (ink in light, lime at night), then the
-   actions. Calm in light; at night the figures turn monospace. */
-.ledger { display: grid; padding: 6px 2px 4px; color: var(--label); }
-.ledger-label { font-size: .9375rem; color: var(--label-2); }
-.ledger-label b { color: var(--label); font-weight: 600; }
-.ledger .amount-hero { margin: 8px 0 10px; font-size: clamp(3.25rem, 16vw, 4rem); }
+/* ───────── Home · balance card ───────── */
+/* Cozy home: a warm rounded card (no gradient) holding the open sheet as a
+   tag, who owes whom, the amount in Fraunces, a bar of what each couple
+   paid, and a full-width Settle up. */
+.ledger { display: grid; justify-items: start; padding: 18px 20px 20px; border-radius: 30px; background: var(--surface-2); color: var(--label); }
+.ledger-tag { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; margin-bottom: 14px; padding: 0 10px 0 12px; border: 0; border-radius: 999px; background: var(--surface); color: var(--label-2); font-size: .8125rem; font-weight: 800; }
+.ledger-tag .icon { width: 15px; height: 15px; }
+.ledger-tag .icon:last-child { width: 14px; height: 14px; stroke-width: 2.6; opacity: .7; }
+.ledger-tag:active { opacity: .7; }
+.ledger-label { font-size: 1rem; font-weight: 700; color: var(--label-2); }
+.ledger-label b { color: var(--label); font-weight: 800; }
+.ledger .amount-hero { margin: 6px 0 16px; font-size: clamp(3.25rem, 15vw, 3.75rem); }
 .ledger .amount-cur, .ledger .amount-dec { opacity: 1; color: var(--label-2); font-weight: 500; }
 .ledger.is-owed .amount-hero { color: var(--positive); }
-.ledger-meta { font-size: .875rem; color: var(--label-2); }
-.ledger-bar { display: flex; gap: 2px; height: 8px; margin-top: 20px; overflow: hidden; border-radius: 4px; }
-.ledger-bar > i { flex: 0 0 var(--w); min-width: 0; background: var(--c); transition: flex-basis .8s var(--ease); }
-.ledger-bar > .ledger-gap { background: repeating-linear-gradient(135deg, var(--gap) 0 3px, transparent 3px 6px); }
-.ledger-legend { display: flex; justify-content: space-between; gap: 8px; margin-top: 10px; font-size: .8125rem; color: var(--label-2); }
-.ledger-legend > span { display: flex; align-items: center; gap: 0; white-space: nowrap; }
-.ledger-legend > span:last-child .dot { margin: 0 0 0 6px; }
-.ledger-legend b { margin-left: 4px; color: var(--label); font-weight: 600; font-variant-numeric: tabular-nums; }
-:root[data-theme=dark] .ledger-legend b { font-family: var(--mono); font-weight: 500; }
-.ledger-actions { display: flex; gap: 10px; margin-top: 20px; }
-.ledger-actions .btn { flex: 1; }
+.ledger-bar { display: flex; gap: 6px; width: 100%; height: 12px; }
+.ledger-bar > i { flex: 0 0 calc(var(--w) - 3px); min-width: 0; border-radius: 6px; background: var(--c); transition: flex-basis .8s var(--ease); }
+.ledger-legend { display: flex; justify-content: space-between; gap: 8px; width: 100%; margin-top: 10px; font-size: .875rem; font-weight: 700; color: var(--label-2); }
+.ledger-legend > span { display: flex; align-items: center; white-space: nowrap; }
+.ledger-legend b { margin-left: 4px; color: var(--label); font-weight: 800; font-variant-numeric: tabular-nums; }
+.ledger-meta { margin-top: 6px; font-size: .875rem; font-weight: 800; color: var(--label-2); }
+.ledger-cta { margin-top: 18px; }
 
 /* Coming-up bills as plain rows. */
 .bill-row { min-height: 60px; }
@@ -140,8 +140,8 @@ button.row:active:not(:disabled) { background: var(--fill-2); }
 .bill-row-text strong { overflow: hidden; font-size: .9375rem; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
 .bill-row-amount { font-weight: 600; }
 
-/* The welcome screen's example balance keeps the earlier gradient card. */
-.wallet { position: relative; display: grid; gap: 2px; padding: 18px; overflow: hidden; border-radius: 30px; isolation: isolate; color: #fff; background: radial-gradient(90% 70% at 0% 0%, rgb(255 255 255 / .18), transparent 60%), linear-gradient(150deg, #134e6f 0%, #0d7a72 45%, #0b8f6c 75%, #22a87c 100%); box-shadow: 0 24px 44px -22px rgb(11 143 108 / .5), inset 0 1px 0 rgb(255 255 255 / .22); }
+/* The welcome screen's example balance: a sage card in the Cozy home colours. */
+.wallet { position: relative; display: grid; gap: 2px; padding: 18px; overflow: hidden; border-radius: 30px; isolation: isolate; color: #fff; background: linear-gradient(150deg, #3f6a53 0%, #4f7a63 55%, #6a8f72 100%); box-shadow: 0 24px 44px -22px rgb(63 106 83 / .5); }
 .wallet-sheen { position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: inherit; }
 .wallet-sheen::before { content: ""; position: absolute; top: 0; bottom: 0; left: -45%; width: 45%; background: linear-gradient(105deg, transparent, rgb(255 255 255 / .1), transparent); animation: sheen 10s ease-in-out infinite; }
 @keyframes sheen { 0%, 55% { transform: translateX(0); } 100% { transform: translateX(360%); } }
@@ -395,7 +395,7 @@ button.row:active:not(:disabled) { background: var(--fill-2); }
 
 .editor-form { display: grid; gap: 18px; }
 .form-section { display: grid; gap: 8px; }
-.form-section-title { padding: 0 6px; font-size: .75rem; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--label-3); }
+.form-section-title { padding: 0 6px; font-family: var(--serif); font-size: 1.1875rem; font-weight: 600; letter-spacing: -.005em; color: var(--label); }
 .form-card { overflow: hidden; border-radius: var(--r-card); background: var(--surface); box-shadow: var(--card-shadow); }
 :root[data-theme=dark] .form-card { box-shadow: inset 0 0 0 .5px var(--separator); }
 .form-card-pad { display: grid; gap: 10px; padding: 14px; }
@@ -419,7 +419,7 @@ button.field-row:active, label.field-row:active { background: var(--fill-2); }
 .field-row-input input:focus-visible { box-shadow: none; }
 .field-row .btn-small { flex: none; min-height: 34px; }
 .field-row.is-set .field-row-icon { background: var(--accent-soft); color: var(--positive); }
-.field-label { padding-left: 2px; font-size: .8125rem; font-weight: 600; color: var(--label-2); }
+.field-label { padding-left: 2px; font-size: .875rem; font-weight: 800; color: var(--label-2); }
 .field-label + * { margin-top: -4px; }
 .person-picks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
 .split-picks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
